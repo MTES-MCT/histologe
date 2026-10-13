@@ -78,14 +78,14 @@
 			<div class="fr-fieldset__element{% if form.isOAuth2.vars.checked %} fr-hidden{% endif %}" id="partner_esabora_token_group">
 				{{ form_row(form.esaboraToken) }}
 			</div>
-			<div class="fr-fieldset__element{% if not form.isOAuth2.vars.checked %} fr-hidden{% endif %}" id="partner_oauth2_token_url_group">
-				{{ form_row(form.oauth2TokenUrl) }}
+			<div class="fr-fieldset__element js-esabora-oauth2-field{% if not form.isOAuth2.vars.checked %} fr-hidden{% endif %}" id="partner_oauth2_token_url_group">
+				{{ form_row(form.esaboraOauth2TokenUrl) }}
 			</div>
-			<div class="fr-fieldset__element{% if not form.isOAuth2.vars.checked %} fr-hidden{% endif %}" id="partner_oauth2_client_id_group">
-				{{ form_row(form.oauth2ClientId) }}
+			<div class="fr-fieldset__element js-esabora-oauth2-field{% if not form.isOAuth2.vars.checked %} fr-hidden{% endif %}" id="partner_oauth2_client_id_group">
+				{{ form_row(form.esaboraOauth2ClientId) }}
 			</div>
-			<div class="fr-fieldset__element{% if not form.isOAuth2.vars.checked %} fr-hidden{% endif %}" id="partner_oauth2_scope_group">
-				{{ form_row(form.oauth2Scope) }}
+			<div class="fr-fieldset__element js-esabora-oauth2-field{% if not form.isOAuth2.vars.checked %} fr-hidden{% endif %}" id="partner_oauth2_scope_group">
+				{{ form_row(form.esaboraOauth2Scope) }}
 			</div>
 		</fieldset>
 	</div>

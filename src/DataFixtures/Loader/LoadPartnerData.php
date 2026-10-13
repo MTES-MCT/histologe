@@ -66,16 +66,16 @@ class LoadPartnerData extends Fixture implements OrderedFixtureInterface
         }
 
         if (isset($row['oauth2_token_url'])) {
-            $partner->setOauth2TokenUrl($row['oauth2_token_url']);
+            $partner->setEsaboraOauth2TokenUrl($row['oauth2_token_url']);
         }
         if (isset($row['oauth2_client_id'])) {
-            $partner->setOauth2ClientId($row['oauth2_client_id']);
+            $partner->setEsaboraOauth2ClientId($row['oauth2_client_id']);
         }
         if (isset($row['oauth2_client_secret'])) {
-            $partner->setOauth2ClientSecret($row['oauth2_client_secret']);
+            $partner->setEsaboraOauth2ClientSecret($row['oauth2_client_secret']);
         }
         if (isset($row['oauth2_scope'])) {
-            $partner->setOauth2Scope($row['oauth2_scope']);
+            $partner->setEsaboraOauth2Scope($row['oauth2_scope']);
         }
 
         if (isset($row['type'])) {

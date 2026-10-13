@@ -116,10 +116,10 @@ class EsaboraTokenProviderTest extends TestCase
             ->setId(42)
             ->setNom('Partenaire Nantes Métropole')
             ->setAuthenticationType(InterconnectionAuthType::OAUTH2_CLIENT_CREDENTIALS)
-            ->setOauth2TokenUrl('https://auth-ext.example.com/oauth2/token')
-            ->setOauth2ClientId('my-client-id')
-            ->setOauth2ClientSecret($clientSecret)
-            ->setOauth2Scope('openid');
+            ->setEsaboraOauth2TokenUrl('https://auth-ext.example.com/oauth2/token')
+            ->setEsaboraOauth2ClientId('my-client-id')
+            ->setEsaboraOauth2ClientSecret($clientSecret)
+            ->setEsaboraOauth2Scope('openid');
 
         $token = $provider->getToken($partner);
 
@@ -142,10 +142,10 @@ class EsaboraTokenProviderTest extends TestCase
             ->setId(99)
             ->setNom('Partenaire Cached')
             ->setAuthenticationType(InterconnectionAuthType::OAUTH2_CLIENT_CREDENTIALS)
-            ->setOauth2TokenUrl('https://auth-ext.example.com/oauth2/token')
-            ->setOauth2ClientId('client-id')
-            ->setOauth2ClientSecret('client-secret')
-            ->setOauth2Scope('openid');
+            ->setEsaboraOauth2TokenUrl('https://auth-ext.example.com/oauth2/token')
+            ->setEsaboraOauth2ClientId('client-id')
+            ->setEsaboraOauth2ClientSecret('client-secret')
+            ->setEsaboraOauth2Scope('openid');
 
         $firstCallToken = $provider->getToken($partner);
         $this->assertEquals('cached-access-token', $firstCallToken);
@@ -176,17 +176,17 @@ class EsaboraTokenProviderTest extends TestCase
             ->setId(101)
             ->setNom('Partner 1')
             ->setAuthenticationType(InterconnectionAuthType::OAUTH2_CLIENT_CREDENTIALS)
-            ->setOauth2TokenUrl('https://auth.example.com/oauth2/token')
-            ->setOauth2ClientId('client-1')
-            ->setOauth2ClientSecret('secret-1');
+            ->setEsaboraOauth2TokenUrl('https://auth.example.com/oauth2/token')
+            ->setEsaboraOauth2ClientId('client-1')
+            ->setEsaboraOauth2ClientSecret('secret-1');
 
         $partner2 = new Partner()
             ->setId(102)
             ->setNom('Partner 2')
             ->setAuthenticationType(InterconnectionAuthType::OAUTH2_CLIENT_CREDENTIALS)
-            ->setOauth2TokenUrl('https://auth.example.com/oauth2/token')
-            ->setOauth2ClientId('client-2')
-            ->setOauth2ClientSecret('secret-2');
+            ->setEsaboraOauth2TokenUrl('https://auth.example.com/oauth2/token')
+            ->setEsaboraOauth2ClientId('client-2')
+            ->setEsaboraOauth2ClientSecret('secret-2');
 
         $token1 = $provider->getToken($partner1);
         $token2 = $provider->getToken($partner2);
@@ -209,8 +209,8 @@ class EsaboraTokenProviderTest extends TestCase
             ->setId(1)
             ->setNom('Partenaire Incomplet 1')
             ->setAuthenticationType(InterconnectionAuthType::OAUTH2_CLIENT_CREDENTIALS)
-            ->setOauth2ClientId('client-id')
-            ->setOauth2ClientSecret('client-secret');
+            ->setEsaboraOauth2ClientId('client-id')
+            ->setEsaboraOauth2ClientSecret('client-secret');
 
         try {
             $provider->getToken($partner1);
@@ -224,8 +224,8 @@ class EsaboraTokenProviderTest extends TestCase
             ->setId(2)
             ->setNom('Partenaire Incomplet 2')
             ->setAuthenticationType(InterconnectionAuthType::OAUTH2_CLIENT_CREDENTIALS)
-            ->setOauth2TokenUrl('https://auth.example.com')
-            ->setOauth2ClientSecret('client-secret');
+            ->setEsaboraOauth2TokenUrl('https://auth.example.com')
+            ->setEsaboraOauth2ClientSecret('client-secret');
 
         try {
             $provider->getToken($partner2);
@@ -249,8 +249,8 @@ class EsaboraTokenProviderTest extends TestCase
             ->setId(1)
             ->setNom('Partenaire Erreur HTTP')
             ->setAuthenticationType(InterconnectionAuthType::OAUTH2_CLIENT_CREDENTIALS)
-            ->setOauth2TokenUrl('https://auth.example.com/oauth2/token')
-            ->setOauth2ClientId('client-id');
+            ->setEsaboraOauth2TokenUrl('https://auth.example.com/oauth2/token')
+            ->setEsaboraOauth2ClientId('client-id');
 
         try {
             $provider->getToken($partner);
@@ -278,9 +278,9 @@ class EsaboraTokenProviderTest extends TestCase
             ->setId(1)
             ->setNom('Partenaire Sans Access Token')
             ->setAuthenticationType(InterconnectionAuthType::OAUTH2_CLIENT_CREDENTIALS)
-            ->setOauth2TokenUrl('https://auth.example.com/oauth2/token')
-            ->setOauth2ClientId('client-id')
-            ->setOauth2ClientSecret('client-secret');
+            ->setEsaboraOauth2TokenUrl('https://auth.example.com/oauth2/token')
+            ->setEsaboraOauth2ClientId('client-id')
+            ->setEsaboraOauth2ClientSecret('client-secret');
 
         $this->expectException(EsaboraTokenException::class);
         $this->expectExceptionMessage('L\'access_token est absent de la réponse OAuth2.');
@@ -298,9 +298,9 @@ class EsaboraTokenProviderTest extends TestCase
             ->setId(1)
             ->setNom('Partenaire HTML Response')
             ->setAuthenticationType(InterconnectionAuthType::OAUTH2_CLIENT_CREDENTIALS)
-            ->setOauth2TokenUrl('https://auth.example.com/oauth2/token')
-            ->setOauth2ClientId('client-id')
-            ->setOauth2ClientSecret('client-secret');
+            ->setEsaboraOauth2TokenUrl('https://auth.example.com/oauth2/token')
+            ->setEsaboraOauth2ClientId('client-id')
+            ->setEsaboraOauth2ClientSecret('client-secret');
 
         $this->expectException(EsaboraTokenException::class);
         $provider->getToken($partner);
@@ -319,9 +319,9 @@ class EsaboraTokenProviderTest extends TestCase
             ->setId(1)
             ->setNom('Partenaire Test Sécurité')
             ->setAuthenticationType(InterconnectionAuthType::OAUTH2_CLIENT_CREDENTIALS)
-            ->setOauth2TokenUrl('https://auth.example.com/oauth2/token')
-            ->setOauth2ClientId('client-id')
-            ->setOauth2ClientSecret($clientSecret);
+            ->setEsaboraOauth2TokenUrl('https://auth.example.com/oauth2/token')
+            ->setEsaboraOauth2ClientId('client-id')
+            ->setEsaboraOauth2ClientSecret($clientSecret);
 
         try {
             $provider->getToken($partner);

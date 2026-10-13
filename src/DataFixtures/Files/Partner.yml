@@ -606,10 +606,10 @@ partners:
     esabora_url: "http://signal_logement_wiremock:8080/ws/rest"
     is_esabora_active: 1
     auth_type: "oauth2_client_credentials"
-    oauth2_token_url: "http://signal_logement_wiremock:8080/oauth2/token"
-    oauth2_client_id: "silooauth2"
-    oauth2_client_secret: "lescanaris"
-    oauth2_scope: "openid"
+    esabora_oauth2_token_url: "http://signal_logement_wiremock:8080/oauth2/token"
+    esabora_oauth2_client_id: "silooauth2"
+    esabora_oauth2_client_secret: "lescanaris"
+    esabora_oauth2_scope: "openid"
     type: "COMMUNE_SCHS"
     competence: "VISITES"
 

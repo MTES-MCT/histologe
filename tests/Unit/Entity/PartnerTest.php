@@ -2,6 +2,7 @@
 
 namespace App\Tests\Unit\Entity;
 
+use App\Entity\Enum\InterconnectionAuthType;
 use App\Entity\Enum\PartnerType;
 use App\Entity\Enum\Qualification;
 use App\Entity\Partner;
@@ -66,7 +67,11 @@ class PartnerTest extends KernelTestCase
     #[DataProvider('provideDataForIsConnectedToSanteHabitat')]
     public function testIsConnectedToSanteHabitat(?string $esaboraUrl, bool $expected): void
     {
-        $partner = new Partner()->setEsaboraUrl($esaboraUrl);
+        $partner = new Partner()
+            ->setAuthenticationType(InterconnectionAuthType::STATIC_TOKEN)
+            ->setIsEsaboraActive(true)
+            ->setEsaboraToken('token')
+            ->setEsaboraUrl($esaboraUrl);
         $this->assertSame($expected, $partner->isConnectedToSanteHabitat());
     }
 

@@ -138,13 +138,13 @@ class PartnerType extends AbstractType
                 'disabled' => !$this->isAdminTerritory,
             ])
             ->add('esaboraUrl', UrlType::class, [
-                'label' => 'URL Esabora (facultatif)',
+                'label' => 'URL Esabora',
                 'required' => false,
                 'disabled' => !$this->isAdmin,
                 'default_protocol' => null,
             ])
             ->add('isOAuth2', CheckboxType::class, [
-                'label' => 'Connexion OAuth2 (facultatif)',
+                'label' => 'Connexion OAuth2',
                 'mapped' => false,
                 'data' => $isOAuth2,
                 'required' => false,
@@ -154,23 +154,23 @@ class PartnerType extends AbstractType
                 'disabled' => !$this->isAdmin,
             ])
             ->add('esaboraToken', TextType::class, [
-                'label' => 'Token Esabora (facultatif)',
+                'label' => 'Token Esabora',
                 'required' => false,
                 'disabled' => !$this->isAdmin,
             ])
-            ->add('oauth2TokenUrl', UrlType::class, [
-                'label' => 'URL du token OAuth2 (facultatif)',
+            ->add('esaboraOauth2TokenUrl', UrlType::class, [
+                'label' => 'URL du token OAuth2',
                 'required' => false,
                 'disabled' => !$this->isAdmin,
                 'default_protocol' => null,
             ])
-            ->add('oauth2ClientId', TextType::class, [
-                'label' => 'Client ID (facultatif)',
+            ->add('esaboraOauth2ClientId', TextType::class, [
+                'label' => 'Client ID',
                 'required' => false,
                 'disabled' => !$this->isAdmin,
             ])
-            ->add('oauth2Scope', TextType::class, [
-                'label' => 'Scope OAuth2 (facultatif)',
+            ->add('esaboraOauth2Scope', TextType::class, [
+                'label' => 'Scope OAuth2',
                 'required' => false,
                 'disabled' => !$this->isAdmin,
             ]);
@@ -183,7 +183,7 @@ class PartnerType extends AbstractType
                 'required' => false,
             ])
             ->add('idossUrl', UrlType::class, [
-                'label' => 'URL Idoss (facultatif)',
+                'label' => 'URL Idoss',
                 'required' => false,
                 'default_protocol' => null,
             ]);
@@ -208,15 +208,16 @@ class PartnerType extends AbstractType
                 $isOAuth2 = (bool) $form->get('isOAuth2')->getData();
                 if ($isOAuth2) {
                     $partner->setAuthenticationType(InterconnectionAuthType::OAUTH2_CLIENT_CREDENTIALS);
+                    $partner->setEsaboraToken(null);
                 } else {
                     $partner->setAuthenticationType(
                         !empty($partner->getEsaboraToken())
                             ? InterconnectionAuthType::STATIC_TOKEN
                             : null
                     );
-                    $partner->setOauth2TokenUrl(null);
-                    $partner->setOauth2ClientId(null);
-                    $partner->setOauth2Scope(null);
+                    $partner->setEsaboraOauth2TokenUrl(null);
+                    $partner->setEsaboraOauth2ClientId(null);
+                    $partner->setEsaboraOauth2Scope(null);
                 }
             }
         });
@@ -264,9 +265,6 @@ class PartnerType extends AbstractType
     {
         $resolver->setDefaults([
             'data_class' => Partner::class,
-            'attr' => [
-                'novalidate' => 'novalidate',
-            ],
             'constraints' => [
                 new Assert\Callback([
                     $this,
@@ -305,14 +303,14 @@ class PartnerType extends AbstractType
         if ($value instanceof Partner) {
             // OAuth2
             if (InterconnectionAuthType::OAUTH2_CLIENT_CREDENTIALS === $value->getAuthenticationType()) {
-                if (empty($value->getOauth2TokenUrl())) {
+                if (empty($value->getEsaboraOauth2TokenUrl())) {
                     $context->buildViolation('Pour activer la connexion OAuth2, l’URL du token doit être renseignée.')
-                        ->atPath('oauth2TokenUrl')
+                        ->atPath('esaboraOauth2TokenUrl')
                         ->addViolation();
                 }
-                if (empty($value->getOauth2ClientId())) {
+                if (empty($value->getEsaboraOauth2ClientId())) {
                     $context->buildViolation('Pour activer la connexion OAuth2, le Client ID doit être renseigné.')
-                        ->atPath('oauth2ClientId')
+                        ->atPath('esaboraOauth2ClientId')
                         ->addViolation();
                 }
             }

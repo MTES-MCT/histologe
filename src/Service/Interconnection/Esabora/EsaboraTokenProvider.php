@@ -59,8 +59,8 @@ class EsaboraTokenProvider
      */
     private function getOAuth2Token(Partner $partner): string
     {
-        $tokenUrl = $partner->getOauth2TokenUrl();
-        $clientId = $partner->getOauth2ClientId();
+        $tokenUrl = $partner->getEsaboraOauth2TokenUrl();
+        $clientId = $partner->getEsaboraOauth2ClientId();
         // TODO Symfony 8.2: le client secret OAuth2 est temporairement global et stocké
         // dans une variable d'environnement. Après la migration vers Symfony 8.2,
         // le stocker par partenaire en base de données, chiffré avec le composant
@@ -96,7 +96,7 @@ class EsaboraTokenProvider
     ): OAuth2TokenResponse {
         $body = [
             'grant_type' => 'client_credentials',
-            'scope' => $partner->getOauth2Scope(),
+            'scope' => $partner->getEsaboraOauth2Scope(),
         ];
 
         try {

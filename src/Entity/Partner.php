@@ -118,16 +118,16 @@ class Partner implements EntityHistoryInterface
 
     #[ORM\Column(length: 255, nullable: true)]
     #[Assert\Url]
-    private ?string $oauth2TokenUrl = null;
+    private ?string $esaboraOauth2TokenUrl = null;
 
     #[ORM\Column(length: 255, nullable: true)]
-    private ?string $oauth2ClientId = null;
+    private ?string $esaboraOauth2ClientId = null;
 
     #[ORM\Column(length: 255, nullable: true)]
-    private ?string $oauth2ClientSecret = null;
+    private ?string $esaboraOauth2ClientSecret = null;
 
     #[ORM\Column(length: 255, nullable: true)]
-    private ?string $oauth2Scope = null;
+    private ?string $esaboraOauth2Scope = null;
 
     #[ORM\ManyToOne(targetEntity: Bailleur::class, inversedBy: 'partners')]
     #[ORM\JoinColumn(nullable: true)]
@@ -442,9 +442,12 @@ class Partner implements EntityHistoryInterface
         return match ($this->authenticationType) {
             InterconnectionAuthType::STATIC_TOKEN => (bool) $this->esaboraToken,
 
-            InterconnectionAuthType::OAUTH2_CLIENT_CREDENTIALS => $this->oauth2TokenUrl
-                && $this->oauth2ClientId
-                && $this->oauth2ClientSecret,
+            InterconnectionAuthType::OAUTH2_CLIENT_CREDENTIALS => $this->esaboraOauth2TokenUrl
+                && $this->esaboraOauth2ClientId,
+            // TODO : Activer cette condition une fois la persistance du secret en base implémentée.
+            // Le secret est actuellement fourni globalement via la variable d'environnement OAUTH2_CLIENT_SECRET.
+            // Voir https://github.com/MTES-MCT/histologe/issues/6475
+            // && $this->esaboraOauth2ClientSecret,
 
             null => false,
         };
@@ -452,7 +455,7 @@ class Partner implements EntityHistoryInterface
 
     public function isConnectedToSanteHabitat(): bool
     {
-        if (null === $this->esaboraUrl) {
+        if (!$this->canSyncWithEsabora()) {
             return false;
         }
 
@@ -624,50 +627,50 @@ class Partner implements EntityHistoryInterface
         return $this;
     }
 
-    public function getOauth2ClientSecret(): ?string
+    public function getEsaboraOauth2ClientSecret(): ?string
     {
-        return $this->oauth2ClientSecret;
+        return $this->esaboraOauth2ClientSecret;
     }
 
-    public function setOauth2ClientSecret(?string $oauth2ClientSecret): static
+    public function setEsaboraOauth2ClientSecret(?string $esaboraOauth2ClientSecret): static
     {
-        $this->oauth2ClientSecret = $oauth2ClientSecret;
+        $this->esaboraOauth2ClientSecret = $esaboraOauth2ClientSecret;
 
         return $this;
     }
 
-    public function getOauth2ClientId(): ?string
+    public function getEsaboraOauth2ClientId(): ?string
     {
-        return $this->oauth2ClientId;
+        return $this->esaboraOauth2ClientId;
     }
 
-    public function setOauth2ClientId(?string $oauth2ClientId): static
+    public function setEsaboraOauth2ClientId(?string $esaboraOauth2ClientId): static
     {
-        $this->oauth2ClientId = $oauth2ClientId;
+        $this->esaboraOauth2ClientId = $esaboraOauth2ClientId;
 
         return $this;
     }
 
-    public function getOauth2TokenUrl(): ?string
+    public function getEsaboraOauth2TokenUrl(): ?string
     {
-        return $this->oauth2TokenUrl;
+        return $this->esaboraOauth2TokenUrl;
     }
 
-    public function setOauth2TokenUrl(?string $oauth2TokenUrl): static
+    public function setEsaboraOauth2TokenUrl(?string $esaboraOauth2TokenUrl): static
     {
-        $this->oauth2TokenUrl = $oauth2TokenUrl;
+        $this->esaboraOauth2TokenUrl = $esaboraOauth2TokenUrl;
 
         return $this;
     }
 
-    public function getOauth2Scope(): ?string
+    public function getEsaboraOauth2Scope(): ?string
     {
-        return $this->oauth2Scope;
+        return $this->esaboraOauth2Scope;
     }
 
-    public function setOauth2Scope(?string $oauth2Scope): static
+    public function setEsaboraOauth2Scope(?string $esaboraOauth2Scope): static
     {
-        $this->oauth2Scope = $oauth2Scope;
+        $this->esaboraOauth2Scope = $esaboraOauth2Scope;
 
         return $this;
     }
