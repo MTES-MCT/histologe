@@ -14,6 +14,7 @@ use App\Messenger\MessageHandler\NewSignalementCheckFileMessageHandler;
 use App\Repository\DesordreCritereRepository;
 use App\Repository\SignalementRepository;
 use App\Repository\UserRepository;
+use App\Service\Signalement\Suivi\SuiviDescriptionHelper;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ManagerRegistry;
 use PHPUnit\Framework\MockObject\MockObject;
@@ -78,6 +79,25 @@ class NewSignalementCheckFileMessageHandlerTest extends KernelTestCase
         $this->assertStringContainsString('diagnostic', $handler->description);
     }
 
+    public function testProcessNewSignalementCheckFileDescriptionFromTemplate(): void
+    {
+        /** @var SignalementRepository $signalementRepository */
+        $signalementRepository = $this->entityManager->getRepository(Signalement::class);
+        /** @var Signalement $signalement */
+        $signalement = $signalementRepository->findOneBy(['uuid' => '00000000-0000-0000-2023-000000000027']);
+        $signalement->setMailProprio(null);
+        $signalement->setTelProprio(null);
+
+        $handler = $this->getHandler();
+        $handler->__invoke(new NewSignalementCheckFileMessage($signalement->getId()));
+
+        $this->assertInstanceOf(Suivi::class, $handler->suivi);
+        $this->assertStringStartsWith('Bonjour,<br><br>Vous avez signalé un problème sur un logement.<br>', $handler->description);
+        $this->assertStringContainsString('- le ou les documents suivants : ', $handler->description);
+        $this->assertStringContainsString('- les coordonnées du propriétaire / bailleur', $handler->description);
+        $this->assertStringEndsWith('Merci,<br>L\'équipe '.static::getContainer()->getParameter('platform_name'), $handler->description);
+    }
+
     public function testProcessSignalementRefusedNotSent(): void
     {
         // on n'envoie pas de demande de documents si le signalement est refusé
@@ -128,6 +148,7 @@ class NewSignalementCheckFileMessageHandlerTest extends KernelTestCase
             $suiviManager,
             $parameterBag,
             $this->entityManager,
+            static::getContainer()->get(SuiviDescriptionHelper::class),
         );
 
         return $handler;
