@@ -16,6 +16,7 @@ use App\Entity\SuiviFile;
 use App\Entity\User;
 use App\Event\SuiviCreatedEvent;
 use App\Service\Signalement\Suivi\SuiviDescriptionHelper;
+use App\Service\Signalement\Suivi\SuiviHelper;
 use App\Utils\DateHelper;
 use App\Utils\DictionaryProvider;
 use App\Utils\Sanitizer;
@@ -98,6 +99,11 @@ class SuiviManager
                 subscriptionCreated: $subscriptionCreated
             );
         }
+        // dénormalisation des champs vers le signalement
+        $signalement->setLastSuiviAt($suivi->getCreatedAt());
+        $signalement->setLastSuiviBy(SuiviHelper::getLastLabelFromSuivi($suivi));
+        $signalement->setLastSuiviIsVisibleForUsager($suivi->getIsVisibleForUsager());
+
         $this->entityManager->persist($suivi);
         $this->eventDispatcher->dispatch(new SuiviCreatedEvent($suivi), SuiviCreatedEvent::NAME);
 
