@@ -9,11 +9,11 @@
       :locale="localeFr"
       range
       multi-calendars
-      :enableTimePicker=false
-      format="dd/MM/yyyy"
+      :time-config="{ enableTimePicker: false }"
+      :formats="{ input: 'dd/MM/yyyy' }"
       selectText="Appliquer"
       cancelText="Annuler"
-      :placeholder=placeholder
+      :placeholder="placeholder"
       :ref="id"
       :name="id"
       :id="id"
