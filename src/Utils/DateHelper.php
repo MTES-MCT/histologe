@@ -60,4 +60,12 @@ class DateHelper
 
         return $value.' '.($units[$unit] ?? $unit);
     }
+
+    public static function getDateUTCFromLocalDateAndTime(\DateTimeImmutable $date, ?\DateTimeImmutable $time, \DateTimeZone $timezone): \DateTimeImmutable
+    {
+        $localDateTime = new \DateTimeImmutable($date->format('Y-m-d'), $timezone);
+        $localDateTime = $localDateTime->setTime((int) ($time?->format('H') ?? 0), (int) ($time?->format('i') ?? 0));
+
+        return $localDateTime->setTimezone(new \DateTimeZone('UTC'));
+    }
 }

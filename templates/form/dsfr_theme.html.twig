@@ -209,7 +209,7 @@
                     {{ form_help(form) }}
                 </label>
             {% endif %}
-            <input id="{{ id }}_input" type="text" placeholder="{{ noselectionlabel }}" class="fr-input" autocomplete="off">
+            <input id="{{ id }}_input" type="text" placeholder="{{ noselectionlabel }}" class="fr-input" autocomplete="off" data-error-name="{{ full_name|replace({'[]': ''}) }}">
         </div>
         <button type="button" class="fr-btn--close fr-btn fr-hidden" tabindex="-1">Fermer</button>
         <div class="search-checkbox">
@@ -237,7 +237,7 @@
                     {{ form_help(form) }}
                 </label>
             {% endif %}
-            <input id="{{ id }}_input" type="text" placeholder="{{ noselectionlabel }}" class="fr-input" autocomplete="off">
+            <input id="{{ id }}_input" type="text" placeholder="{{ noselectionlabel }}" class="fr-input" autocomplete="off" data-error-name="{{ full_name|replace({'[]': ''}) }}">
         </div>
         <button type="button" class="fr-btn--close fr-btn fr-hidden">Fermer</button>
         <div class="search-checkbox">

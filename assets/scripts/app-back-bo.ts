@@ -23,7 +23,6 @@ import './vanilla/controllers/form_account.js';
 // TODO à la suppression de FEATURE_ORIENTATION : supprimer cet import
 import './vanilla/controllers/form_nde.js';
 import './vanilla/controllers/form_notification.js';
-import './vanilla/controllers/form_visite.js';
 
 import './vanilla/controllers/back_archived_signalements/back_archived_signalements_reactiver.js'
 import './vanilla/controllers/back_archived_users_index/back_archived_users_index.js'
@@ -41,6 +40,7 @@ import './vanilla/controllers/back_signalement_view/form_acceptation_refus.js';
 import './vanilla/controllers/back_signalement_view/toggle-suivi-auto.js';
 import './vanilla/controllers/back_signalement_view/zip_selection_photos.js';
 import './vanilla/controllers/back_signalement_view/personal_note.js';
+import './vanilla/controllers/back_signalement_view/form_visite.js';
 import './vanilla/controllers/back_signalement_view/form_consommation_energetique.js';
 import './vanilla/controllers/back_signalement_edit_file/back_signalement_edit_file.js';
 import './vanilla/controllers/back_signalement_list_export/back_signalement_list_export.js';

@@ -39,28 +39,25 @@ class SignalementVisitesControllerTest extends WebTestCase
 
     public function testAddFutureVisite(): void
     {
-        $signalement = $this->signalementRepository->findOneBy(['uuid' => '00000000-0000-0000-2022-000000000001']);
+        $signalement = $this->signalementRepository->findOneBy(['uuid' => '00000000-0000-0000-2022-000000000008']);
 
         $route = $this->router->generate('back_signalement_visite_add', ['uuid' => $signalement->getUuid()]);
         $this->client->request('GET', $route);
 
-        $partner = $this->partnerRepository->findOneBy(['nom' => 'Partenaire 13-01']);
+        $partner = $this->partnerRepository->findOneBy(['nom' => 'Partenaire 13-02']);
 
         $this->client->request(
             'POST',
             $route,
             [
-                'visite-add' => [
-                    'date' => '2123-01-01',
-                    'time' => '',
-                    'partner' => $partner->getId(),
+                'add_and_reschedule_visite' => [
+                    'scheduledAt' => '2123-01-01',
+                    'scheduledAtTime' => '10:00',
+                    'partnerChoice' => $partner->getId(),
                     'externalOperator' => '',
                     'commentBeforeVisite' => 'Commentaire avant visite',
+                    '_token' => $this->generateCsrfToken($this->client, 'add_and_reschedule_visite'),
                 ],
-                '_token' => $this->generateCsrfToken(
-                    $this->client,
-                    'signalement_add_visit_'.$signalement->getId()
-                ),
             ]
         );
 
@@ -77,7 +74,7 @@ class SignalementVisitesControllerTest extends WebTestCase
         $route = $this->router->generate('back_signalement_view', ['uuid' => $signalement->getUuid()]);
         $crawler = $this->client->request('GET', $route);
         $highlights = $crawler->filter('.fr-highlight');
-        $this->assertCount(2, $highlights);
+        $this->assertCount(1, $highlights);
         $this->assertStringContainsString('Commentaire avant visite', $highlights->eq(0)->text());
     }
 
@@ -92,16 +89,13 @@ class SignalementVisitesControllerTest extends WebTestCase
             'POST',
             $route,
             [
-                'visite-add' => [
-                    'date' => '2123-01-01',
-                    'time' => '10:00',
-                    'partner' => 'extern',
+                'add_and_reschedule_visite' => [
+                    'scheduledAt' => '2123-01-01',
+                    'scheduledAtTime' => '10:00',
+                    'partnerChoice' => 'extern',
                     'externalOperator' => 'Opérateur externe',
+                    '_token' => $this->generateCsrfToken($this->client, 'add_and_reschedule_visite'),
                 ],
-                '_token' => $this->generateCsrfToken(
-                    $this->client,
-                    'signalement_add_visit_'.$signalement->getId()
-                ),
             ]
         );
 
@@ -116,6 +110,69 @@ class SignalementVisitesControllerTest extends WebTestCase
         $this->assertEquals($msgFlash, $response['flashMessages'][0]['message']);
     }
 
+    public function testAddFutureVisiteOnPartnerWithPendingVisiteIsBlocked(): void
+    {
+        $signalement = $this->signalementRepository->findOneBy(['uuid' => '00000000-0000-0000-2022-000000000001']);
+        $partner = $this->partnerRepository->findOneBy(['nom' => 'Partenaire 13-01']);
+
+        $route = $this->router->generate('back_signalement_visite_add', ['uuid' => $signalement->getUuid()]);
+        $this->client->request('GET', $route);
+
+        $this->postFutureVisite($route, (string) $partner->getId(), '');
+        $this->assertResponseStatusCodeSame(400);
+        $response = json_decode((string) $this->client->getResponse()->getContent(), true);
+        $this->assertEquals(
+            ['Ce partenaire a déjà une visite en cours. Veuillez terminer ou annuler la visite ou sélectionner un autre partenaire.'],
+            $response['errors']['add_and_reschedule_visite[partnerChoice]']['errors']
+        );
+        $this->assertCount(1, $this->interventionRepository->findBy([
+            'signalement' => $signalement,
+            'partner' => $partner,
+            'status' => Intervention::STATUS_PLANNED,
+        ]));
+    }
+
+    public function testAddFutureVisiteOnExternalOperatorWithPendingVisiteIsBlocked(): void
+    {
+        $signalement = $this->signalementRepository->findOneBy(['uuid' => '00000000-0000-0000-2022-000000000001']);
+
+        $route = $this->router->generate('back_signalement_visite_add', ['uuid' => $signalement->getUuid()]);
+        $this->client->request('GET', $route);
+
+        $this->postFutureVisite($route, 'extern', 'Opérateur externe');
+        $this->assertResponseIsSuccessful();
+
+        $this->postFutureVisite($route, 'extern', ' OPÉRATEUR EXTERNE ');
+        $this->assertResponseStatusCodeSame(400);
+        $response = json_decode((string) $this->client->getResponse()->getContent(), true);
+        $this->assertEquals(
+            ['Cet opérateur externe a déjà une visite en cours. Veuillez terminer ou annuler la visite ou sélectionner un autre partenaire.'],
+            $response['errors']['add_and_reschedule_visite[externalOperator]']['errors']
+        );
+        $this->assertCount(1, $this->interventionRepository->findBy([
+            'signalement' => $signalement,
+            'externalOperator' => 'Opérateur externe',
+            'status' => Intervention::STATUS_PLANNED,
+        ]));
+    }
+
+    private function postFutureVisite(string $route, string $partnerChoice, string $externalOperator): void
+    {
+        $this->client->request(
+            'POST',
+            $route,
+            [
+                'add_and_reschedule_visite' => [
+                    'scheduledAt' => '2123-01-01',
+                    'scheduledAtTime' => '10:00',
+                    'partnerChoice' => $partnerChoice,
+                    'externalOperator' => $externalOperator,
+                    '_token' => $this->generateCsrfToken($this->client, 'add_and_reschedule_visite'),
+                ],
+            ]
+        );
+    }
+
     public function testVisiteOnLogementVacant(): void
     {
         $user = $this->userRepository->findOneBy(['email' => 'admin-01@signal-logement.fr']);
@@ -128,16 +185,13 @@ class SignalementVisitesControllerTest extends WebTestCase
             'POST',
             $route,
             [
-                'visite-add' => [
-                    'date' => '2123-01-01',
-                    'time' => '10:00',
-                    'partner' => 'extern',
+                'add_and_reschedule_visite' => [
+                    'scheduledAt' => '2123-01-01',
+                    'scheduledAtTime' => '10:00',
+                    'partnerChoice' => 'extern',
                     'externalOperator' => 'Opérateur externe',
+                    '_token' => $this->generateCsrfToken($this->client, 'add_and_reschedule_visite'),
                 ],
-                '_token' => $this->generateCsrfToken(
-                    $this->client,
-                    'signalement_add_visit_'.$signalement->getId()
-                ),
             ]
         );
         $this->assertEmailCount(0);
@@ -145,28 +199,29 @@ class SignalementVisitesControllerTest extends WebTestCase
 
     public function testAddPastVisite(): void
     {
-        $signalement = $this->signalementRepository->findOneBy(['uuid' => '00000000-0000-0000-2022-000000000001']);
+        $signalement = $this->signalementRepository->findOneBy(['uuid' => '00000000-0000-0000-2022-000000000008']);
 
         $route = $this->router->generate('back_signalement_visite_add', ['uuid' => $signalement->getUuid()]);
         $this->client->request('GET', $route);
 
-        $partner = $this->partnerRepository->findOneBy(['nom' => 'Partenaire 13-01']);
+        $partner = $this->partnerRepository->findOneBy(['nom' => 'Partenaire 13-02']);
 
         $this->client->request(
             'POST',
             $route,
             [
-                'visite-add' => [
-                    'date' => '2022-01-01',
-                    'time' => '10:00',
-                    'partner' => $partner->getId(),
+                'add_and_reschedule_visite' => [
+                    'scheduledAt' => '2022-01-01',
+                    'scheduledAtTime' => '10:00',
+                    'partnerChoice' => $partner->getId(),
                     'externalOperator' => '',
-                    'details' => 'Lorem Ipsum',
+                    'visiteDone' => '1',
+                    'occupantPresent' => '1',
+                    'proprietairePresent' => '1',
+                    'concludeProcedure' => ['RSD'],
+                    'details' => 'Lorem Ipsum dolor sit amet',
+                    '_token' => $this->generateCsrfToken($this->client, 'add_and_reschedule_visite'),
                 ],
-                '_token' => $this->generateCsrfToken(
-                    $this->client,
-                    'signalement_add_visit_'.$signalement->getId()
-                ),
             ]
         );
         $response = json_decode((string) $this->client->getResponse()->getContent(), true);
@@ -196,21 +251,17 @@ class SignalementVisitesControllerTest extends WebTestCase
             'POST',
             $route,
             [
-                'visite-add' => [
-                    'date' => '2023-01-01',
-                    'time' => '10:00',
-                    'partner' => $partner->getId(),
+                'add_and_reschedule_visite' => [
+                    'scheduledAt' => '2023-01-01',
+                    'scheduledAtTime' => '10:00',
+                    'partnerChoice' => $partner->getId(),
                     'externalOperator' => '',
                     'visiteDone' => '0',
                     'occupantPresent' => '0',
                     'proprietairePresent' => '0',
-                    'notifyUsager' => '0',
-                    'details' => 'Lorem Ipsum',
+                    'details' => 'Lorem Ipsum dolor sit amet',
+                    '_token' => $this->generateCsrfToken($this->client, 'add_and_reschedule_visite'),
                 ],
-                '_token' => $this->generateCsrfToken(
-                    $this->client,
-                    'signalement_add_visit_'.$signalement->getId()
-                ),
             ]
         );
 
@@ -239,18 +290,15 @@ class SignalementVisitesControllerTest extends WebTestCase
             $this->fail('No intervention found for the signalement');
         }
 
-        $route = $this->router->generate('back_signalement_visite_cancel', ['uuid' => $signalement->getUuid()]);
+        $route = $this->router->generate('back_signalement_visite_cancel', ['id' => $intervention->getId()]);
         $this->client->request(
             'POST',
             $route,
             [
-                'visite-cancel' => [
-                    'intervention' => $intervention->getId(), 'details' => 'nanana',
+                'cancel_visite' => [
+                    'details' => 'nanana',
+                    '_token' => $this->generateCsrfToken($this->client, 'cancel_visite'),
                 ],
-                '_token' => $this->generateCsrfToken(
-                    $this->client,
-                    'signalement_cancel_visit_'.$signalement->getId()
-                ),
             ]
         );
 
@@ -273,13 +321,12 @@ class SignalementVisitesControllerTest extends WebTestCase
             $this->fail('No intervention found for the signalement');
         }
 
-        $route = $this->router->generate('back_signalement_visite_cancel', ['uuid' => $signalement->getUuid()]);
+        $route = $this->router->generate('back_signalement_visite_cancel', ['id' => $intervention->getId()]);
         $this->client->request(
             'POST',
             $route,
-            ['visite-cancel' => [
-                'intervention' => $intervention->getId(), 'details' => 'nanana'],
-            ]);
+            ['cancel_visite' => ['details' => 'nanana']]
+        );
 
         $this->assertResponseStatusCodeSame(403);
     }
@@ -296,27 +343,23 @@ class SignalementVisitesControllerTest extends WebTestCase
         }
         $interventionId = $intervention->getId();
 
-        $route = $this->router->generate('back_signalement_visite_edit', ['uuid' => $signalement->getUuid()]);
+        $route = $this->router->generate('back_signalement_visite_edit_conclusion', ['id' => $interventionId]);
         $this->client->request('GET', $route);
 
         $this->client->request(
             'POST',
             $route,
             [
-                'visite-edit' => [
+                'edit_conclusion_visite' => [
                     'concludeProcedure' => [
                         'NON_DECENCE',
                         'RSD',
                         'INSALUBRITE',
                     ],
                     'notifyUsager' => '1',
-                    'details' => 'Hello world',
-                    'intervention' => $interventionId,
+                    'details' => 'Hello world, this is a comment',
+                    '_token' => $this->generateCsrfToken($this->client, 'edit_conclusion_visite'),
                 ],
-                '_token' => $this->generateCsrfToken(
-                    $this->client,
-                    'signalement_edit_visit_'.$interventionId
-                ),
             ]
         );
 
@@ -344,27 +387,22 @@ class SignalementVisitesControllerTest extends WebTestCase
         }
         $interventionId = $intervention->getId();
 
-        $route = $this->router->generate('back_signalement_visite_edit', ['uuid' => $signalement->getUuid()]);
+        $route = $this->router->generate('back_signalement_visite_edit_conclusion', ['id' => $interventionId]);
         $this->client->request('GET', $route);
 
         $this->client->request(
             'POST',
             $route,
             [
-                'visite-edit' => [
+                'edit_conclusion_visite' => [
                     'concludeProcedure' => [
                         'NON_DECENCE',
                         'RSD',
                         'INSALUBRITE',
                     ],
-                    'notifyUsager' => '0',
-                    'details' => 'Hello world',
-                    'intervention' => $interventionId,
+                    'details' => 'Hello world, this is a comment',
+                    '_token' => $this->generateCsrfToken($this->client, 'edit_conclusion_visite'),
                 ],
-                '_token' => $this->generateCsrfToken(
-                    $this->client,
-                    'signalement_edit_visit_'.$interventionId
-                ),
             ]
         );
 
