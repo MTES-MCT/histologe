@@ -4,7 +4,6 @@ namespace App\Tests\Functional\Service\Import\Signalement;
 
 use App\Entity\Signalement;
 use App\Entity\Territory;
-use App\EventListener\SuiviCreatedListener;
 use App\Manager\AffectationManager;
 use App\Manager\FileManager;
 use App\Manager\InterventionManager;
@@ -23,7 +22,6 @@ use App\Service\Import\Signalement\SignalementImportMapper;
 use App\Service\Signalement\CriticiteCalculator;
 use App\Service\Signalement\Qualification\SignalementQualificationUpdater;
 use Doctrine\ORM\EntityManagerInterface;
-use Doctrine\ORM\Events;
 use Doctrine\ORM\NonUniqueResultException;
 use Doctrine\Persistence\ManagerRegistry;
 use Faker\Factory;
@@ -94,7 +92,6 @@ class SignalementImportLoaderTest extends KernelTestCase
      */
     public function testLoadSignalementImport(): void
     {
-        $this->entityManager->getEventManager()->removeEventListener([Events::onFlush], new SuiviCreatedListener());
         $signalementImportLoader = new SignalementImportLoader(
             $this->signalementImportMapper,
             $this->signalementManager,
@@ -132,7 +129,6 @@ class SignalementImportLoaderTest extends KernelTestCase
      */
     public function testLoadSignalementImportIsLogementVacant(): void
     {
-        $this->entityManager->getEventManager()->removeEventListener([Events::onFlush], new SuiviCreatedListener());
         $this->entityManager->beginTransaction();
 
         $signalementImportLoader = new SignalementImportLoader(
