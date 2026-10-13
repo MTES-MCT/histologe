@@ -1,4 +1,4 @@
-<dialog aria-labelledby="panel-add-visite-title" id="panel-add-visite" data-panel-visite="true" class="side-panel">
+<dialog aria-labelledby="panel-add-visite-title" id="panel-add-visite" data-panel-visite="true" class="side-panel" data-panel-reset-form>
     <div class="side-panel__inner">
         <div class="side-panel__header">
             <button type="button" class="fr-btn--close fr-btn js-close-panel" data-panel="panel-add-visite" aria-controls="panel-add-visite" aria-expanded="false">Fermer</button>
@@ -35,10 +35,6 @@
                         {{ form_label(addVisiteForm.partnerChoice) }}
                         {{ form_widget(addVisiteForm.partnerChoice) }}
                         {{ form_errors(addVisiteForm.partnerChoice) }}
-                        <p class="fr-error-text static-error fr-hidden signalement-visite-partner-double-error">
-                            Ce partenaire a déjà une visite en cours.
-                            Veuillez terminer ou annuler la visite ou sélectionner un autre partenaire.
-                        </p>
                     </div>
                     {{ form_row(addVisiteForm.externalOperator) }}
                 {% endif %}

@@ -20,10 +20,6 @@
             {{ form_label(rescheduleVisiteForm.partnerChoice) }}
             {{ form_widget(rescheduleVisiteForm.partnerChoice) }}
             {{ form_errors(rescheduleVisiteForm.partnerChoice) }}
-            <p class="fr-error-text static-error fr-hidden signalement-visite-partner-double-error">
-                Ce partenaire a déjà une visite en cours.
-                Veuillez terminer ou annuler la visite ou sélectionner un autre partenaire.
-            </p>
         </div>
         {{ form_row(rescheduleVisiteForm.externalOperator) }}
     {% endif %}

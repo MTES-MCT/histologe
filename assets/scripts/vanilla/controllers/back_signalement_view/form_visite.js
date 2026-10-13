@@ -18,7 +18,6 @@ const initVisiteForm = (visiteForm) => {
   const pastDateFields = visiteForm.querySelector('.visite-past-date-complementary-fields');
   const futureDateFields = visiteForm.querySelector('.visite-future-date-complementary-fields');
   const visiteConcludeProcedure = visiteForm.querySelector('.visite-conclude-procedure');
-  const partnerDoubleError = visiteForm.querySelector('.signalement-visite-partner-double-error');
 
   // Réinitialise les champs du bloc "visite passée" lorsqu'il est masqué
   const resetPastDateFields = () => {
@@ -64,7 +63,7 @@ const initVisiteForm = (visiteForm) => {
     element?.classList.toggle('fr-hidden', !isVisible);
   };
 
-  // Affiche le champ "opérateur externe" et signale les opérateurs ayant déjà une visite en cours
+  // Affiche le champ "opérateur externe" uniquement si "Opérateur Externe" est sélectionné
   const syncPartnerFields = () => {
     if (!partnerSelect) {
       return;
@@ -74,20 +73,6 @@ const initVisiteForm = (visiteForm) => {
     if (!isExternalOperator && externalOperatorField) {
       externalOperatorField.value = '';
     }
-
-    const partnerHasPendingVisite = Boolean(
-      partnerSelect.selectedOptions[0]?.classList.contains('alert-partner')
-    );
-    let externalOperatorHasPendingVisite = false;
-    if (isExternalOperator && externalOperatorField?.value) {
-      const pendingOperators = JSON.parse(
-        externalOperatorField.dataset.existingPendingExternalOperators || '[]'
-      );
-      externalOperatorHasPendingVisite = pendingOperators
-        .map((name) => name.toLowerCase())
-        .includes(externalOperatorField.value.trim().toLowerCase());
-    }
-    toggleElement(partnerDoubleError, partnerHasPendingVisite || externalOperatorHasPendingVisite);
   };
 
   // Affiche le fieldset "conclusion de la visite" uniquement si la visite est indiquée comme effectuée
@@ -110,7 +95,6 @@ const initVisiteForm = (visiteForm) => {
   // Champs réactifs : toute modification replace le formulaire dans un état cohérent
   dateField?.addEventListener('change', syncVisiteFormState);
   partnerSelect?.addEventListener('change', syncVisiteFormState);
-  externalOperatorField?.addEventListener('input', syncVisiteFormState);
   visiteDoneRadios.forEach((radio) => {
     radio.addEventListener('change', syncVisiteFormState);
   });

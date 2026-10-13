@@ -92,12 +92,11 @@ class AddAndRescheduleVisiteType extends AbstractType
                 'choices' => [...$partners, 'extern'],
                 'choice_label' => static fn ($choice) => $choice instanceof Partner ? mb_strtoupper($choice->getNom()) : 'Opérateur Externe',
                 'choice_value' => static fn ($choice) => $choice instanceof Partner ? (string) $choice->getId() : ('extern' === $choice ? 'extern' : ''),
-                'choice_attr' => static fn ($choice) => $choice instanceof Partner && isset($partnersWithPendingVisites[$choice->getId()]) ? ['class' => 'alert-partner'] : [],
                 'required' => false,
                 'constraints' => [
                     new Assert\NotBlank(message: 'Veuillez sélectionner un opérateur de visite.'),
                     new Assert\Callback(static function ($value, ExecutionContextInterface $context) use ($partnersWithPendingVisites) {
-                        if (is_numeric($value) && isset($partnersWithPendingVisites[(int) $value])) {
+                        if ($value instanceof Partner && isset($partnersWithPendingVisites[$value->getId()])) {
                             $context
                                 ->buildViolation('Ce partenaire a déjà une visite en cours. Veuillez terminer ou annuler la visite ou sélectionner un autre partenaire.')
                                 ->addViolation();
@@ -112,9 +111,6 @@ class AddAndRescheduleVisiteType extends AbstractType
                 'required' => false,
                 'row_attr' => [
                     'class' => 'fr-hidden',
-                ],
-                'attr' => [
-                    'data-existing-pending-external-operators' => json_encode($externalOperatorsWithPendingVisites),
                 ],
                 'constraints' => [
                     new Assert\Callback(static function ($value, ExecutionContextInterface $context) use ($externalOperatorsWithPendingVisites) {

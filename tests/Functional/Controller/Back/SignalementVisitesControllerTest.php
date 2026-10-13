@@ -39,12 +39,12 @@ class SignalementVisitesControllerTest extends WebTestCase
 
     public function testAddFutureVisite(): void
     {
-        $signalement = $this->signalementRepository->findOneBy(['uuid' => '00000000-0000-0000-2022-000000000001']);
+        $signalement = $this->signalementRepository->findOneBy(['uuid' => '00000000-0000-0000-2022-000000000008']);
 
         $route = $this->router->generate('back_signalement_visite_add', ['uuid' => $signalement->getUuid()]);
         $this->client->request('GET', $route);
 
-        $partner = $this->partnerRepository->findOneBy(['nom' => 'Partenaire 13-01']);
+        $partner = $this->partnerRepository->findOneBy(['nom' => 'Partenaire 13-02']);
 
         $this->client->request(
             'POST',
@@ -74,7 +74,7 @@ class SignalementVisitesControllerTest extends WebTestCase
         $route = $this->router->generate('back_signalement_view', ['uuid' => $signalement->getUuid()]);
         $crawler = $this->client->request('GET', $route);
         $highlights = $crawler->filter('.fr-highlight');
-        $this->assertCount(2, $highlights);
+        $this->assertCount(1, $highlights);
         $this->assertStringContainsString('Commentaire avant visite', $highlights->eq(0)->text());
     }
 
@@ -110,6 +110,69 @@ class SignalementVisitesControllerTest extends WebTestCase
         $this->assertEquals($msgFlash, $response['flashMessages'][0]['message']);
     }
 
+    public function testAddFutureVisiteOnPartnerWithPendingVisiteIsBlocked(): void
+    {
+        $signalement = $this->signalementRepository->findOneBy(['uuid' => '00000000-0000-0000-2022-000000000001']);
+        $partner = $this->partnerRepository->findOneBy(['nom' => 'Partenaire 13-01']);
+
+        $route = $this->router->generate('back_signalement_visite_add', ['uuid' => $signalement->getUuid()]);
+        $this->client->request('GET', $route);
+
+        $this->postFutureVisite($route, (string) $partner->getId(), '');
+        $this->assertResponseStatusCodeSame(400);
+        $response = json_decode((string) $this->client->getResponse()->getContent(), true);
+        $this->assertEquals(
+            ['Ce partenaire a déjà une visite en cours. Veuillez terminer ou annuler la visite ou sélectionner un autre partenaire.'],
+            $response['errors']['add_and_reschedule_visite[partnerChoice]']['errors']
+        );
+        $this->assertCount(1, $this->interventionRepository->findBy([
+            'signalement' => $signalement,
+            'partner' => $partner,
+            'status' => Intervention::STATUS_PLANNED,
+        ]));
+    }
+
+    public function testAddFutureVisiteOnExternalOperatorWithPendingVisiteIsBlocked(): void
+    {
+        $signalement = $this->signalementRepository->findOneBy(['uuid' => '00000000-0000-0000-2022-000000000001']);
+
+        $route = $this->router->generate('back_signalement_visite_add', ['uuid' => $signalement->getUuid()]);
+        $this->client->request('GET', $route);
+
+        $this->postFutureVisite($route, 'extern', 'Opérateur externe');
+        $this->assertResponseIsSuccessful();
+
+        $this->postFutureVisite($route, 'extern', ' OPÉRATEUR EXTERNE ');
+        $this->assertResponseStatusCodeSame(400);
+        $response = json_decode((string) $this->client->getResponse()->getContent(), true);
+        $this->assertEquals(
+            ['Cet opérateur externe a déjà une visite en cours. Veuillez terminer ou annuler la visite ou sélectionner un autre partenaire.'],
+            $response['errors']['add_and_reschedule_visite[externalOperator]']['errors']
+        );
+        $this->assertCount(1, $this->interventionRepository->findBy([
+            'signalement' => $signalement,
+            'externalOperator' => 'Opérateur externe',
+            'status' => Intervention::STATUS_PLANNED,
+        ]));
+    }
+
+    private function postFutureVisite(string $route, string $partnerChoice, string $externalOperator): void
+    {
+        $this->client->request(
+            'POST',
+            $route,
+            [
+                'add_and_reschedule_visite' => [
+                    'scheduledAt' => '2123-01-01',
+                    'scheduledAtTime' => '10:00',
+                    'partnerChoice' => $partnerChoice,
+                    'externalOperator' => $externalOperator,
+                    '_token' => $this->generateCsrfToken($this->client, 'add_and_reschedule_visite'),
+                ],
+            ]
+        );
+    }
+
     public function testVisiteOnLogementVacant(): void
     {
         $user = $this->userRepository->findOneBy(['email' => 'admin-01@signal-logement.fr']);
@@ -136,12 +199,12 @@ class SignalementVisitesControllerTest extends WebTestCase
 
     public function testAddPastVisite(): void
     {
-        $signalement = $this->signalementRepository->findOneBy(['uuid' => '00000000-0000-0000-2022-000000000001']);
+        $signalement = $this->signalementRepository->findOneBy(['uuid' => '00000000-0000-0000-2022-000000000008']);
 
         $route = $this->router->generate('back_signalement_visite_add', ['uuid' => $signalement->getUuid()]);
         $this->client->request('GET', $route);
 
-        $partner = $this->partnerRepository->findOneBy(['nom' => 'Partenaire 13-01']);
+        $partner = $this->partnerRepository->findOneBy(['nom' => 'Partenaire 13-02']);
 
         $this->client->request(
             'POST',

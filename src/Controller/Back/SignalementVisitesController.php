@@ -81,6 +81,7 @@ class SignalementVisitesController extends AbstractController
         Intervention $intervention,
         array $flashMessages,
         bool $closeModalAndReload = true,
+        array $options = [],
     ): Response {
         $signalement = $intervention->getSignalement();
         $visites = $this->interventionRepository->getOrderedVisitesForSignalement($signalement);
@@ -130,7 +131,7 @@ class SignalementVisitesController extends AbstractController
         ];
 
         if ($closeModalAndReload) {
-            return $this->json(['stayOnPage' => true, 'flashMessages' => $flashMessages, 'closeModal' => true, 'htmlTargetContents' => $htmlTargetContents, 'functions' => $functions]);
+            return $this->json(array_merge(['stayOnPage' => true, 'flashMessages' => $flashMessages, 'closeModal' => true, 'htmlTargetContents' => $htmlTargetContents, 'functions' => $functions], $options));
         }
 
         return $this->json(['stayOnPage' => true, 'flashMessages' => $flashMessages, 'closeModal' => false]);
@@ -183,7 +184,7 @@ class SignalementVisitesController extends AbstractController
 
         $this->entityManager->flush();
 
-        return $this->buildVisitesAjaxResponse(intervention: $intervention, flashMessages: $flashMessages);
+        return $this->buildVisitesAjaxResponse(intervention: $intervention, flashMessages: $flashMessages, options: ['resetForm' => true]);
     }
 
     #[Route('/{id}/visites/annuler', name: 'back_signalement_visite_cancel')]
