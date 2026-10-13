@@ -2,8 +2,11 @@
 
 namespace App\Tests\Functional\Manager;
 
+use App\Entity\Enum\DocumentType;
 use App\Entity\Enum\MotifCloture;
 use App\Entity\Enum\SuiviCategory;
+use App\Entity\File;
+use App\Entity\Intervention;
 use App\Entity\Signalement;
 use App\Entity\Suivi;
 use App\Entity\User;
@@ -58,6 +61,7 @@ class SuiviManagerTest extends KernelTestCase
             true,
             static::getContainer()->get(ClockInterface::class),
             $this->dictionaryProvider,
+            static::getContainer()->get(SuiviDescriptionHelper::class),
         );
     }
 
@@ -182,5 +186,99 @@ class SuiviManagerTest extends KernelTestCase
         $this->assertFalse($suivi->getIsVisibleForUsager());
         $this->assertTrue($suivi->getIsSanitized());
         $this->assertInstanceOf(UserInterface::class, $suivi->getCreatedBy());
+    }
+
+    public function testCreateInstanceForFilesSignalementProcedureDocuments(): void
+    {
+        [$signalement, $user] = $this->getSignalementAndUserForFiles();
+        $files = [
+            $this->createFile(DocumentType::PROCEDURE_MISE_EN_DEMEURE),
+            $this->createFile(DocumentType::PROCEDURE_MISE_EN_DEMEURE),
+        ];
+
+        $suivi = $this->suiviManager->createInstanceForFilesSignalement($user, $signalement, $files);
+
+        $this->assertSame(SuiviCategory::NEW_DOCUMENT, $suivi->getCategory());
+        $this->assertSame('2 documents liés à la procédure ont été ajoutés au signalement.', $suivi->getDescription(raw: true));
+        $this->assertFalse($suivi->getIsVisibleForUsager());
+        $this->assertFalse($suivi->getIsVisibleForBailleur());
+        $this->assertCount(2, $suivi->getSuiviFiles());
+    }
+
+    public function testCreateInstanceForFilesSignalementSituationDocument(): void
+    {
+        [$signalement, $user] = $this->getSignalementAndUserForFiles();
+
+        $suivi = $this->suiviManager->createInstanceForFilesSignalement($user, $signalement, [
+            $this->createFile(DocumentType::SITUATION_FOYER_BAIL),
+        ]);
+
+        $this->assertSame('1 document sur la situation usager a été ajouté au signalement :', $suivi->getDescription(raw: true));
+        $this->assertTrue($suivi->getIsVisibleForUsager());
+    }
+
+    public function testCreateInstanceForFilesSignalementRapportDeVisite(): void
+    {
+        [$signalement, $user] = $this->getSignalementAndUserForFiles();
+        $intervention = (new Intervention())->setScheduledAt(new \DateTimeImmutable('2026-03-15 10:00:00'));
+
+        $suivi = $this->suiviManager->createInstanceForFilesSignalement($user, $signalement, [
+            $this->createFile(DocumentType::PROCEDURE_RAPPORT_DE_VISITE, $intervention),
+        ]);
+
+        $partner = $user->getPartnerInTerritoryOrFirstOne($signalement->getAddress()->getTerritory());
+        $this->assertSame($partner, $suivi->getPartner());
+        $this->assertTrue($suivi->getIsVisibleForUsager());
+        $this->assertStringEndsWith('a ajouté 1 rapport de visite de la visite du 15/03/2026 :', $suivi->getDescription(raw: true));
+    }
+
+    public function testCreateInstanceForFilesSignalementPhotosDeVisite(): void
+    {
+        [$signalement, $user] = $this->getSignalementAndUserForFiles();
+        $intervention = (new Intervention())->setScheduledAt(new \DateTimeImmutable('2026-03-15 10:00:00'));
+
+        $suivi = $this->suiviManager->createInstanceForFilesSignalement($user, $signalement, [
+            $this->createFile(DocumentType::PHOTO_VISITE, $intervention),
+            $this->createFile(DocumentType::PHOTO_VISITE, $intervention),
+            $this->createFile(DocumentType::PHOTO_VISITE, $intervention),
+        ]);
+
+        $this->assertTrue($suivi->getIsVisibleForUsager());
+        $this->assertStringEndsWith('a ajouté 3 photos de la visite du 15/03/2026 :', $suivi->getDescription(raw: true));
+    }
+
+    public function testCreateInstanceForFilesSignalementPhotoVisiteWithoutIntervention(): void
+    {
+        // Sans intervention, une photo de visite est traitée comme un document de procédure
+        [$signalement, $user] = $this->getSignalementAndUserForFiles();
+
+        $suivi = $this->suiviManager->createInstanceForFilesSignalement($user, $signalement, [
+            $this->createFile(DocumentType::PHOTO_VISITE),
+        ]);
+
+        $this->assertSame('1 document lié à la procédure a été ajouté au signalement.', $suivi->getDescription(raw: true));
+        $this->assertFalse($suivi->getIsVisibleForUsager());
+    }
+
+    /**
+     * @return array{Signalement, User}
+     */
+    private function getSignalementAndUserForFiles(): array
+    {
+        /** @var Signalement $signalement */
+        $signalement = $this->entityManager->getRepository(Signalement::class)->findOneBy(['reference' => self::REF_SIGNALEMENT]);
+        /** @var User $user */
+        $user = $this->entityManager->getRepository(User::class)->findOneBy(['email' => 'user-13-03@signal-logement.fr']);
+
+        return [$signalement, $user];
+    }
+
+    private function createFile(DocumentType $documentType, ?Intervention $intervention = null): File
+    {
+        return (new File())
+            ->setFilename('document.pdf')
+            ->setTitle('Document')
+            ->setDocumentType($documentType)
+            ->setIntervention($intervention);
     }
 }

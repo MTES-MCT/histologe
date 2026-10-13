@@ -6,6 +6,7 @@ use App\Entity\Enum\MotifClotureUsager;
 use App\Entity\Enum\SuiviCategory;
 use App\Service\Signalement\Suivi\SuiviDescriptionHelper;
 use App\Service\Signalement\Suivi\SuiviDescriptionVariant;
+use PHPUnit\Framework\Attributes\DataProvider;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 
 class SuiviDescriptionHelperTest extends KernelTestCase
@@ -111,5 +112,90 @@ class SuiviDescriptionHelperTest extends KernelTestCase
             ['nomComplet' => 'Jean DUPONT', 'details' => 'Je souhaite continuer'],
             SuiviDescriptionVariant::REPONSE_DEMANDE_CLOTURE,
         );
+    }
+
+    public static function provideNewDocumentContexts(): \Generator
+    {
+        yield 'procédure, 1 document' => ['procedure', 1, '1 document lié à la procédure a été ajouté au signalement.'];
+        yield 'procédure, plusieurs documents' => ['procedure', 3, '3 documents liés à la procédure ont été ajoutés au signalement.'];
+        yield 'situation, 1 document' => ['situation', 1, '1 document sur la situation usager a été ajouté au signalement :'];
+        yield 'situation, plusieurs documents' => ['situation', 2, '2 documents sur la situation usager ont été ajoutés au signalement :'];
+        yield 'rapport de visite, 1 document' => ['rapport_visite', 1, 'Partenaire 13 a ajouté 1 rapport de visite de la visite du 15/03/2026 :'];
+        yield 'rapports de visite, plusieurs documents' => ['rapport_visite', 2, 'Partenaire 13 a ajouté 2 rapports de visite de la visite du 15/03/2026 :'];
+        yield 'photo de visite, 1 document' => ['photo_visite', 1, 'Partenaire 13 a ajouté 1 photo de la visite du 15/03/2026 :'];
+        yield 'photos de visite, plusieurs documents' => ['photo_visite', 4, 'Partenaire 13 a ajouté 4 photos de la visite du 15/03/2026 :'];
+        yield 'type de document sans texte' => [null, 2, ''];
+        yield 'aucun document' => ['procedure', 0, ''];
+    }
+
+    #[DataProvider('provideNewDocumentContexts')]
+    public function testBuildDescriptionForCreationNewDocument(?string $context, int $nbDocs, string $expected): void
+    {
+        $description = $this->suiviDescriptionHelper->buildDescriptionForCreation(SuiviCategory::NEW_DOCUMENT, [
+            'context' => $context,
+            'nbDocs' => $nbDocs,
+            'partnerName' => 'Partenaire 13',
+            'dateVisite' => '15/03/2026',
+        ]);
+
+        $this->assertSame($expected, $description);
+    }
+
+    public function testBuildDescriptionForCreationNewDocumentEscapesPartnerName(): void
+    {
+        $description = $this->suiviDescriptionHelper->buildDescriptionForCreation(SuiviCategory::NEW_DOCUMENT, [
+            'context' => 'photo_visite',
+            'nbDocs' => 1,
+            'partnerName' => 'Mairie d\'Arles <b>',
+            'dateVisite' => '15/03/2026',
+        ]);
+
+        $this->assertSame('Mairie d&#039;Arles &lt;b&gt; a ajouté 1 photo de la visite du 15/03/2026 :', $description);
+    }
+
+    public function testBuildDescriptionForCreationAskDocumentWithAllSections(): void
+    {
+        $description = $this->suiviDescriptionHelper->buildDescriptionForCreation(SuiviCategory::ASK_DOCUMENT, [
+            'documents' => 'Bail / DPE',
+            'desordres' => 'Humidité',
+            'hasCoordonneesBailleur' => false,
+        ]);
+
+        $this->assertSame(
+            'Bonjour,<br><br>Vous avez signalé un problème sur un logement.<br>'
+            .'Votre dossier a bien été enregistré par nos services.<br><br>'
+            .'Afin de nous aider à traiter au mieux votre dossier, veuillez nous fournir :<br>'
+            .'- le ou les documents suivants : Bail / DPE<br>'
+            .'- des photos pour les désordres suivants : Humidité<br>'
+            .'- les coordonnées du propriétaire / bailleur (numéro de téléphone et / ou e-mail). '
+            .'Pour cela, retournez sur l\'accueil de votre dossier et cliquez sur "Voir et compléter le dossier".<br>'
+            .'<br>Envoyez-nous un message en y ajoutant vos documents !<br>Merci,<br>L\'équipe '.$this->platformName,
+            $description
+        );
+    }
+
+    public function testBuildDescriptionForCreationAskDocumentWithoutOptionalSections(): void
+    {
+        $description = $this->suiviDescriptionHelper->buildDescriptionForCreation(SuiviCategory::ASK_DOCUMENT, [
+            'documents' => '',
+            'desordres' => '',
+            'hasCoordonneesBailleur' => true,
+        ]);
+
+        $this->assertStringNotContainsString('- ', $description);
+        $this->assertStringContainsString('veuillez nous fournir :<br><br>Envoyez-nous un message', $description);
+    }
+
+    public function testBuildDescriptionForCreationAskDocumentWithOnlyDesordres(): void
+    {
+        $description = $this->suiviDescriptionHelper->buildDescriptionForCreation(SuiviCategory::ASK_DOCUMENT, [
+            'documents' => '',
+            'desordres' => 'Propreté et entretien / Sécurité',
+            'hasCoordonneesBailleur' => true,
+        ]);
+
+        $this->assertStringNotContainsString('le ou les documents suivants', $description);
+        $this->assertStringContainsString('fournir :<br>- des photos pour les désordres suivants : Propreté et entretien / Sécurité<br><br>', $description);
+        $this->assertStringNotContainsString('coordonnées du propriétaire', $description);
     }
 }

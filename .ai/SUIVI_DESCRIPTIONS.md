@@ -38,6 +38,7 @@ Vider les descriptions existantes. Modèle : `migrations/Version20261009100808.p
 
 - **Textes encore dans la constante `SPECIFIC_DESCRIPTIONS`**, à migrer vers `DISPLAY_TEMPLATES` : `ASK_FEEDBACK_SENT`, `SIGNALEMENT_IS_ACTIVE`, `AFFECTATION_IS_ACCEPTED`, `INTERVENTION_IS_REQUIRED`, `INJONCTION_BAILLEUR_LOGIN_BAILLEUR`. La méthode statique est encore utilisée par `Version20260629085411`.
 - **`SignalementConfirmEditController`** fait encore un `renderView()` direct.
+- **Invitations côté usager** : `SuiviManager::addAccepteInvitationSuivi()` et `addRefuseInvitationSuivi()` (`SIGNALEMENT_EDITED_FO`) construisent encore leur texte en PHP (`buildTiersInfoHtml()`). Le partial `suivi/_tiers_info.html.twig` est prêt à être réutilisé.
 - **Constantes de texte restantes** :
   - dans le helper : `DESCRIPTION_MOTIF_CLOTURE_PARTNER`, `DESCRIPTION_TRAVAUX_MISE_EN_CONFORMITE` ;
   - dans `RemindInjonctionSignalementCommand` : `CLOSE_INJONCTION_SUIVI`.

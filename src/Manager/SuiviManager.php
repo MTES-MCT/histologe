@@ -16,6 +16,7 @@ use App\Entity\SuiviFile;
 use App\Entity\User;
 use App\Event\SuiviCreatedEvent;
 use App\Service\Signalement\Suivi\SuiviDescriptionHelper;
+use App\Service\Signalement\Suivi\SuiviDescriptionVariant;
 use App\Service\Signalement\Suivi\SuiviHelper;
 use App\Utils\DateHelper;
 use App\Utils\DictionaryProvider;
@@ -43,6 +44,7 @@ class SuiviManager
         private readonly bool $editionSuiviEnable,
         private readonly ClockInterface $clock,
         private readonly DictionaryProvider $dictionaryProvider,
+        private readonly SuiviDescriptionHelper $suiviDescriptionHelper,
     ) {
     }
 
@@ -117,12 +119,15 @@ class SuiviManager
         $subscriptionCreated = false;
         /** @var User $user */
         $user = $this->security->getUser();
-        $description = 'Une invitation a été envoyée à un tiers pour suivre le signalement :';
-        $description .= $this->buildTiersInfoHtml(
-            $inviteTiersRequest->getNom(),
-            $inviteTiersRequest->getPrenom(),
-            $inviteTiersRequest->getMail(),
-            $inviteTiersRequest->getTelephone(),
+        $description = $this->suiviDescriptionHelper->buildDescriptionForCreation(
+            SuiviCategory::SIGNALEMENT_EDITED_BO,
+            [
+                'nom' => $inviteTiersRequest->getNom(),
+                'prenom' => $inviteTiersRequest->getPrenom(),
+                'email' => $inviteTiersRequest->getMail(),
+                'telephone' => $inviteTiersRequest->getTelephone(),
+            ],
+            SuiviDescriptionVariant::INVITATION_TIERS,
         );
 
         $this->createSuivi(
@@ -213,57 +218,39 @@ class SuiviManager
             $documentType = $file->getDocumentType();
             $intervention = $file->getIntervention();
         }
-        $description = '';
         $isVisibleForUsager = false;
+        $context = null;
 
         if (
             \array_key_exists($documentType?->value, DocumentType::getOrderedProcedureList())
             && null === $intervention
         ) {
-            if ($nbDocs > 0) {
-                $description .= $nbDocs;
-                $description .= $nbDocs > 1 ? ' documents liés à la procédure ont été ajoutés' : ' document lié à la procédure a été ajouté';
-                $description .= ' au signalement.';
-            }
+            $context = 'procedure';
         }
 
         if (\array_key_exists($documentType?->value, DocumentType::getOrderedSituationList())) {
             $isVisibleForUsager = true;
-            if ($nbDocs > 0) {
-                $description .= $nbDocs;
-                $description .= $nbDocs > 1 ? ' documents ' : ' document ';
-                $description .= 'sur la situation usager';
-                $description .= $nbDocs > 1 ? ' ont été ajoutés au signalement : ' : ' a été ajouté au signalement : ';
-            }
+            $context = 'situation';
         }
 
         if (DocumentType::PROCEDURE_RAPPORT_DE_VISITE === $documentType && null !== $intervention) {
             $isVisibleForUsager = true;
             $partner = $user->getPartnerInTerritoryOrFirstOne($signalement->getAddress()->getTerritory());
-            if ($nbDocs > 0) {
-                $description .= \sprintf(
-                    '%s a ajouté %s %s de la visite du %s :',
-                    $partner->getNom(),
-                    $nbDocs,
-                    $nbDocs > 1 ? ' rapports de visite' : ' rapport de visite',
-                    $intervention->getScheduledAt()->format('d/m/Y')
-                );
-            }
+            $context = 'rapport_visite';
         }
 
         if (DocumentType::PHOTO_VISITE === $documentType && null !== $intervention) {
             $isVisibleForUsager = true;
             $partner = $user->getPartnerInTerritoryOrFirstOne($signalement->getAddress()->getTerritory());
-            if ($nbDocs > 0) {
-                $description .= \sprintf(
-                    '%s a ajouté %s %s de la visite du %s :',
-                    $partner->getNom(),
-                    $nbDocs,
-                    $nbDocs > 1 ? ' photos' : ' photo',
-                    $intervention->getScheduledAt()->format('d/m/Y')
-                );
-            }
+            $context = 'photo_visite';
         }
+
+        $description = $this->suiviDescriptionHelper->buildDescriptionForCreation(SuiviCategory::NEW_DOCUMENT, [
+            'context' => $context,
+            'nbDocs' => $nbDocs,
+            'partnerName' => $partner?->getNom(),
+            'dateVisite' => $intervention?->getScheduledAt()?->format('d/m/Y'),
+        ]);
 
         return $this->createSuivi(
             signalement: $signalement,
@@ -351,36 +338,31 @@ class SuiviManager
             }
         }
 
-        $description = 'Des modifications ont été apportées par '.$user->getNomComplet(true).'.<br>';
+        $groupedChanges = [];
         foreach ($changesGroupedByType as $type => $changes) {
-            $suiviDelayedType = SuiviDelayedType::from($type);
-            $description .= '<strong>'.$suiviDelayedType->label().'</strong><br>';
-            $description .= '<ul>';
-            foreach ($changes as $label => $value) {
-                $description .= '<li>'.$label.' : '.$this->formatValue($value).'</li>';
-            }
-            $description .= '</ul>';
+            $groupedChanges[] = [
+                'label' => SuiviDelayedType::from($type)->label(),
+                // valeurs déjà formatées en HTML (échappées) par formatValue()
+                'changes' => array_map(fn (mixed $value): string => $this->formatValue($value), $changes),
+            ];
         }
 
-        if (count($changesCountedByType) > 0) {
-            if (SuiviCategory::SIGNALEMENT_EDITED_BO !== $category) {
-                $description .= '<strong>Autres modifications</strong><br>';
-            }
-            $description .= '<ul>';
-        }
+        $otherChanges = [];
         foreach ($changesCountedByType as $type => $value) {
             $suiviDelayedType = SuiviDelayedType::from($type);
-            if (SuiviDelayedType::FO_FILE_DELETED === $suiviDelayedType) {
-                $description .= '<li>'.$value.' '.$suiviDelayedType->label().'</li>';
-            } elseif (SuiviDelayedType::BO_EDIT_OCCUPATION_LOGEMENT === $suiviDelayedType) {
-                $description .= '<li>'.$value.'</li>';
-            } else {
-                $description .= '<li>'.$suiviDelayedType->label().'</li>';
-            }
+            $otherChanges[] = match ($suiviDelayedType) {
+                SuiviDelayedType::FO_FILE_DELETED => $value.' '.$suiviDelayedType->label(),
+                SuiviDelayedType::BO_EDIT_OCCUPATION_LOGEMENT => (string) $value,
+                default => $suiviDelayedType->label(),
+            };
         }
-        if (count($changesCountedByType) > 0) {
-            $description .= '</ul>';
-        }
+
+        $description = $this->suiviDescriptionHelper->buildDescriptionForCreation($category, [
+            'nomComplet' => $user->getNomComplet(true),
+            'groupedChanges' => $groupedChanges,
+            'otherChanges' => $otherChanges,
+            'showOtherChangesTitle' => SuiviCategory::SIGNALEMENT_EDITED_BO !== $category,
+        ]);
 
         $partner = null;
         $isVisibleForUsager = true;

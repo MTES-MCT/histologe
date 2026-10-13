@@ -77,6 +77,20 @@ class SuiviDescriptionHelper
             SuiviDescriptionVariant::DEFAULT->value => 'suivi/injonction_bailleur_cloture_par_usager.html.twig',
             SuiviDescriptionVariant::REPONSE_DEMANDE_CLOTURE->value => 'suivi/injonction_bailleur_cloture_par_usager_reponse_demande_cloture.html.twig',
         ],
+        SuiviCategory::SIGNALEMENT_EDITED_BO->value => [
+            SuiviDescriptionVariant::DEFAULT->value => 'suivi/signalement_edited.html.twig',
+            SuiviDescriptionVariant::INVITATION_TIERS->value => 'suivi/signalement_edited_bo_invitation_tiers.html.twig',
+        ],
+        // Même template que SIGNALEMENT_EDITED_BO : le regroupement des SuiviDelayed est commun aux deux catégories
+        SuiviCategory::SIGNALEMENT_EDITED_FO->value => [
+            SuiviDescriptionVariant::DEFAULT->value => 'suivi/signalement_edited.html.twig',
+        ],
+        SuiviCategory::NEW_DOCUMENT->value => [
+            SuiviDescriptionVariant::DEFAULT->value => 'suivi/new_document.html.twig',
+        ],
+        SuiviCategory::ASK_DOCUMENT->value => [
+            SuiviDescriptionVariant::DEFAULT->value => 'suivi/ask_document.html.twig',
+        ],
     ];
 
     private const SPECIFIC_DESCRIPTIONS = [
