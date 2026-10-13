@@ -56,6 +56,8 @@ use App\Service\Signalement\SignalementDesordresProcessor;
 use App\Service\Signalement\SignalementDuplicateChecker;
 use App\Service\Signalement\SignalementUpdateService;
 use App\Service\Signalement\Suivi\SuiviCategoryMapper;
+use App\Service\Signalement\Suivi\SuiviDescriptionHelper;
+use App\Service\Signalement\Suivi\SuiviDescriptionVariant;
 use App\Service\Signalement\Suivi\SuiviSeenMarker;
 use App\Service\UploadHandlerService;
 use App\Utils\HtmlCleaner;
@@ -83,6 +85,7 @@ class SignalementController extends AbstractController
     public function __construct(
         private readonly EventDispatcherInterface $eventDispatcher,
         private readonly CguTiersChecker $cguTiersChecker,
+        private readonly SuiviDescriptionHelper $suiviDescriptionHelper,
         #[Autowire(env: 'S3_ENABLE')]
         private readonly bool $s3Enable,
     ) {
@@ -822,9 +825,11 @@ class SignalementController extends AbstractController
 
             if (SignalementStatus::INJONCTION_BAILLEUR === $signalement->getStatut()) {
                 $category = SuiviCategory::INJONCTION_BAILLEUR_CLOTURE_PAR_USAGER;
-                $description = $user->getNomComplet().' a clôturé son dossier en démarche accélérée pour le motif suivant :
-                    '.$motif->label().\PHP_EOL
-                    .'Détails du motif d\'arrêt de procédure : '.$form->get('details')->getData();
+                $description = $this->suiviDescriptionHelper->buildDescriptionForCreation($category, [
+                    'nomComplet' => $user->getNomComplet(),
+                    'motif' => $motif->label(),
+                    'details' => $form->get('details')->getData(),
+                ]);
                 $notificationAndMailSender->sendUsagerCloseInjonctionToBailleur($signalement, $motif->label());
 
                 // On clôture le signalement
@@ -845,15 +850,16 @@ class SignalementController extends AbstractController
             } else {
                 $signalement->setMotifClotureUsager($motif);
                 $category = SuiviCategory::DEMANDE_ABANDON_PROCEDURE;
-                $description = $user->getNomComplet().' souhaite fermer son dossier sur '
-                    .$this->getParameter('platform_name')
-                    .' pour le motif suivant : '.$motif->label().\PHP_EOL
-                    .'Détails du motif d\'arrêt de procédure : '.$form->get('details')->getData();
+                $description = $this->suiviDescriptionHelper->buildDescriptionForCreation($category, [
+                    'nomComplet' => $user->getNomComplet(),
+                    'motif' => $motif->label(),
+                    'details' => $form->get('details')->getData(),
+                ]);
             }
 
             $suiviManager->createSuivi(
                 signalement: $signalement,
-                description: HtmlCleaner::cleanFrontEndEntry($description),
+                description: $description,
                 category: $category,
                 user: $user,
                 isVisibleForUsager: true,
@@ -895,7 +901,8 @@ class SignalementController extends AbstractController
             return $redirect;
         }
 
-        $lastSuiviDemandePoursuite = $suiviRepository->findOneBy(['signalement' => $signalement, 'category' => SuiviCategory::DEMANDE_POURSUITE_PROCEDURE], ['createdAt' => 'DESC']);
+        $category = SuiviCategory::DEMANDE_POURSUITE_PROCEDURE;
+        $lastSuiviDemandePoursuite = $suiviRepository->findOneBy(['signalement' => $signalement, 'category' => $category], ['createdAt' => 'DESC']);
         $hasRecentDemandePoursuite = false;
         if ($lastSuiviDemandePoursuite && $lastSuiviDemandePoursuite->getCreatedAt() > (new \DateTime('-20 days'))) {
             $hasRecentDemandePoursuite = true;
@@ -909,14 +916,13 @@ class SignalementController extends AbstractController
         if (!$hasRecentDemandePoursuite && $form->isSubmitted() && $form->isValid()) {
             $signalement->setIsUsagerAbandonProcedure(false);
 
-            $description = $user->getNomComplet().' a indiqué vouloir poursuivre la procédure sur '
-                .$this->getParameter('platform_name').\PHP_EOL
-                .'Commentaire : '.$form->get('details')->getData();
-
             $suiviManager->createSuivi(
                 signalement: $signalement,
-                description: HtmlCleaner::cleanFrontEndEntry($description),
-                category: SuiviCategory::DEMANDE_POURSUITE_PROCEDURE,
+                description: $this->suiviDescriptionHelper->buildDescriptionForCreation($category, [
+                    'nomComplet' => $user->getNomComplet(),
+                    'details' => $form->get('details')->getData(),
+                ]),
+                category: $category,
                 user: $user,
                 isVisibleForUsager: true,
             );
@@ -961,14 +967,17 @@ class SignalementController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $description = $user->getNomComplet().' a indiqué vouloir basculer de la démarche accélérée vers la procédure administrative';
-            $description .= \PHP_EOL.'Commentaire : '.$form->get('details')->getData();
+            $category = SuiviCategory::INJONCTION_BAILLEUR_BASCULE_PROCEDURE_PAR_USAGER;
+            $description = $this->suiviDescriptionHelper->buildDescriptionForCreation($category, [
+                'nomComplet' => $user->getNomComplet(),
+                'details' => $form->get('details')->getData(),
+            ]);
             $entityManager->beginTransaction();
             try {
                 $suiviManager->createSuivi(
                     signalement: $signalement,
-                    description: HtmlCleaner::cleanFrontEndEntry($description),
-                    category: SuiviCategory::INJONCTION_BAILLEUR_BASCULE_PROCEDURE_PAR_USAGER,
+                    description: $description,
+                    category: $category,
                     user: $user,
                     isVisibleForUsager: true,
                 );
@@ -1054,13 +1063,16 @@ class SignalementController extends AbstractController
 
             if ('non' === $reponse) {
                 $messageFeedback = 'Votre dossier va être transmis aux services compétents.';
-                $description = $user->getNomComplet().' ne confirme pas la réalisation des travaux par le bailleur pour son signalement. Précision apportée : '.HtmlCleaner::cleanFrontEndEntry($descriptionInput);
                 $category = SuiviCategory::INJONCTION_BAILLEUR_BASCULE_PROCEDURE_PAR_USAGER;
             } else {
                 $messageFeedback = 'Votre dossier va être fermé.';
-                $description = $user->getNomComplet().' confirme la réalisation des travaux par le bailleur pour son signalement.';
                 $category = SuiviCategory::INJONCTION_BAILLEUR_CLOTURE_PAR_USAGER;
             }
+            $description = $this->suiviDescriptionHelper->buildDescriptionForCreation(
+                $category,
+                ['nomComplet' => $user->getNomComplet(), 'details' => $descriptionInput],
+                SuiviDescriptionVariant::REPONSE_DEMANDE_CLOTURE,
+            );
 
             $entityManager->beginTransaction();
             try {

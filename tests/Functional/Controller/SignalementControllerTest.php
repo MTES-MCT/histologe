@@ -151,10 +151,13 @@ class SignalementControllerTest extends WebTestCase
         $this->assertEquals($signalement->getMotifClotureUsager(), MotifClotureUsager::RELOGEMENT_OCCUPANT);
         /** @var Suivi $lastSuivi */
         $lastSuivi = $signalement->getSuivis()->last();
+        $this->assertSame(SuiviCategory::DEMANDE_ABANDON_PROCEDURE, $lastSuivi->getCategory());
+        $this->assertTrue($lastSuivi->getIsVisibleForUsager());
         $this->assertStringContainsString($signalementUser->getUser()->getNomComplet(), $lastSuivi->getDescription());
-        $this->assertStringContainsString('souhaite fermer son dossier', $lastSuivi->getDescription());
+        $this->assertStringContainsString('souhaite fermer son dossier sur '.static::getContainer()->getParameter('platform_name'), $lastSuivi->getDescription());
         $this->assertStringContainsString('pour le motif suivant : '.MotifClotureUsager::RELOGEMENT_OCCUPANT->label(), $lastSuivi->getDescription());
         $this->assertStringContainsString('arrêt de procédure : on a trouvé un meilleur appartement &lt;b&gt;test&lt;/b&gt;', $lastSuivi->getDescription());
+        $this->assertNotEquals(SignalementStatus::INJONCTION_CLOSED, $signalement->getStatut());
     }
 
     public function testSuiviSignalementProcedureAbandonOnInjonctionBailleur(): void
@@ -236,6 +239,7 @@ class SignalementControllerTest extends WebTestCase
         $this->assertFalse($signalement->getIsUsagerAbandonProcedure());
         /** @var Suivi $lastSuivi */
         $lastSuivi = $signalement->getSuivis()->last();
+        $this->assertSame(SuiviCategory::DEMANDE_POURSUITE_PROCEDURE, $lastSuivi->getCategory());
         $this->assertStringContainsString($signalementUser->getUser()->getNomComplet(), $lastSuivi->getDescription());
         $this->assertStringContainsString('vouloir poursuivre la procédure', $lastSuivi->getDescription());
         $this->assertStringContainsString('Commentaire : on veut vraiment vivre mieux &lt;b&gt;test&lt;/b&gt;', $lastSuivi->getDescription());
