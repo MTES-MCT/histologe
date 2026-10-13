@@ -25,7 +25,15 @@
                 <h3 style="text-align: left">Situation(s) suspectée(s) à la déclaration usager</h3>
                 {% for signalementQualification in signalement.signalementQualifications %}
                     {% include '_partials/signalement/qualification.html.twig' with {'qualification': signalementQualification} %}
-                {% endfor %}                
+                {% endfor %}
+
+                {% if signalement.signalementProcedures(enum('App\\Entity\\Enum\\ProcedureCategory').PROCEDURE_ENGAGEE) is not empty %}
+                    <h3 style="text-align: left">Procédure(s) à engager</h3>
+                    {% for signalementProcedure in signalement.signalementProcedures(enum('App\\Entity\\Enum\\ProcedureCategory').PROCEDURE_ENGAGEE) %}
+                        {{ signalementProcedure.procedureType.label }}{% if not loop.last %}, {% endif %}
+                    {% endfor %}
+                {% endif %}
+
             {% endif %}
 
             {% if listConcludeProcedures %}

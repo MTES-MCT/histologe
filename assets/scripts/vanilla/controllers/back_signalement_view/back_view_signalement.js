@@ -476,7 +476,10 @@ logementVacantPanel?.querySelector('form')?.addEventListener('submit', (event) =
 });
 
 export function clearProcedureEngageeForm() {
-  const form = document.querySelector('#panel-add-procedure-engagee form');
+  const form = document.getElementById('panel-edit-procedure-engagee-form');
+  if (!form) {
+    return;
+  }
   form.querySelectorAll('.search-checkbox-container input[type="checkbox"]').forEach((checkbox) => {
     checkbox.checked = false;
   });
@@ -484,8 +487,10 @@ export function clearProcedureEngageeForm() {
   window.dispatchEvent(new Event('refreshSearchCheckboxContainerEvent'));
 
   const textarea = form.querySelector('textarea');
-  textarea.value = '';
-  tinymce.get(textarea.id)?.setContent('');
+  if (textarea) {
+    textarea.value = '';
+    tinymce.get(textarea.id)?.setContent('');
+  }
 }
 
 // Afficher / masquer une section (choix mémorisé par navigateur)
