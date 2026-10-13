@@ -676,43 +676,7 @@
                         {% if (isForUsager and suivi.isVisibleForUsager) or isForUsager is same as false  %}                            
                             <tr>
                                 <td style="padding:.5rem;width: 15%">
-                                    {% set isSuiviUsager = false %}
-                                    {% if suivi.category in enum('App\\Entity\\Enum\\SuiviCategory').categoriesSubmittedByUsager() %}
-                                        {% set isSuiviUsager = true %}
-                                    {% endif %}
-                                    {% if suivi.type is same as constant('App\\Entity\\Suivi::TYPE_TECHNICAL') %}
-                                        Suivi automatique
-                                    {% elseif suivi.partner %}
-                                        <b>{{ suivi.partner.nom }}</b>
-                                        {% if not isForUsager %}
-                                            <br>
-                                            <small>
-                                                {{ suivi.createdBy.nomComplet(true) }}
-                                                {% if suivi.createdBy.fonction %}({{ suivi.createdBy.fonction }}){% endif %}
-                                            </small>
-                                        {% endif %}
-                                    {% elseif suivi.createdBy %}
-                                        {% if isSuiviUsager %}
-                                            <b>{{ (suivi.createdBy is same as signalement.getSignalementUsager.getOccupant ? 'OCCUPANT' : 'DECLARANT') }}</b>
-                                            <br>
-                                            {{ suivi.createdByNomComplet(true) }}
-                                        {% else %}
-                                            {% if suivi.createdBy.getPartnerInTerritoryOrFirstOne(suivi.signalement.address.territory) %}
-                                                <b>{{ suivi.createdBy.getPartnerInTerritoryOrFirstOne(suivi.signalement.address.territory).nom }}</b>
-                                                {% if not isForUsager %}
-                                                    <br>
-                                                    <small>
-                                                        {{ suivi.createdBy.nomComplet(true) }}
-                                                        {% if suivi.createdBy.fonction %}({{ suivi.createdBy.fonction }}){% endif %}
-                                                    </small>
-                                                {% endif %}
-                                            {% endif %}
-                                        {% endif %}
-                                    {% elseif suivi.category in enum('App\\Entity\\Enum\\SuiviCategory').categoriesSubmittedByBailleur() %}
-                                        <b>Bailleur</b>
-                                    {% else %}
-                                        <b> Aucun</b>
-                                    {% endif %}
+                                    {{ suivi.getCreatedByLabel('\n', withAgentName: not isForUsager, withAgentFonction: true)|nl2br }}
                                     <br>
                                     <small>{{ suivi.createdAt|date('d/m/Y') }}</small>
                                 </td>

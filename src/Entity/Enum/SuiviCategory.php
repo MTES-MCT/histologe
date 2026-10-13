@@ -180,6 +180,57 @@ enum SuiviCategory: string
         ];
     }
 
+    /**
+     * Suivis affichés comme "Suivi automatique" et masquables via le toggle "Cacher les suivis automatiques".
+     *
+     * @return array<SuiviCategory>
+     */
+    public static function automaticCategories(): array
+    {
+        return [
+            // Crons / système
+            self::INJONCTION_BAILLEUR_RAPPEL_REPONSE_BAILLEUR,
+            self::INJONCTION_BAILLEUR_REMINDER_FOR_USAGER,
+            self::INJONCTION_BAILLEUR_REMINDER_FOR_BAILLEUR,
+            self::INJONCTION_BAILLEUR_EXPIREE,
+            self::INJONCTION_BAILLEUR_RELANCE_USAGER_CLOTURE,
+            self::INJONCTION_BAILLEUR_CLOTURE_SANS_ACTIVITE,
+            self::ASK_FEEDBACK_SENT,
+            self::INTERVENTION_PLANNED_REMINDER,
+            self::INTERVENTION_IS_REQUIRED,
+            self::SIGNALEMENT_STATUS_IS_SYNCHRO,
+            // Actions d'un agent
+            self::SIGNALEMENT_IS_ACTIVE,
+            self::SIGNALEMENT_IS_REFUSED,
+            self::SIGNALEMENT_IS_REOPENED,
+            self::SIGNALEMENT_EDITED_BO,
+            self::NEW_DOCUMENT,
+            self::DOCUMENT_DELETED_BY_PARTNER,
+            self::AFFECTATION_IS_REFUSED,
+            self::AFFECTATION_IS_ACCEPTED,
+            self::INTERVENTION_IS_ABORTED,
+            self::INTERVENTION_IS_CANCELED,
+            self::INTERVENTION_IS_DONE,
+            self::INTERVENTION_IS_CREATED,
+            self::INTERVENTION_CONTROLE_IS_DONE,
+            self::INTERVENTION_CONTROLE_IS_CREATED,
+            self::INTERVENTION_ARRETE_IS_CREATED,
+            self::INTERVENTION_IS_RESCHEDULED,
+            self::INTERVENTION_CONTROLE_IS_RESCHEDULED,
+            self::INTERVENTION_ARRETE_IS_RESCHEDULED,
+            self::ASK_DOCUMENT,
+            // Actions du bailleur
+            self::SIGNALEMENT_IS_INJONCTION,
+            self::INJONCTION_BAILLEUR_REPONSE_OUI,
+            self::INJONCTION_BAILLEUR_REPONSE_OUI_AVEC_AIDE,
+            self::INJONCTION_BAILLEUR_REPONSE_OUI_DEMARCHES_COMMENCEES,
+            self::INJONCTION_BAILLEUR_REPONSE_NON,
+            self::INJONCTION_BAILLEUR_BASCULE_PROCEDURE_PAR_BAILLEUR,
+            self::INJONCTION_BAILLEUR_DEMANDE_CLOTURE_PAR_BAILLEUR,
+            self::INJONCTION_BAILLEUR_LOGIN_BAILLEUR,
+        ];
+    }
+
     /** @return array<SuiviCategory> */
     public static function injonctionBailleurCategories(): array
     {

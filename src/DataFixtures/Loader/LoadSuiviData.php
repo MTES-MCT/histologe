@@ -71,6 +71,13 @@ class LoadSuiviData extends Fixture implements OrderedFixtureInterface
             $signalement = $this->signalementRepository->findOneBy(['uuid' => $row['signalement']]);
         }
         $createdBy = isset($row['created_by']) ? $this->userRepository->findOneBy(['email' => $row['created_by']]) : null;
+        $partner = $createdBy ?
+            (
+                $createdBy->isApiUser() ?
+                ($signalement->getAffectations()->first() ?: null)?->getPartner() :
+                $createdBy->getPartnerInTerritoryOrFirstOne($signalement->getAddress()->getTerritory())
+            ) :
+            null;
         $createdAt = new \DateTimeImmutable();
         if (isset($row['created_at'])) {
             $createdAt = new \DateTimeImmutable($row['created_at']);
@@ -87,7 +94,7 @@ class LoadSuiviData extends Fixture implements OrderedFixtureInterface
             description: $row['description'],
             category: $category,
             sendMail: SuiviCategory::ASK_FEEDBACK_SENT !== $category,
-            partner: $createdBy?->getPartnerInTerritoryOrFirstOne($signalement->getAddress()->getTerritory()),
+            partner: $partner,
             user: $createdBy,
             isVisibleForUsager: $row['is_public'],
             isVisibleForBailleur: in_array($category, SuiviCategory::categoriesSubmittedByBailleur()),
@@ -101,6 +108,6 @@ class LoadSuiviData extends Fixture implements OrderedFixtureInterface
 
     public function getOrder(): int
     {
-        return 14;
+        return 15;
     }
 }

@@ -15,7 +15,7 @@ class SuiviHelper
     public function getLastLabel(Suivi $suivi, Signalement $signalement): string
     {
         $user = $suivi->getCreatedBy();
-        if (null === $user && Suivi::TYPE_TECHNICAL === $suivi->getType()) {
+        if (null === $user && $suivi->isAutomatic()) {
             return 'MESSAGE AUTOMATIQUE';
         }
         if (null !== $user && \in_array('ROLE_USAGER', $user->getRoles())) {
