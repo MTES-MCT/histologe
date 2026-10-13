@@ -1,8 +1,10 @@
 <template>
-  <AddressesHistoryMapFilters />
-  <section class="container-addresses-history-map">
-    <div id="map-addresses-history" ref="mapContainer"></div>
-  </section>
+  <div class="addresses-history-map-wrapper" ref="mapWrapper">
+    <AddressesHistoryMapFilters />
+    <section class="container-addresses-history-map">
+      <div id="map-addresses-history" ref="mapContainer"></div>
+    </section>
+  </div>
 </template>
 
 <script setup lang="ts">
@@ -25,6 +27,7 @@ import { parse } from 'wellknown'
 const sharedState = store.state
 
 // Refs
+const mapWrapper = ref<HTMLElement | null>(null)
 const mapContainer = ref<HTMLElement | null>(null)
 let map: maplibregl.Map | null = null
 let currentPopup: maplibregl.Popup | null = null
@@ -585,6 +588,8 @@ function initMap() {
   })
 
   map.addControl(new maplibregl.NavigationControl({ showCompass: false }))
+  // Méthode native de fullscreen
+  map.addControl(new maplibregl.FullscreenControl({ container: mapWrapper.value ?? undefined }))
 
   map.on('load', () => {
     addSourceToMap()
@@ -653,6 +658,15 @@ onUnmounted(() => {
   width: 100%;
   height: 70vh;
 }
+
+.addresses-history-map-wrapper:fullscreen {
+  background-color: white;
+}
+
+.addresses-history-map-wrapper:fullscreen .container-addresses-history-map,
+.addresses-history-map-wrapper:fullscreen #map-addresses-history {
+  height: 100%;
+}
 </style>
 
 <style>
@@ -673,6 +687,13 @@ puisse sortir de la carte plutôt que d'être masquée.
 /* Au-dessus du panneau de filtres (z-index: 100) quand la popup déborde de la carte */
 #map-addresses-history .maplibregl-popup {
   z-index: 200;
+}
+
+/*
+Ajuste la hauteur des filtres en cas de plein écran
+*/
+.addresses-history-map-wrapper:fullscreen .addresses-history-map-filters__scroll {
+  max-height: calc(100vh - 6rem);
 }
 
 .maplibregl-popup-content {
