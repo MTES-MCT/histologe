@@ -76,6 +76,7 @@ class SignalementVisitesController extends AbstractController
 
     /**
      * @param array<array{type: string, title: string, message: string}> $flashMessages
+     * @param array<string, mixed>                                       $options
      */
     private function buildVisitesAjaxResponse(
         Intervention $intervention,
