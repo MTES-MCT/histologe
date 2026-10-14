@@ -3,13 +3,7 @@ export default [
     // Later we could use: "strongly-recommended", then "recommended"
     ...pluginVue.configs['flat/essential'],
     {
-        languageOptions: {
-            parserOptions: {
-                parser: "@typescript-eslint/parser",
-            },
-        },
         rules: {
-            "@typescript-eslint/explicit-module-boundary-types": "off",
             "no-array-constructor": "off",
             "no-cond-assign": "off",
             "no-eval": "off",
