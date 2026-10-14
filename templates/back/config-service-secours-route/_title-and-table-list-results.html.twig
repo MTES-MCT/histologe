@@ -2,6 +2,7 @@
     {% set tableHead %}
         <th scope="col">ID</th>
         <th scope="col">Territoire</th>
+        <th scope="col">Catégorie</th>
         <th scope="col">Nom</th>
         <th scope="col">E-mail/Téléphone</th>
         <th scope="col">URL</th>
@@ -13,6 +14,7 @@
             <tr class="autoaffectationrule-row">
                 <td>{{ serviceSecoursRoute.id }}</td>
                 <td>{{ serviceSecoursRoute.territory ? serviceSecoursRoute.territory.zipAndName : 'aucun' }}</td>
+                <td>{{ serviceSecoursRoute.category ? serviceSecoursRoute.category.label : '' }}</td>
                 <td>{{ serviceSecoursRoute.name }}</td>
                 <td>
                     {{ serviceSecoursRoute.email }}
@@ -25,8 +27,11 @@
                         {{ url('service_secours_index', {'slug': serviceSecoursRoute.slug, 'uuid': serviceSecoursRoute.uuid, 'domain': root_domain(app.request.host)}) }}
                     </a>
                 </td>
-                <td class="fr-text--right">
-                    <button class="fr-btn fr-btn--danger fr-btn--sm fr-fi-delete-line fr-mt-3v btn-delete-config-service-secours-route"
+                <td class="fr-text--right fr-ws-nowrap">
+                    <a class="fr-btn fr-btn--sm fr-fi-edit-line fr-mb-1v" href="{{ path('back_config_service_secours_route_edit', {'id': serviceSecoursRoute.id}) }}"
+                        aria-label="Éditer la route {{ serviceSecoursRoute.name }}"
+                        title="Éditer la route {{ serviceSecoursRoute.name }}"></a>
+                    <button class="fr-btn fr-btn--danger fr-btn--sm fr-fi-delete-line fr-mb-1v btn-delete-config-service-secours-route"
                         id="config_service_secours_route_delete_{{ serviceSecoursRoute.id }}" aria-controls="fr-modal-config-service-secours-route-delete"
                         data-fr-opened="false"
                         data-config-service-secours-route-url="{{ path('back_config_service_secours_route_delete', {'id': serviceSecoursRoute.id}) }}"
@@ -37,7 +42,7 @@
                     <a href="{{ path('back_config_service_secours_route_qr_code', { id: serviceSecoursRoute.id }) }}" 
                         class="fr-btn fr-icon-qr-code-line fr-btn--sm fr-mb-1v" 
                         target="_blank" 
-                        rel="noopener"
+                        rel="noopener" 
                         aria-label="Afficher le QR code (Ouvre une nouvelle fenêtre)" 
                         title="Afficher le QR code (Ouvre une nouvelle fenêtre)"
                         >

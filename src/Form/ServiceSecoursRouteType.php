@@ -2,8 +2,10 @@
 
 namespace App\Form;
 
+use App\Entity\Enum\ServiceSecoursCategory;
 use App\Form\Type\TerritoryChoiceType;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\EnumType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\FormBuilderInterface;
 
@@ -16,6 +18,13 @@ class ServiceSecoursRouteType extends AbstractType
     {
         $builder->add('territory', TerritoryChoiceType::class, [
             'placeholder' => 'Sélectionner un territoire',
+        ]);
+        $builder->add('category', EnumType::class, [
+            'class' => ServiceSecoursCategory::class,
+            'choice_label' => static fn (ServiceSecoursCategory $category) => $category->label(),
+            'placeholder' => 'Sélectionner une catégorie',
+            'label' => 'Catégorie',
+            'required' => false,
         ]);
         $builder->add('name', null, [
             'label' => 'Nom du service de secours',

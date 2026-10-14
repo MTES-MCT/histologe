@@ -2,6 +2,7 @@
 
 namespace App\DataFixtures\Loader;
 
+use App\Entity\Enum\ServiceSecoursCategory;
 use App\Entity\ServiceSecoursRoute;
 use App\Repository\TerritoryRepository;
 use Doctrine\Bundle\FixturesBundle\Fixture;
@@ -31,6 +32,12 @@ class LoadServiceSecoursRouteData extends Fixture implements OrderedFixtureInter
     {
         $serviceSecoursRoute = (new ServiceSecoursRoute())->setName($row['name']);
         $serviceSecoursRoute->setEmail($row['email']);
+        if (!empty($row['phone'])) {
+            $serviceSecoursRoute->setPhone($row['phone']);
+        }
+        if (!empty($row['category'])) {
+            $serviceSecoursRoute->setCategory(ServiceSecoursCategory::from($row['category']));
+        }
         $serviceSecoursRoute->setTerritory($this->territoryRepository->findOneBy(['name' => $row['territory']]));
         $manager->persist($serviceSecoursRoute);
     }

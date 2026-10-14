@@ -1,10 +1,35 @@
 service_secours_routes:
--
-  name: "PIN PON"
-  email: "pin-pon@example.com"
-  territory: "Bouches-du-Rhône"
--
-  name: "WOUIP WOUIP"
-  email: "wouip-wouip@example.com"
-  territory: "Bouches-du-Rhône"
+  -
+    name: "SDIS 13"
+    email: "sdis13@example.com"
+    territory: "Bouches-du-Rhône"
+    category: "SDIS"
+    phone: "0491000001"
+  -
+    name: "Bataillon de Marins-Pompiers de Marseille"
+    email: "bmpm@example.com"
+    territory: "Bouches-du-Rhône"
+    category: "MARINS_POMPIERS"
+    phone: "0491000002"
+  -
+    name: "Commissariat de Police 13"
+    email: "police13@example.com"
+    territory: "Bouches-du-Rhône"
+    category: "POLICE"
+  -
+    name: "Gendarmerie de l'Ain"
+    email: "gendarmerie01@example.com"
+    territory: "Ain"
+    category: "GENDARMERIE"
+    phone: "0474000001"
+  -
+    name: "Secours en Montagne Ain"
+    email: "secours-montagne01@example.com"
+    territory: "Ain"
+    category: "AUTRE"
+  -
+    name: "SDIS 01"
+    email: "sdis01@example.com"
+    territory: "Ain"
+    category: "SDIS"
 
