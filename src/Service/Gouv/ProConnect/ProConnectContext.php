@@ -2,6 +2,7 @@
 
 namespace App\Service\Gouv\ProConnect;
 
+use App\Utils\UrlHelper;
 use Random\RandomException;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\HttpFoundation\RequestStack;
@@ -60,11 +61,29 @@ class ProConnectContext
 
     public function getRedirectLoginUrl(): string
     {
+        $currentRequest = $this->requestStack->getCurrentRequest();
+        if ($currentRequest && str_starts_with($currentRequest->getHost(), 'service-secours.')) {
+            return $this->urlGenerator->generate(
+                'service_secours_proconnect_login_callback',
+                ['domain' => UrlHelper::extractRootDomain($currentRequest->getHost())],
+                UrlGeneratorInterface::ABSOLUTE_URL
+            );
+        }
+
         return $this->redirectLoginUrl;
     }
 
     public function getRedirectLogoutUrl(): string
     {
+        $currentRequest = $this->requestStack->getCurrentRequest();
+        if ($currentRequest && str_starts_with($currentRequest->getHost(), 'service-secours.')) {
+            return $this->urlGenerator->generate(
+                'service_secours_home',
+                ['domain' => UrlHelper::extractRootDomain($currentRequest->getHost())],
+                UrlGeneratorInterface::ABSOLUTE_URL
+            );
+        }
+
         return $this->redirectLogoutUrl;
     }
 

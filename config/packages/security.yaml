@@ -23,6 +23,8 @@ security:
             id: App\Security\Provider\SignalementUserProvider
         app_signalement_bailleur_provider:
             id: App\Security\Provider\SignalementBailleurProvider
+        app_service_secours_user_provider:
+            id: App\Security\Provider\ServiceSecoursUserProvider
     firewalls:
         dev:
             pattern: ^/(_(profiler|wdt)|css|images|js)/
@@ -40,6 +42,16 @@ security:
             login_throttling:
                 max_attempts: 5 # '%env(int:FORMS_SUBMIT_LIMITER_LIMIT)%' doesnt work here: fails to cast str to int
                 interval: '%env(FORMS_SUBMIT_LIMITER_INTERVAL)%'
+        service_secours:
+            host: ^service-secours\.
+            pattern: ^/(proconnect|logout-service-secours|services-secours)
+            lazy: true
+            stateless: false
+            provider: app_service_secours_user_provider
+            custom_authenticator: App\Security\Authenticator\ServiceSecoursAuthenticator
+            logout:
+                path: service_secours_logout
+                invalidate_session: false
         code_suivi:
             pattern: ^/(authentification|logout-suivi|suivre-mon-signalement|suivre-ma-procedure|show-export-pdf-usager|signalement/[^/]+/file/)
             stateless: false

@@ -2,13 +2,14 @@
 
 namespace App\EventListener;
 
-use App\Entity\Behaviour\EntityHistoryInterface;
 use App\Entity\Enum\HistoryEntryEvent;
 use App\Entity\Enum\SuiviCategory;
 use App\Entity\User;
 use App\Manager\HistoryEntryManager;
 use App\Manager\SuiviManager;
+use App\Repository\ServiceSecoursRouteRepository;
 use App\Repository\SignalementRepository;
+use App\Security\User\ServiceSecoursUser;
 use App\Security\User\SignalementBailleur;
 use App\Security\User\SignalementUser;
 use App\Service\History\HistoryEntryBuffer;
@@ -27,6 +28,7 @@ class AuthentificationSuccessListener
         private readonly HistoryEntryManager $historyEntryManager,
         private readonly LoggerInterface $logger,
         private readonly SignalementRepository $signalementRepository,
+        private readonly ServiceSecoursRouteRepository $serviceSecoursRepository,
         private readonly EntityManagerInterface $entityManager,
         #[Autowire(env: 'HISTORY_TRACKING_ENABLE')]
         private readonly string $historyTrackingEnable,
@@ -40,7 +42,10 @@ class AuthentificationSuccessListener
         if (self::CHECK_2FA_PATH === $event->getRequest()->getPathInfo()) {
             return;
         }
-        if ($event->getAuthenticationToken()->getUser() instanceof User || $event->getAuthenticationToken()->getUser() instanceof SignalementBailleur) {
+        if ($event->getAuthenticationToken()->getUser() instanceof User
+            || $event->getAuthenticationToken()->getUser() instanceof SignalementBailleur
+            || $event->getAuthenticationToken()->getUser() instanceof ServiceSecoursUser
+        ) {
             $user = $event->getAuthenticationToken()->getUser();
         } elseif ($event->getAuthenticationToken()->getUser() instanceof SignalementUser) {
             $user = $event->getAuthenticationToken()->getUser()->getUser();
@@ -94,14 +99,25 @@ class AuthentificationSuccessListener
             return;
         }
         try {
-            $signalement = null;
+            $entityHistory = null;
+
             if ($user instanceof SignalementUser) {
                 $signalement = $this->signalementRepository->findOneByCodeForPublic($user->getCodeSuivi());
+                $entityHistory = $signalement;
             } elseif ($user instanceof SignalementBailleur) {
                 $signalement = $this->signalementRepository->findOneBy(['uuid' => $user->getUserIdentifier()]);
+                $entityHistory = $signalement;
+            } elseif ($user instanceof ServiceSecoursUser) {
+                $serviceSecours = $this->serviceSecoursRepository->findOneBy(['uuid' => $user->getServiceSecoursRouteUuid()]);
+                $entityHistory = $serviceSecours;
+            } elseif ($user instanceof User) {
+                $entityHistory = $user;
             }
-            /** @var EntityHistoryInterface $entityHistory */
-            $entityHistory = $user instanceof SignalementUser || $user instanceof SignalementBailleur ? $signalement : $user;
+
+            if (!$entityHistory) {
+                return;
+            }
+
             $historyEntry = $this->historyEntryManager->create(
                 historyEntryEvent: $historyEntryEvent,
                 entityHistory: $entityHistory,
@@ -126,14 +142,19 @@ class AuthentificationSuccessListener
                     $exception->getMessage(),
                     $signalement->getId()
                 ));
+            } elseif ($user instanceof ServiceSecoursUser) {
+                $serviceSecours = $this->serviceSecoursRepository->findOneBy(['uuid' => $user->getServiceSecoursRouteUuid()]);
+                $this->logger->error(\sprintf(
+                    'Failed to create login history entry (%s) on service secours : %d',
+                    $exception->getMessage(),
+                    $serviceSecours?->getId() ?? 0
+                ));
             } elseif ($user instanceof User) {
                 $this->logger->error(\sprintf(
                     'Failed to create login history entry (%s) on user : %d',
                     $exception->getMessage(),
                     $user->getId()
                 ));
-            } else {
-                $this->logger->error('Failed unknown user type');
             }
         }
     }

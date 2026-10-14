@@ -4,12 +4,14 @@
     <meta charset="UTF-8">
     <meta name="robots" content="noindex, nofollow">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <title>{{serviceSecoursRoute.name}} - {{ platform.name|replace({' ': '-'}) }}</title>
+    <title>{% block title %}{{ serviceSecoursRoute is defined ? serviceSecoursRoute.name ~ ' - ' : '' }}{% endblock %}{{ platform.name|replace({' ': '-'}) }}</title>
 
     <link rel="apple-touch-icon" sizes="180x180" href="{{ asset('service-secours/apple-touch-icon.png') }}">
     <link rel="icon" type="image/png" sizes="32x32" href="{{ asset('service-secours/favicon-32x32.png') }}">
     <link rel="icon" type="image/png" sizes="16x16" href="{{ asset('service-secours/favicon-16x16.png') }}">
-    <link rel="manifest" href="{{ path('service_secours_webmanifest', {'slug': serviceSecoursRoute.slug, 'uuid': serviceSecoursRoute.uuid, 'domain': root_domain(app.request.host)}) }}">
+    {% if serviceSecoursRoute is defined %}
+        <link rel="manifest" href="{{ path('service_secours_webmanifest', {'slug': serviceSecoursRoute.slug, 'uuid': serviceSecoursRoute.uuid, 'domain': root_domain(app.request.host)}) }}">
+    {% endif %}
 
     <link rel="stylesheet" href="{{ asset('build/dsfr/dsfr.min.css') }}">
     <link rel="stylesheet" href="{{ asset('build/dsfr/utility/icons/icons-arrows/icons-arrows.min.css') }}">
