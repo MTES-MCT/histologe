@@ -3,10 +3,12 @@
 namespace App\EventSubscriber;
 
 use App\Entity\User;
+use App\Security\User\ServiceSecoursUser;
 use App\Security\User\SignalementBailleur;
 use App\Security\User\SignalementUser;
 use App\Service\Gouv\ProConnect\ProConnectAuthentication;
 use App\Service\Gouv\ProConnect\ProConnectContext;
+use App\Utils\UrlHelper;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
@@ -55,6 +57,39 @@ readonly class LogoutSubscriber implements EventSubscriberInterface
             $this->clearSession($session);
             $response = new RedirectResponse($this->urlGenerator->generate('app_login_bailleur'));
             $event->setResponse($response);
+
+            return;
+        }
+
+        if ($user instanceof ServiceSecoursUser) {
+            try {
+                if ($session->has(ProConnectContext::SESSION_KEY_ID_TOKEN)) {
+                    $logoutUrl = $this->proConnectAuthentication->getLogoutUrl();
+                    $this->clearSession($session);
+                    if ($logoutUrl) {
+                        $event->setResponse(new RedirectResponse($logoutUrl));
+
+                        return;
+                    }
+                }
+            } catch (\Throwable $exception) {
+                $this->logger->error('Erreur ProConnect getLogoutUrl Service Secours', [
+                    'exception' => $exception,
+                ]);
+                if ($session->has(ProConnectContext::SESSION_KEY_ID_TOKEN)) {
+                    $flashBag = $event->getRequest()->getSession()->getFlashBag(); // @phpstan-ignore-line
+                    $flashBag->add('warning',
+                        'Vous êtes bien déconnecté de l\'application, mais la déconnexion de votre compte ProConnect '
+                        .'n\'a pas pu être effectuée automatiquement. '
+                        .'Veuillez penser à fermer manuellement votre session sur ProConnect.'
+                    );
+                }
+            }
+            $this->clearSession($session);
+            $domain = UrlHelper::extractRootDomain($request->getHost());
+            $event->setResponse(new RedirectResponse($this->urlGenerator->generate('service_secours_home', [
+                'domain' => $domain,
+            ])));
 
             return;
         }

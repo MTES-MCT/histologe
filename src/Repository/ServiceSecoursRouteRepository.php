@@ -2,7 +2,9 @@
 
 namespace App\Repository;
 
+use App\Entity\Enum\ServiceSecoursCategory;
 use App\Entity\ServiceSecoursRoute;
+use App\Entity\Territory;
 use App\Service\ListFilters\SearchServiceSecoursRoute;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\Tools\Pagination\Paginator;
@@ -53,5 +55,15 @@ class ServiceSecoursRouteRepository extends ServiceEntityRepository
         $qb->setFirstResult($firstResult)->setMaxResults($maxResult);
 
         return new Paginator($qb->getQuery());
+    }
+
+    public function findOneByTerritoryAndCategory(
+        Territory $territory,
+        ServiceSecoursCategory $category,
+    ): ?ServiceSecoursRoute {
+        return $this->findOneBy([
+            'territory' => $territory,
+            'category' => $category,
+        ]);
     }
 }
