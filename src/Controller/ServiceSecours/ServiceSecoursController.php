@@ -11,6 +11,9 @@ use App\Form\ServiceSecours\ServiceSecoursType;
 use App\Manager\UserManager;
 use App\Messenger\Message\SignalementServiceSecoursFileMessage;
 use App\Repository\DesordreCritereRepository;
+use App\Security\User\ServiceSecoursUser;
+use App\Security\Voter\ServiceSecoursRouteVoter;
+use App\Service\Gouv\ProConnect\ProConnectAuthentication;
 use App\Service\Mailer\NotificationMail;
 use App\Service\Mailer\NotificationMailerRegistry;
 use App\Service\Mailer\NotificationMailerType;
@@ -18,10 +21,13 @@ use App\Service\Signalement\AutoAssigner;
 use App\Service\Signalement\Export\ServiceSecoursPdfGenerator;
 use App\Service\Signalement\ReferenceGenerator;
 use Doctrine\ORM\EntityManagerInterface;
+use Psr\Log\LoggerInterface;
 use Symfony\Bridge\Doctrine\Attribute\MapEntity;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\Form\Flow\FormFlowInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Messenger\Exception\ExceptionInterface;
@@ -37,6 +43,54 @@ use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 )]
 class ServiceSecoursController extends AbstractController
 {
+    #[Route('', name: 'service_secours_home', methods: ['GET'])]
+    public function home(
+        #[Autowire(env: 'FEATURE_SERVICE_SECOURS_SECURITY')]
+        bool $isSecurityEnabled,
+    ): Response {
+        if (!$isSecurityEnabled) {
+            throw $this->createNotFoundException();
+        }
+
+        return $this->render('service_secours/home.html.twig');
+    }
+
+    #[Route('/proconnect/login', name: 'service_secours_proconnect_login', methods: ['POST'])]
+    public function loginWithProConnect(
+        Request $request,
+        ProConnectAuthentication $proConnectAuthentication,
+        LoggerInterface $logger,
+    ): Response {
+        try {
+            $url = $proConnectAuthentication->getAuthorizationUrl();
+
+            return new RedirectResponse($url);
+        } catch (\Throwable $exception) {
+            $logger->error('Erreur ProConnect Service Secours getAuthorizationUrl', [
+                'exception' => $exception,
+            ]);
+
+            $this->addFlash('error', 'Une erreur est survenue lors de la connexion à ProConnect, veuillez réessayer.');
+
+            return $this->redirectToRoute('service_secours_home', [
+                'domain' => $request->attributes->get('domain'),
+            ]);
+        }
+    }
+
+    #[Route('/proconnect/login-callback', name: 'service_secours_proconnect_login_callback')]
+    public function handleProConnectCallback(): never
+    {
+        // @see ServiceSecoursAuthenticator::
+        throw new \LogicException('Cette méthode peut rester vide - elle sera interceptée par ServiceSecoursAuthenticator.');
+    }
+
+    #[Route('/logout-service-secours', name: 'service_secours_logout', methods: ['GET'])]
+    public function logout(): never
+    {
+        throw new \LogicException('Cette méthode peut rester vide - elle sera interceptée par la clé logout du firewall.');
+    }
+
     /**
      * @throws ExceptionInterface
      */
@@ -56,7 +110,14 @@ class ServiceSecoursController extends AbstractController
         ServiceSecoursPdfGenerator $serviceSecoursPdfGenerator,
         MessageBusInterface $messageBus,
     ): Response {
+        $this->denyAccessUnlessGranted(ServiceSecoursRouteVoter::ACCESS, $serviceSecoursRoute);
+
         $serviceSecours = new FormServiceSecours();
+        $user = $this->getUser();
+        if ($user instanceof ServiceSecoursUser && $user->getMatricule()) {
+            $serviceSecours->step1->matriculeDeclarant = $user->getMatricule();
+            $serviceSecours->step1->nomDeclarant = $user->getFullname();
+        }
         /** @var FormFlowInterface $flow */
         $flow = $this->createForm(ServiceSecoursType::class, $serviceSecours);
         $flow->handleRequest($request);
@@ -112,6 +173,8 @@ class ServiceSecoursController extends AbstractController
         #[MapEntity(mapping: ['uuidSignalement' => 'uuid'])] Signalement $signalement,
         ServiceSecoursPdfGenerator $serviceSecoursPdfGenerator,
     ): Response {
+        $this->denyAccessUnlessGranted(ServiceSecoursRouteVoter::ACCESS, $serviceSecoursRoute);
+
         if ($signalement->getServiceSecours()?->getId() !== $serviceSecoursRoute->getId()) {
             throw $this->createNotFoundException();
         }

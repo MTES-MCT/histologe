@@ -53,6 +53,7 @@ parameters:
     form-action:
       - "'self'"
       - "%proconnect_scheme_protocol%%proconnect_domain%"
+      - "http://service-secours.localhost:8080"
     frame-ancestors:
       - "'self'"
       - "https://signal-logement.beta.gouv.fr/"

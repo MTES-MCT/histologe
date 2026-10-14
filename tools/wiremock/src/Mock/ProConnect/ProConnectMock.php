@@ -57,6 +57,19 @@ class ProConnectMock
 
         $wireMock->stubFor(
             WireMock::get(WireMock::urlPathEqualTo('/authorize'))
+                ->atPriority(1)
+                ->withQueryParam('redirect_uri', WireMock::containing('service-secours'))
+                ->willReturn(
+                    WireMock::aResponse()
+                        ->withStatus(302)
+                        ->withHeader('Content-Type', self::CONTENT_TYPE)
+                        ->withHeader('Location', 'http://service-secours.localhost:8080/proconnect/login-callback?code=fake_code&state=fake_state')
+                )
+        );
+
+        $wireMock->stubFor(
+            WireMock::get(WireMock::urlPathEqualTo('/authorize'))
+                ->atPriority(2)
                 ->willReturn(
                     WireMock::aResponse()
                         ->withStatus(302)
@@ -67,6 +80,18 @@ class ProConnectMock
 
         $wireMock->stubFor(
             WireMock::get(WireMock::urlPathEqualTo('/session/end'))
+                ->atPriority(1)
+                ->withQueryParam('post_logout_redirect_uri', WireMock::containing('service-secours'))
+                ->willReturn(
+                    WireMock::aResponse()
+                        ->withStatus(302)
+                        ->withHeader('Location', 'http://service-secours.localhost:8080/')
+                )
+        );
+
+        $wireMock->stubFor(
+            WireMock::get(WireMock::urlPathEqualTo('/session/end'))
+                ->atPriority(2)
                 ->withQueryParam('id_token_hint', WireMock::matching('.*'))
                 ->withQueryParam('state', WireMock::matching('.*'))
                 ->withQueryParam('post_logout_redirect_uri', WireMock::matching('.*'))

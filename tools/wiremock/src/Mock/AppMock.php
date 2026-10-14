@@ -11,6 +11,7 @@ use Mock\Idoss\IdossMock;
 use Mock\Oauth2\Oauth2Mock;
 use Mock\ProConnect\ProConnectMock;
 use Mock\Rial\RialMock;
+use Mock\Sirene\SireneMock;
 use WireMock\Client\WireMock;
 
 class AppMock
@@ -27,6 +28,7 @@ class AppMock
             ProConnectMock::prepareAuthorizationMock($wireMock);
             RialMock::prepare($wireMock);
             BrevoMock::prepare($wireMock);
+            SireneMock::prepare($wireMock);
             Oauth2Mock::prepare($wireMock);
         } catch (\Throwable $exception) {
             printf('Error message: %s', $exception->getMessage());

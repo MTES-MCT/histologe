@@ -3,6 +3,7 @@
 namespace App\EventSubscriber;
 
 use App\Entity\User;
+use App\Security\User\ServiceSecoursUser;
 use App\Security\User\SignalementBailleur;
 use App\Security\User\SignalementUser;
 use App\Service\Gouv\ProConnect\ProConnectAuthentication;
@@ -55,6 +56,31 @@ readonly class LogoutSubscriber implements EventSubscriberInterface
             $this->clearSession($session);
             $response = new RedirectResponse($this->urlGenerator->generate('app_login_bailleur'));
             $event->setResponse($response);
+
+            return;
+        }
+
+        if ($user instanceof ServiceSecoursUser) {
+            try {
+                if ($session->has(ProConnectContext::SESSION_KEY_ID_TOKEN)) {
+                    $logoutUrl = $this->proConnectAuthentication->getLogoutUrl();
+                    $this->clearSession($session);
+                    if ($logoutUrl) {
+                        $event->setResponse(new RedirectResponse($logoutUrl));
+
+                        return;
+                    }
+                }
+            } catch (\Throwable $exception) {
+                $this->logger->error('Erreur ProConnect getLogoutUrl Service Secours', [
+                    'exception' => $exception,
+                ]);
+            }
+            $this->clearSession($session);
+            $domain = \App\Utils\UrlHelper::extractRootDomain($request->getHost());
+            $event->setResponse(new RedirectResponse($this->urlGenerator->generate('service_secours_home', [
+                'domain' => $domain,
+            ])));
 
             return;
         }

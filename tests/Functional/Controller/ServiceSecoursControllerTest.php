@@ -5,10 +5,16 @@ namespace App\Tests\Functional\Controller;
 use App\Entity\Enum\CreationSource;
 use App\Entity\Enum\EtageType;
 use App\Entity\ServiceSecoursRoute;
+use App\Exception\ProConnect\ProConnectException;
 use App\Repository\ServiceSecoursRouteRepository;
 use App\Repository\SignalementRepository;
+use App\Service\Gouv\Insee\Response\SiretInformation;
+use App\Service\Gouv\Insee\SireneService;
+use App\Service\Gouv\ProConnect\Model\ProConnectUser;
+use App\Service\Gouv\ProConnect\ProConnectAuthentication;
 use App\Service\Interconnection\Esabora\EsaboraTokenProvider;
 use App\Tests\SessionHelper;
+use CoopTilleuls\UrlSignerBundle\UrlSigner\UrlSignerInterface;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\DomCrawler\Crawler;
@@ -17,6 +23,291 @@ use Symfony\Component\Routing\RouterInterface;
 class ServiceSecoursControllerTest extends WebTestCase
 {
     use SessionHelper;
+
+    public function testHomePage(): void
+    {
+        self::ensureKernelShutdown();
+        $client = static::createClient();
+
+        /** @var RouterInterface $router */
+        $router = static::getContainer()->get(RouterInterface::class);
+        $url = $router->generate('service_secours_home', [
+            'domain' => 'localhost',
+        ]);
+
+        $crawler = $client->request('GET', $url);
+        $this->assertResponseIsSuccessful();
+        $this->assertSelectorTextContains('h1', 'Vous êtes un service de secours ?');
+        $this->assertSelectorExists('button.fr-connect');
+        $this->assertSelectorTextContains('button.fr-connect', 'ProConnect');
+
+        $expectedLoginUrl = $router->generate('service_secours_proconnect_login', [
+            'domain' => 'localhost',
+        ]);
+        $formAction = $crawler->filter('form')->attr('action');
+        $this->assertSame($expectedLoginUrl, $formAction);
+    }
+
+    public function testProConnectLogin(): void
+    {
+        self::ensureKernelShutdown();
+        $client = static::createClient();
+        $container = static::getContainer();
+
+        $mockAuth = $this->createMock(ProConnectAuthentication::class);
+        $mockAuth
+            ->method('getAuthorizationUrl')
+            ->willReturn('https://auth.proconnect.fake/authorize');
+
+        $container->set(ProConnectAuthentication::class, $mockAuth);
+
+        /** @var RouterInterface $router */
+        $router = $container->get(RouterInterface::class);
+        $url = $router->generate('service_secours_proconnect_login', [
+            'domain' => 'localhost',
+        ]);
+
+        $client->request('POST', $url);
+
+        $this->assertResponseRedirects('https://auth.proconnect.fake/authorize');
+    }
+
+    public function testProConnectLoginFailsGracefully(): void
+    {
+        self::ensureKernelShutdown();
+        $client = static::createClient();
+        $container = static::getContainer();
+
+        $session = $this->getSession($client);
+        $session->set('test_key', 'test_val');
+        $session->save();
+
+        $mockAuth = $this->createMock(ProConnectAuthentication::class);
+        $mockAuth
+            ->method('getAuthorizationUrl')
+            ->willThrowException(new \RuntimeException('Erreur fake'));
+
+        $container->set(ProConnectAuthentication::class, $mockAuth);
+
+        /** @var RouterInterface $router */
+        $router = $container->get(RouterInterface::class);
+        $url = $router->generate('service_secours_proconnect_login', [
+            'domain' => 'localhost',
+        ]);
+
+        $client->request('POST', $url);
+
+        $expectedRedirectUrl = $router->generate('service_secours_home', [
+            'domain' => 'localhost',
+        ]);
+        $this->assertResponseRedirects($expectedRedirectUrl);
+        $client->followRedirect();
+        $this->assertSelectorExists('.fr-notice--alert');
+    }
+
+    public function testProConnectCallbackSuccess(): void
+    {
+        self::ensureKernelShutdown();
+        $client = static::createClient();
+        $container = static::getContainer();
+
+        $session = $this->getSession($client);
+        $session->set('test_key', 'test_val');
+        $session->save();
+
+        $proConnectUser = new ProConnectUser([
+            'uid' => '123',
+            'sub' => 'sub_123',
+            'email' => 'agent@sdis13.fr',
+            'siret' => '13000000000001',
+            'organizational_unit' => 'SDIS 13',
+            'chorusdt:matricule' => 'MAT-789',
+        ]);
+
+        $mockAuth = $this->createMock(ProConnectAuthentication::class);
+        $mockAuth
+            ->method('authenticateFromCallback')
+            ->willReturn($proConnectUser);
+        $container->set(ProConnectAuthentication::class, $mockAuth);
+
+        $mockSirene = $this->createMock(SireneService::class);
+        $mockSirene
+            ->method('getSiret')
+            ->with('13000000000001')
+            ->willReturn(new SiretInformation('13000000000001', '13001'));
+        $container->set(SireneService::class, $mockSirene);
+
+        /** @var ServiceSecoursRouteRepository $serviceSecoursRouteRepository */
+        $serviceSecoursRouteRepository = $container->get(ServiceSecoursRouteRepository::class);
+        $expectedRoute = $serviceSecoursRouteRepository->findOneBy(['name' => 'SDIS 13']);
+        $this->assertNotNull($expectedRoute);
+
+        /** @var RouterInterface $router */
+        $router = $container->get(RouterInterface::class);
+        $callbackUrl = $router->generate('service_secours_proconnect_login_callback', [
+            'domain' => 'localhost',
+            'code' => 'fake_code',
+            'state' => 'fake_state',
+        ]);
+
+        $client->request('GET', $callbackUrl);
+
+        $expectedRedirectUrl = $router->generate('service_secours_index', [
+            'domain' => 'localhost',
+            'slug' => $expectedRoute->getSlug(),
+            'uuid' => $expectedRoute->getUuid(),
+        ]);
+
+        $this->assertResponseRedirects($expectedRedirectUrl);
+        $crawler = $client->followRedirect();
+        $this->assertResponseIsSuccessful();
+        $this->assertSame('MAT-789', $crawler->filter('#service_secours_step1_matriculeDeclarant')->attr('value'));
+    }
+
+    public function testProConnectCallbackFailsOnSireneRateLimitExceeded(): void
+    {
+        self::ensureKernelShutdown();
+        $client = static::createClient();
+        $container = static::getContainer();
+
+        $session = $this->getSession($client);
+        $session->set('test_key', 'test_val');
+        $session->save();
+
+        $proConnectUser = new ProConnectUser([
+            'uid' => '123',
+            'sub' => 'sub_123',
+            'email' => 'agent@sdis13.fr',
+            'siret' => '13000000000001',
+            'organizational_unit' => 'SDIS 13',
+        ]);
+
+        $mockAuth = $this->createMock(ProConnectAuthentication::class);
+        $mockAuth
+            ->method('authenticateFromCallback')
+            ->willReturn($proConnectUser);
+        $container->set(ProConnectAuthentication::class, $mockAuth);
+
+        $mockSirene = $this->createMock(SireneService::class);
+        $mockSirene
+            ->method('getSiret')
+            ->willThrowException(new \App\Service\Gouv\Insee\Exception\SireneRateLimitExceededException('Rate limit exceeded'));
+        $container->set(SireneService::class, $mockSirene);
+
+        /** @var RouterInterface $router */
+        $router = $container->get(RouterInterface::class);
+        $callbackUrl = $router->generate('service_secours_proconnect_login_callback', [
+            'domain' => 'localhost',
+            'code' => 'fake_code',
+            'state' => 'fake_state',
+        ]);
+
+        $client->request('GET', $callbackUrl);
+
+        $expectedRedirectUrl = $router->generate('service_secours_home', [
+            'domain' => 'localhost',
+        ]);
+
+        $this->assertResponseRedirects($expectedRedirectUrl);
+        $client->followRedirect();
+        $this->assertSelectorExists('.fr-notice--info');
+        $this->assertSelectorTextContains('.fr-notice--info', 'Le service est temporairement indisponible. Veuillez réessayer de vous connecter plus tard.');
+    }
+
+    public function testProConnectCallbackFailsOnResolutionError(): void
+    {
+        self::ensureKernelShutdown();
+        $client = static::createClient();
+        $container = static::getContainer();
+
+        $session = $this->getSession($client);
+        $session->set('test_key', 'test_val');
+        $session->save();
+
+        $proConnectUser = new ProConnectUser([
+            'uid' => '123',
+            'sub' => 'sub_123',
+            'email' => 'agent@test.fr',
+            'siret' => '99999999999999',
+            'organizational_unit' => 'SDIS 99',
+        ]);
+
+        $mockAuth = $this->createMock(ProConnectAuthentication::class);
+        $mockAuth
+            ->method('authenticateFromCallback')
+            ->willReturn($proConnectUser);
+        $container->set(ProConnectAuthentication::class, $mockAuth);
+
+        $mockSirene = $this->createMock(SireneService::class);
+        $mockSirene
+            ->method('getSiret')
+            ->willReturn(new SiretInformation('99999999999999', '99999'));
+        $container->set(SireneService::class, $mockSirene);
+
+        /** @var RouterInterface $router */
+        $router = $container->get(RouterInterface::class);
+        $callbackUrl = $router->generate('service_secours_proconnect_login_callback', [
+            'domain' => 'localhost',
+            'code' => 'fake_code',
+            'state' => 'fake_state',
+        ]);
+
+        $client->request('GET', $callbackUrl);
+
+        $expectedRedirectUrl = $router->generate('service_secours_home', [
+            'domain' => 'localhost',
+        ]);
+
+        $this->assertResponseRedirects($expectedRedirectUrl);
+        $client->followRedirect();
+        $this->assertSelectorExists('.fr-notice--alert');
+        $this->assertSelectorTextContains('.fr-notice--alert', 'Nous n\'avons pas pu identifier le service de secours');
+    }
+
+    public function testProConnectCallbackFailsOnAuthenticationError(): void
+    {
+        self::ensureKernelShutdown();
+        $client = static::createClient();
+        $container = static::getContainer();
+
+        $session = $this->getSession($client);
+        $session->set('test_key', 'test_val');
+        $session->save();
+
+        $mockAuth = $this->createMock(ProConnectAuthentication::class);
+        $mockAuth
+            ->method('authenticateFromCallback')
+            ->willThrowException(new ProConnectException('Auth failure'));
+        $container->set(ProConnectAuthentication::class, $mockAuth);
+
+        /** @var RouterInterface $router */
+        $router = $container->get(RouterInterface::class);
+        $callbackUrl = $router->generate('service_secours_proconnect_login_callback', [
+            'domain' => 'localhost',
+            'code' => 'fake_code',
+            'state' => 'fake_state',
+        ]);
+
+        $client->request('GET', $callbackUrl);
+
+        $expectedRedirectUrl = $router->generate('service_secours_home', [
+            'domain' => 'localhost',
+        ]);
+
+        $this->assertResponseRedirects($expectedRedirectUrl);
+        $client->followRedirect();
+        $this->assertSelectorExists('.fr-notice--alert');
+        $this->assertSelectorTextContains('.fr-notice--alert', 'Erreur lors du traitement de l\'authentification ProConnect.');
+    }
+
+    public function testUnknownRouteReturns404(): void
+    {
+        self::ensureKernelShutdown();
+        $client = static::createClient();
+
+        $client->request('GET', 'http://service-secours.localhost/route-qui-n-existe-pas');
+        $this->assertResponseStatusCodeSame(404);
+    }
 
     public function testRoutes(): void
     {
@@ -31,6 +322,13 @@ class ServiceSecoursControllerTest extends WebTestCase
         $router = static::getContainer()->get(RouterInterface::class);
 
         foreach ($routes as $route) {
+            $user = new \App\Security\User\ServiceSecoursUser(
+                userIdentifier: 'agent@test.fr:'.$route->getUuid(),
+                email: 'agent@test.fr',
+                serviceSecoursRouteUuid: $route->getUuid()
+            );
+            $client->loginUser($user, 'service_secours');
+
             // OK
             $url = $router->generate('service_secours_index', [
                 'slug' => $route->getSlug(),
@@ -211,6 +509,13 @@ class ServiceSecoursControllerTest extends WebTestCase
     private function requestStartFlow(KernelBrowser $client): Crawler
     {
         $serviceSecoursRoute = $this->getServiceSecoursRoute();
+        $user = new \App\Security\User\ServiceSecoursUser(
+            userIdentifier: 'agent@test.fr:'.$serviceSecoursRoute->getUuid(),
+            email: 'agent@test.fr',
+            serviceSecoursRouteUuid: $serviceSecoursRoute->getUuid()
+        );
+        $client->loginUser($user, 'service_secours');
+
         /** @var RouterInterface $router */
         $router = static::getContainer()->get(RouterInterface::class);
         $url = $router->generate('service_secours_index', [
@@ -329,5 +634,370 @@ class ServiceSecoursControllerTest extends WebTestCase
     {
         $form = $crawler->selectButton('Valider le signalement')->form();
         $client->submit($form);
+    }
+
+    public function testUnauthenticatedUserIsRedirectedToHome(): void
+    {
+        self::ensureKernelShutdown();
+        $client = static::createClient();
+
+        $serviceSecoursRoute = $this->getServiceSecoursRoute();
+        /** @var RouterInterface $router */
+        $router = static::getContainer()->get(RouterInterface::class);
+        $url = $router->generate('service_secours_index', [
+            'slug' => $serviceSecoursRoute->getSlug(),
+            'uuid' => $serviceSecoursRoute->getUuid(),
+            'domain' => 'localhost',
+        ]);
+
+        $client->request('GET', $url);
+
+        $expectedRedirectUrl = $router->generate('service_secours_home', [
+            'domain' => 'localhost',
+        ]);
+        $this->assertResponseRedirects($expectedRedirectUrl);
+    }
+
+    public function testAuthenticatedAgentCanAccessAuthorizedRoute(): void
+    {
+        self::ensureKernelShutdown();
+        $client = static::createClient();
+
+        $serviceSecoursRoute = $this->getServiceSecoursRoute();
+        $user = new \App\Security\User\ServiceSecoursUser(
+            userIdentifier: 'agent@test.fr:'.$serviceSecoursRoute->getUuid(),
+            email: 'agent@test.fr',
+            serviceSecoursRouteUuid: $serviceSecoursRoute->getUuid()
+        );
+        $client->loginUser($user, 'service_secours');
+
+        /** @var RouterInterface $router */
+        $router = static::getContainer()->get(RouterInterface::class);
+        $url = $router->generate('service_secours_index', [
+            'slug' => $serviceSecoursRoute->getSlug(),
+            'uuid' => $serviceSecoursRoute->getUuid(),
+            'domain' => 'localhost',
+        ]);
+
+        $client->request('GET', $url);
+        $this->assertResponseIsSuccessful();
+        $this->assertSelectorExists('a.fr-fi-logout-box-r-line[href*="/logout"]');
+        $this->assertSelectorTextContains('a.fr-fi-logout-box-r-line[href*="/logout"]', 'Quitter');
+    }
+
+    public function testAuthenticatedAgentCannotAccessOtherRoute(): void
+    {
+        self::ensureKernelShutdown();
+        $client = static::createClient();
+
+        /** @var ServiceSecoursRouteRepository $serviceSecoursRouteRepository */
+        $serviceSecoursRouteRepository = static::getContainer()->get(ServiceSecoursRouteRepository::class);
+        $routeA = $serviceSecoursRouteRepository->find(1);
+        $routeB = $serviceSecoursRouteRepository->find(2);
+
+        $user = new \App\Security\User\ServiceSecoursUser(
+            userIdentifier: 'agent@test.fr:'.$routeA->getUuid(),
+            email: 'agent@test.fr',
+            serviceSecoursRouteUuid: $routeA->getUuid()
+        );
+        $client->loginUser($user, 'service_secours');
+
+        /** @var RouterInterface $router */
+        $router = static::getContainer()->get(RouterInterface::class);
+        $url = $router->generate('service_secours_index', [
+            'slug' => $routeB->getSlug(),
+            'uuid' => $routeB->getUuid(),
+            'domain' => 'localhost',
+        ]);
+
+        $client->request('GET', $url);
+        $this->assertResponseStatusCodeSame(403);
+    }
+
+    public function testSameTerritoryOtherCategoryAccessDenied(): void
+    {
+        self::ensureKernelShutdown();
+        $client = static::createClient();
+
+        /** @var ServiceSecoursRouteRepository $serviceSecoursRouteRepository */
+        $serviceSecoursRouteRepository = static::getContainer()->get(ServiceSecoursRouteRepository::class);
+        // Bouches-du-Rhône + SDIS
+        $routeSdis13 = $serviceSecoursRouteRepository->findOneBy(['name' => 'SDIS 13']);
+        // Bouches-du-Rhône + POLICE
+        $routePolice13 = $serviceSecoursRouteRepository->findOneBy(['name' => 'Commissariat de Police 13']);
+
+        $user = new \App\Security\User\ServiceSecoursUser(
+            userIdentifier: 'agent@sdis13.fr:'.$routeSdis13->getUuid(),
+            email: 'agent@sdis13.fr',
+            serviceSecoursRouteUuid: $routeSdis13->getUuid()
+        );
+        $client->loginUser($user, 'service_secours');
+
+        /** @var RouterInterface $router */
+        $router = static::getContainer()->get(RouterInterface::class);
+        $url = $router->generate('service_secours_index', [
+            'slug' => $routePolice13->getSlug(),
+            'uuid' => $routePolice13->getUuid(),
+            'domain' => 'localhost',
+        ]);
+
+        $client->request('GET', $url);
+        $this->assertResponseStatusCodeSame(403);
+    }
+
+    public function testSameCategoryOtherTerritoryAccessDenied(): void
+    {
+        self::ensureKernelShutdown();
+        $client = static::createClient();
+
+        /** @var ServiceSecoursRouteRepository $serviceSecoursRouteRepository */
+        $serviceSecoursRouteRepository = static::getContainer()->get(ServiceSecoursRouteRepository::class);
+        // Bouches-du-Rhône + SDIS
+        $routeSdis13 = $serviceSecoursRouteRepository->findOneBy(['name' => 'SDIS 13']);
+        // Ain + SDIS
+        $routeSdis01 = $serviceSecoursRouteRepository->findOneBy(['name' => 'SDIS 01']);
+
+        $user = new \App\Security\User\ServiceSecoursUser(
+            userIdentifier: 'agent@sdis13.fr:'.$routeSdis13->getUuid(),
+            email: 'agent@sdis13.fr',
+            serviceSecoursRouteUuid: $routeSdis13->getUuid()
+        );
+        $client->loginUser($user, 'service_secours');
+
+        /** @var RouterInterface $router */
+        $router = static::getContainer()->get(RouterInterface::class);
+        $url = $router->generate('service_secours_index', [
+            'slug' => $routeSdis01->getSlug(),
+            'uuid' => $routeSdis01->getUuid(),
+            'domain' => 'localhost',
+        ]);
+
+        $client->request('GET', $url);
+        $this->assertResponseStatusCodeSame(403);
+    }
+
+    public function testAccessFormAfterCallbackDoesNotCallSireneAgain(): void
+    {
+        self::ensureKernelShutdown();
+        $client = static::createClient();
+        $container = static::getContainer();
+
+        $session = $this->getSession($client);
+        $session->set('test_key', 'test_val');
+        $session->save();
+
+        $proConnectUser = new ProConnectUser([
+            'uid' => '123',
+            'sub' => 'sub_123',
+            'email' => 'agent@sdis13.fr',
+            'siret' => '13000000000001',
+            'organizational_unit' => 'SDIS 13',
+        ]);
+
+        $mockAuth = $this->createMock(ProConnectAuthentication::class);
+        $mockAuth
+            ->method('authenticateFromCallback')
+            ->willReturn($proConnectUser);
+        $container->set(ProConnectAuthentication::class, $mockAuth);
+
+        $mockSirene = $this->createMock(SireneService::class);
+        $mockSirene
+            ->expects($this->once())
+            ->method('getSiret')
+            ->with('13000000000001')
+            ->willReturn(new SiretInformation('13000000000001', '13001'));
+        $container->set(SireneService::class, $mockSirene);
+
+        /** @var ServiceSecoursRouteRepository $serviceSecoursRouteRepository */
+        $serviceSecoursRouteRepository = $container->get(ServiceSecoursRouteRepository::class);
+        $expectedRoute = $serviceSecoursRouteRepository->findOneBy(['name' => 'SDIS 13']);
+
+        /** @var RouterInterface $router */
+        $router = $container->get(RouterInterface::class);
+        $callbackUrl = $router->generate('service_secours_proconnect_login_callback', [
+            'domain' => 'localhost',
+            'code' => 'fake_code',
+            'state' => 'fake_state',
+        ]);
+
+        $client->request('GET', $callbackUrl);
+        $this->assertResponseRedirects();
+        $client->followRedirect();
+        $this->assertResponseIsSuccessful();
+
+        // Second GET request on the form directly
+        $formUrl = $router->generate('service_secours_index', [
+            'domain' => 'localhost',
+            'slug' => $expectedRoute->getSlug(),
+            'uuid' => $expectedRoute->getUuid(),
+        ]);
+        $client->request('GET', $formUrl);
+        $this->assertResponseIsSuccessful();
+    }
+
+    public function testPdfAccessAllowedForAuthorizedAgent(): void
+    {
+        self::ensureKernelShutdown();
+        $client = static::createClient();
+
+        /** @var ServiceSecoursRouteRepository $serviceSecoursRouteRepository */
+        $serviceSecoursRouteRepository = static::getContainer()->get(ServiceSecoursRouteRepository::class);
+        $route = $serviceSecoursRouteRepository->find(1);
+
+        /** @var SignalementRepository $signalementRepository */
+        $signalementRepository = static::getContainer()->get(SignalementRepository::class);
+        $signalement = $signalementRepository->findOneBy(['reference' => '2024-05']);
+        $signalement->setServiceSecours($route);
+
+        $em = static::getContainer()->get(\Doctrine\ORM\EntityManagerInterface::class);
+        $em->persist($signalement);
+        $em->flush();
+
+        $user = new \App\Security\User\ServiceSecoursUser(
+            userIdentifier: 'agent@test.fr:'.$route->getUuid(),
+            email: 'agent@test.fr',
+            serviceSecoursRouteUuid: $route->getUuid()
+        );
+        $client->loginUser($user, 'service_secours');
+
+        /** @var RouterInterface $router */
+        $router = static::getContainer()->get(RouterInterface::class);
+        $pdfUrl = $router->generate('service_secours_pdf', [
+            'slug' => $route->getSlug(),
+            'uuid' => $route->getUuid(),
+            'uuidSignalement' => $signalement->getUuid(),
+            'domain' => 'localhost',
+        ]);
+
+        /** @var UrlSignerInterface $urlSigner */
+        $urlSigner = static::getContainer()->get(UrlSignerInterface::class);
+        $signedPdfUrl = $urlSigner->sign('http:'.$pdfUrl, 3600);
+
+        $client->request('GET', $signedPdfUrl);
+        $this->assertResponseIsSuccessful();
+        $this->assertSame('application/pdf', $client->getResponse()->headers->get('Content-Type'));
+    }
+
+    public function testPdfAccessDeniedForUnauthorizedAgent(): void
+    {
+        self::ensureKernelShutdown();
+        $client = static::createClient();
+
+        /** @var ServiceSecoursRouteRepository $serviceSecoursRouteRepository */
+        $serviceSecoursRouteRepository = static::getContainer()->get(ServiceSecoursRouteRepository::class);
+        $routeA = $serviceSecoursRouteRepository->find(1);
+        $routeB = $serviceSecoursRouteRepository->find(2);
+
+        /** @var SignalementRepository $signalementRepository */
+        $signalementRepository = static::getContainer()->get(SignalementRepository::class);
+        $signalement = $signalementRepository->findOneBy(['reference' => '2024-05']);
+        $signalement->setServiceSecours($routeA);
+
+        $em = static::getContainer()->get(\Doctrine\ORM\EntityManagerInterface::class);
+        $em->persist($signalement);
+        $em->flush();
+
+        // Agent authenticated for route B tries to access PDF for route A
+        $userB = new \App\Security\User\ServiceSecoursUser(
+            userIdentifier: 'agentB@test.fr:'.$routeB->getUuid(),
+            email: 'agentB@test.fr',
+            serviceSecoursRouteUuid: $routeB->getUuid()
+        );
+        $client->loginUser($userB, 'service_secours');
+
+        /** @var RouterInterface $router */
+        $router = static::getContainer()->get(RouterInterface::class);
+        $pdfUrl = $router->generate('service_secours_pdf', [
+            'slug' => $routeA->getSlug(),
+            'uuid' => $routeA->getUuid(),
+            'uuidSignalement' => $signalement->getUuid(),
+            'domain' => 'localhost',
+        ]);
+
+        /** @var UrlSignerInterface $urlSigner */
+        $urlSigner = static::getContainer()->get(UrlSignerInterface::class);
+        $signedPdfUrl = $urlSigner->sign('http:'.$pdfUrl, 3600);
+
+        $client->request('GET', $signedPdfUrl);
+        $this->assertResponseStatusCodeSame(403);
+    }
+
+    public function testAfterLogoutAccessIsDenied(): void
+    {
+        self::ensureKernelShutdown();
+        $client = static::createClient();
+
+        $serviceSecoursRoute = $this->getServiceSecoursRoute();
+        $user = new \App\Security\User\ServiceSecoursUser(
+            userIdentifier: 'agent@test.fr:'.$serviceSecoursRoute->getUuid(),
+            email: 'agent@test.fr',
+            serviceSecoursRouteUuid: $serviceSecoursRoute->getUuid()
+        );
+        $client->loginUser($user, 'service_secours');
+
+        /** @var RouterInterface $router */
+        $router = static::getContainer()->get(RouterInterface::class);
+        $formUrl = $router->generate('service_secours_index', [
+            'slug' => $serviceSecoursRoute->getSlug(),
+            'uuid' => $serviceSecoursRoute->getUuid(),
+            'domain' => 'localhost',
+        ]);
+
+        $client->request('GET', $formUrl);
+        $this->assertResponseIsSuccessful();
+
+        $logoutUrl = $router->generate('service_secours_logout', [
+            'domain' => 'localhost',
+        ]);
+        $client->request('GET', $logoutUrl);
+
+        // After logout, accessing the form should redirect or deny access
+        $client->request('GET', $formUrl);
+        $expectedRedirectUrl = $router->generate('service_secours_home', [
+            'domain' => 'localhost',
+        ]);
+        $this->assertResponseRedirects($expectedRedirectUrl);
+    }
+
+    public function testSecurityDisabledAllowsAnonymousAccess(): void
+    {
+        $previousEnv = $_ENV['FEATURE_SERVICE_SECOURS_SECURITY'] ?? null;
+        $_ENV['FEATURE_SERVICE_SECOURS_SECURITY'] = '0';
+        putenv('FEATURE_SERVICE_SECOURS_SECURITY=0');
+
+        try {
+            self::ensureKernelShutdown();
+            $client = static::createClient();
+
+            /** @var ServiceSecoursRouteRepository $serviceSecoursRouteRepository */
+            $serviceSecoursRouteRepository = static::getContainer()->get(ServiceSecoursRouteRepository::class);
+            $serviceSecoursRoute = $serviceSecoursRouteRepository->find(1);
+
+            /** @var RouterInterface $router */
+            $router = static::getContainer()->get(RouterInterface::class);
+
+            // Home should return 404 when security is disabled
+            $homeUrl = $router->generate('service_secours_home', ['domain' => 'localhost']);
+            $client->request('GET', $homeUrl);
+            $this->assertResponseStatusCodeSame(404);
+
+            // Form should be accessible freely without authentication
+            $formUrl = $router->generate('service_secours_index', [
+                'slug' => $serviceSecoursRoute->getSlug(),
+                'uuid' => $serviceSecoursRoute->getUuid(),
+                'domain' => 'localhost',
+            ]);
+            $client->request('GET', $formUrl);
+            $this->assertResponseIsSuccessful();
+        } finally {
+            if (null !== $previousEnv) {
+                $_ENV['FEATURE_SERVICE_SECOURS_SECURITY'] = $previousEnv;
+                putenv('FEATURE_SERVICE_SECOURS_SECURITY='.$previousEnv);
+            } else {
+                unset($_ENV['FEATURE_SERVICE_SECOURS_SECURITY']);
+                putenv('FEATURE_SERVICE_SECOURS_SECURITY');
+            }
+            self::ensureKernelShutdown();
+        }
     }
 }
