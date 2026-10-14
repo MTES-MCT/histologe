@@ -71,9 +71,18 @@ class LoadUserData extends Fixture implements OrderedFixtureInterface
         $user = (new User())
             ->setRoles(json_decode($row['roles'], true))
             ->setStatut($statut)
-            ->setIsMailingActive($row['is_mailing_active'] ?? false)
-            ->setPrenom($faker->firstName())
-            ->setNom($faker->lastName());
+            ->setIsMailingActive($row['is_mailing_active'] ?? false);
+
+        if (isset($row['prenom'])) {
+            $user->setPrenom($row['prenom']);
+        } else {
+            $user->setPrenom($faker->firstName());
+        }
+        if (isset($row['nom'])) {
+            $user->setNom($row['nom']);
+        } else {
+            $user->setNom($faker->lastName());
+        }
 
         $this->userManager->loadUserTokenForUser($user, false);
 
