@@ -54,10 +54,42 @@ class SuiviDescriptionHelper
     /**
      * Textes avec variables, générés une seule fois à la création du suivi puis enregistrés en base.
      * Jamais lus à l'affichage : c'est la description en base qui fait foi.
+     * Une même catégorie peut avoir plusieurs textes selon le contexte de création (SuiviDescriptionVariant).
      */
     private const array CREATION_TEMPLATES = [
-        SuiviCategory::INJONCTION_BAILLEUR_RELANCE_USAGER_CLOTURE->value => 'suivi/injonction_bailleur_relance_usager_cloture.html.twig',
-        SuiviCategory::INJONCTION_BAILLEUR_CLOTURE_PAR_ADMIN->value => 'suivi/injonction_bailleur_cloture_par_admin.html.twig',
+        SuiviCategory::INJONCTION_BAILLEUR_RELANCE_USAGER_CLOTURE->value => [
+            SuiviDescriptionVariant::DEFAULT->value => 'suivi/injonction_bailleur_relance_usager_cloture.html.twig',
+        ],
+        SuiviCategory::INJONCTION_BAILLEUR_CLOTURE_PAR_ADMIN->value => [
+            SuiviDescriptionVariant::DEFAULT->value => 'suivi/injonction_bailleur_cloture_par_admin.html.twig',
+        ],
+        SuiviCategory::DEMANDE_ABANDON_PROCEDURE->value => [
+            SuiviDescriptionVariant::DEFAULT->value => 'suivi/demande_abandon_procedure.html.twig',
+        ],
+        SuiviCategory::DEMANDE_POURSUITE_PROCEDURE->value => [
+            SuiviDescriptionVariant::DEFAULT->value => 'suivi/demande_poursuite_procedure.html.twig',
+        ],
+        SuiviCategory::INJONCTION_BAILLEUR_BASCULE_PROCEDURE_PAR_USAGER->value => [
+            SuiviDescriptionVariant::DEFAULT->value => 'suivi/injonction_bailleur_bascule_procedure_par_usager.html.twig',
+            SuiviDescriptionVariant::REPONSE_DEMANDE_CLOTURE->value => 'suivi/injonction_bailleur_bascule_procedure_par_usager_reponse_demande_cloture.html.twig',
+        ],
+        SuiviCategory::INJONCTION_BAILLEUR_CLOTURE_PAR_USAGER->value => [
+            SuiviDescriptionVariant::DEFAULT->value => 'suivi/injonction_bailleur_cloture_par_usager.html.twig',
+            SuiviDescriptionVariant::REPONSE_DEMANDE_CLOTURE->value => 'suivi/injonction_bailleur_cloture_par_usager_reponse_demande_cloture.html.twig',
+        ],
+        SuiviCategory::SIGNALEMENT_EDITED_BO->value => [
+            SuiviDescriptionVariant::DEFAULT->value => 'suivi/signalement_edited.html.twig',
+            SuiviDescriptionVariant::INVITATION_TIERS->value => 'suivi/signalement_edited_bo_invitation_tiers.html.twig',
+        ],
+        SuiviCategory::SIGNALEMENT_EDITED_FO->value => [
+            SuiviDescriptionVariant::DEFAULT->value => 'suivi/signalement_edited.html.twig', // Même template que SIGNALEMENT_EDITED_BO
+        ],
+        SuiviCategory::NEW_DOCUMENT->value => [
+            SuiviDescriptionVariant::DEFAULT->value => 'suivi/new_document.html.twig',
+        ],
+        SuiviCategory::ASK_DOCUMENT->value => [
+            SuiviDescriptionVariant::DEFAULT->value => 'suivi/ask_document.html.twig',
+        ],
     ];
 
     private const SPECIFIC_DESCRIPTIONS = [
@@ -107,11 +139,14 @@ class SuiviDescriptionHelper
      *
      * @param array<string, mixed> $params
      */
-    public function buildDescriptionForCreation(SuiviCategory $category, array $params = []): string
-    {
-        $template = self::CREATION_TEMPLATES[$category->value] ?? null;
+    public function buildDescriptionForCreation(
+        SuiviCategory $category,
+        array $params = [],
+        SuiviDescriptionVariant $variant = SuiviDescriptionVariant::DEFAULT,
+    ): string {
+        $template = self::CREATION_TEMPLATES[$category->value][$variant->value] ?? null;
         if (null === $template) {
-            throw new \LogicException(\sprintf('No creation template for suivi category %s', $category->value));
+            throw new \LogicException(\sprintf('No creation template for suivi category %s and variant %s', $category->value, $variant->value));
         }
 
         return trim($this->twig->render($template, $params));

@@ -1,0 +1,11 @@
+{%- if nbDocs > 0 -%}
+    {%- if context == 'procedure' -%}
+        {{ nbDocs }} {{ nbDocs > 1 ? 'documents liés à la procédure ont été ajoutés' : 'document lié à la procédure a été ajouté' }} au signalement.
+    {%- elseif context == 'situation' -%}
+        {{ nbDocs }} {{ nbDocs > 1 ? 'documents sur la situation usager ont été ajoutés' : 'document sur la situation usager a été ajouté' }} au signalement :
+    {%- elseif context == 'rapport_visite' -%}
+        {{ partnerName }} a ajouté {{ nbDocs }} {{ nbDocs > 1 ? 'rapports de visite' : 'rapport de visite' }} de la visite du {{ dateVisite }} :
+    {%- elseif context == 'photo_visite' -%}
+        {{ partnerName }} a ajouté {{ nbDocs }} {{ nbDocs > 1 ? 'photos' : 'photo' }} de la visite du {{ dateVisite }} :
+    {%- endif -%}
+{%- endif -%}

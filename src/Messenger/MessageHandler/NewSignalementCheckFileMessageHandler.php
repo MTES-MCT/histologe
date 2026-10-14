@@ -13,6 +13,7 @@ use App\Messenger\Message\NewSignalementCheckFileMessage;
 use App\Repository\DesordreCritereRepository;
 use App\Repository\SignalementRepository;
 use App\Repository\UserRepository;
+use App\Service\Signalement\Suivi\SuiviDescriptionHelper;
 use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
@@ -21,10 +22,6 @@ use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 #[AsMessageHandler]
 class NewSignalementCheckFileMessageHandler
 {
-    public const string SUIVI_ASK_DOCUMENTS_INTRO = 'Bonjour,<br><br>'
-        .'Vous avez signalé un problème sur un logement.<br>'
-        .'Votre dossier a bien été enregistré par nos services.<br><br>'
-        .'Afin de nous aider à traiter au mieux votre dossier, veuillez nous fournir :<br>';
     /**
      * @var array<int, string>
      */
@@ -58,6 +55,7 @@ class NewSignalementCheckFileMessageHandler
         private readonly SuiviManager $suiviManager,
         private readonly ParameterBagInterface $parameterBag,
         private readonly EntityManagerInterface $entityManager,
+        private readonly SuiviDescriptionHelper $suiviDescriptionHelper,
     ) {
     }
 
@@ -208,27 +206,19 @@ class NewSignalementCheckFileMessageHandler
 
     private function createSuivi(Signalement $signalement, string $documents, string $desordres, bool $hasCoordonneesBailleur): Suivi
     {
-        $this->description = self::SUIVI_ASK_DOCUMENTS_INTRO;
-        if (!empty($documents)) {
-            $this->description .= '- le ou les documents suivants : '.$documents.'<br>';
-        }
-        if (!empty($desordres)) {
-            $this->description .= '- des photos pour les désordres suivants : '.$desordres.'<br>';
-        }
-        if (!$hasCoordonneesBailleur) {
-            $this->description .= '- les coordonnées du propriétaire / bailleur (numéro de téléphone et / ou e-mail). Pour cela, retournez sur l\'accueil de votre dossier et cliquez sur "Voir et compléter le dossier".<br>';
-        }
-        $this->description .= '<br>';
-        $this->description .= 'Envoyez-nous un message en y ajoutant vos documents !<br>';
-        $this->description .= 'Merci,<br>';
-        $this->description .= 'L\'équipe '.$this->parameterBag->get('platform_name');
+        $category = SuiviCategory::ASK_DOCUMENT;
+        $this->description = $this->suiviDescriptionHelper->buildDescriptionForCreation($category, [
+            'documents' => $documents,
+            'desordres' => $desordres,
+            'hasCoordonneesBailleur' => $hasCoordonneesBailleur,
+        ]);
 
         $userAdmin = $this->userRepository->findOneBy(['email' => $this->parameterBag->get('user_system_email')]);
 
         return $this->suiviManager->createSuivi(
             signalement: $signalement,
             description: $this->description,
-            category: SuiviCategory::ASK_DOCUMENT,
+            category: $category,
             user: $userAdmin,
             isVisibleForUsager: true,
         );
