@@ -49,6 +49,7 @@ export function initTinyMCE(selector) {
       ui_mode: 'split', // on attache le menu de suggestions à l'éditeur
       menubar: false,
       height: 320,
+      content_style: 'html { height: 100%; } body { min-height: 100%; margin: 0; padding: 1rem; box-sizing: border-box; }',
       setup: (ed) => {
         //modification des classes des boutons et champs de texte dans la fenêtre de dialogue pour etre sur le theme DSFR (concerne la fenêtre du bouton lien)
         ed.on('OpenWindow', () => {
