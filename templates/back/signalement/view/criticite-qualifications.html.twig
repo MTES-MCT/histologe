@@ -13,34 +13,22 @@
 
     <div class="fr-col-12 fr-col-md-6">
         <h3 class="fr-h5">Situation(s) suspectée(s)</h3>
-        {% for qualificationStatusLabel in listQualificationStatusesLabelsCheck %}
+        {% for qualification in signalement.signalementQualifications(excludePostVisite: true) %}
             {% include '_partials/signalement/qualification.html.twig' %}
         {% endfor %}
         {% if listConcludeProcedures %}
-        <div class="fr-mt-3v">
-            <h3 class="fr-h5">Situation(s) observée(s) après visite</h3>
-            {% for concludeProcedure in listConcludeProcedures %}
-                {% set typeBadge = 'info' %}
-                {% if concludeProcedure is same as 'Mise en sécurité / Péril' %}
-                    {% set typeBadge = 'error' %}
-                {% elseif concludeProcedure is same as 'Insalubrité' %}
-                    {% set typeBadge = 'warning' %}
-                {% endif %}
-                <small class="fr-badge fr-badge--{{typeBadge}} fr-badge--no-icon fr-mb-1v">{{ concludeProcedure }}</small>
-            {% endfor %}
-        </div>
+            <div class="fr-mt-3v">
+                <h3 class="fr-h5">Situation(s) observée(s) après visite</h3>
+                {% for procedure in listConcludeProcedures %}
+                    {% include '_partials/signalement/procedure.html.twig' %}
+                {% endfor %}
+            </div>
         {% endif %}
         {% if signalement.statut is same as enum('App\\Entity\\Enum\\SignalementStatus').CLOSED %}
             <div class="fr-mt-3v">
                 <h3 class="fr-h5">Procédure(s) engagée(s)</h3>
-                    {% for procedure in signalement.signalementProcedures %}
-                        {% set typeBadge = 'info' %}
-                        {% if procedure.procedureType is same as enum('App\\Entity\\Enum\\ProcedureType').MISE_EN_SECURITE_PERIL %}
-                            {% set typeBadge = 'error' %}
-                        {% elseif procedure.procedureType is same as enum('App\\Entity\\Enum\\ProcedureType').INSALUBRITE %}
-                            {% set typeBadge = 'warning' %}
-                        {% endif %}
-                        <small class="fr-badge fr-badge--{{typeBadge}} fr-badge--no-icon fr-mb-1v">{{ procedure.procedureType.label }}</small>
+                {% for signalementProcedure in signalement.signalementProcedures(enum('App\\Entity\\Enum\\ProcedureCategory').PROCEDURE_RETENUE) %}
+                    {% include '_partials/signalement/procedure.html.twig' with {'procedure': signalementProcedure.procedureType} %}
                 {% endfor %}
             </div>
         {% endif %}

@@ -36,29 +36,15 @@ class PdfExportMessageHandler
         try {
             $signalement = $this->signalementRepository->find($pdfExportMessage->getSignalementId());
             $infoDesordres = $this->signalementDesordresProcessor->process($signalement);
-            $listQualificationStatusesLabelsCheck = [];
-            if (null !== $signalement->getSignalementQualifications()) {
-                foreach ($signalement->getSignalementQualifications() as $qualification) {
-                    if (!$qualification->isPostVisite()) {
-                        $listQualificationStatusesLabelsCheck[] = $qualification->getStatus()->label();
-                    }
-                }
-            }
 
             $listConcludeProcedures = [];
-            if (null !== $signalement->getInterventions()) {
-                foreach ($signalement->getInterventions() as $intervention) {
-                    if (Intervention::STATUS_DONE == $intervention->getStatus()) {
-                        $listConcludeProcedures = array_merge(
-                            $listConcludeProcedures,
-                            $intervention->getConcludeProcedure()
-                        );
+            foreach ($signalement->getInterventions() as $intervention) {
+                if (Intervention::STATUS_DONE === $intervention->getStatus()) {
+                    foreach ($intervention->getConcludeProcedure() as $procedure) {
+                        $listConcludeProcedures[$procedure->label()] = $procedure;
                     }
                 }
             }
-            $listConcludeProcedures = array_unique(array_map(static function ($concludeProcedure) {
-                return $concludeProcedure->label();
-            }, $listConcludeProcedures));
 
             $visites = $this->interventionRepository->getOrderedVisitesForSignalement($signalement);
 
@@ -66,7 +52,6 @@ class PdfExportMessageHandler
                 'signalement' => $signalement,
                 'situations' => $infoDesordres['criticitesArranged'],
                 'listConcludeProcedures' => $listConcludeProcedures,
-                'listQualificationStatusesLabelsCheck' => $listQualificationStatusesLabelsCheck,
                 'visites' => $visites,
                 'isForUsager' => $pdfExportMessage->isForUsager(),
             ]);

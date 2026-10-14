@@ -2,12 +2,13 @@
 
 namespace App\Entity;
 
+use App\Entity\Enum\ProcedureCategory;
 use App\Entity\Enum\ProcedureType;
 use App\Repository\SignalementProcedureRepository;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: SignalementProcedureRepository::class)]
-#[ORM\UniqueConstraint(name: 'uniq_signalement_procedure_type', columns: ['signalement_id', 'procedure_type'])]
+#[ORM\UniqueConstraint(name: 'uniq_signalement_procedure_type', columns: ['signalement_id', 'procedure_type', 'procedure_category'])]
 class SignalementProcedure
 {
     #[ORM\Id]
@@ -21,6 +22,9 @@ class SignalementProcedure
 
     #[ORM\Column(enumType: ProcedureType::class)]
     private ProcedureType $procedureType;
+
+    #[ORM\Column(enumType: ProcedureCategory::class)]
+    private ProcedureCategory $procedureCategory;
 
     public function getId(): ?int
     {
@@ -47,6 +51,18 @@ class SignalementProcedure
     public function setProcedureType(ProcedureType $procedureType): static
     {
         $this->procedureType = $procedureType;
+
+        return $this;
+    }
+
+    public function getProcedureCategory(): ProcedureCategory
+    {
+        return $this->procedureCategory;
+    }
+
+    public function setProcedureCategory(ProcedureCategory $procedureCategory): static
+    {
+        $this->procedureCategory = $procedureCategory;
 
         return $this;
     }
