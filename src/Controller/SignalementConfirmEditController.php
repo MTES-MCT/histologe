@@ -6,6 +6,8 @@ use App\Entity\Enum\SuiviCategory;
 use App\Entity\Signalement;
 use App\Manager\SuiviManager;
 use App\Security\Voter\SignalementFoVoter;
+use App\Service\Signalement\Suivi\SuiviDescriptionHelper;
+use App\Service\Signalement\Suivi\SuiviDescriptionVariant;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bridge\Doctrine\Attribute\MapEntity;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -20,6 +22,7 @@ class SignalementConfirmEditController extends AbstractController
         #[MapEntity(expr: 'repository.findOneByCodeForPublic(code)')]
         Signalement $signalement,
         SuiviManager $suiviManager,
+        SuiviDescriptionHelper $suiviDescriptionHelper,
         EntityManagerInterface $entityManager,
     ): Response {
         $this->denyAccessUnlessGranted(SignalementFoVoter::SIGN_USAGER_EDIT_OFFLINE, $signalement);
@@ -30,7 +33,11 @@ class SignalementConfirmEditController extends AbstractController
 
             $suiviManager->createSuivi(
                 signalement: $signalement,
-                description: $this->renderView('suivi/front_signalement_confirm_edit_email_occupant.html.twig', ['old' => $old, 'new' => $signalement->getMailOccupant()]),
+                description: $suiviDescriptionHelper->buildDescriptionForCreation(
+                    SuiviCategory::SIGNALEMENT_EDITED_FO,
+                    ['old' => $old, 'new' => $signalement->getMailOccupant()],
+                    SuiviDescriptionVariant::MODIFICATION_EMAIL_OCCUPANT,
+                ),
                 category: SuiviCategory::SIGNALEMENT_EDITED_FO,
                 isVisibleForUsager: true,
             );
