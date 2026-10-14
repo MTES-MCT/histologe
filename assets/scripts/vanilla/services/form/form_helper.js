@@ -37,6 +37,7 @@ export function initTinyMCE(selector) {
     tinymce.init({
       selector: selector,
       browser_spellcheck: true,
+      contextmenu: false,
       license_key: 'gpl',
       cache_suffix: TINYMCE_CACHE_SUFFIX,
       language: 'fr-FR',
