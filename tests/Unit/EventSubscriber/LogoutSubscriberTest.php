@@ -4,6 +4,7 @@ namespace App\Tests\Unit\EventSubscriber;
 
 use App\Entity\User;
 use App\EventSubscriber\LogoutSubscriber;
+use App\Security\User\ServiceSecoursUser;
 use App\Security\User\SignalementUser;
 use App\Service\Gouv\ProConnect\ProConnectAuthentication;
 use App\Service\Gouv\ProConnect\ProConnectContext;
@@ -154,5 +155,61 @@ class LogoutSubscriberTest extends TestCase
         $response = $event->getResponse();
         $this->assertInstanceOf(RedirectResponse::class, $response);
         $this->assertSame('/', $response->getTargetUrl());
+    }
+
+    public function testLogoutHandlesExceptionAndAddsFlashForServiceSecoursUser(): void
+    {
+        $flashBag = $this->createMock(FlashBagInterface::class);
+        $flashBag
+            ->expects($this->once())
+            ->method('add')
+            ->with(
+                'warning',
+                $this->stringContains('n\'a pas pu être effectuée automatiquement')
+            );
+
+        $request = new Request([], [], [], [], [], ['HTTP_HOST' => 'service-secours.histologe.test']);
+        /** @var MockObject&FlashBagAwareSessionInterface $session */
+        $session = $this->createMock(FlashBagAwareSessionInterface::class);
+        $session->method('has')->willReturn(true);
+        $session->method('getFlashBag')->willReturn($flashBag);
+
+        $request->setSession($session);
+
+        $serviceSecoursUser = new ServiceSecoursUser(
+            'uuid-123',
+            'agent@test.fr',
+            'SDIS 13',
+            '12345678901234',
+            '00000000-0000-0000-0000-000000000001',
+        );
+
+        /** @var MockObject&TokenInterface $token */
+        $token = $this->createMock(TokenInterface::class);
+        $token->method('getUser')->willReturn($serviceSecoursUser);
+
+        $event = new LogoutEvent($request, $token);
+
+        $this->proConnectAuth->method('getLogoutUrl')->willThrowException(new \RuntimeException('Network down'));
+        $this->urlGenerator->method('generate')
+            ->with('service_secours_home', ['domain' => 'histologe.test'])
+            ->willReturn('http://service-secours.histologe.test');
+
+        /** @var MockObject&LoggerInterface $logger */
+        $logger = $this->createMock(LoggerInterface::class);
+        $logger->expects($this->once())->method('error')->with('Erreur ProConnect getLogoutUrl Service Secours', $this->anything());
+
+        $subscriber = new LogoutSubscriber(
+            $this->proConnectAuth,
+            $this->proConnectContext,
+            $this->urlGenerator,
+            $logger,
+        );
+
+        $subscriber->onLogout($event);
+
+        $response = $event->getResponse();
+        $this->assertInstanceOf(RedirectResponse::class, $response);
+        $this->assertSame('http://service-secours.histologe.test', $response->getTargetUrl());
     }
 }

@@ -1,0 +1,62 @@
+{% extends 'service_secours/base.html.twig' %}
+
+{% block title %}Vous êtes un service de secours ? - {% endblock %}
+
+{% block body %}
+    <main class="fr-container fr-mb-5w" id="content">
+        <div class="fr-grid-row fr-grid-row--center">
+            <div class="fr-col-12 fr-col-md-9 fr-col-lg-8 fr-mt-4w">
+                <h1>Vous êtes un service de secours ?</h1>
+
+                <p class="fr-text--lead">
+                    Vous êtes un service de secours ou d'urgence et souhaitez signaler un problème dans un logement ou un bâtiment ?
+                </p>
+
+                <p>
+                    Identifiez-vous avec ProConnect pour accéder au formulaire dédié aux services de secours.
+                </p>
+                <p>
+                    Une fois connecté, vous pourrez déposer un signalement concernant un logement ou un bâtiment nécessitant l'intervention ou l'attention des services compétents.
+                </p>
+
+                <div class="fr-connect-group fr-my-4w">
+                    <form action="{{ path('service_secours_proconnect_login', {'domain': root_domain(app.request.host)}) }}" method="post">
+                        <button class="fr-connect" aria-label="S’identifier avec ProConnect">
+                            <span class="fr-connect__login">S’identifier avec</span>
+                            <span class="fr-connect__brand">ProConnect</span>
+                        </button>
+                    </form>
+                    <p>
+                        <a href="https://www.proconnect.gouv.fr/"
+                           target="_blank"
+                           rel="noopener"
+                           title="Qu’est-ce que ProConnect ? - nouvelle fenêtre">Qu’est-ce que ProConnect ?
+                        </a>
+                    </p>
+                </div>
+
+                <div class="fr-callout fr-my-4w">
+                    <h2 class="fr-callout__title">Avant de commencer</h2>
+                    <p class="fr-callout__text fr-mb-4w">
+                        Prévoyez environ 15 minutes pour compléter un signalement. Il est utile d'avoir :
+                    </p>
+                    <ul>
+                        <li>l'adresse du logement ou du bâtiment ;</li>
+                        <li>des photos des problèmes constatés ;</li>
+                        <li>si disponible, le nom du propriétaire ou du bailleur ;</li>
+                        <li>les informations utiles concernant les occupants.</li>
+                    </ul>
+                    <p class="fr-callout__text fr-text--sm fr-mt-2w fr-mb-0">
+                        En tant que service de secours, seules les informations indispensables au traitement du signalement seront obligatoires.
+                    </p>
+                </div>
+
+                <div class="fr-alert fr-alert--info fr-alert--sm">
+                    <p>
+                        Les informations renseignées seront uniquement partagées avec les administrations compétentes pour traiter le dossier.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </main>
+{% endblock %}
