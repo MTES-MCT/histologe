@@ -71,6 +71,8 @@ class LoadSuiviData extends Fixture implements OrderedFixtureInterface
             $signalement = $this->signalementRepository->findOneBy(['uuid' => $row['signalement']]);
         }
         $createdBy = isset($row['created_by']) ? $this->userRepository->findOneBy(['email' => $row['created_by']]) : null;
+        // si le suivi est créé par un utilisateur API, on récupère le partenaire de l'affectation du signalement
+        // sinon on récupère le partenaire de l'utilisateur
         $partner = $createdBy ?
             (
                 $createdBy->isApiUser() ?

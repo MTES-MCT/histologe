@@ -233,14 +233,8 @@ class Suivi implements EntityHistoryInterface
                 }
             }
         } elseif (!$this->getCreatedBy() && in_array($this->getCategory(), SuiviCategory::categoriesSubmittedByUsager())) {
-            if ($this->getcreatedat()->format('Y') >= 2024) {
-                $partnerOrType = 'OCCUPANT/DECLARANT';
-            } else {
-                $partnerOrType = $this->getSignalement()->getIsNotOccupant() ? 'DECLARANT' : 'OCCUPANT';
-                $author = $this->getSignalement()->getIsNotOccupant() ?
-                    strtoupper($this->getSignalement()->getNomDeclarant()).' '.ucfirst($this->getSignalement()->getPrenomDeclarant()) :
-                    strtoupper($this->getSignalement()->getNomOccupant()).' '.ucfirst($this->getSignalement()->getPrenomOccupant());
-            }
+            // Suivi usager sans compte associé : impossible de savoir si c'est l'occupant ou le déclarant
+            $partnerOrType = 'OCCUPANT/DECLARANT';
         }
 
         $label = implode($separator, array_filter([$partnerOrType, $author]));

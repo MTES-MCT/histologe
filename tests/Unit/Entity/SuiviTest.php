@@ -224,21 +224,15 @@ class SuiviTest extends KernelTestCase
         $this->assertSame('OCCUPANT/DECLARANT', $suivi->getCreatedByLabel());
     }
 
-    public function testCreatedByLabelLegacyUsagerSuiviBefore2024FromDeclarant(): void
+    public function testCreatedByLabelLegacyUsagerSuiviBefore2024(): void
     {
         $suivi = $this->createSuivi(SuiviCategory::MESSAGE_USAGER)
             ->setCreatedAt(new \DateTimeImmutable('2023-06-01'));
 
-        $this->assertSame('DECLARANT : DURAND Paul', $suivi->getCreatedByLabel());
-    }
+        $this->assertSame('OCCUPANT/DECLARANT', $suivi->getCreatedByLabel());
 
-    public function testCreatedByLabelLegacyUsagerSuiviBefore2024FromOccupant(): void
-    {
         $this->signalement->setIsNotOccupant(false);
-        $suivi = $this->createSuivi(SuiviCategory::MESSAGE_USAGER)
-            ->setCreatedAt(new \DateTimeImmutable('2023-06-01'));
-
-        $this->assertSame('OCCUPANT : MARTIN Marie', $suivi->getCreatedByLabel());
+        $this->assertSame('OCCUPANT/DECLARANT', $suivi->getCreatedByLabel());
     }
 
     // getCreatedByLabel : cas sans auteur identifiable
