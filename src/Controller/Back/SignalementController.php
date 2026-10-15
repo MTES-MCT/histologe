@@ -23,14 +23,12 @@ use App\Form\AdminCancelInjonctionProcedureType;
 use App\Form\AffectationToggleType;
 use App\Form\AgentSelectionType;
 use App\Form\CloseAffectationType;
-use App\Form\CloseSignalementType;
 use App\Form\ClotureType;
 use App\Form\ProcedureEngageeType;
 use App\Form\RefusAffectationType;
 use App\Form\RefusSignalementType;
 use App\Manager\AffectationManager;
 use App\Manager\SignalementManager;
-use App\Repository\AffectationRepository;
 use App\Repository\CritereRepository;
 use App\Repository\DesordreCategorieRepository;
 use App\Repository\DesordreCritereRepository;
@@ -94,7 +92,6 @@ class SignalementController extends AbstractController
         SignalementManager $signalementManager,
         EventDispatcherInterface $eventDispatcher,
         SignalementQualificationNde $signalementQualificationNdeService,
-        AffectationRepository $affectationRepository,
         InterventionRepository $interventionRepository,
         SignalementDesordresProcessor $signalementDesordresProcessor,
         DesordreCategorieRepository $desordreCategorieRepository,
@@ -169,11 +166,7 @@ class SignalementController extends AbstractController
 
         $clotureForm = null;
         $closeAffectationForm = null;
-        $closeSignalementForm = null;
         if ($this->featureClotureV2) {
-            if ($this->isGranted(SignalementVoter::SIGN_CLOSE, $signalement)) {
-                $closeSignalementForm = $this->createForm(CloseSignalementType::class, $signalement, ['action' => $this->generateUrl('back_signalement_close', ['uuid' => $signalement->getUuid()])]);
-            }
             if ($affectation && $this->isGranted(AffectationVoter::AFFECTATION_CLOSE, $affectation)) {
                 $closeAffectationForm = $this->createForm(CloseAffectationType::class, $affectation, ['action' => $this->generateUrl('back_affectation_close', ['uuid' => $signalement->getUuid()])]);
             }
@@ -311,7 +304,6 @@ class SignalementController extends AbstractController
             'partners' => $partners,
             'affectationToggleForm' => $affectationToggleForm,
             'clotureForm' => $clotureForm,
-            'closeSignalementForm' => $closeSignalementForm,
             'closeAffectationForm' => $closeAffectationForm,
             'addSuiviForm' => $addSuiviForm,
             'acceptSignalementForm' => $acceptSignalementForm,

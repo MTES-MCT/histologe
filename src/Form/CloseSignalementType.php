@@ -100,7 +100,7 @@ class CloseSignalementType extends AbstractType
             'help' => 'Si une visite a été renseignée sur le dossier : les conclusions de la visite sont reprises automatiquement. Vous pouvez modifier ces informations si elles ne correspondent pas aux procédures engagées sur ce dossier.',
             'mapped' => false,
             'showSelectionAsTags' => true,
-            'data' => $this->signalementProcedureService->getProceduresFromIntervention($signalement),
+            'data' => $this->signalementProcedureService->getProceduresPreselectedForClosing($signalement),
         ]);
         $builder->add('withoutProcedure', CheckboxType::class, [
             'label' => 'Aucune procédure n’a été engagée sur le dossier',

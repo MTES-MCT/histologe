@@ -1,3 +1,6 @@
+import { initTinyMCE } from '../../services/form/form_helper.js';
+import { initializeFormSteps } from '../../services/form/ajax_form_steps.js';
+
 const radioButtons = document.querySelectorAll('input[name="cloture[isVisibleForUsager]"]');
 const cloturePublicOui = document.querySelector('#warning_cloture_public_oui');
 const cloturePublicNon = document.querySelector('#warning_cloture_public_non');
@@ -31,57 +34,91 @@ motifClotureSelect?.addEventListener('change', updateTravauxVisibilityAffectatio
 updateTravauxVisibilityAffectation();
 
 //cloture signalement v2
-const motifClotureSelectSignalement = document.querySelector('#close_signalement_motifCloture');
-const travauxContainerSignalement = document.querySelector(
-  '#close_signalement_travauxMiseEnConformite_container'
-);
-const travauxRadioButtonsSignalement = document.querySelectorAll(
-  'input[name="close_signalement[travauxMiseEnConformite]"]'
-);
-const travauxWarningSignalement = document.querySelector(
-  '#close_signalement_travauxMiseEnConformite_warning'
-);
-const proceduresContainerSignalement = document.querySelector(
-  '#close_signalement_procedures_container'
-);
-const withoutProcedureCheckboxSignalement = document.querySelector(
-  '#close_signalement_withoutProcedure'
-);
-
-function updateTravauxVisibilitySignalement() {
-  if (!motifClotureSelectSignalement || !travauxContainerSignalement) return;
-  const selectedOption =
-    motifClotureSelectSignalement.options[motifClotureSelectSignalement.selectedIndex];
-  const needTravaux = selectedOption?.hasAttribute('data-need-travaux-precisions');
-  travauxContainerSignalement.classList.toggle('fr-hidden', !needTravaux);
-}
-
-function updateTravauxWarningSignalement() {
-  const selectedTravaux = document.querySelector(
-    'input[name="close_signalement[travauxMiseEnConformite]"]:checked'
+function initCloseSignalementForm() {
+  const motifClotureSelectSignalement = document.querySelector('#close_signalement_motifCloture');
+  const travauxContainerSignalement = document.querySelector(
+    '#close_signalement_travauxMiseEnConformite_container'
   );
-  travauxWarningSignalement?.classList.toggle('fr-hidden', selectedTravaux?.value !== 'EN_COURS');
-}
+  const travauxRadioButtonsSignalement = document.querySelectorAll(
+    'input[name="close_signalement[travauxMiseEnConformite]"]'
+  );
+  const travauxWarningSignalement = document.querySelector(
+    '#close_signalement_travauxMiseEnConformite_warning'
+  );
+  const proceduresContainerSignalement = document.querySelector(
+    '#close_signalement_procedures_container'
+  );
+  const withoutProcedureCheckboxSignalement = document.querySelector(
+    '#close_signalement_withoutProcedure'
+  );
 
-function updateProceduresStateSignalement() {
-  if (!proceduresContainerSignalement || !withoutProcedureCheckboxSignalement) return;
+  function updateTravauxVisibilitySignalement() {
+    if (!motifClotureSelectSignalement || !travauxContainerSignalement) return;
+    const selectedOption =
+      motifClotureSelectSignalement.options[motifClotureSelectSignalement.selectedIndex];
+    const needTravaux = selectedOption?.hasAttribute('data-need-travaux-precisions');
+    travauxContainerSignalement.classList.toggle('fr-hidden', !needTravaux);
+  }
 
-  const isWithoutProcedure = withoutProcedureCheckboxSignalement.checked;
-  proceduresContainerSignalement.querySelectorAll('input, button').forEach((control) => {
-    if (isWithoutProcedure && control.type === 'checkbox') {
-      control.checked = false;
-    }
-    control.disabled = isWithoutProcedure;
+  function updateTravauxWarningSignalement() {
+    const selectedTravaux = document.querySelector(
+      'input[name="close_signalement[travauxMiseEnConformite]"]:checked'
+    );
+    travauxWarningSignalement?.classList.toggle('fr-hidden', selectedTravaux?.value !== 'EN_COURS');
+  }
+
+  function updateProceduresStateSignalement() {
+    if (!proceduresContainerSignalement || !withoutProcedureCheckboxSignalement) return;
+
+    const isWithoutProcedure = withoutProcedureCheckboxSignalement.checked;
+    proceduresContainerSignalement.querySelectorAll('input, button').forEach((control) => {
+      if (isWithoutProcedure && control.type === 'checkbox') {
+        control.checked = false;
+      }
+      control.disabled = isWithoutProcedure;
+    });
+
+    window.dispatchEvent(new Event('refreshSearchCheckboxContainerEvent'));
+  }
+
+  motifClotureSelectSignalement?.addEventListener('change', updateTravauxVisibilitySignalement);
+  travauxRadioButtonsSignalement.forEach((radioButton) => {
+    radioButton.addEventListener('change', updateTravauxWarningSignalement);
   });
-
-  window.dispatchEvent(new Event('refreshSearchCheckboxContainerEvent'));
+  withoutProcedureCheckboxSignalement?.addEventListener('change', updateProceduresStateSignalement);
+  updateTravauxVisibilitySignalement();
+  updateTravauxWarningSignalement();
+  updateProceduresStateSignalement();
 }
 
-motifClotureSelectSignalement?.addEventListener('change', updateTravauxVisibilitySignalement);
-travauxRadioButtonsSignalement.forEach((radioButton) => {
-  radioButton.addEventListener('change', updateTravauxWarningSignalement);
+const btnCloseSignalement = document.querySelector('.btn-close-signalement');
+
+btnCloseSignalement?.addEventListener('click', () => {
+  const url = btnCloseSignalement.dataset.url;
+  const panelContent = document.querySelector('#panel-close-signalement-content');
+  panelContent.querySelectorAll('textarea.editor').forEach((textarea) => {
+    window.tinymce?.get(textarea.id)?.remove();
+  });
+  const submitButton = document.querySelector('#panel-close-signalement button[type="submit"]');
+  submitButton.disabled = true;
+  panelContent.innerHTML = 'Chargement en cours...';
+  fetch(url).then((response) => {
+    if (response.ok) {
+      response.json().then((response) => {
+        panelContent.innerHTML = response.content;
+        submitButton.disabled = false;
+
+        initCloseSignalementForm();
+        const closeSignalementForm = panelContent.querySelector('#close-signalement-form');
+        if (closeSignalementForm) {
+          initializeFormSteps(closeSignalementForm);
+        }
+        initTinyMCE('#close-signalement-form textarea.editor');
+      });
+    } else {
+      const content =
+        '<div class="fr-notice fr-notice--alert"><div class="fr-container"><div class="fr-notice__body"><p><span class="fr-notice__title">Erreur</span><span class="fr-notice__desc">Une erreur s\'est produite. Veuillez actualiser la page.</span></p></div></div></div>';
+      document.querySelector('#panel-close-signalement-content').innerHTML = content;
+    }
+  });
 });
-withoutProcedureCheckboxSignalement?.addEventListener('change', updateProceduresStateSignalement);
-updateTravauxVisibilitySignalement();
-updateTravauxWarningSignalement();
-updateProceduresStateSignalement();
