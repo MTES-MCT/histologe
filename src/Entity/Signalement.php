@@ -546,7 +546,7 @@ class Signalement implements EntityHistoryInterface, EntityHistoryCollectionInte
 
     #[ORM\Column(type: Types::TEXT, nullable: true)]
     #[Assert\NotBlank(groups: ['close_signalement', 'close_signalement_step_1'], message: 'Veuillez commenter la clôture du signalement.')]
-    #[Assert\Length(min: 16, groups: ['close_signalement', 'close_signalement_step_1'], minMessage: 'La précision doit contenir au moins 10 caractères.')] // on compte 16 pour une limite de 10 car le message est emglobé par <p></p> par l'éditeur de texte
+    #[Assert\Length(min: 17, groups: ['close_signalement', 'close_signalement_step_1'], minMessage: 'La précision doit contenir au moins 10 caractères.')] // on compte 17 pour une limite de 10 car le message est emglobé par <p></p> par l'éditeur de texte
     private ?string $comCloture = null;
 
     #[ORM\OneToOne(mappedBy: 'signalement', targetEntity: SignalementUsager::class)]
