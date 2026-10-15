@@ -40,8 +40,11 @@ services:
       WIREMOCK_HOSTNAME: ${WIREMOCK_HOSTNAME}
       WIREMOCK_PORT: ${WIREMOCK_PORT}
       MESSENGER_TRANSPORT_DSN: ${MESSENGER_TRANSPORT_DSN}
+      PHP_IDE_CONFIG: "serverName=Silo"
     volumes:
       - .:/app/
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
 
   signal_logement_phpworker:
     build: .docker/php-worker
