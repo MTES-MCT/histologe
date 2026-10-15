@@ -118,27 +118,10 @@ function updateMailingSumaryState() {
   }
 }
 
-document.addEventListener('click', (evt) => {
-  const target = evt.target.closest('.btn-transfer-partner-user');
-  if (!target) return;
-
-  document.querySelector('#fr-modal-user-transfer_username').textContent =
-    target.getAttribute('data-username');
-  histoUpdateValueFromData('#fr-modal-user-transfer_userid', 'data-userid', target);
-});
-
-document.addEventListener('click', (evt) => {
-  const target = evt.target.closest('.btn-delete-partner-user');
-  if (!target) return;
-
-  document.querySelectorAll('.fr-modal-user-delete_username').forEach((userItem) => {
-    userItem.textContent = target.getAttribute('data-username');
-  });
-  document.querySelectorAll('.fr-modal-user-delete_useremail').forEach((userItem) => {
-    userItem.textContent = target.getAttribute('data-useremail');
-  });
-  histoUpdateValueFromData('#fr-modal-user-delete_userid', 'data-userid', target);
-});
+// NOTE POC STIMULUS: Les écouteurs globaux sur le document pour le transfert et la suppression
+// des utilisateurs de partenaires (.btn-transfer-partner-user et .btn-delete-partner-user)
+// ont été migrés vers le contrôleur Stimulus `assets/controllers/partner_user_modal_controller.js`.
+// Cela élimine ces listeners globaux tournant inutilement sur toutes les pages du BO.
 
 document.addEventListener('click', (evt) => {
   const target = evt.target.closest('.btn-delete-partner');
