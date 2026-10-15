@@ -65,17 +65,17 @@ class LoadPartnerData extends Fixture implements OrderedFixtureInterface
             $partner->setEsaboraUrl($row['esabora_url'])->setEsaboraToken($this->tokenGenerator->generateToken());
         }
 
-        if (isset($row['oauth2_token_url'])) {
-            $partner->setEsaboraOauth2TokenUrl($row['oauth2_token_url']);
+        if (isset($row['esabora_oauth2_token_url'])) {
+            $partner->setEsaboraOauth2TokenUrl($row['esabora_oauth2_token_url']);
         }
-        if (isset($row['oauth2_client_id'])) {
-            $partner->setEsaboraOauth2ClientId($row['oauth2_client_id']);
+        if (isset($row['esabora_oauth2_client_id'])) {
+            $partner->setEsaboraOauth2ClientId($row['esabora_oauth2_client_id']);
         }
-        if (isset($row['oauth2_client_secret'])) {
-            $partner->setEsaboraOauth2ClientSecret($row['oauth2_client_secret']);
+        if (isset($row['esabora_oauth2_client_secret'])) {
+            $partner->setEsaboraOauth2ClientSecret($row['esabora_oauth2_client_secret']);
         }
-        if (isset($row['oauth2_scope'])) {
-            $partner->setEsaboraOauth2Scope($row['oauth2_scope']);
+        if (isset($row['esabora_oauth2_scope'])) {
+            $partner->setEsaboraOauth2Scope($row['esabora_oauth2_scope']);
         }
 
         if (isset($row['type'])) {
