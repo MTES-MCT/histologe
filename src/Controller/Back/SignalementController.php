@@ -30,7 +30,6 @@ use App\Form\RefusAffectationType;
 use App\Form\RefusSignalementType;
 use App\Manager\AffectationManager;
 use App\Manager\SignalementManager;
-use App\Repository\AffectationRepository;
 use App\Repository\CritereRepository;
 use App\Repository\DesordreCategorieRepository;
 use App\Repository\DesordreCritereRepository;
@@ -94,7 +93,6 @@ class SignalementController extends AbstractController
         SignalementManager $signalementManager,
         EventDispatcherInterface $eventDispatcher,
         SignalementQualificationNde $signalementQualificationNdeService,
-        AffectationRepository $affectationRepository,
         InterventionRepository $interventionRepository,
         SignalementDesordresProcessor $signalementDesordresProcessor,
         DesordreCategorieRepository $desordreCategorieRepository,

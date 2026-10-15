@@ -21,10 +21,12 @@ use App\Security\Voter\SignalementVoter;
 use App\Service\Files\FilenameGenerator;
 use App\Service\Signalement\PhotoHelper;
 use App\Service\Signalement\SignalementDesordresProcessor;
+use App\Service\Signalement\TabOrientation\TabOrientationService;
 use App\Service\UploadHandlerService;
 use App\Utils\FormHelper;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\DependencyInjection\Attribute\Target;
 use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
@@ -52,6 +54,9 @@ class SignalementVisitesController extends AbstractController
         private readonly WorkflowInterface $interventionPlanningStateMachine,
         private readonly EntityManagerInterface $entityManager,
         private readonly InterventionManager $interventionManager,
+        #[Autowire(env: 'FEATURE_ORIENTATION')]
+        private readonly bool $featureOrientation,
+        private readonly TabOrientationService $tabOrientationService,
     ) {
     }
 
@@ -124,6 +129,12 @@ class SignalementVisitesController extends AbstractController
                 ),
             ],
         ];
+        if ($this->featureOrientation) {
+            $htmlTargetContents[] = [
+                'target' => '#tabpanel-orientation-panel',
+                'content' => $this->renderView('back/signalement/view/tabs/tab-orientation.html.twig', ['tabOrientationItems' => $this->tabOrientationService->getTabOrientationItems($signalement)]),
+            ];
+        }
         $functions = [
             ['name' => 'applyFilter'],
             ['name' => 'openPhotoAlbumAddEventListeners'],
