@@ -58,9 +58,9 @@ class Criticite
     #[ORM\Column(type: 'boolean')]
     private bool $isDefault;
 
-    /** @var array<mixed> $qualification */
+    /** @var array<mixed>|null $qualification */
     #[ORM\Column(type: 'json', nullable: true)]
-    private $qualification = [];
+    private ?array $qualification = [];
 
     public function __construct()
     {
@@ -219,13 +219,13 @@ class Criticite
         };
     }
 
-    /** @return array<mixed> */
+    /** @return array<mixed>|null */
     public function getQualification(): ?array
     {
         return $this->qualification;
     }
 
-    /** @param array<mixed> $qualification */
+    /** @param array<mixed>|null $qualification */
     public function setQualification(?array $qualification): self
     {
         $this->qualification = $qualification;
