@@ -30,9 +30,9 @@ class SignalementQualification
     #[ORM\Column(nullable: true)]
     private ?array $desordrePrecisionIds = [];
 
-    /** @var array<mixed> $details */
+    /** @var array<mixed>|null $details */
     #[ORM\Column(nullable: true)]
-    private array $details = [];
+    private ?array $details = [];
 
     #[ORM\Column(type: 'string', nullable: true, enumType: QualificationStatus::class)]
     private ?QualificationStatus $status = null;
@@ -114,13 +114,13 @@ class SignalementQualification
         return false;
     }
 
-    /** @return array<mixed> */
-    public function getDetails(): array
+    /** @return array<mixed>|null */
+    public function getDetails(): ?array
     {
         return $this->details;
     }
 
-    /** @param array<mixed> $details */
+    /** @param array<mixed>|null $details */
     public function setDetails(?array $details): self
     {
         $this->details = $details;

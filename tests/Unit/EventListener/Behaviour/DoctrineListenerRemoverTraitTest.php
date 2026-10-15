@@ -3,17 +3,17 @@
 namespace App\Tests\Unit\EventListener\Behaviour;
 
 use App\EventListener\Behaviour\DoctrineListenerRemoverTrait;
-use Doctrine\Common\EventManager;
+use Doctrine\Common\EventManagerInterface;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
 class DoctrineListenerRemoverTraitTest extends TestCase
 {
-    private MockObject&EventManager $eventManagerMock;
+    private MockObject&EventManagerInterface $eventManagerMock;
 
     protected function setUp(): void
     {
-        $this->eventManagerMock = $this->createMock(EventManager::class);
+        $this->eventManagerMock = $this->createMock(EventManagerInterface::class);
     }
 
     public function testRemoveListenerWhenClassUsingTrait(): void
