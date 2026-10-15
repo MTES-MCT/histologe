@@ -1,39 +1,63 @@
-function initializeFormSteps(formElement) {
+function getStepElements(formElement) {
+  return Array.from(formElement.querySelectorAll('[data-step]'));
+}
+
+function getCurrentStepIndex(formElement) {
+  return getStepElements(formElement).findIndex((stepElement) => !stepElement.hidden);
+}
+
+function showStep(formElement, stepIndex) {
   const containerElement = formElement.closest('[data-form-steps]');
-  const stepElements = Array.from(formElement.querySelectorAll('[data-step]'));
+  const stepElements = getStepElements(formElement);
+  const index = Math.max(0, Math.min(stepIndex, stepElements.length - 1));
 
-  if (!containerElement || stepElements.length === 0) return;
+  stepElements.forEach((stepElement, i) => {
+    stepElement.hidden = i !== index;
+  });
 
-  const nextButton = containerElement.querySelector('[data-step-next]');
-  const previousButton = containerElement.querySelector('[data-step-previous]');
-  const submitButton = containerElement.querySelector('[data-step-submit]');
-  let currentStepIndex = 0;
+  containerElement
+    ?.querySelector('[data-step-previous]')
+    ?.classList.toggle('fr-hidden', index === 0);
+  containerElement
+    ?.querySelector('[data-step-next]')
+    ?.classList.toggle('fr-hidden', index === stepElements.length - 1);
+  containerElement
+    ?.querySelector('[data-step-submit]')
+    ?.classList.toggle('fr-hidden', index !== stepElements.length - 1);
+}
 
-  function showStep(stepIndex) {
-    currentStepIndex = Math.max(0, Math.min(stepIndex, stepElements.length - 1));
-
-    stepElements.forEach((stepElement, index) => {
-      stepElement.hidden = index !== currentStepIndex;
-    });
-
-    previousButton?.classList.toggle('fr-hidden', currentStepIndex === 0);
-    nextButton?.classList.toggle('fr-hidden', currentStepIndex === stepElements.length - 1);
-    submitButton?.classList.toggle('fr-hidden', currentStepIndex !== stepElements.length - 1);
+function showStepContaining(formElement, element) {
+  const stepIndex = getStepElements(formElement).indexOf(element?.closest('[data-step]'));
+  if (stepIndex !== -1) {
+    showStep(formElement, stepIndex);
   }
+}
 
-  function showStepContaining(element) {
-    const stepElement = element?.closest('[data-step]');
-    const stepIndex = stepElements.indexOf(stepElement);
+function initializeFormStepsContainer(containerElement) {
+  const getForm = () => containerElement.querySelector('.form-with-steps');
 
-    if (stepIndex !== -1) {
-      showStep(stepIndex);
-    }
-  }
+  containerElement.querySelector('[data-step-previous]')?.addEventListener('click', () => {
+    const formElement = getForm();
+    if (formElement) showStep(formElement, getCurrentStepIndex(formElement) - 1);
+  });
+  containerElement.addEventListener('close', () => {
+    const formElement = getForm();
+    if (formElement) showStep(formElement, 0);
+  });
+}
 
-  formElement.addEventListener('form-steps:validated', () => showStep(currentStepIndex + 1));
-  previousButton?.addEventListener('click', () => showStep(currentStepIndex - 1));
-  formElement.addEventListener('invalid', (event) => showStepContaining(event.target), true);
-  const errorObserver = new MutationObserver((mutations) => {
+export function initializeFormSteps(formElement) {
+  if (getStepElements(formElement).length === 0) return;
+
+  formElement.addEventListener('form-steps:validated', () =>
+    showStep(formElement, getCurrentStepIndex(formElement) + 1)
+  );
+  formElement.addEventListener(
+    'invalid',
+    (event) => showStepContaining(formElement, event.target),
+    true
+  );
+  new MutationObserver((mutations) => {
     const hasNewError = mutations.some((mutation) =>
       Array.from(mutation.addedNodes).some(
         (node) =>
@@ -41,18 +65,16 @@ function initializeFormSteps(formElement) {
           (node.matches('.fr-error-text') || node.querySelector('.fr-error-text'))
       )
     );
-
     if (!hasNewError) return;
 
-    const firstStepWithError = stepElements.find((stepElement) =>
+    const firstStepWithError = getStepElements(formElement).find((stepElement) =>
       stepElement.querySelector('.fr-error-text')
     );
-    showStepContaining(firstStepWithError);
-  });
-  errorObserver.observe(formElement, { childList: true, subtree: true });
-  containerElement.addEventListener('close', () => showStep(0));
+    showStepContaining(formElement, firstStepWithError);
+  }).observe(formElement, { childList: true, subtree: true });
 
-  showStep(0);
+  showStep(formElement, 0);
 }
 
+document.querySelectorAll('[data-form-steps]').forEach(initializeFormStepsContainer);
 document.querySelectorAll('.form-with-steps').forEach(initializeFormSteps);

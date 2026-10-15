@@ -202,7 +202,7 @@ class SignalementActionController extends AbstractController
         return $this->json(['redirect' => true, 'url' => $url]);
     }
 
-    #[Route('/{uuid:signalement}/close-signalement', name: 'back_signalement_close', methods: 'POST')]
+    #[Route('/{uuid:signalement}/close-signalement', name: 'back_signalement_close')]
     public function closeSignalement(
         Signalement $signalement,
         Request $request,
@@ -226,7 +226,9 @@ class SignalementActionController extends AbstractController
         ]);
         $form->handleRequest($request);
         if (!$form->isSubmitted()) {
-            return $this->json(['code' => Response::HTTP_BAD_REQUEST]);
+            $html = $this->renderView('_partials/signalement/_panel-close-signalement-form.html.twig', ['closeSignalementForm' => $form, 'signalement' => $signalement]);
+
+            return $this->json(['content' => $html]);
         }
         if (!$form->isValid()) {
             $response = ['code' => Response::HTTP_BAD_REQUEST, 'errors' => FormHelper::getErrorsFromForm(form: $form, withPrefix: true)];

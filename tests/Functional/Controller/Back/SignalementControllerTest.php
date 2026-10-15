@@ -14,6 +14,7 @@ use App\Repository\TagRepository;
 use App\Repository\UserRepository;
 use App\Tests\SessionHelper;
 use PHPUnit\Framework\Attributes\DataProvider;
+use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
@@ -261,6 +262,20 @@ class SignalementControllerTest extends WebTestCase
     //     );
     // }
 
+    /**
+     * @param array<string, mixed> $closeSignalementData
+     */
+    private function submitCloseSignalement(KernelBrowser $client, Signalement $signalement, array $closeSignalementData): void
+    {
+        /** @var RouterInterface $router */
+        $router = static::getContainer()->get(RouterInterface::class);
+        $client->request(
+            'POST',
+            $router->generate('back_signalement_close', ['uuid' => $signalement->getUuid()]),
+            ['close_signalement' => $closeSignalementData + ['_token' => $this->generateCsrfToken($client, 'close_signalement')]]
+        );
+    }
+
     public function testAdminSubmitClotureSignalementWithEmailSentToPartners(): void
     {
         self::ensureKernelShutdown();
@@ -279,21 +294,12 @@ class SignalementControllerTest extends WebTestCase
         $user = $userRepository->findOneBy(['email' => 'admin-01@signal-logement.fr']);
         $client->loginUser($user);
 
-        /** @var RouterInterface $router */
-        $router = static::getContainer()->get(RouterInterface::class);
-        $route = $router->generate('back_signalement_view', ['uuid' => $signalement->getUuid()]);
-
-        $client->request('GET', $route);
-        $client->submitForm(
-            'Fermer le dossier',
-            [
-                'close_signalement[motifCloture]' => 'RELOGEMENT_OCCUPANT',
-                'close_signalement[travauxMiseEnConformite]' => 'NON',
-                'close_signalement[comCloture]' => 'Lorem ipsum dolor sit amet, consectetur adipiscing elit',
-                'close_signalement[procedures][0]' => true, // NON_DECENCE
-                'close_signalement[procedures][2]' => true, // INSALUBRITE
-            ]
-        );
+        $this->submitCloseSignalement($client, $signalement, [
+            'motifCloture' => 'RELOGEMENT_OCCUPANT',
+            'travauxMiseEnConformite' => 'NON',
+            'comCloture' => 'Lorem ipsum dolor sit amet, consectetur adipiscing elit',
+            'procedures' => ['NON_DECENCE', 'INSALUBRITE'],
+        ]);
 
         $this->assertResponseHeaderSame('Content-Type', 'application/json');
         $response = json_decode((string) $client->getResponse()->getContent(), true);
@@ -340,19 +346,11 @@ class SignalementControllerTest extends WebTestCase
         $user = $userRepository->findOneBy(['email' => 'admin-01@signal-logement.fr']);
         $client->loginUser($user);
 
-        /** @var RouterInterface $router */
-        $router = static::getContainer()->get(RouterInterface::class);
-        $route = $router->generate('back_signalement_view', ['uuid' => $signalement->getUuid()]);
-
-        $client->request('GET', $route);
-        $client->submitForm(
-            'Fermer le dossier',
-            [
-                'close_signalement[motifCloture]' => 'RELOGEMENT_OCCUPANT',
-                'close_signalement[travauxMiseEnConformite]' => 'NON',
-                'close_signalement[comCloture]' => 'Lorem ipsum dolor sit amet, consectetur adipiscing elit',
-            ]
-        );
+        $this->submitCloseSignalement($client, $signalement, [
+            'motifCloture' => 'RELOGEMENT_OCCUPANT',
+            'travauxMiseEnConformite' => 'NON',
+            'comCloture' => 'Lorem ipsum dolor sit amet, consectetur adipiscing elit',
+        ]);
 
         $this->assertResponseHeaderSame('Content-Type', 'application/json');
         $this->assertEquals(Response::HTTP_BAD_REQUEST, $client->getResponse()->getStatusCode());
@@ -379,21 +377,13 @@ class SignalementControllerTest extends WebTestCase
         $user = $userRepository->findOneBy(['email' => 'admin-01@signal-logement.fr']);
         $client->loginUser($user);
 
-        /** @var RouterInterface $router */
-        $router = static::getContainer()->get(RouterInterface::class);
-        $route = $router->generate('back_signalement_view', ['uuid' => $signalement->getUuid()]);
-
-        $client->request('GET', $route);
-        $client->submitForm(
-            'Fermer le dossier',
-            [
-                'close_signalement[motifCloture]' => 'RELOGEMENT_OCCUPANT',
-                'close_signalement[travauxMiseEnConformite]' => 'NON',
-                'close_signalement[comCloture]' => 'Lorem ipsum dolor sit amet, consectetur adipiscing elit',
-                'close_signalement[procedures][0]' => true, // NON_DECENCE
-                'close_signalement[withoutProcedure]' => true,
-            ]
-        );
+        $this->submitCloseSignalement($client, $signalement, [
+            'motifCloture' => 'RELOGEMENT_OCCUPANT',
+            'travauxMiseEnConformite' => 'NON',
+            'comCloture' => 'Lorem ipsum dolor sit amet, consectetur adipiscing elit',
+            'procedures' => ['NON_DECENCE'],
+            'withoutProcedure' => '1',
+        ]);
 
         $this->assertResponseHeaderSame('Content-Type', 'application/json');
         $this->assertEquals(Response::HTTP_BAD_REQUEST, $client->getResponse()->getStatusCode());
@@ -421,22 +411,13 @@ class SignalementControllerTest extends WebTestCase
         $user = $userRepository->findOneBy(['email' => 'admin-territoire-13-01@signal-logement.fr']);
         $client->loginUser($user);
 
-        /** @var RouterInterface $router */
-        $router = static::getContainer()->get(RouterInterface::class);
-        $route = $router->generate('back_signalement_view', ['uuid' => $signalement->getUuid()]);
-
-        $client->request('GET', $route);
-        $client->submitForm(
-            'Fermer le dossier',
-            [
-                'close_signalement[motifCloture]' => 'RELOGEMENT_OCCUPANT',
-                'close_signalement[travauxMiseEnConformite]' => 'OUI',
-                'close_signalement[comCloture]' => 'un deux trois soleil',
-                'close_signalement[isVisibleForUsager]' => '1',
-                'close_signalement[procedures]' => [],
-                'close_signalement[withoutProcedure]' => '1',
-            ]
-        );
+        $this->submitCloseSignalement($client, $signalement, [
+            'motifCloture' => 'RELOGEMENT_OCCUPANT',
+            'travauxMiseEnConformite' => 'OUI',
+            'comCloture' => 'un deux trois soleil',
+            'isVisibleForUsager' => '1',
+            'withoutProcedure' => '1',
+        ]);
 
         $this->assertResponseHeaderSame('Content-Type', 'application/json');
         $response = json_decode((string) $client->getResponse()->getContent(), true);

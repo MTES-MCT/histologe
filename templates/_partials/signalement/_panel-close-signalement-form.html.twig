@@ -1,0 +1,36 @@
+{{ form_start(closeSignalementForm, {'attr': {'id': 'close-signalement-form', 'data-submit-type':'formData', 'class': 'form-with-steps'}}) }}
+{{ form_errors(closeSignalementForm) }}
+<div class="fr-input-group">
+    <span class="no-field-errors"></span>
+</div>
+<div data-step="1">
+    <p>
+        Expliquez ici les raisons de la fermeture du dossier et choisissez à qui ces informations seront transmises. 
+        A l'étape suivante, vous pourrez indiquer les procédures engagées sur le dossier.
+    </p>
+    <p><i>Sauf mention contraire, tous les champs sont obligatoires.</i></p>
+    {% include "back/signalement/view/_destinataires-du-message.html.twig" with {'form': closeSignalementForm, 'signalement': signalement} %}
+    {{ form_row(closeSignalementForm.motifCloture) }}
+    <div id="close_signalement_travauxMiseEnConformite_container">
+        {{ form_row(closeSignalementForm.travauxMiseEnConformite) }}
+        <div class="fr-notice fr-notice--warning fr-notice--no-icon fr-mt-n6v fr-mb-4v fr-hidden" id="close_signalement_travauxMiseEnConformite_warning">
+            <div class="fr-container">
+                <div class="fr-notice__body">
+                    <p><span class="fr-notice__title">Dans 6 mois, nous enverrons un message à l'usager pour l’interroger sur l’avancement des travaux.</span></p>
+                </div>
+            </div>
+        </div>
+    </div>
+    {{ form_row(closeSignalementForm.comCloture) }}
+</div>
+<div data-step="2">
+    <p>
+        Vérifiez et / ou complétez les informations concernant les procédures engagées sur ce dossier.
+        Les informations saisies à cette étape ne seront pas envoyées à l'usager.
+    </p>
+    <p><i>Tous les champs sont obligatoires.</i></p>
+    {{ form_row(closeSignalementForm.procedures) }}
+    {{ form_row(closeSignalementForm.withoutProcedure) }}
+</div>
+
+{{ form_end(closeSignalementForm) }}
