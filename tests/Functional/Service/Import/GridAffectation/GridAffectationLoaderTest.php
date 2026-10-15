@@ -137,7 +137,7 @@ class GridAffectationLoaderTest extends KernelTestCase
             'line 5 : Type incorrect pour Random Type --> Random Type',
             'line 5 : Rôle incorrect pour jon.conor@signal-logement.fr --> Fake role',
             'line 6 : Type incorrect pour Random Type --> Random Type',
-            'line 6 : Cette valeur n\'est pas une adresse email valide. Erreur sur le champ email pour l\'agent john.doe@',
+            'line 6 : Cette valeur n\'est pas une adresse e-mail valide. Erreur sur le champ email pour l\'agent john.doe@',
             'line 7 : E-mail partenaire déjà existant dans le territoire avec (partenaire-13-01@signal-logement.fr) dans Bouches-du-Rhône, nom : Partenaire 13-01',
             'line 9 : Nom de partenaire manquant',
             'line 10 : "user-13-06@signal-logement.fr" existe déja, merci de saisir un nouvel e-mail Erreur sur le champ email pour l\'agent user-13-06@signal-logement.fr',
