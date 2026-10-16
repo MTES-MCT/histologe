@@ -3,13 +3,13 @@
 namespace App\Service\Signalement;
 
 use App\Entity\Territory;
-use App\Repository\SignalementRepository;
+use App\Repository\Query\Signalement\SignalementReferenceQuery;
 use Doctrine\ORM\NonUniqueResultException;
 use Doctrine\ORM\TransactionRequiredException;
 
 class ReferenceGenerator
 {
-    public function __construct(private readonly SignalementRepository $signalementRepository)
+    public function __construct(private readonly SignalementReferenceQuery $signalementReferenceQuery)
     {
     }
 
@@ -25,7 +25,7 @@ class ReferenceGenerator
             return $todayYear.'-TEMPORAIRE';
         }
 
-        $result = $this->signalementRepository->findLastReferenceByTerritory($territory);
+        $result = $this->signalementReferenceQuery->findLastReferenceByTerritory($territory);
         if (!empty($result)) {
             list($year, $id) = explode('-', $result['reference']);
 
@@ -44,7 +44,7 @@ class ReferenceGenerator
 
     public function generateReferenceInjonction(): int
     {
-        $maxRef = $this->signalementRepository->findMaxReferenceInjonction();
+        $maxRef = $this->signalementReferenceQuery->findMaxReferenceInjonction();
         if ($maxRef) {
             return $maxRef + 1;
         }

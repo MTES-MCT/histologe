@@ -7,9 +7,9 @@ use App\Repository\CritereRepository;
 use App\Repository\PartnerRepository;
 use App\Repository\Query\Address\AddressesHistoryQuery;
 use App\Repository\Query\Commune\CommuneEpciQuery;
+use App\Repository\Query\Signalement\SignalementLocalisationQuery;
 use App\Repository\Query\Statistics\CountStatisticsQuery;
 use App\Repository\Query\Zone\ZoneSignalementQuery;
-use App\Repository\SignalementRepository;
 use App\Repository\TagRepository;
 use App\Repository\TerritoryRepository;
 use App\Repository\UserRepository;
@@ -25,7 +25,7 @@ class SearchFilterOptionDataProviderTest extends KernelTestCase
     private readonly TerritoryRepository $territoryRepository;
     private readonly PartnerRepository $partnerRepository;
     private readonly TagRepository $tagsRepository;
-    private readonly SignalementRepository $signalementRepository;
+    private readonly SignalementLocalisationQuery $signalementLocalisationQuery;
     private readonly AddressesHistoryQuery $addressesHistoryQuery;
     private readonly BailleurRepository $bailleurRepository;
     private readonly TagAwareCacheInterface $cache;
@@ -42,7 +42,7 @@ class SearchFilterOptionDataProviderTest extends KernelTestCase
         $this->territoryRepository = static::getContainer()->get(TerritoryRepository::class);
         $this->partnerRepository = static::getContainer()->get(PartnerRepository::class);
         $this->tagsRepository = static::getContainer()->get(TagRepository::class);
-        $this->signalementRepository = static::getContainer()->get(SignalementRepository::class);
+        $this->signalementLocalisationQuery = static::getContainer()->get(SignalementLocalisationQuery::class);
         $this->addressesHistoryQuery = static::getContainer()->get(AddressesHistoryQuery::class);
         $this->bailleurRepository = static::getContainer()->get(BailleurRepository::class);
         $this->cache = static::getContainer()->get(TagAwareCacheInterface::class);
@@ -55,7 +55,7 @@ class SearchFilterOptionDataProviderTest extends KernelTestCase
             $this->territoryRepository,
             $this->partnerRepository,
             $this->tagsRepository,
-            $this->signalementRepository,
+            $this->signalementLocalisationQuery,
             $this->addressesHistoryQuery,
             $this->cache,
             $this->qualificationStatusService,
@@ -80,7 +80,7 @@ class SearchFilterOptionDataProviderTest extends KernelTestCase
         /** @var array<int, mixed> $tags */
         $tags = (array) $this->tagsRepository->findAllActive(null, $user);
         /** @var array<int, mixed> $cities */
-        $cities = (array) $this->signalementRepository->findCities($user);
+        $cities = (array) $this->signalementLocalisationQuery->findCities($user);
 
         $expectedData = compact('criteres', 'territories', 'partners', 'tags', 'cities');
 

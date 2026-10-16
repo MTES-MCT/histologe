@@ -3,7 +3,7 @@
 namespace App\Tests\Functional\Service\Signalement;
 
 use App\Entity\Territory;
-use App\Repository\SignalementRepository;
+use App\Repository\Query\Signalement\SignalementReferenceQuery;
 use App\Repository\TerritoryRepository;
 use App\Service\Signalement\ReferenceGenerator;
 use Doctrine\ORM\EntityManagerInterface;
@@ -41,15 +41,15 @@ class ReferenceGeneratorTest extends KernelTestCase
         $territory = $territoryRepository->findOneBy(['zip' => 13]);
 
         $todayYear = (new \DateTime())->format('Y');
-        /** @var SignalementRepository&MockObject $signalementRepository */
-        $signalementRepository = $this->createMock(SignalementRepository::class);
-        $signalementRepository
+        /** @var SignalementReferenceQuery&MockObject $signalementReferenceQuery */
+        $signalementReferenceQuery = $this->createMock(SignalementReferenceQuery::class);
+        $signalementReferenceQuery
             ->expects($this->once())
             ->method('findLastReferenceByTerritory')
             ->with($territory)
             ->willReturn(['reference' => '2022-11']);
 
-        $referenceGenerator = new ReferenceGenerator($signalementRepository);
+        $referenceGenerator = new ReferenceGenerator($signalementReferenceQuery);
 
         $referenceGenerated = $referenceGenerator->generateReference($territory);
         $this->assertEquals($todayYear.'-12', $referenceGenerated);
@@ -65,15 +65,15 @@ class ReferenceGeneratorTest extends KernelTestCase
         $territoryRepository = $this->entityManager->getRepository(Territory::class);
         $territory = $territoryRepository->findOneBy(['zip' => 85]);
 
-        /** @var SignalementRepository&MockObject $signalementRepository */
-        $signalementRepository = $this->createMock(SignalementRepository::class);
-        $signalementRepository
+        /** @var SignalementReferenceQuery&MockObject $signalementReferenceQuery */
+        $signalementReferenceQuery = $this->createMock(SignalementReferenceQuery::class);
+        $signalementReferenceQuery
             ->expects($this->once())
             ->method('findLastReferenceByTerritory')
             ->with($territory)
             ->willReturn(null);
 
-        $referenceGenerator = new ReferenceGenerator($signalementRepository);
+        $referenceGenerator = new ReferenceGenerator($signalementReferenceQuery);
 
         $referenceGenerated = $referenceGenerator->generateReference($territory);
         $year = (new \DateTime())->format('Y');
