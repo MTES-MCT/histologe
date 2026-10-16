@@ -5,6 +5,7 @@ namespace App\Tests\Unit\Factory\Esabora;
 use App\Entity\Enum\PartnerType;
 use App\Entity\Signalement;
 use App\Factory\Interconnection\Esabora\DossierMessageSCHSFactory;
+use App\Service\Interconnection\Esabora\EsaboraTokenProvider;
 use App\Service\UploadHandlerService;
 use App\Tests\FixturesHelper;
 use PHPUnit\Framework\Attributes\DataProvider;
@@ -24,11 +25,18 @@ class DossierMessageSCHSFactoryTest extends TestCase
             ->method('getTmpFilepath')
             ->willReturn(self::FILE);
 
-        $dossierMessageFactory = new DossierMessageSCHSFactory($uploadHandlerServiceMock, true);
+        $esaboraTokenProviderMock = $this->createMock(EsaboraTokenProvider::class);
+        $esaboraTokenProviderMock
+            ->expects($this->once())
+            ->method('getToken')
+            ->willReturn('test-token');
+
+        $dossierMessageFactory = new DossierMessageSCHSFactory($uploadHandlerServiceMock, $esaboraTokenProviderMock, true);
         $dossierMessage = $dossierMessageFactory->createInstance(
             $this->getSignalementAffectation(PartnerType::COMMUNE_SCHS)
         );
 
+        $this->assertEquals('test-token', $dossierMessage->getToken());
         $this->assertCount(2, $dossierMessage->getPiecesJointes());
         $this->assertStringContainsString('document.pdf', $dossierMessage->getPiecesJointesObservation());
         $this->assertStringContainsString('Points signalés', $dossierMessage->getDossierCommentaire());
@@ -46,7 +54,8 @@ class DossierMessageSCHSFactoryTest extends TestCase
             ->method('getTmpFilepath')
             ->willReturn(self::FILE);
 
-        $dossierMessageFactory = new DossierMessageSCHSFactory($uploadHandlerServiceMock, true);
+        $esaboraTokenProviderMock = $this->createMock(EsaboraTokenProvider::class);
+        $dossierMessageFactory = new DossierMessageSCHSFactory($uploadHandlerServiceMock, $esaboraTokenProviderMock, true);
         $signalement = (new Signalement())->setNbEnfantsM6($nbEnfantsM6)->setNbEnfantsP6($nbEnfantsP6);
 
         $buildNbEnfantsMethod = new \ReflectionMethod(DossierMessageSCHSFactory::class, 'buildNbEnfants');
@@ -72,7 +81,8 @@ class DossierMessageSCHSFactoryTest extends TestCase
     {
         $uploadHandlerServiceMock = $this->createMock(UploadHandlerService::class);
 
-        $dossierMessageFactory = new DossierMessageSCHSFactory($uploadHandlerServiceMock, true);
+        $esaboraTokenProviderMock = $this->createMock(EsaboraTokenProvider::class);
+        $dossierMessageFactory = new DossierMessageSCHSFactory($uploadHandlerServiceMock, $esaboraTokenProviderMock, true);
 
         $affectation = $this->getSignalementAffectation(PartnerType::COMMUNE_SCHS);
         $signalement = $affectation->getSignalement();

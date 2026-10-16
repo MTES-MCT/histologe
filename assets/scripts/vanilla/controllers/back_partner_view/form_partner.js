@@ -47,6 +47,18 @@ function histoUpdateFieldsVisibility() {
   }
 }
 
+function histoUpdateEsaboraAuthVisibility() {
+  const isOAuth2 = document.querySelector('#partner_isOAuth2').checked;
+  const esaboraTokenGroup = document.querySelector('#partner_esabora_token_group');
+  const oauth2Groups = document.querySelectorAll('.js-esabora-oauth2-field');
+
+  esaboraTokenGroup.classList.toggle('fr-hidden', isOAuth2);
+
+  oauth2Groups.forEach((group) => {
+    group.classList.toggle('fr-hidden', !isOAuth2);
+  });
+}
+
 function histoUpdateCompetencesFromPartnerType() {
   const partnerTypeSelect = document.getElementById('partner_type');
   const competenceContainer = document.getElementById('partner_competence');
@@ -160,6 +172,14 @@ if (document.querySelector('#partner_type')) {
     if (isCreateMode) {
       histoUpdateCompetencesFromPartnerType();
     }
+  });
+}
+
+const isOAuth2Toggle = document.querySelector('#partner_isOAuth2');
+if (isOAuth2Toggle) {
+  histoUpdateEsaboraAuthVisibility();
+  isOAuth2Toggle.addEventListener('change', () => {
+    histoUpdateEsaboraAuthVisibility();
   });
 }
 

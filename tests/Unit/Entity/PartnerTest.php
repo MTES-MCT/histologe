@@ -2,10 +2,12 @@
 
 namespace App\Tests\Unit\Entity;
 
+use App\Entity\Enum\InterconnectionAuthType;
 use App\Entity\Enum\PartnerType;
 use App\Entity\Enum\Qualification;
 use App\Entity\Partner;
 use App\Entity\Territory;
+use App\Repository\PartnerRepository;
 use App\Tests\FixturesHelper;
 use Faker\Factory;
 use PHPUnit\Framework\Attributes\DataProvider;
@@ -66,7 +68,11 @@ class PartnerTest extends KernelTestCase
     #[DataProvider('provideDataForIsConnectedToSanteHabitat')]
     public function testIsConnectedToSanteHabitat(?string $esaboraUrl, bool $expected): void
     {
-        $partner = new Partner()->setEsaboraUrl($esaboraUrl);
+        $partner = new Partner()
+            ->setAuthenticationType(InterconnectionAuthType::STATIC_TOKEN)
+            ->setIsEsaboraActive(true)
+            ->setEsaboraToken('token')
+            ->setEsaboraUrl($esaboraUrl);
         $this->assertSame($expected, $partner->isConnectedToSanteHabitat());
     }
 
@@ -77,5 +83,15 @@ class PartnerTest extends KernelTestCase
         yield 'sante-habitat url' => ['https://sante-habitat.esabora.fr/ws', true];
         yield 'ARS url' => ['https://ARS.esabora.fr/ws', true];
         yield 'sish url' => ['https://sish.esabora.fr/ws', true];
+    }
+
+    public function testPartnerWithOauth2Connection(): void
+    {
+        $partnerRepository = static::getContainer()->get(PartnerRepository::class);
+        $partner = $partnerRepository->findOneBy(['authenticationType' => 'oauth2_client_credentials']);
+        $this->assertNotNull($partner->getEsaboraOauth2TokenUrl());
+        $this->assertNotNull($partner->getEsaboraOauth2ClientId());
+        $this->assertNotNull($partner->getEsaboraOauth2ClientSecret());
+        $this->assertNotNull($partner->getEsaboraOauth2Scope());
     }
 }

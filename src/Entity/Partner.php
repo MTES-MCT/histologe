@@ -5,6 +5,7 @@ namespace App\Entity;
 use App\Entity\Behaviour\EntityHistoryInterface;
 use App\Entity\Behaviour\TimestampableTrait;
 use App\Entity\Enum\HistoryEntryEvent;
+use App\Entity\Enum\InterconnectionAuthType;
 use App\Entity\Enum\PartnerType;
 use App\Entity\Enum\Qualification;
 use App\Entity\Enum\UserStatus;
@@ -92,7 +93,7 @@ class Partner implements EntityHistoryInterface
     private ?bool $isEsaboraActive = null;
 
     /** @var Collection<int, Intervention> $interventions */
-    #[ORM\OneToMany(mappedBy: 'partner', targetEntity: Intervention::class)]
+    #[ORM\OneToMany(targetEntity: Intervention::class, mappedBy: 'partner')]
     private Collection $interventions;
 
     #[ORM\Column]
@@ -107,6 +108,26 @@ class Partner implements EntityHistoryInterface
 
     #[ORM\Column(type: Types::DATETIME_IMMUTABLE, nullable: true)]
     private ?\DateTimeImmutable $idossTokenExpirationDate = null;
+
+    #[ORM\Column(
+        type: 'string',
+        nullable: true,
+        enumType: InterconnectionAuthType::class,
+    )]
+    private ?InterconnectionAuthType $authenticationType = null;
+
+    #[ORM\Column(length: 255, nullable: true)]
+    #[Assert\Url]
+    private ?string $esaboraOauth2TokenUrl = null;
+
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $esaboraOauth2ClientId = null;
+
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $esaboraOauth2ClientSecret = null;
+
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $esaboraOauth2Scope = null;
 
     #[ORM\ManyToOne(targetEntity: Bailleur::class, inversedBy: 'partners')]
     #[ORM\JoinColumn(nullable: true)]
@@ -128,7 +149,7 @@ class Partner implements EntityHistoryInterface
     /**
      * @var Collection<int, UserPartner>
      */
-    #[ORM\OneToMany(mappedBy: 'partner', targetEntity: UserPartner::class, orphanRemoval: true)]
+    #[ORM\OneToMany(targetEntity: UserPartner::class, mappedBy: 'partner', orphanRemoval: true)]
     private Collection $userPartners;
 
     /**
@@ -414,14 +435,27 @@ class Partner implements EntityHistoryInterface
 
     public function canSyncWithEsabora(): bool
     {
-        return $this->esaboraToken
-            && $this->esaboraUrl
-            && $this->isEsaboraActive;
+        if (!$this->isEsaboraActive || !$this->esaboraUrl) {
+            return false;
+        }
+
+        return match ($this->authenticationType) {
+            InterconnectionAuthType::STATIC_TOKEN => (bool) $this->esaboraToken,
+
+            InterconnectionAuthType::OAUTH2_CLIENT_CREDENTIALS => $this->esaboraOauth2TokenUrl
+                && $this->esaboraOauth2ClientId,
+            // TODO : Activer cette condition une fois la persistance du secret en base implémentée.
+            // Le secret est actuellement fourni globalement via la variable d'environnement OAUTH2_CLIENT_SECRET.
+            // Voir https://github.com/MTES-MCT/histologe/issues/6475
+            // && $this->esaboraOauth2ClientSecret,
+
+            null => false,
+        };
     }
 
     public function isConnectedToSanteHabitat(): bool
     {
-        if (null === $this->esaboraUrl) {
+        if (!$this->canSyncWithEsabora()) {
             return false;
         }
 
@@ -589,6 +623,66 @@ class Partner implements EntityHistoryInterface
     public function removeEpci(Epci $epci): static
     {
         $this->epcis->removeElement($epci);
+
+        return $this;
+    }
+
+    public function getEsaboraOauth2ClientSecret(): ?string
+    {
+        return $this->esaboraOauth2ClientSecret;
+    }
+
+    public function setEsaboraOauth2ClientSecret(?string $esaboraOauth2ClientSecret): static
+    {
+        $this->esaboraOauth2ClientSecret = $esaboraOauth2ClientSecret;
+
+        return $this;
+    }
+
+    public function getEsaboraOauth2ClientId(): ?string
+    {
+        return $this->esaboraOauth2ClientId;
+    }
+
+    public function setEsaboraOauth2ClientId(?string $esaboraOauth2ClientId): static
+    {
+        $this->esaboraOauth2ClientId = $esaboraOauth2ClientId;
+
+        return $this;
+    }
+
+    public function getEsaboraOauth2TokenUrl(): ?string
+    {
+        return $this->esaboraOauth2TokenUrl;
+    }
+
+    public function setEsaboraOauth2TokenUrl(?string $esaboraOauth2TokenUrl): static
+    {
+        $this->esaboraOauth2TokenUrl = $esaboraOauth2TokenUrl;
+
+        return $this;
+    }
+
+    public function getEsaboraOauth2Scope(): ?string
+    {
+        return $this->esaboraOauth2Scope;
+    }
+
+    public function setEsaboraOauth2Scope(?string $esaboraOauth2Scope): static
+    {
+        $this->esaboraOauth2Scope = $esaboraOauth2Scope;
+
+        return $this;
+    }
+
+    public function getAuthenticationType(): ?InterconnectionAuthType
+    {
+        return $this->authenticationType;
+    }
+
+    public function setAuthenticationType(?InterconnectionAuthType $authenticationType): static
+    {
+        $this->authenticationType = $authenticationType;
 
         return $this;
     }

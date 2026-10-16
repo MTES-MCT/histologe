@@ -11,6 +11,7 @@ use App\Repository\SuiviRepository;
 use App\Service\Interconnection\Esabora\AbstractEsaboraService;
 use App\Service\Interconnection\Esabora\CiviliteMapper;
 use App\Service\Interconnection\Esabora\Enum\PersonneType;
+use App\Service\Interconnection\Esabora\EsaboraTokenProvider;
 use App\Service\Interconnection\Esabora\Model\DossierMessageSISHPersonne;
 use App\Service\TimezoneProvider;
 use App\Service\UploadHandlerService;
@@ -31,6 +32,7 @@ class DossierMessageSISHFactory extends AbstractDossierMessageFactory
         private readonly UploadHandlerService $uploadHandlerService,
         private readonly ParameterBagInterface $parameterBag,
         private readonly UrlGeneratorInterface $urlGenerator,
+        private readonly EsaboraTokenProvider $esaboraTokenProvider,
         #[Autowire(env: 'FEATURE_SCHS_DISPATCH_SISH_ENABLE')]
         private readonly bool $featureSchsDispatchSishEnable,
     ) {
@@ -92,7 +94,7 @@ class DossierMessageSISHFactory extends AbstractDossierMessageFactory
 
         return (new DossierMessageSISH())
             ->setUrl($partner->getEsaboraUrl())
-            ->setToken($partner->getEsaboraToken())
+            ->setToken($this->esaboraTokenProvider->getToken($partner))
             ->setPartnerId($partner->getId())
             ->setPartnerType($partner->getType())
             ->setSignalementId($signalement->getId())

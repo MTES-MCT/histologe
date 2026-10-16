@@ -7,6 +7,7 @@ use App\Entity\Enum\EtageType;
 use App\Entity\ServiceSecoursRoute;
 use App\Repository\ServiceSecoursRouteRepository;
 use App\Repository\SignalementRepository;
+use App\Service\Interconnection\Esabora\EsaboraTokenProvider;
 use App\Tests\SessionHelper;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
@@ -157,6 +158,15 @@ class ServiceSecoursControllerTest extends WebTestCase
     {
         self::ensureKernelShutdown();
         $client = static::createClient();
+        $client->disableReboot();
+
+        $tokenJsonPath = __DIR__.'/../../../tools/wiremock/src/Resources/Oauth2/token.json';
+        $tokenData = json_decode((string) file_get_contents($tokenJsonPath), true);
+
+        $esaboraTokenProviderMock = $this->createMock(EsaboraTokenProvider::class);
+        $esaboraTokenProviderMock->method('getToken')->willReturn($tokenData['access_token']);
+        static::getContainer()->set(EsaboraTokenProvider::class, $esaboraTokenProviderMock);
+
         $crawler = $this->requestStartFlow($client);
         $crawler = $this->submitStep1($client, $crawler);
         $crawler = $this->submitStep2($client, $crawler);

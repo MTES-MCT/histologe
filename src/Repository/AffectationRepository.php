@@ -4,6 +4,7 @@ namespace App\Repository;
 
 use App\Entity\Affectation;
 use App\Entity\Enum\AffectationStatus;
+use App\Entity\Enum\InterconnectionAuthType;
 use App\Entity\Enum\InterfacageType;
 use App\Entity\Enum\PartnerType;
 use App\Entity\Enum\Qualification;
@@ -55,8 +56,24 @@ class AffectationRepository extends ServiceEntityRepository
         $qb = $qb
             ->innerJoin('a.partner', 'p')
             ->innerJoin('a.signalement', 's')
-            ->where('p.esaboraUrl IS NOT NULL AND p.esaboraToken IS NOT NULL AND p.isEsaboraActive = 1')
+            ->where('p.esaboraUrl IS NOT NULL')
+            ->andWhere('p.isEsaboraActive = 1')
+            ->andWhere(
+                $qb->expr()->orX(
+                    $qb->expr()->andX(
+                        'p.authenticationType = :static_token',
+                        'p.esaboraToken IS NOT NULL',
+                    ),
+                    $qb->expr()->andX(
+                        'p.authenticationType = :oauth2',
+                        'p.esaboraOauth2TokenUrl IS NOT NULL',
+                        'p.esaboraOauth2ClientId IS NOT NULL',
+                    ),
+                )
+            )
             ->andWhere('s.statut NOT IN (:signalement_status_list)')
+            ->setParameter('static_token', InterconnectionAuthType::STATIC_TOKEN->value)
+            ->setParameter('oauth2', InterconnectionAuthType::OAUTH2_CLIENT_CREDENTIALS->value)
             ->setParameter('signalement_status_list', SignalementStatus::excludedStatuses());
 
         if (is_array($partnerType)) {

@@ -8,6 +8,7 @@ use App\Entity\AutoAffectationRule;
 use App\Entity\Critere;
 use App\Entity\Criticite;
 use App\Entity\Enum\CreationSource;
+use App\Entity\Enum\InterconnectionAuthType;
 use App\Entity\Enum\InterventionType;
 use App\Entity\Enum\PartnerType;
 use App\Entity\Enum\ProfileDeclarant;
@@ -45,6 +46,7 @@ trait FixturesHelper
                     ->setEsaboraToken($faker->password(20))
                     ->setEsaboraUrl($faker->url())
                     ->setType($partnerType)
+                    ->setAuthenticationType(InterconnectionAuthType::STATIC_TOKEN)
             )->setSignalement(
                 (new Signalement())
                     ->setUuid($faker->uuid())

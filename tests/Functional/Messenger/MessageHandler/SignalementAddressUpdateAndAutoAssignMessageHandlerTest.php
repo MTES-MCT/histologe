@@ -8,6 +8,7 @@ use App\Messenger\MessageHandler\SignalementAddressUpdateAndAutoAssignMessageHan
 use App\Repository\AffectationRepository;
 use App\Repository\NotificationRepository;
 use App\Repository\SignalementRepository;
+use App\Service\Interconnection\Esabora\EsaboraTokenProvider;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\Messenger\MessageBusInterface;
@@ -45,6 +46,13 @@ class SignalementAddressUpdateAndAutoAssignMessageHandlerTest extends WebTestCas
     {
         self::bootKernel();
         $container = static::getContainer();
+
+        $tokenJsonPath = __DIR__.'/../../../../tools/wiremock/src/Resources/Oauth2/token.json';
+        $tokenData = json_decode((string) file_get_contents($tokenJsonPath), true);
+        $esaboraTokenProviderMock = $this->createMock(EsaboraTokenProvider::class);
+        $esaboraTokenProviderMock->method('getToken')->willReturn($tokenData['access_token']);
+        $container->set(EsaboraTokenProvider::class, $esaboraTokenProviderMock);
+
         $messageBus = $container->get(MessageBusInterface::class);
         $signalementRepository = static::getContainer()->get(SignalementRepository::class);
         $signalement = $signalementRepository->findOneBy(['reference' => '2025-05']);
