@@ -1,8 +1,14 @@
 import pluginVue from 'eslint-plugin-vue'
+import tsParser from '@typescript-eslint/parser'
 export default [
     // Later we could use: "strongly-recommended", then "recommended"
     ...pluginVue.configs['flat/essential'],
     {
+        languageOptions: {
+            parserOptions: {
+                parser: tsParser,
+            },
+        },
         rules: {
             "no-array-constructor": "off",
             "no-cond-assign": "off",
