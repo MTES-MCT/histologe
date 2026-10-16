@@ -85,6 +85,10 @@ class Territory implements EntityHistoryInterface
     #[ORM\OneToMany(targetEntity: Address::class, mappedBy: 'territory')]
     private Collection $addresses;
 
+    #[ORM\ManyToOne]
+    #[ORM\JoinColumn(nullable: false)]
+    private Region $region;
+
     public function __construct()
     {
         $this->partners = new ArrayCollection();
@@ -416,6 +420,18 @@ class Territory implements EntityHistoryInterface
     public function removeAddress(Address $address): static
     {
         $this->addresses->removeElement($address);
+
+        return $this;
+    }
+
+    public function getRegion(): Region
+    {
+        return $this->region;
+    }
+
+    public function setRegion(Region $region): static
+    {
+        $this->region = $region;
 
         return $this;
     }
