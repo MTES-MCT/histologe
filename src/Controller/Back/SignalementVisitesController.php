@@ -3,6 +3,7 @@
 namespace App\Controller\Back;
 
 use App\Entity\Enum\DocumentType;
+use App\Entity\File;
 use App\Entity\Intervention;
 use App\Entity\Signalement;
 use App\Entity\User;
@@ -19,12 +20,15 @@ use App\Repository\InterventionRepository;
 use App\Security\Voter\InterventionVoter;
 use App\Security\Voter\SignalementVoter;
 use App\Service\Files\FilenameGenerator;
+use App\Service\Files\ImageManipulationHandler;
+use App\Service\Security\FileScanner;
 use App\Service\Signalement\PhotoHelper;
 use App\Service\Signalement\SignalementDesordresProcessor;
 use App\Service\Signalement\TabOrientation\TabOrientationService;
 use App\Service\UploadHandlerService;
 use App\Utils\FormHelper;
 use Doctrine\ORM\EntityManagerInterface;
+use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\DependencyInjection\Attribute\Target;
@@ -57,6 +61,9 @@ class SignalementVisitesController extends AbstractController
         #[Autowire(env: 'FEATURE_ORIENTATION')]
         private readonly bool $featureOrientation,
         private readonly TabOrientationService $tabOrientationService,
+        private readonly ImageManipulationHandler $imageManipulationHandler,
+        private readonly FileScanner $fileScanner,
+        private readonly LoggerInterface $logger,
     ) {
     }
 
@@ -69,9 +76,25 @@ class SignalementVisitesController extends AbstractController
             return [true, null];
         }
 
+        try {
+            if (!$this->fileScanner->isClean($uploadedFile->getPathname())) {
+                $message = 'Le fichier '.$uploadedFile->getClientOriginalName().' est infecté par un virus.';
+                $this->logger->error($message);
+
+                return [false, $message];
+            }
+        } catch (\Exception $exception) {
+            $this->logger->error($exception->getMessage());
+
+            return [false, $exception->getMessage()];
+        }
+
         $newFilename = $this->filenameGenerator->generate($uploadedFile);
         try {
             $uploadedFilename = $this->uploadHandler->uploadFromFile($uploadedFile, $newFilename);
+            if ($uploadedFilename && \in_array($uploadedFile->getMimeType(), File::RESIZABLE_MIME_TYPES, true)) {
+                $this->imageManipulationHandler->setUseTmpDir(false)->resize($uploadedFilename)->thumbnail($uploadedFilename);
+            }
 
             return [true, $uploadedFilename];
         } catch (MaxUploadSizeExceededException|UnsupportedFileFormatException|EmptyFileException $exception) {
@@ -120,13 +143,17 @@ class SignalementVisitesController extends AbstractController
                 ),
             ],
             [
-                'target' => '#photos-album',
+                'target' => '#photos-album-container',
                 'content' => $this->renderView('back/signalement/view/photos-album.html.twig',
                     [
                         'signalement' => $signalement,
                         'allPhotosOrdered' => $allPhotosOrdered,
                     ]
                 ),
+            ],
+            [
+                'target' => '#documents-visite-container',
+                'content' => $this->renderView('back/signalement/view/tab-documents-visites.html.twig', ['signalement' => $signalement]),
             ],
         ];
         if ($this->featureOrientation) {

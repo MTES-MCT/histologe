@@ -1,33 +1,26 @@
 {% if s3_enable %}
-{% include 'back/signalement/view/photos-documents.html.twig' with {'zonetitle': "Photos et documents de la situation",'filesFilter': 'situation','context': 'documents-situation'} %}
+    {% include 'back/signalement/view/photos-documents.html.twig' with {'zonetitle': "Photos et documents de la situation",'filesFilter': 'situation','context': 'documents-situation'} %}
 
-<div class="fr-mt-5v"></div>
-
-{% include 'back/signalement/view/photos-documents.html.twig' with {'zonetitle': "Photos et documents concernant la procédure",'filesFilter': 'procédure','context': 'documents-procedure'} %}
-
-{% include 'back/signalement/view/photos-documents.html.twig' with {'zonetitle': "Photos et documents transmis par le bailleur",'filesFilter': 'bailleur','context': 'documents-bailleur'} %}
-
-{% for intervention in signalement.interventions | filter(intervention => intervention.type != enum('App\\Entity\\Enum\\InterventionType').ARRETE_PREFECTORAL) %}
     <div class="fr-mt-5v"></div>
-    {% include 'back/signalement/view/photos-documents.html.twig' with {
-        'zonetitle': "Photos et documents de la visite du " ~ intervention.scheduledAt|date('d/m/Y') ~ " par " ~ (intervention.partner ? intervention.partner.nom : 'Opérateur Externe'),
-        'filesFilter': 'visite',
-        'interventionId': intervention.id,
-        'context': 'documents-visite'
-        } 
-    %}
-{% endfor %}
 
-<div class="fr-mt-5v">
-    <h3 class="fr-h5">Documents types</h3>
-    <p class="fr-text--sm fr-mt-n2w fr-mb-2w">
-        Vos responsables de territoires mettent à votre disposition des documents pour vous aider dans la procédure. Ces documents sont rassemblés dans l'espace documentaire. 
-        Pour le consulter, cliquez sur le bouton (ouverture dans un nouvel onglet).
-    </p>
-    <a href="{{ path('back_territory_files_index') }}" class="fr-btn fr-btn--tertiary fr-btn--icon-right fr-icon-external-link-line" target="_blank" rel="noopener" title="Consulter l'espace documentaire - Ouvre une nouvelle fenêtre">
-        Consulter l'espace documentaire
-    </a>
-</div>
+    {% include 'back/signalement/view/photos-documents.html.twig' with {'zonetitle': "Photos et documents concernant la procédure",'filesFilter': 'procédure','context': 'documents-procedure'} %}
+
+    {% include 'back/signalement/view/photos-documents.html.twig' with {'zonetitle': "Photos et documents transmis par le bailleur",'filesFilter': 'bailleur','context': 'documents-bailleur'} %}
+
+    <div id="documents-visite-container">
+        {% include 'back/signalement/view/tab-documents-visites.html.twig' %}
+    </div>
+
+    <div class="fr-mt-5v">
+        <h3 class="fr-h5">Documents types</h3>
+        <p class="fr-text--sm fr-mt-n2w fr-mb-2w">
+            Vos responsables de territoires mettent à votre disposition des documents pour vous aider dans la procédure. Ces documents sont rassemblés dans l'espace documentaire. 
+            Pour le consulter, cliquez sur le bouton (ouverture dans un nouvel onglet).
+        </p>
+        <a href="{{ path('back_territory_files_index') }}" class="fr-btn fr-btn--tertiary fr-btn--icon-right fr-icon-external-link-line" target="_blank" rel="noopener" title="Consulter l'espace documentaire - Ouvre une nouvelle fenêtre">
+            Consulter l'espace documentaire
+        </a>
+    </div>
 {% else %}
     <div class="fr-alert fr-alert--warning">
         <h3 class="fr-alert__title">Maintenance en cours</h3>
