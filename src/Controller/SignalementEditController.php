@@ -34,7 +34,8 @@ use App\Service\Security\CguTiersChecker;
 use App\Service\Signalement\DesordreTraitement\DesordreCompositionLogementLoader;
 use App\Service\Signalement\InputValue\SituationFoyerProcessor;
 use App\Service\Signalement\SignalementUpdateService;
-use App\Utils\HtmlCleaner;
+use App\Service\Signalement\Suivi\SuiviDescriptionHelper;
+use App\Service\Signalement\Suivi\SuiviDescriptionVariant;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\NonUniqueResultException;
 use Symfony\Bridge\Doctrine\Attribute\MapEntity;
@@ -542,6 +543,7 @@ class SignalementEditController extends AbstractController
         Signalement $signalement,
         Request $request,
         SuiviManager $suiviManager,
+        SuiviDescriptionHelper $suiviDescriptionHelper,
         EntityManagerInterface $entityManager,
     ): Response {
         $this->denyAccessUnlessGranted(SignalementFoVoter::SIGN_USAGER_COMPLETE_TRAVAUX_MISE_EN_CONFORMITE, $signalement);
@@ -562,23 +564,21 @@ class SignalementEditController extends AbstractController
         $form = $this->createForm(TravauxMiseEnConformiteType::class, $signalement);
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
-            $description = '';
-            $suiviCategory = SuiviCategory::MESSAGE_USAGER_TRAVAUX_MISE_EN_CONFORMITE;
-            switch ($signalement->getTravauxMiseEnConformiteUsager()) {
-                case TravauxMiseEnConformite::OUI:
-                    $description = 'L\'usager a indiqué que les travaux ont bien été faits.';
-                    break;
-                case TravauxMiseEnConformite::EN_COURS:
-                    $description = 'L\'usager a indiqué que les travaux sont en cours.';
-                    break;
-                case TravauxMiseEnConformite::NON:
-                    $description = 'L\'usager a indiqué que les travaux n\'ont pas été faits.<br>';
-                    $description .= 'Commentaire : '.HtmlCleaner::cleanFrontEndEntry($form->get('travauxMiseEnConformiteUsagerCommentaire')->getData());
-                    $suiviCategory = SuiviCategory::MESSAGE_USAGER_POST_CLOTURE;
-                    break;
-                case TravauxMiseEnConformite::NE_SAIT_PAS:
-                    $description = 'L\'usager a indiqué qu\'il ne sait pas si les travaux ont été faits.';
-                    break;
+            /** @var TravauxMiseEnConformite $reponse non null grâce à la contrainte NotBlank du formulaire */
+            $reponse = $form->get('travauxMiseEnConformiteUsager')->getData();
+            if (TravauxMiseEnConformite::NON === $reponse) {
+                $suiviCategory = SuiviCategory::MESSAGE_USAGER_POST_CLOTURE;
+                $description = $suiviDescriptionHelper->buildDescriptionForCreation(
+                    $suiviCategory,
+                    ['commentaire' => $form->get('travauxMiseEnConformiteUsagerCommentaire')->getData()],
+                    SuiviDescriptionVariant::TRAVAUX_MISE_EN_CONFORMITE,
+                );
+            } else {
+                $suiviCategory = SuiviCategory::MESSAGE_USAGER_TRAVAUX_MISE_EN_CONFORMITE;
+                $description = $suiviDescriptionHelper->buildDescriptionForCreation(
+                    $suiviCategory,
+                    ['reponse' => $reponse->value],
+                );
             }
 
             $suiviManager->createSuivi(

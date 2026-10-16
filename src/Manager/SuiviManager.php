@@ -146,17 +146,9 @@ class SuiviManager
 
     public function addAccepteInvitationSuivi(Signalement $signalement): void
     {
-        $description = 'Un tiers a accepté une invitation pour suivre le signalement :';
-        $description .= $this->buildTiersInfoHtml(
-            $signalement->getNomDeclarant(),
-            $signalement->getPrenomDeclarant(),
-            $signalement->getMailDeclarant(),
-            $signalement->getTelDeclarantDecoded(),
-        );
-
         $this->createSuivi(
             signalement: $signalement,
-            description: $description,
+            description: $this->buildTiersInvitationDescription($signalement, SuiviDescriptionVariant::INVITATION_TIERS_ACCEPTEE),
             category: SuiviCategory::SIGNALEMENT_EDITED_FO,
             user: $this->userManager->getSystemUser(),
             isVisibleForUsager: true,
@@ -165,37 +157,27 @@ class SuiviManager
 
     public function addRefuseInvitationSuivi(Signalement $signalement): void
     {
-        $description = 'Le tiers a refusé l\'invitation pour suivre le signalement :';
-        $description .= $this->buildTiersInfoHtml(
-            $signalement->getNomDeclarant(),
-            $signalement->getPrenomDeclarant(),
-            $signalement->getMailDeclarant(),
-            $signalement->getTelDeclarantDecoded(),
-        );
-
         $this->createSuivi(
             signalement: $signalement,
-            description: $description,
+            description: $this->buildTiersInvitationDescription($signalement, SuiviDescriptionVariant::INVITATION_TIERS_REFUSEE),
             category: SuiviCategory::SIGNALEMENT_EDITED_FO,
             user: $this->userManager->getSystemUser(),
             isVisibleForUsager: true,
         );
     }
 
-    private function buildTiersInfoHtml(
-        ?string $nom,
-        ?string $prenom,
-        ?string $email,
-        ?string $telephone,
-    ): string {
-        $description = '<br><ul>';
-        $description .= $nom ? '<li>Nom : '.$nom.'</li>' : '';
-        $description .= $prenom ? '<li>Prénom : '.$prenom.'</li>' : '';
-        $description .= $email ? '<li>E-mail : '.$email.'</li>' : '';
-        $description .= $telephone ? '<li>Téléphone : '.$telephone.'</li>' : '';
-        $description .= '</ul>';
-
-        return $description;
+    private function buildTiersInvitationDescription(Signalement $signalement, SuiviDescriptionVariant $variant): string
+    {
+        return $this->suiviDescriptionHelper->buildDescriptionForCreation(
+            SuiviCategory::SIGNALEMENT_EDITED_FO,
+            [
+                'nom' => $signalement->getNomDeclarant(),
+                'prenom' => $signalement->getPrenomDeclarant(),
+                'email' => $signalement->getMailDeclarant(),
+                'telephone' => $signalement->getTelDeclarantDecoded(),
+            ],
+            $variant,
+        );
     }
 
     /**

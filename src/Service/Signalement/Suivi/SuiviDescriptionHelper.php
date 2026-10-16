@@ -83,6 +83,16 @@ class SuiviDescriptionHelper
         ],
         SuiviCategory::SIGNALEMENT_EDITED_FO->value => [
             SuiviDescriptionVariant::DEFAULT->value => 'suivi/signalement_edited.html.twig', // Même template que SIGNALEMENT_EDITED_BO
+            SuiviDescriptionVariant::INVITATION_TIERS_ACCEPTEE->value => 'suivi/signalement_edited_fo_invitation_tiers_acceptee.html.twig',
+            SuiviDescriptionVariant::INVITATION_TIERS_REFUSEE->value => 'suivi/signalement_edited_fo_invitation_tiers_refusee.html.twig',
+            SuiviDescriptionVariant::MODIFICATION_EMAIL_OCCUPANT->value => 'suivi/signalement_edited_fo_modification_email_occupant.html.twig',
+        ],
+        SuiviCategory::MESSAGE_USAGER_TRAVAUX_MISE_EN_CONFORMITE->value => [
+            SuiviDescriptionVariant::DEFAULT->value => 'suivi/message_usager_travaux_mise_en_conformite.html.twig',
+        ],
+        // Pas de variante DEFAULT : les autres MESSAGE_USAGER_POST_CLOTURE sont des messages libres de l'usager
+        SuiviCategory::MESSAGE_USAGER_POST_CLOTURE->value => [
+            SuiviDescriptionVariant::TRAVAUX_MISE_EN_CONFORMITE->value => 'suivi/message_usager_post_cloture_travaux_mise_en_conformite.html.twig',
         ],
         SuiviCategory::NEW_DOCUMENT->value => [
             SuiviDescriptionVariant::DEFAULT->value => 'suivi/new_document.html.twig',
