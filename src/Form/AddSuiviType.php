@@ -64,7 +64,7 @@ class AddSuiviType extends AbstractType
             'constraints' => [
                 new Assert\NotBlank(),
                 new Assert\Length(
-                    min: 16, // on compte 16 pour une limite de 10 car le message est emglobé par <p></p> par l'éditeur de texte
+                    min: 17, // on compte 17 pour une limite de 10 car le message est emglobé par <p></p> par l'éditeur de texte
                     minMessage: 'Le contenu du suivi doit contenir au moins 10 caractères.',
                 ),
             ],

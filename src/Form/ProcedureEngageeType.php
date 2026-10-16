@@ -56,8 +56,8 @@ class ProcedureEngageeType extends AbstractType
             'data' => $commentaire,
             'constraints' => [
                 new Assert\NotBlank(),
-                // on compte 16 pour une limite de 10 car le message est emglobé par <p></p> par l'éditeur de texte
-                new Assert\Length(min: 16, minMessage: 'Le commentaire doit contenir au moins 10 caractères.'),
+                // on compte 17 pour une limite de 10 car le message est emglobé par <p></p> par l'éditeur de texte
+                new Assert\Length(min: 17, minMessage: 'Le commentaire doit contenir au moins 10 caractères.'),
             ],
         ]);
     }

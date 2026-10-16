@@ -137,7 +137,7 @@ class AddAndRescheduleVisiteType extends AbstractType
                 'class' => 'editor',
             ],
             'constraints' => [
-                new Assert\Length(min: 16, minMessage: 'Le commentaire de visite doit contenir au moins 10 caractères.'),
+                new Assert\Length(min: 17, minMessage: 'Le commentaire de visite doit contenir au moins 10 caractères.'),
             ],
         ]);
         // les champs ci dessous sont obligatoire si visite passé (voir le POST_SUBMIT plus bas)
@@ -212,7 +212,7 @@ class AddAndRescheduleVisiteType extends AbstractType
                 'class' => 'editor',
             ],
             'constraints' => [
-                new Assert\Length(min: 16, minMessage: 'Le commentaire de visite doit contenir au moins 10 caractères.'),
+                new Assert\Length(min: 17, minMessage: 'Le commentaire de visite doit contenir au moins 10 caractères.'),
             ],
         ]);
         if (!$intervention->getRapportDeVisite()) {

@@ -96,7 +96,7 @@ class ConfirmVisiteType extends AbstractType
             ],
             'constraints' => [
                 new Assert\NotNull(message: 'Veuillez saisir un commentaire pour la visite.'),
-                new Assert\Length(min: 16, minMessage: 'Le commentaire de visite doit contenir au moins 10 caractères.'),
+                new Assert\Length(min: 17, minMessage: 'Le commentaire de visite doit contenir au moins 10 caractères.'),
             ],
         ]);
         if (!$intervention->getRapportDeVisite()) {

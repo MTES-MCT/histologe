@@ -12,6 +12,7 @@ use Symfony\Bundle\FrameworkBundle\Console\Application;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 use Symfony\Component\Clock\MockClock;
 use Symfony\Component\Console\Tester\CommandTester;
+use Symfony\Component\HtmlSanitizer\HtmlSanitizerInterface;
 
 class SendSuiviWaitingNotificationAndDelayedCommandTest extends KernelTestCase
 {
@@ -35,6 +36,9 @@ class SendSuiviWaitingNotificationAndDelayedCommandTest extends KernelTestCase
         $this->assertEmailCount(11);
 
         $suiviRepository = static::getContainer()->get(SuiviRepository::class);
+
+        /** @var HtmlSanitizerInterface $htmlSanitizer */
+        $htmlSanitizer = static::getContainer()->get('html_sanitizer.sanitizer.app.message_sanitizer');
 
         $this->assertEquals(0, $suiviRepository->count(['waitingNotification' => 1]));
 
@@ -72,7 +76,7 @@ class SendSuiviWaitingNotificationAndDelayedCommandTest extends KernelTestCase
         $this->assertFalse($suivi2024_12->getIsVisibleForBailleur());
 
         $description2025_09 = $suivi2025_09->getDescription();
-        $this->assertStringContainsString('Des modifications ont été apportées par '.$user2025_09->getNomComplet(true).'.', $description2025_09);
+        $this->assertStringContainsString($htmlSanitizer->sanitize('Des modifications ont été apportées par '.$user2025_09->getNomComplet(true).'.'), $description2025_09);
         $this->assertStringContainsString('Situation du foyer', $description2025_09);
         $this->assertStringContainsString('Date de naissance de l&#039;occupant : 10/06/1986', $description2025_09);
         $this->assertStringContainsString('Allocataire / Caisse d&#039;allocation : CAF', $description2025_09);
@@ -81,14 +85,14 @@ class SendSuiviWaitingNotificationAndDelayedCommandTest extends KernelTestCase
         $this->assertStringContainsString('Nom : Puche', $description2025_09);
 
         $description2024_08 = $suivi2024_08->getDescription();
-        $this->assertStringContainsString('Des modifications ont été apportées par '.$user2024_08->getNomComplet(true).'.', $description2024_08);
+        $this->assertStringContainsString($htmlSanitizer->sanitize('Des modifications ont été apportées par '.$user2024_08->getNomComplet(true).'.'), $description2024_08);
         $this->assertStringContainsString('Coordonnées de l&#039;occupant', $description2024_08);
         $this->assertStringContainsString('Civilité : Monsieur', $description2024_08);
         $this->assertStringContainsString('Informations sur l&#039;assurance', $description2024_08);
         $this->assertStringContainsString('Assurance contactée : Oui', $description2024_08);
 
         $description2024_12 = $suivi2024_12->getDescription();
-        $this->assertStringContainsString('Des modifications ont été apportées par '.$user2024_12->getNomComplet(true).'.', $description2024_12);
+        $this->assertStringContainsString($htmlSanitizer->sanitize('Des modifications ont été apportées par '.$user2024_12->getNomComplet(true).'.'), $description2024_12);
         $this->assertStringContainsString('Édition des coordonnées du foyer', $description2024_12);
         $this->assertStringContainsString('Édition des informations sur le logement', $description2024_12);
     }
