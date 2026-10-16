@@ -13,6 +13,7 @@ use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 use Symfony\Component\DependencyInjection\Attribute\Target;
@@ -24,6 +25,8 @@ use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 )]
 class ImportSignalementCommand extends Command
 {
+    private const string PARAM_ANONYMIZE = 'anonymize';
+
     public function __construct(
         private readonly CsvParser $csvParser,
         private readonly ParameterBagInterface $parameterBag,
@@ -37,7 +40,13 @@ class ImportSignalementCommand extends Command
 
     protected function configure(): void
     {
-        $this->addArgument('territory_zip', InputArgument::REQUIRED, 'Territory zip to target');
+        $this->addArgument('territory_zip', InputArgument::REQUIRED, 'Territory zip to target')
+            ->addOption(
+                self::PARAM_ANONYMIZE,
+                null,
+                InputOption::VALUE_NONE,
+                'Anonymize the data'
+            );
     }
 
     /**
@@ -54,6 +63,7 @@ class ImportSignalementCommand extends Command
 
             return Command::FAILURE;
         }
+        $anonymize = $input->getOption(self::PARAM_ANONYMIZE);
 
         $fromFile = 'csv/signalement_'.$territoryZip.'.csv';
         $toFile = $this->parameterBag->get('uploads_tmp_dir').'signalement.csv';
@@ -70,6 +80,7 @@ class ImportSignalementCommand extends Command
                 $territory,
                 $this->csvParser->parseAsDict($toFile),
                 $this->csvParser->getHeaders($toFile),
+                $anonymize,
                 $output
             );
         } catch (\Exception $e) {
