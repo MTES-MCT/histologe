@@ -10,9 +10,9 @@ use App\Repository\CritereRepository;
 use App\Repository\PartnerRepository;
 use App\Repository\Query\Address\AddressesHistoryQuery;
 use App\Repository\Query\Commune\CommuneEpciQuery;
+use App\Repository\Query\Signalement\SignalementLocalisationQuery;
 use App\Repository\Query\Statistics\CountStatisticsQuery;
 use App\Repository\Query\Zone\ZoneSignalementQuery;
-use App\Repository\SignalementRepository;
 use App\Repository\TagRepository;
 use App\Repository\TerritoryRepository;
 use App\Service\Signalement\Qualification\QualificationStatusService;
@@ -31,7 +31,7 @@ class SearchFilterOptionDataProvider
         private readonly TerritoryRepository $territoryRepository,
         private readonly PartnerRepository $partnerRepository,
         private readonly TagRepository $tagsRepository,
-        private readonly SignalementRepository $signalementRepository,
+        private readonly SignalementLocalisationQuery $signalementLocalisationQuery,
         private readonly AddressesHistoryQuery $addressesHistoryQuery,
         private readonly TagAwareCacheInterface $cache,
         private readonly QualificationStatusService $qualificationStatusService,
@@ -78,8 +78,8 @@ class SearchFilterOptionDataProvider
                     'epcis' => $this->communeEpciQuery->findEpciByCommuneTerritory($territory, $user),
                     'tags' => $isAddressesHistoryContext ? [] : $this->tagsRepository->findAllActive($territory, $user),
                     'zones' => $this->zoneSignalementQuery->findForUserAndTerritory($user, $territory),
-                    'cities' => $this->signalementRepository->findCities($user, $territory),
-                    'zipcodes' => $this->signalementRepository->findZipcodes($user, $territory),
+                    'cities' => $this->signalementLocalisationQuery->findCities($user, $territory),
+                    'zipcodes' => $this->signalementLocalisationQuery->findZipcodes($user, $territory),
                     'listQualificationStatus' => $isAddressesHistoryContext ? [] : $this->qualificationStatusService->getList(),
                     'listVisiteStatus' => $isAddressesHistoryContext ? [] : VisiteStatus::getLabelList(),
                     'hasSignalementsImported' => $hasSignalementImported,

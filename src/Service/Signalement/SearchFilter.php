@@ -20,7 +20,7 @@ use App\Repository\BailleurRepository;
 use App\Repository\Query\Commune\CommuneEpciQuery;
 use App\Repository\Query\Dashboard\DossiersActiviteRecenteQuery;
 use App\Repository\Query\Dashboard\DossiersSuivisUsagerQuery;
-use App\Repository\SignalementQualificationRepository;
+use App\Repository\Query\Signalement\SignalementQualificationQuery;
 use App\Service\InjonctionBailleur\InjonctionBailleurService;
 use App\Utils\Address\AddressParser;
 use App\Utils\Address\CommuneHelper;
@@ -42,7 +42,7 @@ class SearchFilter
     public function __construct(
         private AffectationRepository $affectationRepository,
         private EntityManagerInterface $entityManager,
-        private SignalementQualificationRepository $signalementQualificationRepository,
+        private SignalementQualificationQuery $signalementQualificationQuery,
         private CommuneEpciQuery $communeEpciQuery,
         private BailleurRepository $bailleurRepository,
         private DossiersActiviteRecenteQuery $dossiersActiviteRecenteQuery,
@@ -451,7 +451,7 @@ class SearchFilter
         }
 
         if (!empty($filters['nde'])) {
-            $subqueryResults = $this->signalementQualificationRepository->findSignalementsByQualification(
+            $subqueryResults = $this->signalementQualificationQuery->findSignalementsByQualification(
                 Qualification::NON_DECENCE_ENERGETIQUE,
                 $filters['nde']
             );
@@ -612,13 +612,13 @@ class SearchFilter
     {
         $qualification = Qualification::tryFrom($procedure);
         if (Qualification::NON_DECENCE_ENERGETIQUE === $qualification) {
-            $subqueryResults = $this->signalementQualificationRepository->findSignalementsByQualification(
+            $subqueryResults = $this->signalementQualificationQuery->findSignalementsByQualification(
                 $qualification,
                 [QualificationStatus::NDE_AVEREE, QualificationStatus::NDE_CHECK],
                 false
             );
         } else {
-            $subqueryResults = $this->signalementQualificationRepository->findSignalementsByQualification(
+            $subqueryResults = $this->signalementQualificationQuery->findSignalementsByQualification(
                 $qualification,
                 null,
                 false

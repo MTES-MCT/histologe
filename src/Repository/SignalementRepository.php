@@ -25,12 +25,10 @@ use App\Utils\Address\AddressParser;
 use App\Utils\Address\CommuneHelper;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Common\Collections\Collection;
-use Doctrine\DBAL\LockMode;
 use Doctrine\ORM\NonUniqueResultException;
 use Doctrine\ORM\Query\Expr\Join;
 use Doctrine\ORM\QueryBuilder;
 use Doctrine\ORM\Tools\Pagination\Paginator;
-use Doctrine\ORM\TransactionRequiredException;
 use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Component\Clock\ClockInterface;
 
@@ -53,57 +51,6 @@ class SignalementRepository extends ServiceEntityRepository
     }
 
     /**
-     * @return array<int, array<string, mixed>>|int|string
-     */
-    public function findCities(User $user, ?Territory $territory = null): array|int|string
-    {
-        return $this->findCommunes($user, $territory, 'address.city', 'city');
-    }
-
-    /**
-     * @return array<int, array<string, mixed>>|int|string
-     */
-    public function findZipcodes(User $user, ?Territory $territory = null): array|int|string
-    {
-        return $this->findCommunes($user, $territory, 'address.postCode', 'zipcode');
-    }
-
-    /**
-     * @return array<int, array<string, mixed>>|int|string
-     */
-    public function findCommunes(
-        User $user,
-        ?Territory $territory = null,
-        ?string $field = null,
-        ?string $alias = null,
-    ): array|int|string {
-        $qb = $this->createQueryBuilder('s')
-            ->select($field.' '.$alias)
-            ->innerJoin('s.address', 'address')
-            ->where('s.statut NOT IN (:statutList)')
-            ->setParameter('statutList', SignalementStatus::excludedStatuses());
-        if (!$user->isSuperAdmin() && !$user->isTerritoryAdmin()) {
-            $qb->leftJoin('s.affectations', 'affectations')
-                ->leftJoin('affectations.partner', 'partner')
-                ->andWhere('partner IN (:partners)')
-                ->setParameter('partners', $user->getPartners());
-        }
-        if ($territory) {
-            $qb->andWhere('address.territory = :territory')
-                ->setParameter('territory', $territory);
-        } elseif (!$user->isSuperAdmin()) {
-            $qb->andWhere('address.territory IN (:territories)')
-                ->setParameter('territories', $user->getPartnersTerritories());
-        }
-
-        return $qb
-            ->groupBy($field)
-            ->orderBy($field, 'ASC')
-            ->getQuery()
-            ->getResult();
-    }
-
-    /**
      * @throws NonUniqueResultException
      */
     public function findOneByCodeForPublic(string $code): ?Signalement
@@ -117,40 +64,6 @@ class SignalementRepository extends ServiceEntityRepository
             ->setParameter('statutDraft', [SignalementStatus::DRAFT, SignalementStatus::DRAFT_ARCHIVED]);
 
         return $qb->getQuery()->getOneOrNullResult();
-    }
-
-    /**
-     * @return array<string, string>|null
-     *
-     * @throws TransactionRequiredException
-     * @throws NonUniqueResultException
-     */
-    public function findLastReferenceByTerritory(Territory $territory): ?array
-    {
-        $year = (new \DateTime())->format('Y');
-        $queryBuilder = $this->createQueryBuilder('s')
-            ->select('s.reference')
-            ->addSelect("SUBSTRING_INDEX(s.reference, '-', 1) AS year")
-            ->addSelect("CAST(SUBSTRING_INDEX(s.reference, '-', -1) AS SIGNED) AS reference_index")
-            ->innerJoin('s.address', 'address')
-            ->where('YEAR(s.createdAt) = :year')
-            ->setParameter('year', $year)
-            ->andWhere('address.territory = :territory')
-            ->setParameter('territory', $territory)
-            ->orderBy('reference_index', 'DESC')
-            ->setMaxResults(1);
-
-        return $queryBuilder
-            ->getQuery()
-            ->setLockMode(LockMode::PESSIMISTIC_WRITE)
-            ->getOneOrNullResult();
-    }
-
-    public function findMaxReferenceInjonction(): ?int
-    {
-        $qb = $this->createQueryBuilder('s')->select('MAX(s.referenceInjonction)');
-
-        return (int) $qb->getQuery()->getSingleScalarResult();
     }
 
     /**
