@@ -28,6 +28,8 @@ Points d'attention :
 2. Le déclarer dans `CREATION_TEMPLATES` sous la clé `SuiviDescriptionVariant::DEFAULT`. Si la même catégorie est créée à plusieurs endroits avec des textes différents, ajouter un cas à l'enum `SuiviDescriptionVariant` et un template suffixé (exemple : `INJONCTION_BAILLEUR_CLOTURE_PAR_USAGER`).
 3. À la création : `description: $suiviDescriptionHelper->buildDescriptionForCreation(SuiviCategory::X, ['var' => $value], SuiviDescriptionVariant::Y)` (variante facultative). Pas de `renderView()` direct.
 
+**Suivis différés (`SuiviDelayedFactory`)** : le texte est généré par `SuiviManager::createSuiviFromSuiviDelayedList()` avec `suivi/signalement_edited.html.twig`. Dans `SuiviDelayed::changes`, enregistrer des **données** (valeurs brutes, booléens), jamais des phrases : la formulation reste dans le template.
+
 ## Migration (texte fixe, catégorie existante)
 
 Vider les descriptions existantes. Modèle : `migrations/Version20261009100808.php`.

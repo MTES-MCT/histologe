@@ -3,7 +3,7 @@ Des modifications ont été apportées par {{ nomComplet }}.<br>
 {%- for group in groupedChanges -%}
     <strong>{{ group.label }}</strong><br><ul>
     {%- for label, value in group.changes -%}
-        <li>{{ label }} : {{ value|raw }}</li>
+        <li>{{ label }} : {% if value is null %}<i>(valeur supprimée)</i>{% else %}{{ value|nl2br }}{% endif %}</li>
     {%- endfor -%}
     </ul>
 {%- endfor -%}
@@ -11,7 +11,15 @@ Des modifications ont été apportées par {{ nomComplet }}.<br>
     {%- if showOtherChangesTitle -%}<strong>Autres modifications</strong><br>{%- endif -%}
     <ul>
     {%- for change in otherChanges -%}
-        <li>{{ change }}</li>
+        <li>
+        {%- if change.logementVacant is not null -%}
+            Le logement a été marqué comme {{ change.logementVacant ? 'vacant' : 'occupé' }}.
+        {%- elseif change.count is not null -%}
+            {{ change.count }} {{ change.label }}
+        {%- else -%}
+            {{ change.label }}
+        {%- endif -%}
+        </li>
     {%- endfor -%}
     </ul>
 {%- endif -%}
