@@ -201,7 +201,7 @@ class SignalementVisitesController extends AbstractController
         if (!$success) {
             $flashMessages[] = ['type' => 'alert', 'title' => 'Erreur', 'message' => $fileNameOrError];
 
-            return $this->json(['stayOnPage' => true, 'flashMessages' => $flashMessages, 'closeModal' => true]);
+            return $this->json(['stayOnPage' => true, 'flashMessages' => $flashMessages, 'closeModal' => false]);
         }
 
         $this->entityManager->persist($intervention);
@@ -295,7 +295,7 @@ class SignalementVisitesController extends AbstractController
             if (!$success) {
                 $flashMessages[] = ['type' => 'alert', 'title' => 'Erreur', 'message' => $fileNameOrError];
 
-                return $this->json(['stayOnPage' => true, 'flashMessages' => $flashMessages, 'closeModal' => true]);
+                return $this->json(['stayOnPage' => true, 'flashMessages' => $flashMessages, 'closeModal' => false]);
             }
         }
         if ($rescheduleVisiteForm->isSubmitted() && $rescheduleVisiteForm->isValid()) {
@@ -352,7 +352,7 @@ class SignalementVisitesController extends AbstractController
             if (!$success) {
                 $flashMessages[] = ['type' => 'alert', 'title' => 'Erreur', 'message' => $fileNameOrError];
 
-                return $this->json(['stayOnPage' => true, 'flashMessages' => $flashMessages, 'closeModal' => true]);
+                return $this->json(['stayOnPage' => true, 'flashMessages' => $flashMessages, 'closeModal' => false]);
             }
         }
         if ($confirmVisiteForm->isSubmitted() && $confirmVisiteForm->isValid()) {
@@ -401,7 +401,7 @@ class SignalementVisitesController extends AbstractController
             if (!$success) {
                 $flashMessages[] = ['type' => 'alert', 'title' => 'Erreur', 'message' => $fileNameOrError];
 
-                return $this->json(['stayOnPage' => true, 'flashMessages' => $flashMessages, 'closeModal' => true]);
+                return $this->json(['stayOnPage' => true, 'flashMessages' => $flashMessages, 'closeModal' => false]);
             }
         }
         if ($editConclusionVisiteForm->isSubmitted() && $editConclusionVisiteForm->isValid()) {
