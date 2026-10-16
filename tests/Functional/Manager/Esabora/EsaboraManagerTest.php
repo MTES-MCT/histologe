@@ -25,6 +25,7 @@ use App\Service\Interconnection\Esabora\Response\DossierStateSCHSResponse;
 use App\Service\Interconnection\Esabora\Response\DossierStateSISHResponse;
 use App\Service\Security\FileScanner;
 use App\Service\Signalement\Qualification\SignalementQualificationUpdater;
+use App\Service\Signalement\Suivi\SuiviDescriptionHelper;
 use App\Service\UploadHandlerService;
 use App\Tests\FixturesHelper;
 use Doctrine\ORM\EntityManagerInterface;
@@ -132,6 +133,7 @@ class EsaboraManagerTest extends KernelTestCase
             $this->workflow,
             $this->userSignalementSubscriptionManager,
             true,
+            static::getContainer()->get(SuiviDescriptionHelper::class),
         );
 
         $esaboraManager->synchronizeAffectationFrom($dossierResponse, $affectation);
@@ -266,6 +268,7 @@ class EsaboraManagerTest extends KernelTestCase
             $this->workflow,
             $this->userSignalementSubscriptionManager,
             true,
+            static::getContainer()->get(SuiviDescriptionHelper::class),
         );
 
         $esaboraManager->synchronizeAffectationFrom($dossierResponse, $affectation);
@@ -326,6 +329,7 @@ class EsaboraManagerTest extends KernelTestCase
             $this->workflow,
             $this->userSignalementSubscriptionManager,
             true,
+            static::getContainer()->get(SuiviDescriptionHelper::class),
         );
 
         $dossierVisite = $this->getDossierVisiteSISHCollectionResponse()->getCollection()[0];

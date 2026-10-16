@@ -1,0 +1,8 @@
+{#- presentation et libelle viennent d'Esabora : passés en |raw comme avant, le HtmlSanitizer de createSuivi() les nettoie -#}
+Date : {{ date }}<br/>Message provenant d'esabora SCHS :<br/>
+{%- if presentation is not empty -%}
+    {{ presentation|raw }}<br/>
+{%- endif -%}
+{%- if libelle is not empty -%}
+    {{ libelle|raw }}
+{%- endif -%}

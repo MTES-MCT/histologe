@@ -16,4 +16,6 @@ enum SuiviDescriptionVariant: string
     case MODIFICATION_EMAIL_OCCUPANT = 'MODIFICATION_EMAIL_OCCUPANT';
     // Réponse de l'usager sur la réalisation des travaux de mise en conformité
     case TRAVAUX_MISE_EN_CONFORMITE = 'TRAVAUX_MISE_EN_CONFORMITE';
+    // Synchronisation de statut provenant d'IDOSS (le cas par défaut est Esabora)
+    case IDOSS = 'IDOSS';
 }

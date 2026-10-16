@@ -34,6 +34,7 @@ use App\Service\Interconnection\Esabora\Response\Model\DossierVisiteSISH;
 use App\Service\Intervention\InterventionDescriptionGenerator;
 use App\Service\Security\FileScanner;
 use App\Service\Signalement\Qualification\SignalementQualificationUpdater;
+use App\Service\Signalement\Suivi\SuiviDescriptionHelper;
 use App\Service\UploadHandlerService;
 use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerInterface;
@@ -68,6 +69,7 @@ class EsaboraManager
         private readonly UserSignalementSubscriptionManager $userSignalementSubscriptionManager,
         #[Autowire(env: 'FEATURE_SISH_REPUSH_MESSAGE')]
         private readonly bool $featureSishRepushMessage,
+        private readonly SuiviDescriptionHelper $suiviDescriptionHelper,
     ) {
     }
 
@@ -85,7 +87,7 @@ class EsaboraManager
         if (!empty($description)) {
             $this->suiviManager->createSuivi(
                 signalement: $signalement,
-                description: 'Signalement <b>'.$description.'</b>',
+                description: $description,
                 category: SuiviCategory::SIGNALEMENT_STATUS_IS_SYNCHRO,
                 partner: $affectation->getPartner(),
                 user: $adminUser,
@@ -103,11 +105,11 @@ class EsaboraManager
         User $user,
         DossierResponseInterface $dossierResponse,
     ): string {
-        $description = '';
+        $action = null;
+        $dateReaffectation = null;
         $currentStatus = $affectation->getStatut();
 
         $esaboraStatus = $dossierResponse->getSasEtat();
-        $commentaireSas = $dossierResponse->getCommentaireSas();
         $esaboraDossierStatus = null !== $dossierResponse->getEtat()
         ? strtolower($dossierResponse->getEtat())
         : '';
@@ -119,10 +121,7 @@ class EsaboraManager
                 if (AffectationStatus::WAIT !== $currentStatus) {
                     $this->affectationManager->updateAffectation($affectation, $user, AffectationStatus::WAIT, $affectation->getPartner());
                     $this->affectationManager->removeSubscriptionsOfAffectation($affectation);
-                    $description = 'remis en attente par '.$namePartner.' via '.$dossierResponse->getNameSI();
-                    if ($commentaireSas) {
-                        $description .= '<br>Commentaire Santé-Habitat : '.$commentaireSas;
-                    }
+                    $action = 'wait';
                 }
                 break;
             case EsaboraStatus::ESABORA_ACCEPTED->value:
@@ -131,38 +130,25 @@ class EsaboraManager
                     $this->userSignalementSubscriptionManager->createDefaultSubscriptionsForAffectation($affectation);
                     $this->entityManager->flush();
 
-                    $description = 'accepté par '.$namePartner.' via '.$dossierResponse->getNameSI();
+                    // Doit correspondre au début du texte généré par suivi/signalement_status_is_synchro.html.twig
                     $suivis = $this->suiviRepository->findSuiviByDescription(
                         $signalement,
-                        'Signalement <b>'.$description,
+                        'Signalement <b>accepté par '.$namePartner.' via '.$dossierResponse->getNameSI(),
                         SuiviCategory::SIGNALEMENT_STATUS_IS_SYNCHRO
                     );
-
-                    if (count($suivis) > 0) {
-                        $description = 'resynchronisé avec '.$namePartner.' via '.$dossierResponse->getNameSI();
-                    }
-
-                    if ($commentaireSas) {
-                        $description .= '<br>Commentaire Santé-Habitat : '.$commentaireSas;
-                    }
+                    $action = count($suivis) > 0 ? 'resynchronized' : 'accepted';
                 }
 
                 if ($this->shouldBeClosedViaEsabora($esaboraDossierStatus, $currentStatus)) {
                     $this->affectationManager->updateAffectation($affectation, $user, AffectationStatus::CLOSED, $affectation->getPartner());
                     $this->affectationManager->removeSubscriptionsOfAffectation($affectation);
-                    $description = 'clôturé par '.$namePartner.' via '.$dossierResponse->getNameSI();
-                    if ($commentaireSas) {
-                        $description .= '<br>Commentaire Santé-Habitat : '.$commentaireSas;
-                    }
+                    $action = 'closed';
                 }
                 break;
             case EsaboraStatus::ESABORA_REFUSED->value:
                 if (AffectationStatus::REFUSED !== $currentStatus) {
                     $this->affectationManager->updateAffectation($affectation, $user, AffectationStatus::REFUSED, $affectation->getPartner());
-                    $description = 'refusé par '.$namePartner.' via '.$dossierResponse->getNameSI();
-                    if ($commentaireSas) {
-                        $description .= '<br>Commentaire Santé-Habitat : '.$commentaireSas;
-                    }
+                    $action = 'refused';
                 }
                 break;
             case EsaboraStatus::ESABORA_REJECTED->value:
@@ -179,36 +165,25 @@ class EsaboraManager
                         $dateReaffectation = (new \DateTimeImmutable('now', $timezone))
                             ->modify('+1 day')
                             ->format('d/m/Y');
-
-                        $note = \sprintf(
-                            '<i>NOTE : vous pourrez, si besoin, réaffecter ce signalement à partir du : %s</i>',
-                            $dateReaffectation
-                        );
-
-                        $description = \sprintf(
-                            'refusé via '.$dossierResponse->getNameSI().' pour motif suivant : %s<br>%s',
-                            $dossierResponse->getSasCauseRefus(),
-                            $note
-                        );
-                    } else {
-                        $description = \sprintf(
-                            'refusé via '.$dossierResponse->getNameSI().' pour motif suivant : %s',
-                            $dossierResponse->getSasCauseRefus()
-                        );
                     }
-
-                    if ($commentaireSas) {
-                        $description .= '<br>Commentaire Santé-Habitat : '.$commentaireSas;
-                    }
+                    $action = 'rejected';
                 }
                 break;
         }
 
-        if (!empty($dossierResponse->getDossNum()) && !empty($description)) {
-            $description .= ' (Dossier '.$dossierResponse->getDossNum().')';
+        if (null === $action) {
+            return '';
         }
 
-        return $description;
+        return $this->suiviDescriptionHelper->buildDescriptionForCreation(SuiviCategory::SIGNALEMENT_STATUS_IS_SYNCHRO, [
+            'action' => $action,
+            'partnerName' => $namePartner,
+            'nameSI' => $dossierResponse->getNameSI(),
+            'causeRefus' => $dossierResponse->getSasCauseRefus(),
+            'dateReaffectation' => $dateReaffectation,
+            'commentaireSas' => $dossierResponse->getCommentaireSas(),
+            'dossNum' => $dossierResponse->getDossNum(),
+        ]);
     }
 
     /**
@@ -343,21 +318,15 @@ class EsaboraManager
             $dateLabel = $rawDate;
         }
 
-        $description = \sprintf('Date : %s', $dateLabel).'<br/>';
-        $description .= 'Message provenant d\'esabora SCHS :<br/>';
-
-        if (!empty($event->getPresentation())) {
-            $description .= $event->getPresentation().'<br/>';
-        }
-
-        if (!empty($event->getLibelle())) {
-            $description .= $event->getLibelle();
-        }
-
+        $category = SuiviCategory::MESSAGE_ESABORA_SCHS;
         $suivi = $this->suiviManager->createSuivi(
             signalement: $affectation->getSignalement(),
-            description: $description,
-            category: SuiviCategory::MESSAGE_ESABORA_SCHS,
+            description: $this->suiviDescriptionHelper->buildDescriptionForCreation($category, [
+                'date' => $dateLabel,
+                'presentation' => $event->getPresentation(),
+                'libelle' => $event->getLibelle(),
+            ]),
+            category: $category,
             partner: $affectation->getPartner(),
             user: $this->userManager->getSystemUser(),
         );
