@@ -10,6 +10,7 @@ use Doctrine\ORM\Events;
 use Doctrine\Persistence\Event\LifecycleEventArgs;
 
 #[AsDoctrineListener(event: Events::postLoad)]
+#[AsDoctrineListener(event: Events::postPersist)]
 class SuiviTransformerListener
 {
     public function __construct(
@@ -21,6 +22,22 @@ class SuiviTransformerListener
      * @param LifecycleEventArgs<EntityManager> $args
      */
     public function postLoad(LifecycleEventArgs $args): void
+    {
+        $this->injectSuiviTransformerService($args);
+    }
+
+    /**
+     * @param LifecycleEventArgs<EntityManager> $args
+     */
+    public function postPersist(LifecycleEventArgs $args): void
+    {
+        $this->injectSuiviTransformerService($args);
+    }
+
+    /**
+     * @param LifecycleEventArgs<EntityManager> $args
+     */
+    private function injectSuiviTransformerService(LifecycleEventArgs $args): void
     {
         $entity = $args->getObject();
 

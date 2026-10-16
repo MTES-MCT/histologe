@@ -321,7 +321,6 @@ class SignalementActionController extends AbstractController
                 subscriptionCreated: $subscriptionCreated,
             );
             $entityManager->flush();
-            $entityManager->refresh($suivi); // on rafraichit afin d'avoir le SuiviTransformerService et que les potentiels documents liés s'affiche sur le suivi
         } catch (\Throwable $exception) {
             $logger->error($exception->getMessage());
             $errors = ['main' => ['errors' => ['Une erreur est survenue lors de la publication, veuillez réessayer.']]];
@@ -699,14 +698,11 @@ class SignalementActionController extends AbstractController
         }
 
         $isEdition = false;
-        $suivi = $procedureEngageeService->updateProcedureEngageeForSignalement($signalement, $form, $isEdition);
+        $procedureEngageeService->updateProcedureEngageeForSignalement($signalement, $form, $isEdition);
 
         $entityManager->flush();
         $flashMessages = [['type' => 'success', 'title' => 'Procédures modifiées', 'message' => $isEdition ? 'Les procédures à engager ont bien été modifiées.' : 'Les procédures à engager ont bien été définies.']];
         $entityManager->refresh($signalement);
-        if ($suivi) {
-            $entityManager->refresh($suivi); // on rafraichit afin d'avoir le SuiviTransformerService sur le suivi créé
-        }
         $htmlTargetContents[] = [
             'target' => '#list-suivis',
             'content' => $this->renderView('back/signalement/view/suivis.html.twig', ['signalement' => $signalement]),

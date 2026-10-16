@@ -101,81 +101,91 @@ export function openPhotoAlbumAddEventListeners() {
   });
 }
 
-// L'album photo est généré une seule fois avec toutes les photos (allPhotosOrdered),
-// ses boutons internes ne sont jamais recréés : initialisation unique.
+// L'album photo (#photos-album-container) est remplacé lors des rechargements AJAX :
+// les écouteurs sont donc délégués au document pour survivre au remplacement des boutons.
 initPhotoAlbumListeners();
 
-function initPhotoAlbumListeners() {
-  /* global histoPhotoIds */
-  document?.querySelectorAll('.photos-album-btn-close')?.forEach((btn) => {
-    btn.addEventListeners('click touchdown', () => {
-      document?.querySelectorAll('.photos-album')?.forEach((element) => {
-        element.classList?.add('fr-hidden');
-      });
-    });
-  });
-  document?.querySelectorAll('.photos-album-swipe')?.forEach((btn) => {
-    const swipeDirection = Number(btn.getAttribute('data-direction'));
+function getAlbumPhotoIds() {
+  return Array.from(document.querySelectorAll('.photos-album-image-item')).map((element) =>
+    Number(element.getAttribute('data-id'))
+  );
+}
 
-    btn.addEventListeners('click touchdown', () => {
-      let currentId = null;
-      document?.querySelectorAll('.photos-album-image-item.loop-current')?.forEach((element) => {
-        currentId = Number(element.getAttribute('data-id'));
+function initPhotoAlbumListeners() {
+  document.addEventListener('click', (e) => {
+    const target = e.target;
+    if (!(target instanceof Element)) {
+      return;
+    }
+
+    if (target.closest('.photos-album-btn-close')) {
+      document.querySelectorAll('.photos-album').forEach((element) => {
+        element.classList.add('fr-hidden');
       });
-      let newIndex = histoPhotoIds.indexOf(currentId);
-      newIndex += Number(swipeDirection);
+      return;
+    }
+
+    const swipeBtn = target.closest('.photos-album-swipe');
+    if (swipeBtn) {
+      const swipeDirection = Number(swipeBtn.getAttribute('data-direction'));
+      const photoIds = getAlbumPhotoIds();
+      const currentElement = document.querySelector('.photos-album-image-item.loop-current');
+      const currentId = currentElement ? Number(currentElement.getAttribute('data-id')) : null;
+      let newIndex = photoIds.indexOf(currentId) + swipeDirection;
       if (newIndex < 0) {
-        newIndex = histoPhotoIds.length - 1;
+        newIndex = photoIds.length - 1;
       }
-      if (newIndex > histoPhotoIds.length - 1) {
+      if (newIndex > photoIds.length - 1) {
         newIndex = 0;
       }
-      displayPhotoAlbum(histoPhotoIds[newIndex]);
-    });
-  });
-  document?.querySelectorAll('.photos-album-main-btn-edit')?.forEach((btn) => {
-    btn.addEventListeners('click touchdown', () => {
-      const photoId = btn.dataset.id;
-      btn.classList?.add('fr-hidden');
+      displayPhotoAlbum(photoIds[newIndex]);
+      return;
+    }
+
+    const editBtn = target.closest('.photos-album-main-btn-edit');
+    if (editBtn) {
+      const photoId = editBtn.dataset.id;
+      editBtn.classList.add('fr-hidden');
       document
-        ?.querySelector('.photos-album-list-btn-edit[data-id="' + photoId + '"]')
-        ?.classList?.remove('fr-hidden');
-    });
-  });
-  document?.querySelectorAll('.photo-album-rotate-left-btn')?.forEach((btn) => {
-    btn.addEventListeners('click touchdown', () => {
-      const photoId = btn.dataset.id;
-      rotatePhotoAlbumImage(photoId, 'left');
-    });
-  });
-  document?.querySelectorAll('.photo-album-rotate-right-btn')?.forEach((btn) => {
-    btn.addEventListeners('click touchdown', () => {
-      const photoId = btn.dataset.id;
-      rotatePhotoAlbumImage(photoId, 'right');
-    });
-  });
-  document?.querySelectorAll('.photo-album-save-rotation')?.forEach((btn) => {
-    btn.addEventListeners('click touchdown', () => {
-      const photoId = btn.dataset.id;
+        .querySelector('.photos-album-list-btn-edit[data-id="' + photoId + '"]')
+        ?.classList.remove('fr-hidden');
+      return;
+    }
+
+    const rotateLeftBtn = target.closest('.photo-album-rotate-left-btn');
+    if (rotateLeftBtn) {
+      rotatePhotoAlbumImage(rotateLeftBtn.dataset.id, 'left');
+      return;
+    }
+
+    const rotateRightBtn = target.closest('.photo-album-rotate-right-btn');
+    if (rotateRightBtn) {
+      rotatePhotoAlbumImage(rotateRightBtn.dataset.id, 'right');
+      return;
+    }
+
+    const saveRotationBtn = target.closest('.photo-album-save-rotation');
+    if (saveRotationBtn) {
+      const photoId = saveRotationBtn.dataset.id;
       const rotate = document.querySelector('.photos-album-image[data-id="' + photoId + '"]')
         .dataset.rotate;
-      const action = btn.dataset.action;
       const form = document.querySelector('#form-save-file-rotation');
       form.querySelector('input[name="rotate"]').value = rotate;
-      form.action = action;
+      form.action = saveRotationBtn.dataset.action;
       form.submit();
-    });
-  });
-  document?.querySelectorAll('.photos-album-btn-zoom-in')?.forEach((btn) => {
-    btn.addEventListener('click', () => {
-      setZoom(btn.dataset.id, true);
-    });
-  });
+      return;
+    }
 
-  document?.querySelectorAll('.photos-album-btn-zoom-out')?.forEach((btn) => {
-    btn.addEventListener('click', () => {
-      setZoom(btn.dataset.id, false);
-    });
+    const zoomInBtn = target.closest('.photos-album-btn-zoom-in');
+    if (zoomInBtn) {
+      setZoom(zoomInBtn.dataset.id, true);
+      return;
+    }
+
+    const zoomOutBtn = target.closest('.photos-album-btn-zoom-out');
+    if (zoomOutBtn) {
+      setZoom(zoomOutBtn.dataset.id, false);
+    }
   });
 }
 

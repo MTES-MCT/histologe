@@ -212,7 +212,9 @@
     {% endif %}
     <div class="fr-background--white {{ signalementInvalidClass }}">
         <section id="signalement-{{ signalement.id }}-content" class="fr-pt-4v">
-            {% include 'back/signalement/view/photos-album.html.twig' %}
+            <div id="photos-album-container">
+                {% include 'back/signalement/view/photos-album.html.twig' %}
+            </div>
             {% include 'back/signalement/view/header.html.twig' %}
         </section>
         {% include 'back/signalement/view/tabs.html.twig' %}
