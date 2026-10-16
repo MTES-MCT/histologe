@@ -338,6 +338,11 @@ class ProfilController extends AbstractController
     ): Response {
         /** @var User $user */
         $user = $this->getUser();
+
+        if (null === $user->getPassword()) {
+            throw $this->createAccessDeniedException();
+        }
+
         /** @var array<string, mixed> $payload */
         $payload = $request->getPayload()->all();
 

@@ -10,9 +10,11 @@
     {% include 'back/profil/_modal_profil_notification_email.html.twig' %}
 </div>
 {% include 'back/profil/_modal_profil_email.html.twig' %}
-<div data-ajax-form>  
-    {% include 'back/profil/_modal_profil_password.html.twig' %}
-</div>
+{% if app.user.password is not null %}
+    <div data-ajax-form>  
+        {% include 'back/profil/_modal_profil_password.html.twig' %}
+    </div>
+{% endif %}
 
     <section class="fr-pt-4v">
         {% include 'back/breadcrumb_bo.html.twig' with {
@@ -35,27 +37,36 @@
         {% include 'back/profil/_mes-informations.html.twig' %}
     </section>
     <hr>
-    <section class="fr-pt-4v" id="adresse-email">
+    <section class="fr-pt-4v fr-mb-4v" id="adresse-email">
         {% include 'back/profil/_adresse-email.html.twig' %}
     </section>
     <hr>
-    <section class="fr-pt-4v">
+    <section class="fr-pt-4v fr-mb-4v">
         <div class="fr-grid-row fr-grid-row--middle">  
             <div class="fr-col-12 fr-col-md-8 fr-text--left">
                 <h2>Mot de passe</h2>
             </div>
-            <div class="fr-col-12 fr-col-md-4 fr-text--right">
-                <button class="fr-button fr-btn--tertiary-no-outline fr-btn--icon-left fr-icon-edit-line"
-                    title="Modifier mon mot de passe"
-                    data-fr-opened="false" 
-                    aria-controls="fr-modal-profil-edit-password"
-                    >
-                    Modifier mon mot de passe
-                </button>
-            </div>
+            {% if app.user.password is not null %}
+                <div class="fr-col-12 fr-col-md-4 fr-text--right">
+                    <button class="fr-button fr-btn--tertiary-no-outline fr-btn--icon-left fr-icon-edit-line"
+                        title="Modifier mon mot de passe"
+                        data-fr-opened="false" 
+                        aria-controls="fr-modal-profil-edit-password"
+                        >
+                        Modifier mon mot de passe
+                    </button>
+                </div>
+            {% endif %}
         </div>
         <div>
-        Choisissez un mot de passe unique pour votre compte {{ platform.name }}.
+        {% if app.user.password is not null %}
+            Choisissez un mot de passe unique pour votre compte {{ platform.name }}.
+        {% else %}
+            {% if app.user.proConnectUserId is not null %}
+                <p>Vous vous connectez actuellement via ProConnect.</p>
+            {% endif %}
+            Si vous voulez définir un mot de passe directement sur {{ platform.name }}, passez par la page de <a class="fr-link" href="{{ path('login_mdp_perdu') }}">réinitialisation de mot de passe</a>.
+        {% endif %}
         </div>
     </section>
     <hr>
