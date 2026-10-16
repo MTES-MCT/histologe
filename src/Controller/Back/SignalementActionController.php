@@ -271,6 +271,7 @@ class SignalementActionController extends AbstractController
             user: $user,
             isVisibleForUsager: (bool) $form->get('isVisibleForUsager')->getData(),
             isVisibleForBailleur: $form->has('isVisibleForBailleur') ? (bool) $form->get('isVisibleForBailleur')->getData() : false,
+            files: $form->has('files') ? $form->get('files')->getData() : [],
         );
         // à garder aprés la création du suivi afin que les notifications de fermeture partent bien (avant la suppression des abonnements)
         $affectationManager->closeBySignalement($signalement, $signalement->getMotifCloture(), $user, $partner);

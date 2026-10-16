@@ -4,8 +4,11 @@ namespace App\Form;
 
 use App\Entity\Enum\MotifCloture;
 use App\Entity\Enum\ProcedureType;
+use App\Entity\File;
 use App\Entity\Signalement;
 use App\Form\Type\SearchCheckboxEnumType;
+use App\Form\Type\SearchCheckboxType;
+use App\Service\Files\FileListService;
 use App\Service\Signalement\SignalementProcedureService;
 use App\Validator\EmailFormatValidator;
 use Symfony\Component\Form\AbstractType;
@@ -21,8 +24,10 @@ use Symfony\Component\Validator\Context\ExecutionContextInterface;
  */
 class CloseSignalementType extends AbstractType
 {
-    public function __construct(private readonly SignalementProcedureService $signalementProcedureService)
-    {
+    public function __construct(
+        private readonly SignalementProcedureService $signalementProcedureService,
+        private readonly FileListService $fileListService,
+    ) {
     }
 
     public function buildForm(FormBuilderInterface $builder, array $options): void
@@ -66,6 +71,15 @@ class CloseSignalementType extends AbstractType
                 'class' => 'editor',
             ],
             'data' => null,
+        ]);
+        $builder->add('files', SearchCheckboxType::class, [
+            'class' => File::class,
+            'choice_label' => 'title',
+            'label' => 'Fichiers',
+            'noselectionlabel' => 'Sélectionnez un ou plusieurs fichiers à joindre au suivi de clôture',
+            'nochoiceslabel' => 'Aucun fichier disponible',
+            'choices' => $this->fileListService->getFileChoicesForSignalement($signalement),
+            'mapped' => false,
         ]);
         $builder->add('isVisibleForUsager', CheckboxType::class, [
             'label' => 'Usager (occupant, tiers déclarant)',
