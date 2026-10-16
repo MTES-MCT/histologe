@@ -1243,13 +1243,12 @@ class SignalementEditController extends AbstractController
                 $signalement->setIsLogementVacant($logementVacant);
                 /** @var User $user */
                 $user = $this->getUser();
-                $description = $logementVacant ? 'Le logement a été marqué comme vacant.' : 'Le logement a été marqué comme occupé.';
                 $suiviDelayed = $suiviDelayedFactory->createSuiviDelayed(
                     user: $user,
                     signalement: $signalement,
                     type: SuiviDelayedType::BO_EDIT_OCCUPATION_LOGEMENT,
                     category: SuiviCategory::SIGNALEMENT_EDITED_BO,
-                    customChanges: ['description' => $description]
+                    customChanges: ['logementVacant' => $logementVacant]
                 );
                 $entityManager->persist($suiviDelayed);
                 $entityManager->flush();

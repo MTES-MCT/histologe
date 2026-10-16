@@ -5,10 +5,12 @@ namespace App\Tests\Functional\Manager;
 use App\Entity\Enum\DocumentType;
 use App\Entity\Enum\MotifCloture;
 use App\Entity\Enum\SuiviCategory;
+use App\Entity\Enum\SuiviDelayedType;
 use App\Entity\File;
 use App\Entity\Intervention;
 use App\Entity\Signalement;
 use App\Entity\Suivi;
+use App\Entity\SuiviDelayed;
 use App\Entity\User;
 use App\Manager\SuiviManager;
 use App\Manager\UserManager;
@@ -280,5 +282,94 @@ class SuiviManagerTest extends KernelTestCase
             ->setTitle('Document')
             ->setDocumentType($documentType)
             ->setIntervention($intervention);
+    }
+
+    public function testCreateSuiviFromSuiviDelayedListFrontOffice(): void
+    {
+        [$signalement, $user] = $this->getSignalementAndUserForFiles();
+
+        $this->suiviManager->createSuiviFromSuiviDelayedList([
+            $this->createSuiviDelayed($signalement, $user, SuiviCategory::SIGNALEMENT_EDITED_FO, SuiviDelayedType::FO_EDIT_COORDONNEES_OCCUPANT, [
+                'Nom' => 'Dupont <b>',
+                'Téléphone' => null,
+                'Commentaire' => "ligne 1\nligne 2",
+            ]),
+            $this->createSuiviDelayed($signalement, $user, SuiviCategory::SIGNALEMENT_EDITED_FO, SuiviDelayedType::FO_FILE_DELETED),
+            $this->createSuiviDelayed($signalement, $user, SuiviCategory::SIGNALEMENT_EDITED_FO, SuiviDelayedType::FO_FILE_DELETED),
+        ]);
+        $this->entityManager->flush();
+
+        $suivi = $this->findLastSuivi($signalement, SuiviCategory::SIGNALEMENT_EDITED_FO);
+        $description = $suivi->getDescription(raw: true);
+        $this->assertStringContainsString('Des modifications ont été apportées par', $description);
+        $this->assertStringContainsString('<li>Nom : Dupont &lt;b&gt;</li>', $description);
+        $this->assertStringContainsString('<li>Téléphone : <i>(valeur supprimée)</i></li>', $description);
+        $this->assertStringContainsString('Commentaire : ligne 1<br', $description);
+        $this->assertStringContainsString('<strong>Autres modifications</strong>', $description);
+        $this->assertStringContainsString('<li>2 '.SuiviDelayedType::FO_FILE_DELETED->label().'</li>', $description);
+        $this->assertTrue($suivi->getIsVisibleForUsager());
+        $this->assertNull($suivi->getPartner());
+    }
+
+    public function testCreateSuiviFromSuiviDelayedListBackOfficeOccupationLogement(): void
+    {
+        [$signalement, $user] = $this->getSignalementAndUserForFiles();
+
+        $this->suiviManager->createSuiviFromSuiviDelayedList([
+            $this->createSuiviDelayed($signalement, $user, SuiviCategory::SIGNALEMENT_EDITED_BO, SuiviDelayedType::BO_EDIT_OCCUPATION_LOGEMENT, ['logementVacant' => true]),
+            $this->createSuiviDelayed($signalement, $user, SuiviCategory::SIGNALEMENT_EDITED_BO, SuiviDelayedType::BO_EDIT_ADDRESS),
+        ]);
+        $this->entityManager->flush();
+
+        $suivi = $this->findLastSuivi($signalement, SuiviCategory::SIGNALEMENT_EDITED_BO);
+        $description = $suivi->getDescription(raw: true);
+        $this->assertStringContainsString('<li>Le logement a été marqué comme vacant.</li>', $description);
+        $this->assertStringContainsString('<li>'.htmlspecialchars(SuiviDelayedType::BO_EDIT_ADDRESS->label(), \ENT_QUOTES).'</li>', $description);
+        // Pas de titre « Autres modifications » côté back-office
+        $this->assertStringNotContainsString('Autres modifications', $description);
+        $this->assertFalse($suivi->getIsVisibleForUsager());
+        $this->assertSame($user->getPartnerInTerritoryOrFirstOne($signalement->getAddress()->getTerritory()), $suivi->getPartner());
+    }
+
+    public function testCreateSuiviFromSuiviDelayedListLogementOccupe(): void
+    {
+        [$signalement, $user] = $this->getSignalementAndUserForFiles();
+
+        $this->suiviManager->createSuiviFromSuiviDelayedList([
+            $this->createSuiviDelayed($signalement, $user, SuiviCategory::SIGNALEMENT_EDITED_BO, SuiviDelayedType::BO_EDIT_OCCUPATION_LOGEMENT, ['logementVacant' => false]),
+        ]);
+        $this->entityManager->flush();
+
+        $description = $this->findLastSuivi($signalement, SuiviCategory::SIGNALEMENT_EDITED_BO)->getDescription(raw: true);
+        $this->assertStringContainsString('<li>Le logement a été marqué comme occupé.</li>', $description);
+    }
+
+    /**
+     * @param array<mixed>|null $changes
+     */
+    private function createSuiviDelayed(
+        Signalement $signalement,
+        User $user,
+        SuiviCategory $category,
+        SuiviDelayedType $type,
+        ?array $changes = null,
+    ): SuiviDelayed {
+        return (new SuiviDelayed())
+            ->setSignalement($signalement)
+            ->setUser($user)
+            ->setSuiviCategory($category)
+            ->setSuiviDelayedType($type)
+            ->setChanges($changes);
+    }
+
+    private function findLastSuivi(Signalement $signalement, SuiviCategory $category): Suivi
+    {
+        /** @var Suivi $suivi */
+        $suivi = $this->entityManager->getRepository(Suivi::class)->findOneBy(
+            ['signalement' => $signalement, 'category' => $category],
+            ['id' => 'DESC']
+        );
+
+        return $suivi;
     }
 }
