@@ -4,6 +4,9 @@ namespace App\Form;
 
 use App\Entity\Affectation;
 use App\Entity\Enum\MotifCloture;
+use App\Entity\File;
+use App\Form\Type\SearchCheckboxType;
+use App\Service\Files\FileListService;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
@@ -13,8 +16,14 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
  */
 class CloseAffectationType extends AbstractType
 {
+    public function __construct(
+        private readonly FileListService $fileListService,
+    ) {
+    }
+
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
+        $signalement = $builder->getData()->getSignalement();
         $builder
             ->add('motifCloture', null, [
                 'choices' => MotifCloture::getListForAffectation(),
@@ -47,6 +56,15 @@ class CloseAffectationType extends AbstractType
             'attr' => [
                 'class' => 'editor',
             ],
+        ]);
+        $builder->add('files', SearchCheckboxType::class, [
+            'class' => File::class,
+            'choice_label' => 'title',
+            'label' => 'Fichiers',
+            'noselectionlabel' => 'Sélectionnez un ou plusieurs fichiers à joindre au suivi de clôture',
+            'nochoiceslabel' => 'Aucun fichier disponible',
+            'choices' => $this->fileListService->getFileChoicesForSignalement($signalement),
+            'mapped' => false,
         ]);
     }
 

@@ -408,6 +408,7 @@ class AffectationController extends AbstractController
             motif: $affectation->getMotifCloture(),
             partner: $partner,
             message: $affectation->getPrecisionsCloture(),
+            files: $form->get('files')->getData(),
             createSuiviAndNotifications: true
         );
         $entityManager->flush();
