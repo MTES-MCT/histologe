@@ -192,40 +192,56 @@ class Suivi implements EntityHistoryInterface
         return $this->getCreatedBy()?->getNomComplet($firstNameFirst);
     }
 
-    public function getCreatedByLabel(string $separator = ' : ', bool $forBailleur = false): ?string
-    {
-        if (self::TYPE_TECHNICAL === $this->type) {
-            return 'Suivi automatique';
+    public function getCreatedByLabel(
+        string $separator = ' : ',
+        bool $forBailleur = false,
+        bool $withAgentName = true,
+        bool $withAgentFonction = false,
+    ): ?string {
+        $mention = '';
+        if ($this->isAutomatic()) {
+            $mention = '(Suivi automatique)';
         }
-        if ($this->getPartner()) {
-            if ($this->getPartner()->getIsArchive()) {
-                return 'Partenaire supprimé'.$separator.$this->getCreatedBy()->getNomComplet(true);
-            }
+        if ($this->getCreatedBy()?->isApiUser()) {
+            $mention = '(Suivi créé par API)';
+        }
 
-            return $this->getPartner()->getNom().$separator.$this->getCreatedBy()->getNomComplet(true);
+        $partnerOrType = null;
+        $partner = $this->getPartner() ?: $this->getCreatedBy()?->getPartnerInTerritoryOrFirstOne($this->getSignalement()->getAddress()->getTerritory());
+        if ($partner) {
+            if ($partner->getIsArchive()) {
+                $partnerOrType = 'Partenaire supprimé';
+            } else {
+                $partnerOrType = $partner->getNom();
+            }
         }
-        if ($this->getCreatedBy()) {
-            if (in_array($this->getCategory(), SuiviCategory::categoriesSubmittedByUsager())) {
-                if ($this->getCreatedBy() === $this->getSignalement()->getSignalementUsager()?->getOccupant()) {
-                    return 'OCCUPANT'.$separator.$this->getCreatedByNomComplet(true);
+
+        $author = null;
+        if (
+            in_array($this->getCategory(), SuiviCategory::categoriesSubmittedByBailleur())
+            || SuiviCategory::INJONCTION_BAILLEUR_LOGIN_BAILLEUR === $this->getCategory()
+        ) {
+            $author = $forBailleur ? 'Vous (bailleur)' : 'BAILLEUR';
+        } elseif ($this->getCreatedBy()?->isUsager()) {
+            $partnerOrType = $this->getCreatedBy() === $this->getSignalement()->getSignalementUsager()?->getOccupant() ? 'OCCUPANT' : 'DECLARANT';
+            $author = $this->getCreatedByNomComplet(true);
+        } elseif ($this->getCreatedBy() && !$this->getCreatedBy()->isApiUser()) {
+            if ($withAgentName) {
+                $author = $this->getCreatedBy()->getNomComplet(true);
+                if ($withAgentFonction && $this->getCreatedBy()->getFonction()) {
+                    $author .= ' ('.$this->getCreatedBy()->getFonction().')';
                 }
-
-                return 'DECLARANT'.$separator.$this->getCreatedByNomComplet(true);
             }
-
-            return $this->getCreatedBy()->getPartnerInTerritoryOrFirstOne($this->getSignalement()->getAddress()->getTerritory())?->getNom().$separator.$this->getCreatedBy()->getNomComplet(true);
-        }
-        if (in_array($this->getCategory(), SuiviCategory::categoriesSubmittedByBailleur())) {
-            return $forBailleur ? 'Vous (bailleur)' : 'Bailleur';
-        }
-        if ($this->getCreatedAt()->format('Y') >= 2024) {
-            return 'Occupant ou déclarant';
-        }
-        if ($this->getSignalement()->getIsNotOccupant()) {
-            return 'DECLARANT'.$separator.strtoupper($this->getSignalement()->getNomDeclarant()).' '.ucfirst($this->getSignalement()->getPrenomDeclarant());
+        } elseif (!$this->getCreatedBy() && in_array($this->getCategory(), SuiviCategory::categoriesSubmittedByUsager())) {
+            // Suivi usager sans compte associé : impossible de savoir si c'est l'occupant ou le déclarant
+            $partnerOrType = 'OCCUPANT/DECLARANT';
         }
 
-        return 'OCCUPANT'.$separator.strtoupper($this->getSignalement()->getNomOccupant()).' '.ucfirst($this->getSignalement()->getPrenomOccupant());
+        $label = implode($separator, array_filter([$partnerOrType, $author]));
+        // La mention est accolée avec un espace, sauf si le séparateur est un retour à la ligne
+        $mentionSeparator = str_contains($separator, "\n") ? $separator : ' ';
+
+        return implode($mentionSeparator, array_filter([$label, $mention]));
     }
 
     public function getDescription(bool $transformHtml = true, bool $raw = false, SuiviRecipient $recipient = SuiviRecipient::DEFAULT): string
@@ -387,6 +403,15 @@ class Suivi implements EntityHistoryInterface
         }
 
         return in_array($this->category, SuiviCategory::categoriesSubmittedByBailleur(), true);
+    }
+
+    public function isAutomatic(): bool
+    {
+        if (null === $this->category) {
+            return false;
+        }
+
+        return in_array($this->category, SuiviCategory::automaticCategories(), true);
     }
 
     public function setSeenByUsager(bool $seen): void

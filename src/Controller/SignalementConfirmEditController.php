@@ -32,6 +32,7 @@ class SignalementConfirmEditController extends AbstractController
                 signalement: $signalement,
                 description: $this->renderView('suivi/front_signalement_confirm_edit_email_occupant.html.twig', ['old' => $old, 'new' => $signalement->getMailOccupant()]),
                 category: SuiviCategory::SIGNALEMENT_EDITED_FO,
+                user: $signalement->getSignalementUsager()?->getOccupant(),
                 isVisibleForUsager: true,
             );
             $entityManager->flush();

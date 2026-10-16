@@ -112,6 +112,6 @@ class LoadAffectationData extends Fixture implements OrderedFixtureInterface
 
     public function getOrder(): int
     {
-        return 15;
+        return 14;
     }
 }
