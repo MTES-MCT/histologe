@@ -100,6 +100,13 @@ class SuiviDescriptionHelper
         SuiviCategory::ASK_DOCUMENT->value => [
             SuiviDescriptionVariant::DEFAULT->value => 'suivi/ask_document.html.twig',
         ],
+        SuiviCategory::SIGNALEMENT_STATUS_IS_SYNCHRO->value => [
+            SuiviDescriptionVariant::DEFAULT->value => 'suivi/signalement_status_is_synchro.html.twig',
+            SuiviDescriptionVariant::IDOSS->value => 'suivi/signalement_status_is_synchro_idoss.html.twig',
+        ],
+        SuiviCategory::MESSAGE_ESABORA_SCHS->value => [
+            SuiviDescriptionVariant::DEFAULT->value => 'suivi/message_esabora_schs.html.twig',
+        ],
     ];
 
     private const SPECIFIC_DESCRIPTIONS = [

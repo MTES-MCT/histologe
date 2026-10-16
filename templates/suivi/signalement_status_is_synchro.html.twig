@@ -1,0 +1,30 @@
+{#-
+    Synchronisation du statut d'une affectation depuis Esabora (SCHS / SISH).
+    commentaireSas et causeRefus viennent du SI : passés en |raw comme avant, le HtmlSanitizer de createSuivi() les nettoie.
+    Attention : EsaboraManager recherche les suivis existants commençant par « Signalement <b>accepté par … via … »
+    pour détecter une resynchronisation, ne pas modifier ce début de texte.
+-#}
+Signalement <b>
+{%- if action == 'wait' -%}
+    remis en attente par {{ partnerName }} via {{ nameSI }}
+{%- elseif action == 'accepted' -%}
+    accepté par {{ partnerName }} via {{ nameSI }}
+{%- elseif action == 'resynchronized' -%}
+    resynchronisé avec {{ partnerName }} via {{ nameSI }}
+{%- elseif action == 'closed' -%}
+    clôturé par {{ partnerName }} via {{ nameSI }}
+{%- elseif action == 'refused' -%}
+    refusé par {{ partnerName }} via {{ nameSI }}
+{%- elseif action == 'rejected' -%}
+    refusé via {{ nameSI }} pour motif suivant : {{ causeRefus|raw }}
+    {%- if dateReaffectation -%}
+        <br><i>NOTE : vous pourrez, si besoin, réaffecter ce signalement à partir du : {{ dateReaffectation }}</i>
+    {%- endif -%}
+{%- endif -%}
+{%- if commentaireSas -%}
+    <br>Commentaire Santé-Habitat : {{ commentaireSas|raw }}
+{%- endif -%}
+{%- if dossNum -%}
+    {{ ' (Dossier ' ~ dossNum ~ ')' }}
+{%- endif -%}
+</b>

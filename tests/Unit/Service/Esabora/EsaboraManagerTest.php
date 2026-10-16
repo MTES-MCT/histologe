@@ -26,6 +26,7 @@ use App\Service\Interconnection\Esabora\Response\DossierResponseInterface;
 use App\Service\Interconnection\Esabora\Response\Model\DossierArreteSISH;
 use App\Service\Security\FileScanner;
 use App\Service\Signalement\Qualification\SignalementQualificationUpdater;
+use App\Service\Signalement\Suivi\SuiviDescriptionHelper;
 use App\Service\TimezoneProvider;
 use App\Service\UploadHandlerService;
 use App\Tests\FixturesHelper;
@@ -61,6 +62,7 @@ class EsaboraManagerTest extends KernelTestCase
     private HtmlSanitizerInterface $htmlSanitizer;
     private WorkflowInterface $workflow;
     private MockObject&UserSignalementSubscriptionManager $userSignalementSubscriptionManager;
+    private SuiviDescriptionHelper $suiviDescriptionHelper;
 
     protected function setUp(): void
     {
@@ -82,6 +84,7 @@ class EsaboraManagerTest extends KernelTestCase
         $this->htmlSanitizer = static::getContainer()->get('html_sanitizer.sanitizer.app.message_sanitizer');
         $this->workflow = static::getContainer()->get('state_machine.intervention_planning');
         $this->userSignalementSubscriptionManager = $this->createMock(UserSignalementSubscriptionManager::class);
+        $this->suiviDescriptionHelper = static::getContainer()->get(SuiviDescriptionHelper::class);
     }
 
     /**
@@ -135,6 +138,7 @@ class EsaboraManagerTest extends KernelTestCase
             $this->workflow,
             $this->userSignalementSubscriptionManager,
             true,
+            $this->suiviDescriptionHelper,
         );
         $esaboraManager->createOrUpdateVisite($this->getAffectation(PartnerType::ARS), $dossierVisite);
     }
@@ -216,6 +220,7 @@ class EsaboraManagerTest extends KernelTestCase
             $this->workflow,
             $this->userSignalementSubscriptionManager,
             true,
+            $this->suiviDescriptionHelper,
         );
     }
 
@@ -262,6 +267,7 @@ class EsaboraManagerTest extends KernelTestCase
             $this->workflow,
             $this->userSignalementSubscriptionManager,
             true,
+            $this->suiviDescriptionHelper,
         );
 
         $reflector = new \ReflectionClass($esaboraManager);
@@ -317,6 +323,7 @@ class EsaboraManagerTest extends KernelTestCase
             $this->workflow,
             $this->userSignalementSubscriptionManager,
             true,
+            $this->suiviDescriptionHelper,
         );
 
         $reflector = new \ReflectionClass($esaboraManager);
@@ -382,6 +389,7 @@ class EsaboraManagerTest extends KernelTestCase
             $this->workflow,
             $this->userSignalementSubscriptionManager,
             true,
+            $this->suiviDescriptionHelper,
         );
 
         $description = $esaboraManager->updateStatusAndBuildDescription($affectation, $user, $dossierResponse);
@@ -446,6 +454,7 @@ class EsaboraManagerTest extends KernelTestCase
             $this->workflow,
             $this->userSignalementSubscriptionManager,
             true,
+            $this->suiviDescriptionHelper,
         );
 
         $reflector = new \ReflectionClass($esaboraManager);
@@ -524,6 +533,7 @@ class EsaboraManagerTest extends KernelTestCase
             $this->workflow,
             $this->userSignalementSubscriptionManager,
             true,
+            $this->suiviDescriptionHelper,
         );
 
         $reflector = new \ReflectionClass($esaboraManager);
@@ -601,6 +611,7 @@ class EsaboraManagerTest extends KernelTestCase
             $this->workflow,
             $this->userSignalementSubscriptionManager,
             true,
+            $this->suiviDescriptionHelper,
         );
 
         $reflector = new \ReflectionClass($esaboraManager);
@@ -678,6 +689,7 @@ class EsaboraManagerTest extends KernelTestCase
             $this->workflow,
             $this->userSignalementSubscriptionManager,
             true,
+            $this->suiviDescriptionHelper,
         );
 
         $reflector = new \ReflectionClass($esaboraManager);
@@ -755,6 +767,7 @@ class EsaboraManagerTest extends KernelTestCase
             $this->workflow,
             $this->userSignalementSubscriptionManager,
             true,
+            $this->suiviDescriptionHelper,
         );
 
         $reflector = new \ReflectionClass($esaboraManager);
@@ -837,6 +850,7 @@ class EsaboraManagerTest extends KernelTestCase
             $this->workflow,
             $this->userSignalementSubscriptionManager,
             true,
+            $this->suiviDescriptionHelper,
         );
 
         $reflector = new \ReflectionClass($esaboraManager);
@@ -925,6 +939,7 @@ class EsaboraManagerTest extends KernelTestCase
             $this->workflow,
             $this->userSignalementSubscriptionManager,
             true,
+            $this->suiviDescriptionHelper,
         );
 
         $reflector = new \ReflectionClass($esaboraManager);

@@ -17,6 +17,8 @@ use App\Service\Interconnection\Idoss\IdossService;
 use App\Service\Mailer\NotificationMail;
 use App\Service\Mailer\NotificationMailerRegistry;
 use App\Service\Mailer\NotificationMailerType;
+use App\Service\Signalement\Suivi\SuiviDescriptionHelper;
+use App\Service\Signalement\Suivi\SuiviDescriptionVariant;
 use Doctrine\ORM\EntityManagerInterface;
 use League\Flysystem\FilesystemException;
 use Symfony\Component\Console\Attribute\AsCommand;
@@ -51,6 +53,7 @@ class SynchronizeIdossCommand extends AbstractCronCommand
         private readonly IdossService $idossService,
         private readonly UserSignalementSubscriptionManager $userSignalementSubscriptionManager,
         private readonly AffectationManager $affectationManager,
+        private readonly SuiviDescriptionHelper $suiviDescriptionHelper,
     ) {
         parent::__construct($this->parameterBag);
     }
@@ -135,21 +138,26 @@ class SynchronizeIdossCommand extends AbstractCronCommand
                     switch ($item['statut']) {
                         case IdossService::STATUS_ACCEPTED:
                         case IdossService::STATUS_IN_PROGRESS:
-                            $description = 'Le signalement a été accepté par IDOSS';
+                            $action = 'accepted';
                             $this->userSignalementSubscriptionManager->createDefaultSubscriptionsForAffectation($affectation);
                             $this->entityManager->flush();
                             break;
                         case IdossService::STATUS_CLOSED:
-                            $description = 'Le signalement a été clôturé par IDOSS avec le motif suivant : "'.$item['motif'].'"';
+                            $action = 'closed';
                             $this->affectationManager->removeSubscriptionsOfAffectation($affectation);
                             break;
                         default:
-                            $description = 'Le signalement a été mis à jour ("'.$item['statut'].'") par IDOSS';
+                            $action = 'updated';
                     }
+                    $category = SuiviCategory::SIGNALEMENT_STATUS_IS_SYNCHRO;
                     $this->suiviManager->createSuivi(
                         signalement: $signalement,
-                        description: $description,
-                        category: SuiviCategory::SIGNALEMENT_STATUS_IS_SYNCHRO,
+                        description: $this->suiviDescriptionHelper->buildDescriptionForCreation(
+                            $category,
+                            ['action' => $action, 'motif' => $item['motif'], 'statut' => $item['statut']],
+                            SuiviDescriptionVariant::IDOSS,
+                        ),
+                        category: $category,
                         sendMail: false,
                         partner: $affectation->getPartner(),
                         user: $this->adminUser,

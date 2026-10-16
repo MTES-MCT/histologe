@@ -1,0 +1,7 @@
+{%- if action == 'accepted' -%}
+    Le signalement a été accepté par IDOSS
+{%- elseif action == 'closed' -%}
+    Le signalement a été clôturé par IDOSS avec le motif suivant : "{{ motif }}"
+{%- else -%}
+    Le signalement a été mis à jour ("{{ statut }}") par IDOSS
+{%- endif -%}

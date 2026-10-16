@@ -198,4 +198,104 @@ class SuiviDescriptionHelperTest extends KernelTestCase
         $this->assertStringContainsString('fournir :<br>- des photos pour les désordres suivants : Propreté et entretien / Sécurité<br><br>', $description);
         $this->assertStringNotContainsString('coordonnées du propriétaire', $description);
     }
+
+    public function testBuildDescriptionForCreationStatusSynchroAcceptedKeepsPrefixUsedForResynchronisation(): void
+    {
+        $description = $this->buildStatusSynchro(['action' => 'accepted', 'dossNum' => '2023/SISH/0010']);
+
+        // EsaboraManager recherche ce préfixe pour détecter une resynchronisation
+        $this->assertStringStartsWith('Signalement <b>accepté par Partenaire 13-01 via SISH', $description);
+        $this->assertSame('Signalement <b>accepté par Partenaire 13-01 via SISH (Dossier 2023/SISH/0010)</b>', $description);
+    }
+
+    public static function provideStatusSynchroActions(): \Generator
+    {
+        yield 'remis en attente' => ['wait', 'Signalement <b>remis en attente par Partenaire 13-01 via SISH</b>'];
+        yield 'resynchronisé' => ['resynchronized', 'Signalement <b>resynchronisé avec Partenaire 13-01 via SISH</b>'];
+        yield 'clôturé' => ['closed', 'Signalement <b>clôturé par Partenaire 13-01 via SISH</b>'];
+        yield 'refusé' => ['refused', 'Signalement <b>refusé par Partenaire 13-01 via SISH</b>'];
+    }
+
+    #[DataProvider('provideStatusSynchroActions')]
+    public function testBuildDescriptionForCreationStatusSynchro(string $action, string $expected): void
+    {
+        $this->assertSame($expected, $this->buildStatusSynchro(['action' => $action]));
+    }
+
+    public function testBuildDescriptionForCreationStatusSynchroRejectedWithNoteAndCommentaire(): void
+    {
+        $description = $this->buildStatusSynchro([
+            'action' => 'rejected',
+            'causeRefus' => 'Doublon',
+            'dateReaffectation' => '17/10/2026',
+            'commentaireSas' => 'Déjà traité',
+            'dossNum' => '2023/SISH/0010',
+        ]);
+
+        $this->assertSame(
+            'Signalement <b>refusé via SISH pour motif suivant : Doublon'
+            .'<br><i>NOTE : vous pourrez, si besoin, réaffecter ce signalement à partir du : 17/10/2026</i>'
+            .'<br>Commentaire Santé-Habitat : Déjà traité (Dossier 2023/SISH/0010)</b>',
+            $description
+        );
+    }
+
+    public static function provideStatusSynchroIdoss(): \Generator
+    {
+        yield 'accepté' => ['accepted', null, 'Le signalement a été accepté par IDOSS'];
+        yield 'clôturé' => ['closed', 'Travaux réalisés', 'Le signalement a été clôturé par IDOSS avec le motif suivant : "Travaux réalisés"'];
+        yield 'mis à jour' => ['updated', null, 'Le signalement a été mis à jour ("EN_ATTENTE") par IDOSS'];
+    }
+
+    #[DataProvider('provideStatusSynchroIdoss')]
+    public function testBuildDescriptionForCreationStatusSynchroIdoss(string $action, ?string $motif, string $expected): void
+    {
+        $description = $this->suiviDescriptionHelper->buildDescriptionForCreation(
+            SuiviCategory::SIGNALEMENT_STATUS_IS_SYNCHRO,
+            ['action' => $action, 'motif' => $motif, 'statut' => 'EN_ATTENTE'],
+            SuiviDescriptionVariant::IDOSS,
+        );
+
+        $this->assertSame($expected, $description);
+    }
+
+    public function testBuildDescriptionForCreationMessageEsaboraSchs(): void
+    {
+        $description = $this->suiviDescriptionHelper->buildDescriptionForCreation(SuiviCategory::MESSAGE_ESABORA_SCHS, [
+            'date' => '15/03/2026',
+            'presentation' => 'Visite effectuée',
+            'libelle' => 'Rapport transmis',
+        ]);
+
+        $this->assertSame(
+            'Date : 15/03/2026<br/>Message provenant d\'esabora SCHS :<br/>Visite effectuée<br/>Rapport transmis',
+            $description
+        );
+    }
+
+    public function testBuildDescriptionForCreationMessageEsaboraSchsWithoutPresentation(): void
+    {
+        $description = $this->suiviDescriptionHelper->buildDescriptionForCreation(SuiviCategory::MESSAGE_ESABORA_SCHS, [
+            'date' => 'inconnue',
+            'presentation' => null,
+            'libelle' => 'Rapport transmis',
+        ]);
+
+        $this->assertSame('Date : inconnue<br/>Message provenant d\'esabora SCHS :<br/>Rapport transmis', $description);
+    }
+
+    /**
+     * @param array<string, mixed> $params
+     */
+    private function buildStatusSynchro(array $params): string
+    {
+        return $this->suiviDescriptionHelper->buildDescriptionForCreation(SuiviCategory::SIGNALEMENT_STATUS_IS_SYNCHRO, array_merge([
+            'partnerName' => 'Partenaire 13-01',
+            'nameSI' => 'SISH',
+            'causeRefus' => null,
+            'dateReaffectation' => null,
+            'commentaireSas' => null,
+            'dossNum' => null,
+        ], $params));
+    }
 }
