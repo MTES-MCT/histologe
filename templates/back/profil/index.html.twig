@@ -10,9 +10,11 @@
     {% include 'back/profil/_modal_profil_notification_email.html.twig' %}
 </div>
 {% include 'back/profil/_modal_profil_email.html.twig' %}
-<div data-ajax-form>  
-    {% include 'back/profil/_modal_profil_password.html.twig' %}
-</div>
+{% if app.user.password is not null %}
+    <div data-ajax-form>  
+        {% include 'back/profil/_modal_profil_password.html.twig' %}
+    </div>
+{% endif %}
 
     <section class="fr-pt-4v">
         {% include 'back/breadcrumb_bo.html.twig' with {
