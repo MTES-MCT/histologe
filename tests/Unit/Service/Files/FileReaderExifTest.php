@@ -100,6 +100,7 @@ class FileReaderExifTest extends TestCase
     }
 
     #[DataProvider('provideAbsentOrEmptyOrNonStringValues')]
+    #[DataProvider('provideInvalidYears')]
     public function testSetDatePriseDeVueWithAbsentEmptyOrNonStringValues(mixed $exifDate): void
     {
         $file = $this->createFileWithExifData('test.jpg', $exifDate);
@@ -116,18 +117,6 @@ class FileReaderExifTest extends TestCase
         yield 'Null value' => [null];
         yield 'Empty string' => [''];
         yield 'Whitespace string' => ['   '];
-    }
-
-    #[DataProvider('provideInvalidYears')]
-    public function testSetDatePriseDeVueWithYearLessThanOrEqualTo1970OrFuture(string $exifDate): void
-    {
-        $file = $this->createFileWithExifData('test.jpg', $exifDate);
-
-        $this->logger->expects($this->never())->method('error');
-
-        $this->fileReaderExif->setDatePriseDeVueFromExifData($file);
-
-        $this->assertNull($file->getDatePriseDeVue());
     }
 
     public static function provideInvalidYears(): \Generator
