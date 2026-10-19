@@ -1,0 +1,9 @@
+{#-
+    Visite ou visite de contrôle, programmée ou déjà réalisée (isInPast).
+    commentBeforeVisite : saisie du partenaire déjà nettoyée, passée en |raw comme avant.
+-#}
+{%- set label = typeLabel|lower -%}
+{{ label|capitalize }} {{ isInPast ? 'réalisée' : 'programmée' }} : une {{ label }} du logement situé {{ address }} {{ isInPast ? 'a été effectuée' : 'est prévue' }} le {{ date }}.<br>La {{ label }} {{ isInPast ? 'a été réalisée' : 'sera effectuée' }} par {{ partnerName }}.
+{%- if commentBeforeVisite -%}
+    <br>Informations complémentaires : {{ commentBeforeVisite|raw }}
+{%- endif -%}

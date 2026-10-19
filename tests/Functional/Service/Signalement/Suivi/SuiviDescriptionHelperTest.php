@@ -285,6 +285,250 @@ class SuiviDescriptionHelperTest extends KernelTestCase
         $this->assertSame('Date : inconnue<br/>Message provenant d\'esabora SCHS :<br/>Rapport transmis', $description);
     }
 
+    public function testBuildDescriptionForCreationInterventionPlannedReminder(): void
+    {
+        $description = $this->suiviDescriptionHelper->buildDescriptionForCreation(SuiviCategory::INTERVENTION_PLANNED_REMINDER, [
+            'address' => '25 rue du test 13001 Marseille',
+            'date' => '01/10/2026',
+            'partnerName' => 'ARS',
+        ]);
+
+        $this->assertSame(
+            '<strong>Rappel de visite :</strong> la visite du logement situé 25 rue du test 13001 Marseille aura lieu le 01/10/2026<br>La visite sera effectuée par ARS.',
+            $description
+        );
+    }
+
+    public function testBuildDescriptionForCreationInterventionIsAborted(): void
+    {
+        $description = $this->suiviDescriptionHelper->buildDescriptionForCreation(SuiviCategory::INTERVENTION_IS_ABORTED, [
+            'date' => '01/10/2026',
+            'details' => '<p>Occupant absent</p>',
+        ]);
+
+        $this->assertSame(
+            'La visite du logement prévue le 01/10/2026 n\'a pas pu avoir lieu pour le motif suivant :<br><p>Occupant absent</p>',
+            $description
+        );
+    }
+
+    public function testBuildDescriptionForCreationInterventionIsCanceled(): void
+    {
+        $description = $this->suiviDescriptionHelper->buildDescriptionForCreation(SuiviCategory::INTERVENTION_IS_CANCELED, [
+            'date' => '01/10/2026',
+            'details' => '<p>Travaux réalisés</p>',
+        ]);
+
+        $this->assertSame(
+            'Annulation de visite : la visite du logement prévue le 01/10/2026 a été annulée pour le motif suivant : <br><p>Travaux réalisés</p>',
+            $description
+        );
+    }
+
+    public function testBuildDescriptionForCreationInterventionHasConclusion(): void
+    {
+        $description = $this->suiviDescriptionHelper->buildDescriptionForCreation(SuiviCategory::INTERVENTION_HAS_CONCLUSION, [
+            'partnerName' => 'ARS',
+            'concludeProcedures' => ['Insalubrité', 'Danger'],
+            'details' => '<p>RAS</p>',
+        ]);
+
+        $this->assertSame(
+            'Après visite du logement par ARS, la situation observée du logement est :<br>- Insalubrité<br>- Danger<br><br>Commentaire opérateur :<br><p>RAS</p>',
+            $description
+        );
+    }
+
+    public function testBuildDescriptionForCreationInterventionHasConclusionWithoutPartner(): void
+    {
+        $description = $this->suiviDescriptionHelper->buildDescriptionForCreation(SuiviCategory::INTERVENTION_HAS_CONCLUSION, [
+            'partnerName' => null,
+            'concludeProcedures' => [],
+            'details' => null,
+        ]);
+
+        $this->assertSame(
+            'Après visite du logement, la situation observée du logement est :<br><br>Commentaire opérateur :<br>',
+            $description
+        );
+    }
+
+    public function testBuildDescriptionForCreationInterventionHasConclusionEditedWithoutChanges(): void
+    {
+        $description = $this->suiviDescriptionHelper->buildDescriptionForCreation(SuiviCategory::INTERVENTION_HAS_CONCLUSION_EDITED, [
+            'hasChanges' => false,
+            'date' => '01/10/2026',
+            'partnerName' => 'ARS',
+            'concludeProcedureChanged' => false,
+            'concludeProcedures' => ['Insalubrité'],
+            'detailsChanged' => false,
+            'details' => '<p>RAS</p>',
+        ]);
+
+        $this->assertSame('Edition de la conclusion de la visite par ARS.<br>Commentaire opérateur :<br><p>RAS</p>', $description);
+    }
+
+    /**
+     * @param array<string> $concludeProcedures
+     */
+    #[DataProvider('provideInterventionHasConclusionEditedChanges')]
+    public function testBuildDescriptionForCreationInterventionHasConclusionEditedWithChanges(
+        bool $concludeProcedureChanged,
+        array $concludeProcedures,
+        bool $detailsChanged,
+        string $expectedEnd,
+    ): void {
+        $description = $this->suiviDescriptionHelper->buildDescriptionForCreation(SuiviCategory::INTERVENTION_HAS_CONCLUSION_EDITED, [
+            'hasChanges' => true,
+            'date' => '01/10/2026 à 10:00',
+            'partnerName' => 'ARS',
+            'concludeProcedureChanged' => $concludeProcedureChanged,
+            'concludeProcedures' => $concludeProcedures,
+            'detailsChanged' => $detailsChanged,
+            'details' => '<p>RAS</p>',
+        ]);
+
+        $this->assertSame(
+            'Les informations sur la visite du logement effectuée le 01/10/2026 à 10:00 par ARS ont été modifiées.'.$expectedEnd,
+            $description
+        );
+    }
+
+    public static function provideInterventionHasConclusionEditedChanges(): \Generator
+    {
+        yield 'Une situation' => [true, ['Insalubrité'], false, '<br><br>La nouvelle situation observée du logement est : <br>Insalubrité.'];
+        yield 'Plusieurs situations et commentaire' => [
+            true,
+            ['Insalubrité', 'Danger'],
+            true,
+            '<br><br>Les nouvelles situations observées du logement sont : <br>Insalubrité, Danger.<br><br>Commentaire opérateur : <p>RAS</p>',
+        ];
+        yield 'Commentaire seul' => [false, ['Insalubrité'], true, '<br><br>Commentaire opérateur : <p>RAS</p>'];
+    }
+
+    #[DataProvider('provideInterventionIsCreated')]
+    public function testBuildDescriptionForCreationInterventionIsCreated(
+        SuiviCategory $category,
+        string $typeLabel,
+        bool $isInPast,
+        ?string $commentBeforeVisite,
+        string $expected,
+    ): void {
+        $description = $this->suiviDescriptionHelper->buildDescriptionForCreation($category, [
+            'typeLabel' => $typeLabel,
+            'isInPast' => $isInPast,
+            'address' => '25 rue du test',
+            'date' => '01/10/2026',
+            'partnerName' => 'ARS',
+            'commentBeforeVisite' => $commentBeforeVisite,
+        ]);
+
+        $this->assertSame($expected, $description);
+    }
+
+    public static function provideInterventionIsCreated(): \Generator
+    {
+        yield 'Visite programmée' => [
+            SuiviCategory::INTERVENTION_IS_CREATED,
+            'Visite',
+            false,
+            'Prévenir le gardien',
+            'Visite programmée : une visite du logement situé 25 rue du test est prévue le 01/10/2026.<br>La visite sera effectuée par ARS.<br>Informations complémentaires : Prévenir le gardien',
+        ];
+        yield 'Visite réalisée' => [
+            SuiviCategory::INTERVENTION_IS_DONE,
+            'Visite',
+            true,
+            null,
+            'Visite réalisée : une visite du logement situé 25 rue du test a été effectuée le 01/10/2026.<br>La visite a été réalisée par ARS.',
+        ];
+        yield 'Visite de contrôle programmée' => [
+            SuiviCategory::INTERVENTION_CONTROLE_IS_CREATED,
+            'Visite de contrôle',
+            false,
+            null,
+            'Visite de contrôle programmée : une visite de contrôle du logement situé 25 rue du test est prévue le 01/10/2026.<br>La visite de contrôle sera effectuée par ARS.',
+        ];
+        yield 'Visite de contrôle réalisée' => [
+            SuiviCategory::INTERVENTION_CONTROLE_IS_DONE,
+            'Visite de contrôle',
+            true,
+            null,
+            'Visite de contrôle réalisée : une visite de contrôle du logement situé 25 rue du test a été effectuée le 01/10/2026.<br>La visite de contrôle a été réalisée par ARS.',
+        ];
+    }
+
+    #[DataProvider('provideInterventionArrete')]
+    public function testBuildDescriptionForCreationInterventionArrete(SuiviCategory $category): void
+    {
+        $description = $this->suiviDescriptionHelper->buildDescriptionForCreation($category, [
+            'details' => 'L\'arrêté 2023/DD13/00664 du 14/06/2023 a été pris dans le dossier de n°2023/DD13/0010.<br>Type arrêté : Suroccupation<br>',
+        ]);
+
+        $this->assertSame(
+            'L\'arrêté 2023/DD13/00664 du 14/06/2023 a été pris dans le dossier de n°2023/DD13/0010.<br>Type arrêté : Suroccupation<br>',
+            $description
+        );
+    }
+
+    public static function provideInterventionArrete(): \Generator
+    {
+        yield 'Création' => [SuiviCategory::INTERVENTION_ARRETE_IS_CREATED];
+        yield 'Modification' => [SuiviCategory::INTERVENTION_ARRETE_IS_RESCHEDULED];
+    }
+
+    public function testBuildDescriptionForCreationInterventionIsRescheduled(): void
+    {
+        $description = $this->suiviDescriptionHelper->buildDescriptionForCreation(SuiviCategory::INTERVENTION_IS_RESCHEDULED, [
+            'previousDate' => '01/10/2026',
+            'date' => '15/10/2026',
+            'partnerName' => 'ARS',
+            'commentBeforeVisite' => 'Prévenir le gardien',
+        ]);
+
+        $this->assertSame(
+            'Changement de date de visite : la visite du logement initialement prévue le 01/10/2026 a été décalée au 15/10/2026.<br>La visite sera effectuée par ARS.<br>Informations complémentaires : Prévenir le gardien',
+            $description
+        );
+    }
+
+    #[DataProvider('provideInterventionIsRescheduledEsabora')]
+    public function testBuildDescriptionForCreationInterventionIsRescheduledEsabora(
+        SuiviCategory $category,
+        string $typeLabel,
+        ?string $commentBeforeVisite,
+        string $expected,
+    ): void {
+        $description = $this->suiviDescriptionHelper->buildDescriptionForCreation(
+            $category,
+            [
+                'typeLabel' => $typeLabel,
+                'nameSI' => 'SI-SH',
+                'date' => '15/10/2026',
+                'commentBeforeVisite' => $commentBeforeVisite,
+            ],
+            SuiviDescriptionVariant::ESABORA,
+        );
+
+        $this->assertSame($expected, $description);
+    }
+
+    public static function provideInterventionIsRescheduledEsabora(): \Generator
+    {
+        yield 'Visite' => [
+            SuiviCategory::INTERVENTION_IS_RESCHEDULED,
+            'Visite',
+            'Prévenir le gardien',
+            'La date de visite dans SI-SH a été modifiée ; La nouvelle date est le 15/10/2026.<br>Informations complémentaires : Prévenir le gardien',
+        ];
+        yield 'Visite de contrôle' => [
+            SuiviCategory::INTERVENTION_CONTROLE_IS_RESCHEDULED,
+            'Visite de contrôle',
+            null,
+            'La date de visite de contrôle dans SI-SH a été modifiée ; La nouvelle date est le 15/10/2026.',
+        ];
+    }
+
     /**
      * @param array<string, mixed> $params
      */

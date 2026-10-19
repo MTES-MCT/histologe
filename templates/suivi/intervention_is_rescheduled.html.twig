@@ -1,0 +1,5 @@
+{#- commentBeforeVisite : saisie du partenaire déjà nettoyée par InterventionManager, passée en |raw comme avant -#}
+Changement de date de visite : la visite du logement initialement prévue le {{ previousDate }} a été décalée au {{ date }}.<br>La visite sera effectuée par {{ partnerName }}.
+{%- if commentBeforeVisite -%}
+    <br>Informations complémentaires : {{ commentBeforeVisite|raw }}
+{%- endif -%}

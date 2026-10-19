@@ -13,6 +13,7 @@ use App\Repository\InterventionRepository;
 use App\Repository\SuiviRepository;
 use App\Repository\UserRepository;
 use App\Service\Interconnection\Esabora\DateParser;
+use App\Service\Signalement\Suivi\SuiviDescriptionHelper;
 use App\Service\Signalement\VisiteNotifier;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ManagerRegistry;
@@ -61,7 +62,7 @@ class InterventionCreatedSubscriberTest extends KernelTestCase
         /** @var UserRepository $userRepository */
         $userRepository = $this->entityManager->getRepository(User::class);
         $user = $userRepository->findOneBy(['email' => 'admin-territoire-13-01@signal-logement.fr']);
-        $interventionCreatedSubscriber = new InterventionCreatedSubscriber($visiteNotifier, $suiviManager);
+        $interventionCreatedSubscriber = new InterventionCreatedSubscriber($visiteNotifier, $suiviManager, static::getContainer()->get(SuiviDescriptionHelper::class));
         $eventDispatcher->addSubscriber($interventionCreatedSubscriber);
 
         $intervention = $interventions[0];
@@ -104,7 +105,7 @@ class InterventionCreatedSubscriberTest extends KernelTestCase
         /** @var UserRepository $userRepository */
         $userRepository = $this->entityManager->getRepository(User::class);
         $user = $userRepository->findOneBy(['email' => 'admin-territoire-13-01@signal-logement.fr']);
-        $interventionCreatedSubscriber = new InterventionCreatedSubscriber($visiteNotifier, $suiviManager);
+        $interventionCreatedSubscriber = new InterventionCreatedSubscriber($visiteNotifier, $suiviManager, static::getContainer()->get(SuiviDescriptionHelper::class));
         $eventDispatcher->addSubscriber($interventionCreatedSubscriber);
 
         $intervention = $interventions[0];
@@ -175,7 +176,7 @@ class InterventionCreatedSubscriberTest extends KernelTestCase
         /** @var UserRepository $userRepository */
         $userRepository = $this->entityManager->getRepository(User::class);
         $user = $userRepository->findOneBy(['email' => 'admin-territoire-13-01@signal-logement.fr']);
-        $interventionCreatedSubscriber = new InterventionCreatedSubscriber($visiteNotifier, $suiviManager);
+        $interventionCreatedSubscriber = new InterventionCreatedSubscriber($visiteNotifier, $suiviManager, static::getContainer()->get(SuiviDescriptionHelper::class));
         $eventDispatcher->addSubscriber($interventionCreatedSubscriber);
 
         $intervention->setScheduledAt($date);

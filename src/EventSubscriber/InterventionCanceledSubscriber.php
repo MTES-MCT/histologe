@@ -8,6 +8,7 @@ use App\Entity\Intervention;
 use App\Entity\User;
 use App\Manager\SuiviManager;
 use App\Service\Mailer\NotificationMailerType;
+use App\Service\Signalement\Suivi\SuiviDescriptionHelper;
 use App\Service\Signalement\VisiteNotifier;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
@@ -21,6 +22,7 @@ class InterventionCanceledSubscriber implements EventSubscriberInterface
         private Security $security,
         private VisiteNotifier $visiteNotifier,
         private SuiviManager $suiviManager,
+        private SuiviDescriptionHelper $suiviDescriptionHelper,
     ) {
     }
 
@@ -42,14 +44,14 @@ class InterventionCanceledSubscriber implements EventSubscriberInterface
         $currentUser = $this->security->getUser();
         $context = $event->getContext();
         if (InterventionType::VISITE === $intervention->getType()) {
-            $description = 'Annulation de visite :';
-            $description .= ' la visite du logement prévue le '.$intervention->getScheduledAt()->format('d/m/Y');
-            $description .= ' a été annulée pour le motif suivant : <br>';
-            $description .= $intervention->getDetails();
+            $category = SuiviCategory::INTERVENTION_IS_CANCELED;
             $suivi = $this->suiviManager->createSuivi(
                 signalement: $intervention->getSignalement(),
-                description: $description,
-                category: SuiviCategory::INTERVENTION_IS_CANCELED,
+                description: $this->suiviDescriptionHelper->buildDescriptionForCreation($category, [
+                    'date' => $intervention->getScheduledAt()->format('d/m/Y'),
+                    'details' => $intervention->getDetails(),
+                ]),
+                category: $category,
                 partner: $context['createdByPartner'],
                 user: $currentUser,
                 isVisibleForUsager: true,

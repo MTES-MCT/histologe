@@ -4,10 +4,13 @@ namespace App\EventSubscriber;
 
 use App\Entity\Enum\InterventionType;
 use App\Entity\Enum\SuiviCategory;
+use App\Entity\Intervention;
 use App\Event\InterventionUpdatedByEsaboraEvent;
 use App\Manager\SuiviManager;
-use App\Service\Intervention\InterventionDescriptionGenerator;
+use App\Service\Interconnection\Esabora\EsaboraSISHService;
 use App\Service\Mailer\NotificationMailerType;
+use App\Service\Signalement\Suivi\SuiviDescriptionHelper;
+use App\Service\Signalement\Suivi\SuiviDescriptionVariant;
 use App\Service\Signalement\VisiteNotifier;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
@@ -16,6 +19,7 @@ readonly class InterventionUpdatedByEsaboraSubscriber implements EventSubscriber
     public function __construct(
         private VisiteNotifier $visiteNotifier,
         private SuiviManager $suiviManager,
+        private SuiviDescriptionHelper $suiviDescriptionHelper,
     ) {
     }
 
@@ -30,8 +34,6 @@ readonly class InterventionUpdatedByEsaboraSubscriber implements EventSubscriber
     {
         $intervention = $event->getIntervention();
         $signalement = $intervention->getSignalement();
-        $description = (string) InterventionDescriptionGenerator::generate($intervention, InterventionUpdatedByEsaboraEvent::NAME);
-
         switch ($intervention->getType()) {
             case InterventionType::VISITE:
                 $suiviCategory = SuiviCategory::INTERVENTION_IS_RESCHEDULED;
@@ -44,6 +46,29 @@ readonly class InterventionUpdatedByEsaboraSubscriber implements EventSubscriber
                 break;
             default:
                 $suiviCategory = SuiviCategory::INTERVENTION_IS_RESCHEDULED;
+        }
+
+        if (InterventionType::ARRETE_PREFECTORAL === $intervention->getType()) {
+            $description = $this->suiviDescriptionHelper->buildDescriptionForCreation(
+                $suiviCategory,
+                ['details' => $intervention->getDetails()],
+            );
+        } else {
+            // Pour l'instant le seul besoin remonté par SISH est celui de la modification de date
+            // Mais l'opérateur pourrait aussi être modifié (que ce soit ARS ou un opérateur externe)
+            $isInPast = new \DateTimeImmutable() > $intervention->getScheduledAt()
+                && Intervention::STATUS_DONE === $intervention->getStatus();
+            $timezone = $signalement->getTimezone() ?? 'Europe/Paris';
+            $description = $this->suiviDescriptionHelper->buildDescriptionForCreation(
+                $suiviCategory,
+                [
+                    'typeLabel' => $intervention->getType()->label(),
+                    'nameSI' => EsaboraSISHService::NAME_SI,
+                    'date' => $intervention->getScheduledAt()->setTimezone(new \DateTimeZone($timezone))->format('d/m/Y'),
+                    'commentBeforeVisite' => !$isInPast ? $intervention->getCommentBeforeVisite() : null,
+                ],
+                SuiviDescriptionVariant::ESABORA,
+            );
         }
 
         $suivi = $this->suiviManager->createSuivi(

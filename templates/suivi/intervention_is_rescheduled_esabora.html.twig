@@ -1,0 +1,5 @@
+{#- Date d'une visite ou d'une visite de contrôle modifiée dans Esabora (SI-SH) -#}
+La date de {{ typeLabel|lower }} dans {{ nameSI }} a été modifiée ; La nouvelle date est le {{ date }}.
+{%- if commentBeforeVisite -%}
+    <br>Informations complémentaires : {{ commentBeforeVisite|raw }}
+{%- endif -%}

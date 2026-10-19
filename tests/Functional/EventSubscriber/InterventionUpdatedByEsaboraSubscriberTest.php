@@ -10,6 +10,7 @@ use App\EventSubscriber\InterventionUpdatedByEsaboraSubscriber;
 use App\Manager\SuiviManager;
 use App\Repository\SignalementRepository;
 use App\Repository\UserRepository;
+use App\Service\Signalement\Suivi\SuiviDescriptionHelper;
 use App\Service\Signalement\VisiteNotifier;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ManagerRegistry;
@@ -53,7 +54,7 @@ class InterventionUpdatedByEsaboraSubscriberTest extends KernelTestCase
         /** @var UserRepository $userRepository */
         $userRepository = $this->entityManager->getRepository(User::class);
         $user = $userRepository->findOneBy(['email' => 'admin-territoire-13-01@signal-logement.fr']);
-        $interventionUpdatedByEsaboraSubscriber = new InterventionUpdatedByEsaboraSubscriber($visiteNotifier, $suiviManager);
+        $interventionUpdatedByEsaboraSubscriber = new InterventionUpdatedByEsaboraSubscriber($visiteNotifier, $suiviManager, static::getContainer()->get(SuiviDescriptionHelper::class));
         $eventDispatcher->addSubscriber($interventionUpdatedByEsaboraSubscriber);
 
         if (!$intervention) {

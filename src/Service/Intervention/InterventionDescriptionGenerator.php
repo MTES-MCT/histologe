@@ -3,78 +3,12 @@
 namespace App\Service\Intervention;
 
 use App\Dto\Api\Request\ArreteRequest;
-use App\Entity\Enum\InterventionType;
 use App\Entity\Intervention;
-use App\Event\InterventionCreatedEvent;
-use App\Event\InterventionUpdatedByEsaboraEvent;
 use App\Service\Interconnection\Esabora\EsaboraSISHService;
 use App\Service\Interconnection\Esabora\Response\Model\DossierArreteSISH;
 
 class InterventionDescriptionGenerator
 {
-    public static function generate(Intervention $intervention, string $eventName): ?string
-    {
-        if (InterventionCreatedEvent::NAME === $eventName) {
-            if (InterventionType::ARRETE_PREFECTORAL === $intervention->getType()) {
-                return $intervention->getDetails();
-            }
-
-            return self::buildDescriptionVisiteCreated($intervention);
-        } elseif (InterventionUpdatedByEsaboraEvent::NAME === $eventName) {
-            if (InterventionType::ARRETE_PREFECTORAL === $intervention->getType()) {
-                return $intervention->getDetails();
-            }
-
-            return self::buildDescriptionVisiteUpdated($intervention);
-        }
-
-        return null;
-    }
-
-    public static function buildDescriptionVisiteCreated(Intervention $intervention): string
-    {
-        $labelVisite = strtolower($intervention->getType()->label());
-        $partnerName = $intervention->getExternalOperator() ?? $intervention->getPartner()?->getNom() ?? 'Non renseigné';
-        $today = new \DateTimeImmutable();
-        $isInPast = $today > $intervention->getScheduledAt()
-            && Intervention::STATUS_DONE === $intervention->getStatus();
-        $commentBeforeVisite = !$isInPast ? $intervention->getCommentBeforeVisite() : '';
-
-        return \sprintf(
-            '%s %s : une %s du logement situé %s %s le %s.<br>La %s %s par %s.%s',
-            ucfirst($labelVisite),
-            $isInPast ? 'réalisée' : 'programmée',
-            $labelVisite,
-            $intervention->getSignalement()->getAddress()->getHousenumberAndStreet(),
-            $isInPast ? 'a été effectuée' : 'est prévue',
-            $intervention->getScheduledAtFormated(),
-            $labelVisite,
-            $isInPast ? 'a été réalisée' : 'sera effectuée',
-            $partnerName,
-            $commentBeforeVisite ? '<br>Informations complémentaires : '.$commentBeforeVisite : '',
-        );
-    }
-
-    public static function buildDescriptionVisiteUpdated(Intervention $intervention): string
-    {
-        $labelVisite = strtolower($intervention->getType()->label());
-        $today = new \DateTimeImmutable();
-        $isInPast = $today > $intervention->getScheduledAt()
-            && Intervention::STATUS_DONE === $intervention->getStatus();
-        $commentBeforeVisite = !$isInPast ? $intervention->getCommentBeforeVisite() : '';
-        $timezone = $intervention->getSignalement()->getTimezone() ?? 'Europe/Paris';
-
-        // Pour l'instant le seul besoin remonté par SISH est celui de la modification de date
-        // Mais l'opérateur pourrait aussi être modifié (que ce soit ARS ou un opérateur externe)
-        return \sprintf(
-            'La date de %s dans %s a été modifiée ; La nouvelle date est le %s.%s',
-            $labelVisite,
-            EsaboraSISHService::NAME_SI,
-            $intervention->getScheduledAt()->setTimezone(new \DateTimeZone($timezone))->format('d/m/Y'),
-            $commentBeforeVisite ? '<br>Informations complémentaires : '.$commentBeforeVisite : '',
-        );
-    }
-
     public static function buildDescriptionArreteCreated(DossierArreteSISH $dossierArreteSISH): string
     {
         if ($dossierArreteSISH->getArreteMLDate()) {
