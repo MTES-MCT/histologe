@@ -86,7 +86,7 @@ class FileReaderExifTest extends TestCase
 
         $this->fileReaderExif->setDatePriseDeVueFromExifData($file);
 
-        // $this->assertNull($file->getDatePriseDeVue());
+        $this->assertNull($file->getDatePriseDeVue());
     }
 
     public static function provideImpossibleDates(): \Generator
