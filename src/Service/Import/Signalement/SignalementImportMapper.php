@@ -272,9 +272,13 @@ class SignalementImportMapper
                 }
 
                 if ($anonymize && \in_array($fieldColumn, self::ANONYMIZE_FIELDS)) {
-                    $fieldValue = $fieldColumn.'_anonymized_'.uniqid();
-                    if ('mailOccupant' === $fieldColumn || 'mailDeclarant' === $fieldColumn || 'mailProprio' === $fieldColumn) {
-                        $fieldValue .= '@example.com';
+                    if ('numAllocataire' === $fieldColumn || 'montantAllocation' === $fieldColumn) {
+                        $fieldValue = 0;
+                    } else {
+                        $fieldValue = $fieldColumn.'_anonymized_'.uniqid();
+                        if ('mailOccupant' === $fieldColumn || 'mailDeclarant' === $fieldColumn || 'mailProprio' === $fieldColumn) {
+                            $fieldValue .= '@example.com';
+                        }
                     }
                 }
 
