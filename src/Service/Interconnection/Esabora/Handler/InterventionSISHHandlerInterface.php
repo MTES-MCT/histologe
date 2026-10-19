@@ -11,10 +11,4 @@ interface InterventionSISHHandlerInterface
     public function handle(Affectation $affectation, string $uuidSignalement): void;
 
     public function getServiceName(): string;
-
-    public function getCountSuccess(): int;
-
-    public function getCountFailed(): int;
-
-    public static function getPriority(): int;
 }

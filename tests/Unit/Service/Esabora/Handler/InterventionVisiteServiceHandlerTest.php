@@ -12,6 +12,7 @@ use App\Service\Interconnection\Esabora\Response\DossierVisiteSISHCollectionResp
 use App\Service\Interconnection\Esabora\Response\Model\DossierVisiteSISH;
 use App\Tests\FixturesHelper;
 use PHPUnit\Framework\TestCase;
+use Symfony\Component\DependencyInjection\Attribute\AsTaggedItem;
 
 class InterventionVisiteServiceHandlerTest extends TestCase
 {
@@ -82,13 +83,15 @@ class InterventionVisiteServiceHandlerTest extends TestCase
         );
 
         $this->handler->handle($this->affectation, $this->affectation->getSignalement()->getUuid());
-        $this->assertEquals(1, $this->handler->getCountSuccess());
-        $this->assertEquals(0, $this->handler->getCountFailed());
     }
 
-    public function testGetPriority(): void
+    public function testPriority(): void
     {
-        $this->assertEquals(1, $this->handler::getPriority());
+        $attributes = (new \ReflectionClass(InterventionVisiteServiceHandler::class))
+            ->getAttributes(AsTaggedItem::class);
+
+        $this->assertCount(1, $attributes);
+        $this->assertSame(1, $attributes[0]->newInstance()->priority);
     }
 
     public function testGetServiceName(): void

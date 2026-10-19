@@ -74,19 +74,6 @@ class ArreteRepository extends ServiceEntityRepository
     /**
      * @return Arrete[]
      */
-    public function findByBanId(string $banId): array
-    {
-        return $this->createQueryBuilder('a')
-            ->join('a.address', 'addr')
-            ->where('addr.banId = :banId')
-            ->setParameter('banId', $banId)
-            ->getQuery()
-            ->getResult();
-    }
-
-    /**
-     * @return Arrete[]
-     */
     public function findByAddress(Address $address): array
     {
         $qb = $this->createQueryBuilder('a')

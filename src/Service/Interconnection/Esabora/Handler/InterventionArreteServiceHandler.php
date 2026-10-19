@@ -12,9 +12,6 @@ use Symfony\Component\DependencyInjection\Attribute\AsTaggedItem;
 #[AsTaggedItem(priority: 2)]
 class InterventionArreteServiceHandler implements InterventionSISHHandlerInterface
 {
-    private int $countSuccess = 0;
-    private int $countFailed = 0;
-
     public function __construct(
         private readonly EsaboraSISHService $esaboraSISHService,
         private readonly ArreteSISHCollectionResponseNormalizer $arreteSISHCollectionResponseNormalizer,
@@ -35,29 +32,11 @@ class InterventionArreteServiceHandler implements InterventionSISHHandlerInterfa
             foreach ($dossierArreteSISHCollectionResponseNormalized->getCollection() as $dossierArrete) {
                 $this->esaboraManager->createOrUpdateArrete($affectation, $dossierArrete);
             }
-            ++$this->countSuccess;
-        } else {
-            ++$this->countFailed;
         }
-    }
-
-    public function getCountSuccess(): int
-    {
-        return $this->countSuccess;
-    }
-
-    public function getCountFailed(): int
-    {
-        return $this->countFailed;
     }
 
     public function getServiceName(): string
     {
         return AbstractEsaboraService::ACTION_SYNC_DOSSIER_ARRETE;
-    }
-
-    public static function getPriority(): int
-    {
-        return 2;
     }
 }
