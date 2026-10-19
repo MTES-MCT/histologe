@@ -336,6 +336,7 @@ class SignalementFileController extends AbstractController
         File $file,
         Request $request,
         ImageManipulationHandler $imageManipulationHandler,
+        EntityManagerInterface $entityManager,
     ): Response {
         if (!$this->isGranted(SignalementVoter::SIGN_EDIT_ACTIVE, $signalement)
             && !$this->isGranted(SignalementVoter::SIGN_EDIT_CLOSED, $signalement)
@@ -353,6 +354,8 @@ class SignalementFileController extends AbstractController
         }
         $angle = $rotate * 90;
         $imageManipulationHandler->rotate($file, $angle);
+        // Enregistre le fichier comme ayant ses variantes générées le cas échéant
+        $entityManager->flush();
         $this->addFlash('success', ['title' => 'Modifications enregistrées', 'message' => 'La photo a bien été modifiée.']);
 
         return $this->redirect($this->generateUrl('back_signalement_view', ['uuid' => $signalement->getUuid(), '_fragment' => 'documents']));

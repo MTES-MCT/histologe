@@ -85,7 +85,14 @@ class ImageManipulationHandler
      */
     public function rotate(File $file, int $angle): void
     {
-        $variantNames = self::getVariantNames($file->getFilename());
+        $filename = $file->getFilename();
+        $variantNames = self::getVariantNames($filename);
+
+        // Génération des variantes si elles n'existent pas encore
+        if ($file->isTypeImage() && !($this->fileStorage->fileExists($variantNames[self::SUFFIX_RESIZE]) && $this->fileStorage->fileExists($variantNames[self::SUFFIX_THUMB]))) {
+            $this->setUseTmpDir(false)->resize($filename)->thumbnail($filename);
+            $file->setIsVariantsGenerated(true);
+        }
 
         foreach ($variantNames as $variant) {
             if (!$this->fileStorage->fileExists($variant)) {
