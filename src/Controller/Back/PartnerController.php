@@ -27,6 +27,7 @@ use App\Repository\UserRepository;
 use App\Security\Voter\PartnerVoter;
 use App\Security\Voter\UserVoter;
 use App\Service\EmailAlert\EmailAlertChecker;
+use App\Service\Interconnection\Esabora\EsaboraTokenProvider;
 use App\Service\ListFilters\SearchPartner;
 use App\Service\Mailer\NotificationMail;
 use App\Service\Mailer\NotificationMailerRegistry;
@@ -186,6 +187,7 @@ class PartnerController extends AbstractController
         NotificationMailerRegistry $notificationMailerRegistry,
         VisiteNotifier $visiteNotifier,
         WorkflowInterface $interventionPlanningStateMachine,
+        EsaboraTokenProvider $esaboraTokenProvider,
     ): Response {
         $this->denyAccessUnlessGranted(PartnerVoter::PARTNER_EDIT, $partner);
         if ($partner->getIsArchive()) {
@@ -252,6 +254,7 @@ class PartnerController extends AbstractController
             }
 
             $entityManager->flush();
+            $esaboraTokenProvider->resetToken($partner);
             $this->addFlash('success', ['title' => 'Modifications enregistrées', 'message' => 'Le partenaire a bien été modifié.']);
 
             return $this->redirectToRoute('back_partner_view', [

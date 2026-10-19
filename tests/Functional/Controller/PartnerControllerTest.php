@@ -18,6 +18,7 @@ use PHPUnit\Framework\Attributes\DataProvider;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\Routing\RouterInterface;
+use Symfony\Contracts\Cache\CacheInterface;
 
 class PartnerControllerTest extends WebTestCase
 {
@@ -101,6 +102,11 @@ class PartnerControllerTest extends WebTestCase
         /** @var Partner $partner */
         $partner = $this->partnerRepository->findOneBy(['nom' => 'Partenaire 13-02']);
 
+        /** @var CacheInterface $cache */
+        $cache = static::getContainer()->get(CacheInterface::class);
+        $cacheKey = sprintf('esabora.oauth2.access_token.%s', $partner->getId());
+        $cache->get($cacheKey, static fn () => 'cached-test-token');
+
         $route = $this->router->generate('back_partner_edit', ['id' => $partner->getId()]);
         $this->client->request('GET', $route);
 
@@ -115,6 +121,16 @@ class PartnerControllerTest extends WebTestCase
         );
 
         $this->assertResponseRedirects('/bo/partenaires/'.$partner->getId().'/voir');
+
+        $cacheItemDeleted = true;
+        // In Symfony cache contracts, getting with a default callback reveals if it was hit or re-computed
+        $wasHit = false;
+        $cache->get($cacheKey, static function () use (&$wasHit) {
+            $wasHit = true;
+
+            return 'new-token';
+        });
+        $this->assertTrue($wasHit, 'Cache key should have been cleared on partner edit.');
     }
 
     public function testPartnerFormEditSubmitWithoutEmail(): void

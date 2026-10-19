@@ -9,6 +9,7 @@ use App\Service\Interconnection\Esabora\Response\OAuth2TokenResponse;
 use Psr\Cache\InvalidArgumentException;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Contracts\Cache\CacheInterface;
 use Symfony\Contracts\Cache\ItemInterface;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
@@ -57,6 +58,21 @@ class EsaboraTokenProvider
     /**
      * @throws InvalidArgumentException
      */
+    public function resetToken(Partner $partner): void
+    {
+        $this->cache->delete($this->getCacheKey($partner));
+    }
+
+    private function getCacheKey(Partner $partner): string
+    {
+        $partnerId = $partner->getId() ?? $partner->getUuid() ?? 'unknown';
+
+        return sprintf('esabora.oauth2.access_token.%s', $partnerId);
+    }
+
+    /**
+     * @throws InvalidArgumentException
+     */
     private function getOAuth2Token(Partner $partner): string
     {
         $tokenUrl = $partner->getEsaboraOauth2TokenUrl();
@@ -72,8 +88,7 @@ class EsaboraTokenProvider
             throw new EsaboraTokenException(sprintf('La configuration OAuth2 est incomplète pour le partenaire "%s".', $partner->getNom()));
         }
 
-        $partnerId = $partner->getId() ?? $partner->getUuid() ?? 'unknown';
-        $cacheKey = sprintf('esabora.oauth2.access_token.%s', $partnerId);
+        $cacheKey = $this->getCacheKey($partner);
 
         return $this->cache->get($cacheKey, function (ItemInterface $item) use ($partner, $tokenUrl, $clientId, $clientSecret): string {
             $oAuth2Token = $this->requestOAuth2Token($partner, $tokenUrl, $clientId, $clientSecret);
@@ -106,7 +121,7 @@ class EsaboraTokenProvider
             ]);
 
             $statusCode = $response->getStatusCode();
-            if ($statusCode < 200 || $statusCode >= 300) {
+            if ($statusCode < Response::HTTP_OK || $statusCode >= Response::HTTP_MULTIPLE_CHOICES) {
                 $this->logger->error(
                     sprintf('[Esabora OAuth2] Erreur HTTP %d lors de la récupération du token pour le partenaire ID %s.', $statusCode, $partner->getId())
                 );

@@ -12,6 +12,7 @@ use Psr\Log\LoggerInterface;
 use Symfony\Component\Cache\Adapter\ArrayAdapter;
 use Symfony\Component\HttpClient\MockHttpClient;
 use Symfony\Component\HttpClient\Response\MockResponse;
+use Symfony\Component\HttpFoundation\Response;
 
 class EsaboraTokenProviderTest extends TestCase
 {
@@ -241,7 +242,7 @@ class EsaboraTokenProviderTest extends TestCase
     public function testOAuth2HttpErrorThrowsException(): void
     {
         $clientSecret = 'sensitive-secret-value-999';
-        $mockResponse = new MockResponse('Unauthorized', ['http_code' => 401]);
+        $mockResponse = new MockResponse('Unauthorized', ['http_code' => Response::HTTP_UNAUTHORIZED]);
         $mockHttpClient = new MockHttpClient($mockResponse);
         $provider = new EsaboraTokenProvider($mockHttpClient, $this->cache, $this->logger, 'secret');
 
@@ -311,7 +312,7 @@ class EsaboraTokenProviderTest extends TestCase
         $clientSecret = 'ultra-secret-password-xyz';
         $accessToken = 'my-super-secret-access-token';
 
-        $mockResponse = new MockResponse('Internal Server Error', ['http_code' => 500]);
+        $mockResponse = new MockResponse('Internal Server Error', ['http_code' => Response::HTTP_INTERNAL_SERVER_ERROR]);
         $mockHttpClient = new MockHttpClient($mockResponse);
         $provider = new EsaboraTokenProvider($mockHttpClient, $this->cache, $this->logger, 'secret');
 
@@ -334,5 +335,42 @@ class EsaboraTokenProviderTest extends TestCase
             $this->assertStringNotContainsString($clientSecret, $log['message']);
             $this->assertStringNotContainsString($accessToken, $log['message']);
         }
+    }
+
+    /**
+     * @throws InvalidArgumentException
+     */
+    public function testResetTokenDeletesCache(): void
+    {
+        $accessToken = 'cached-token-12345';
+        $mockResponse = new MockResponse((string) json_encode([
+            'access_token' => $accessToken,
+            'token_type' => 'Bearer',
+            'expires_in' => 3600,
+        ]));
+        $mockHttpClient = new MockHttpClient([$mockResponse, $mockResponse]);
+        $provider = new EsaboraTokenProvider($mockHttpClient, $this->cache, $this->logger, 'secret');
+
+        $partner = (new Partner())
+            ->setId(42)
+            ->setNom('Partenaire Cache Reset')
+            ->setAuthenticationType(InterconnectionAuthType::OAUTH2_CLIENT_CREDENTIALS)
+            ->setEsaboraOauth2TokenUrl('https://auth.example.com/oauth2/token')
+            ->setEsaboraOauth2ClientId('client-id')
+            ->setEsaboraOauth2ClientSecret('client-secret');
+
+        $token1 = $provider->getToken($partner);
+        $this->assertSame($accessToken, $token1);
+
+        // Verify it was stored in cache
+        $cacheItem = $this->cache->getItem('esabora.oauth2.access_token.42');
+        $this->assertTrue($cacheItem->isHit());
+
+        // Reset token
+        $provider->resetToken($partner);
+
+        // Verify it is no longer in cache
+        $cacheItemAfterReset = $this->cache->getItem('esabora.oauth2.access_token.42');
+        $this->assertFalse($cacheItemAfterReset->isHit());
     }
 }

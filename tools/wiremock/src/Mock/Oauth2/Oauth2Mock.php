@@ -10,7 +10,7 @@ class Oauth2Mock
     protected const string RESOURCES_DIR = 'Oauth2/';
     protected const string CONTENT_TYPE = 'application/json';
     protected const string CLIENT_ID = 'silooauth2';
-    protected const string CLIENT_SECRET = 'lescanaris';
+    protected const string CLIENT_SECRET = 'secret';
 
     public static function prepare(WireMock $wireMock): void
     {

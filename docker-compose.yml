@@ -88,6 +88,10 @@ services:
       - "8082:8080"
     volumes:
       - .:/home/wiremock
+    networks:
+      default:
+        aliases:
+          - signal_logement_wiremock.local
 
   signal_logement_redis:
     image: redis:7.2.14-alpine

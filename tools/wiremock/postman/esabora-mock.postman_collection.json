@@ -691,7 +691,7 @@
 							"basic": [
 								{
 									"key": "password",
-									"value": "lescanaris",
+									"value": "secret",
 									"type": "string"
 								},
 								{
