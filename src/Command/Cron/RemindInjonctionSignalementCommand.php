@@ -15,6 +15,7 @@ use App\Service\Mailer\NotificationMailerRegistry;
 use App\Service\Mailer\NotificationMailerType;
 use App\Service\Notification\NotificationAndMailSender;
 use App\Service\Signalement\Suivi\SuiviDescriptionHelper;
+use App\Service\Signalement\Suivi\SuiviDescriptionVariant;
 use App\Service\Signalement\Suivi\SuiviRecipient;
 use App\Utils\DateHelper;
 use Doctrine\ORM\EntityManagerInterface;
@@ -33,8 +34,6 @@ use Symfony\Component\Messenger\Exception\ExceptionInterface;
     description: 'Every month, remind bailleurs and usagers to give news about injonction signalements')]
 class RemindInjonctionSignalementCommand extends AbstractCronCommand
 {
-    private const string CLOSE_INJONCTION_SUIVI = 'En l\'absence de réponse ou d\'opposition du déclarant dans le délai imparti, le dossier est clôturé et réputé résolu.';
-
     private User $adminUser;
 
     public function __construct(
@@ -245,6 +244,10 @@ class RemindInjonctionSignalementCommand extends AbstractCronCommand
         $beforeDate = $this->clock->now()->modify('-'.$this->usagerClotureThreshold);
         $signalements = $this->signalementRepository->findInjonctionClotureBailleurToClose($beforeDate);
         $usagerClotureThresholdFR = DateHelper::translateDurationThresholdToFrench($this->usagerClotureThreshold);
+        $closeDescription = $this->suiviDescriptionHelper->buildDescriptionForCreation(
+            SuiviCategory::SIGNALEMENT_IS_CLOSED,
+            variant: SuiviDescriptionVariant::CLOTURE_AUTOMATIQUE_INJONCTION,
+        );
         foreach ($signalements as $signalement) {
             if (!empty($signalement->getMailOccupant())) {
                 $this->notificationAndMailSender->sendReminderClotureAndCloseToUsager($signalement);
@@ -255,7 +258,7 @@ class RemindInjonctionSignalementCommand extends AbstractCronCommand
 
             $this->suiviManager->createSuivi(
                 signalement: $signalement,
-                description: self::CLOSE_INJONCTION_SUIVI,
+                description: $closeDescription,
                 category: SuiviCategory::SIGNALEMENT_IS_CLOSED,
                 isVisibleForUsager: true,
                 isVisibleForBailleur: true,
@@ -267,7 +270,7 @@ class RemindInjonctionSignalementCommand extends AbstractCronCommand
                 signalement: $signalement,
                 closedBy: $this->adminUser,
                 motifCloture: MotifCloture::TRAVAUX_FAITS_OU_EN_COURS,
-                description: self::CLOSE_INJONCTION_SUIVI,
+                description: $closeDescription,
             );
             $this->affectationManager->closeBySignalement(
                 signalement: $signalement,

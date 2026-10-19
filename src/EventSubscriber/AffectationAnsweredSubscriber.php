@@ -10,6 +10,7 @@ use App\Event\AffectationAnsweredEvent;
 use App\Factory\Interconnection\Idoss\DossierMessageFactory;
 use App\Manager\SuiviManager;
 use App\Repository\UserRepository;
+use App\Service\Signalement\Suivi\SuiviDescriptionHelper;
 use App\Specification\Signalement\FirstAffectationAcceptedSpecification;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
@@ -25,6 +26,7 @@ readonly class AffectationAnsweredSubscriber implements EventSubscriberInterface
         private UserRepository $userRepository,
         private MessageBusInterface $bus,
         private DossierMessageFactory $dossierMessageFactory,
+        private SuiviDescriptionHelper $suiviDescriptionHelper,
     ) {
     }
 
@@ -47,13 +49,9 @@ readonly class AffectationAnsweredSubscriber implements EventSubscriberInterface
         $user = $event->getUser();
         if (AffectationStatus::REFUSED == $status) {
             $signalement = $affectation->getSignalement();
-            $params = [
-                'suivi' => $event->getMessage(),
-                'motifRefus' => $event->getMotifRefus(),
-            ];
             $this->suiviManager->createSuivi(
                 signalement: $signalement,
-                description: SuiviManager::buildDescriptionAnswerAffectation($params),
+                description: $this->suiviManager->buildDescriptionAnswerAffectation($event->getMessage(), $event->getMotifRefus()),
                 category: SuiviCategory::AFFECTATION_IS_REFUSED,
                 partner: $event->getPartner(),
                 user: $user,
@@ -64,7 +62,7 @@ readonly class AffectationAnsweredSubscriber implements EventSubscriberInterface
         if (AffectationStatus::WAIT == $status && !empty($affectation->getHasNotificationUsagerToCreate())) {
             $this->suiviManager->createSuivi(
                 signalement: $signalement,
-                description: 'Signalement rouvert pour '.mb_strtoupper($partner->getNom()),
+                description: $this->suiviDescriptionHelper->buildDescriptionForCreation(SuiviCategory::SIGNALEMENT_IS_REOPENED, ['partnerName' => $partner->getNom()]),
                 category: SuiviCategory::SIGNALEMENT_IS_REOPENED,
                 partner: $event->getPartner(),
                 user: $user,

@@ -37,6 +37,3 @@ Vider les descriptions existantes. Modèle : `migrations/Version20261009100808.p
 ## Dette restante
 
 - **Textes encore dans la constante `SPECIFIC_DESCRIPTIONS`**, à migrer vers `DISPLAY_TEMPLATES` : `ASK_FEEDBACK_SENT`, `SIGNALEMENT_IS_ACTIVE`, `AFFECTATION_IS_ACCEPTED`, `INTERVENTION_IS_REQUIRED`, `INJONCTION_BAILLEUR_LOGIN_BAILLEUR`. La méthode statique est encore utilisée par `Version20260629085411`.
-- **Constantes de texte restantes** :
-  - dans le helper : `DESCRIPTION_MOTIF_CLOTURE_PARTNER`, `DESCRIPTION_TRAVAUX_MISE_EN_CONFORMITE` ;
-  - dans `RemindInjonctionSignalementCommand` : `CLOSE_INJONCTION_SUIVI`.

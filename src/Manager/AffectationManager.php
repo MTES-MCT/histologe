@@ -207,7 +207,7 @@ class AffectationManager
         $params['travaux_mise_en_conformite'] = $affectation->getTravauxMiseEnConformite();
         $suivi = $this->suiviManager->createSuivi(
             signalement: $signalement,
-            description: SuiviManager::buildDescriptionClotureSignalement($params),
+            description: $this->suiviManager->buildDescriptionClotureSignalement($params, SuiviCategory::AFFECTATION_IS_CLOSED),
             category: SuiviCategory::AFFECTATION_IS_CLOSED,
             partner: $partner,
             user: $user,

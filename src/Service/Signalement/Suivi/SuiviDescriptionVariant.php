@@ -18,4 +18,6 @@ enum SuiviDescriptionVariant: string
     case TRAVAUX_MISE_EN_CONFORMITE = 'TRAVAUX_MISE_EN_CONFORMITE';
     // Synchronisation de statut provenant d'IDOSS (le cas par défaut est Esabora)
     case IDOSS = 'IDOSS';
+    // Clôture automatique d'une démarche accélérée sans réponse du déclarant
+    case CLOTURE_AUTOMATIQUE_INJONCTION = 'CLOTURE_AUTOMATIQUE_INJONCTION';
 }

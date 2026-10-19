@@ -33,6 +33,7 @@ use App\Service\Gouv\Rnb\RnbService;
 use App\Service\MessageHelper;
 use App\Service\RequestDataExtractor;
 use App\Service\Signalement\ProcedureEngageeService;
+use App\Service\Signalement\Suivi\SuiviDescriptionHelper;
 use App\Service\Signalement\TabOrientation\TabOrientationService;
 use App\Service\SignalementAddressContentService;
 use App\Utils\FormHelper;
@@ -63,6 +64,7 @@ class SignalementActionController extends AbstractController
         private readonly int $delaySuiviEditableInMinutes,
         #[Autowire(env: 'FEATURE_CLOTURE_V2')]
         private readonly bool $featureClotureV2,
+        private readonly SuiviDescriptionHelper $suiviDescriptionHelper,
     ) {
     }
 
@@ -175,7 +177,10 @@ class SignalementActionController extends AbstractController
             return $this->json($response, $response['code']);
         }
         $signalement->setMotifRefus($refusSignalement->getMotifRefus());
-        $description = 'Signalement clôturé car non-valide avec le motif suivant : '.$refusSignalement->getMotifRefus()->label().'<br>Plus précisément :<br>'.$refusSignalement->getDescription();
+        $description = $this->suiviDescriptionHelper->buildDescriptionForCreation(SuiviCategory::SIGNALEMENT_IS_REFUSED, [
+            'motif' => $refusSignalement->getMotifRefus()->label(),
+            'description' => $refusSignalement->getDescription(),
+        ]);
 
         /** @var User $user */
         $user = $this->getUser();
@@ -257,7 +262,7 @@ class SignalementActionController extends AbstractController
         $signalement->setComCloture($this->htmlSanitizer->sanitize($signalement->getComCloture()));
         $signalement->setClosedBy($user);
 
-        $description = SuiviManager::buildDescriptionClotureSignalement([
+        $description = $this->suiviManager->buildDescriptionClotureSignalement([
             'subject' => 'tous les partenaires',
             'motif_cloture' => $signalement->getMotifCloture(),
             'motif_suivi' => $signalement->getComCloture(),
@@ -432,14 +437,14 @@ class SignalementActionController extends AbstractController
         if ($this->isCsrfTokenValid('signalement_reopen_'.$signalement->getId(), (string) $request->query->get('_token')) && !empty($response)) {
             if ($this->isGranted('ROLE_ADMIN_TERRITORY') && isset($response['reopenAll'])) {
                 $affectationUpdater->updateStatusBySignalement(AffectationStatus::WAIT, $signalement);
-                $reopenFor = 'tous les partenaires';
+                $reopenFor = null;
             } elseif (!$this->isGranted('ROLE_ADMIN_TERRITORY') && SignalementStatus::CLOSED === $signalement->getStatut()) {
                 $this->addFlash('error', ['title' => 'Accès refusé', 'message' => 'Seul un responsable de territoire peut réouvrir un dossier fermé.']);
 
                 return $this->redirectToRoute('back_signalement_view', ['uuid' => $signalement->getUuid()]);
             } else {
                 $partner = $user->getPartnerInTerritoryOrFirstOne($signalement->getAddress()->getTerritory());
-                $reopenFor = mb_strtoupper($partner->getNom());
+                $reopenFor = $partner->getNom();
                 foreach ($partner->getAffectations() as $affectation) {
                     if ($affectation->getSignalement()->getId() === $signalement->getId()) {
                         $affectation->setStatut(AffectationStatus::WAIT);
@@ -453,7 +458,7 @@ class SignalementActionController extends AbstractController
             $subscriptionCreated = false;
             $this->suiviManager->createSuivi(
                 signalement: $signalement,
-                description: 'Signalement rouvert pour '.$reopenFor,
+                description: $this->suiviDescriptionHelper->buildDescriptionForCreation(SuiviCategory::SIGNALEMENT_IS_REOPENED, ['partnerName' => $reopenFor]),
                 category: SuiviCategory::SIGNALEMENT_IS_REOPENED,
                 partner: $user->getPartnerInTerritoryOrFirstOne($signalement->getAddress()->getTerritory()),
                 user: $user,

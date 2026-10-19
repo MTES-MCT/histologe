@@ -86,7 +86,7 @@ class SuiviManagerTest extends KernelTestCase
         $signalement->setClosedBy($user);
         $suivi = $this->suiviManager->createSuivi(
             signalement : $signalement,
-            description : SuiviManager::buildDescriptionClotureSignalement($params),
+            description : $this->suiviManager->buildDescriptionClotureSignalement($params),
             category: SuiviCategory::SIGNALEMENT_IS_CLOSED,
             partner: $user->getPartnerInTerritoryOrFirstOne($signalement->getAddress()->getTerritory()),
             user: $user,
@@ -98,7 +98,7 @@ class SuiviManagerTest extends KernelTestCase
         $this->assertEquals(Suivi::TYPE_PARTNER, $suivi->getType());
         $this->assertNotEquals($countSuivisBeforeCreate, $countSuivisAfterCreate);
         $this->assertInstanceOf(Suivi::class, $suivi);
-        $desc = \sprintf(SuiviDescriptionHelper::DESCRIPTION_MOTIF_CLOTURE_PARTNER, 'test').'<br /><strong>Non décence</strong><br /><strong>Desc. : </strong>Lorem ipsum suivi sit amet, consectetur adipiscing elit.';
+        $desc = 'Le signalement a été clôturé pour test avec le motif suivant :<br /><strong>Non décence</strong><br /><strong>Desc. : </strong>Lorem ipsum suivi sit amet, consectetur adipiscing elit.';
         $this->assertEquals($desc, $suivi->getDescription());
         $this->assertTrue($suivi->getIsVisibleForUsager());
         $this->assertTrue($suivi->getIsSanitized());
@@ -168,7 +168,7 @@ class SuiviManagerTest extends KernelTestCase
         $signalement->setClosedBy($user);
         $suivi = $this->suiviManager->createSuivi(
             signalement : $signalement,
-            description : SuiviManager::buildDescriptionClotureSignalement($params),
+            description : $this->suiviManager->buildDescriptionClotureSignalement($params),
             category: SuiviCategory::SIGNALEMENT_IS_CLOSED,
             partner: $user->getPartnerInTerritoryOrFirstOne($signalement->getAddress()->getTerritory()),
             user: $user,
@@ -181,7 +181,7 @@ class SuiviManagerTest extends KernelTestCase
         $this->assertEquals(Suivi::TYPE_PARTNER, $suivi->getType());
         $this->assertNotEquals($countSuivisBeforeCreate, $countSuivisAfterCreate);
         $this->assertInstanceOf(Suivi::class, $suivi);
-        $desc = \sprintf(SuiviDescriptionHelper::DESCRIPTION_MOTIF_CLOTURE_PARTNER, 'test').'<br /><strong>Non décence</strong><br /><strong>Desc. : </strong>Lorem ipsum suivi sit amet, consectetur adipiscing elit.';
+        $desc = 'Le signalement a été clôturé pour test avec le motif suivant :<br /><strong>Non décence</strong><br /><strong>Desc. : </strong>Lorem ipsum suivi sit amet, consectetur adipiscing elit.';
         $this->assertEquals($desc, $suivi->getDescription());
         $this->assertFalse($suivi->getIsVisibleForUsager());
         $this->assertTrue($suivi->getIsSanitized());

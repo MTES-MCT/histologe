@@ -1,0 +1,2 @@
+{#- commentaire est la saisie de l'agent, déjà passée dans Sanitizer::sanitize() : |raw comme avant, le HtmlSanitizer de createSuivi() la nettoie -#}
+Le signalement a été refusé avec le motif suivant : {{ motif|default('Non précisé') }}.<br>Plus précisément :<br>{{ commentaire|raw }}

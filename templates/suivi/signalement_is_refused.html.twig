@@ -1,0 +1,5 @@
+{#-
+    description est la saisie de l'agent : |raw comme avant, le HtmlSanitizer de createSuivi() la nettoie.
+    Attention : SuiviCreatedSubscriber découpe la description sur « Plus précisément :<br /> » pour envoyer le motif à l'usager.
+-#}
+Signalement clôturé car non-valide avec le motif suivant : {{ motif }}<br>Plus précisément :<br>{{ description|raw }}
