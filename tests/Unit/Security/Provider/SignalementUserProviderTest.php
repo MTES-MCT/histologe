@@ -56,8 +56,6 @@ class SignalementUserProviderTest extends TestCase
         $this->assertSame('12345678:occupant', $user->getUserIdentifier());
         $this->assertSame('luc.martin@example.com', $user->getEmail());
         $this->assertSame('occupant', $user->getType());
-        $this->assertNull($user->getPassword());
-        $this->assertNull($user->getSalt());
     }
 
     /**

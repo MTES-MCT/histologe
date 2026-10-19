@@ -167,14 +167,6 @@ class SignalementFileProcessor
         return empty($this->errors);
     }
 
-    /**
-     * @return array<string>
-     */
-    public function getErrors(): array
-    {
-        return $this->errors;
-    }
-
     public function getErrorMessages(): string
     {
         return implode('<br>', $this->errors);

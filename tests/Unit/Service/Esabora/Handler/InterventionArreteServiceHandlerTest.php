@@ -14,6 +14,7 @@ use App\Service\Interconnection\Esabora\Response\Model\DossierArreteSISH;
 use App\Tests\FixturesHelper;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
+use Symfony\Component\DependencyInjection\Attribute\AsTaggedItem;
 
 class InterventionArreteServiceHandlerTest extends TestCase
 {
@@ -97,14 +98,15 @@ class InterventionArreteServiceHandlerTest extends TestCase
 
         $this->handler->handle($this->affectation, $this->affectation->getSignalement()->getUuid());
         $this->assertCount(2, $calls);
-
-        $this->assertEquals(1, $this->handler->getCountSuccess());
-        $this->assertEquals(0, $this->handler->getCountFailed());
     }
 
-    public function testGetPriority(): void
+    public function testPriority(): void
     {
-        $this->assertSame(2, $this->handler::getPriority());
+        $attributes = (new \ReflectionClass(InterventionArreteServiceHandler::class))
+            ->getAttributes(AsTaggedItem::class);
+
+        $this->assertCount(1, $attributes);
+        $this->assertSame(2, $attributes[0]->newInstance()->priority);
     }
 
     public function testGetServiceName(): void

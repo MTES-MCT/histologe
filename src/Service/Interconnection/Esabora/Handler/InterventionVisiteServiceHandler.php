@@ -11,9 +11,6 @@ use Symfony\Component\DependencyInjection\Attribute\AsTaggedItem;
 #[AsTaggedItem(priority: 1)]
 class InterventionVisiteServiceHandler implements InterventionSISHHandlerInterface
 {
-    private int $countSuccess = 0;
-    private int $countFailed = 0;
-
     public function __construct(
         private readonly EsaboraSISHService $esaboraSISHService,
         private readonly EsaboraManager $esaboraManager,
@@ -35,9 +32,6 @@ class InterventionVisiteServiceHandler implements InterventionSISHHandlerInterfa
                 }
                 $this->esaboraManager->createOrUpdateVisite($affectation, $dossierVisite);
             }
-            ++$this->countSuccess;
-        } else {
-            ++$this->countFailed;
         }
 
         if ($hasDateError) {
@@ -45,23 +39,8 @@ class InterventionVisiteServiceHandler implements InterventionSISHHandlerInterfa
         }
     }
 
-    public function getCountSuccess(): int
-    {
-        return $this->countSuccess;
-    }
-
-    public function getCountFailed(): int
-    {
-        return $this->countFailed;
-    }
-
     public function getServiceName(): string
     {
         return AbstractEsaboraService::ACTION_SYNC_DOSSIER_VISITE;
-    }
-
-    public static function getPriority(): int
-    {
-        return 1;
     }
 }

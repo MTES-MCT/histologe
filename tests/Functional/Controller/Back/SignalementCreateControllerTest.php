@@ -82,7 +82,12 @@ class SignalementCreateControllerTest extends WebTestCase
         $this->assertTrue($response['redirect']);
         $this->assertStringContainsString('/bo/signalement/brouillon/editer/', $response['url']);
 
-        $signalements = $this->signalementRepository->findByAddress('8', 'Rue de la tourmentinerie', '44850', 'Saint-Mars-du-Désert');
+        $signalements = $this->signalementRepository->findByWithAddressCriteria([
+            'address.housenumber' => '8',
+            'address.street' => 'Rue de la tourmentinerie',
+            'address.postCode' => '44850',
+            'address.city' => 'Saint-Mars-du-Désert',
+        ], ['s.createdAt' => 'DESC']);
 
         $this->assertCount(2, $signalements);
         $this->assertEquals($user->getId(), $signalements[0]->getCreatedBy()->getId());
@@ -130,7 +135,11 @@ class SignalementCreateControllerTest extends WebTestCase
         $this->assertTrue($response['redirect']);
         $this->assertStringContainsString('/bo/signalement/brouillon/editer/', $response['url']);
 
-        $signalements = $this->signalementRepository->findByAddress(null, 'Route des Funeries', '44850', 'Le Cellier');
+        $signalements = $this->signalementRepository->findByWithAddressCriteria([
+            'address.street' => 'Route des Funeries',
+            'address.postCode' => '44850',
+            'address.city' => 'Le Cellier',
+        ], ['s.createdAt' => 'DESC']);
 
         $this->assertCount(2, $signalements);
         $this->assertEquals($user->getId(), $signalements[0]->getCreatedBy()->getId());

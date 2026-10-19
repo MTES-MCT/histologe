@@ -64,7 +64,7 @@ class SignalementFileProcessorTest extends TestCase
 
         $fileList = $signalementFileProcessor->process(self::FILE_LIST['documents']);
         $this->assertTrue($signalementFileProcessor->isValid());
-        $this->assertEmpty($signalementFileProcessor->getErrors());
+        $this->assertEmpty($signalementFileProcessor->getErrorMessages());
         $this->assertCount(2, $fileList);
 
         foreach ($fileList as $fileItem) {

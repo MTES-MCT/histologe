@@ -32,19 +32,4 @@ class UserFactory
 
         return $user;
     }
-
-    /**
-     * @param array<string, mixed> $data
-     */
-    public function createInstanceFromArray(array $data): User
-    {
-        return $this->createInstanceFrom(
-            roleLabel: $data['roles'],
-            firstname: $data['prenom'],
-            lastname: $data['nom'],
-            email: $data['email'],
-            isMailActive: $data['isMailingActive'],
-            hasPermissionAffectation: $data['hasPermissionAffectation'] ?? false
-        );
-    }
 }

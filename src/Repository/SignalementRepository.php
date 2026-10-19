@@ -1108,32 +1108,6 @@ class SignalementRepository extends ServiceEntityRepository
         return $qb->getQuery()->getResult();
     }
 
-    // utilisation uniquement dans les tests
-    /**
-     * @return array<Signalement>
-     */
-    public function findByAddress(?string $housenumber, string $street, string $postCode, string $city): array
-    {
-        $qb = $this->createQueryBuilder('s');
-        $qb->innerJoin('s.address', 'address');
-        if ($housenumber) {
-            $qb->andWhere('address.housenumber = :housenumber')
-                ->setParameter('housenumber', $housenumber);
-        } else {
-            $qb->andWhere('address.housenumber IS NULL');
-        }
-        $qb->andWhere('address.street = :street')
-            ->andWhere('address.postCode = :postCode')
-            ->andWhere('address.city = :city')
-            ->setParameter('street', $street)
-            ->setParameter('postCode', $postCode)
-            ->setParameter('city', $city);
-
-        $qb->orderBy('s.createdAt', 'DESC');
-
-        return $qb->getQuery()->getResult();
-    }
-
     /**
      * @return array<int, Signalement>
      */

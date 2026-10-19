@@ -38,16 +38,6 @@ class SignalementUser implements UserInterface
         return $this->roles;
     }
 
-    public function getPassword(): ?string
-    {
-        return null;
-    }
-
-    public function getSalt(): ?string
-    {
-        return null;
-    }
-
     public function getFirstTerritory(): ?Territory
     {
         return null;
