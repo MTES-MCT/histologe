@@ -39,6 +39,7 @@ class SignalementConfirmEditController extends AbstractController
                     SuiviDescriptionVariant::MODIFICATION_EMAIL_OCCUPANT,
                 ),
                 category: SuiviCategory::SIGNALEMENT_EDITED_FO,
+                user: $signalement->getSignalementUsager()?->getOccupant(),
                 isVisibleForUsager: true,
             );
             $entityManager->flush();

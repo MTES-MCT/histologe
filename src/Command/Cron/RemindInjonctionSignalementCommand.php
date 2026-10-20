@@ -257,6 +257,7 @@ class RemindInjonctionSignalementCommand extends AbstractCronCommand
                 signalement: $signalement,
                 description: self::CLOSE_INJONCTION_SUIVI,
                 category: SuiviCategory::SIGNALEMENT_IS_CLOSED,
+                user: $this->adminUser,
                 isVisibleForUsager: true,
                 isVisibleForBailleur: true,
                 sendMail: false,
