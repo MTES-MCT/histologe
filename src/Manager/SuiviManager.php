@@ -4,12 +4,16 @@ namespace App\Manager;
 
 use App\Dto\Request\Signalement\InviteTiersRequest;
 use App\Entity\Enum\DocumentType;
+use App\Entity\Enum\MotifCloture;
+use App\Entity\Enum\MotifRefus;
 use App\Entity\Enum\SuiviCategory;
 use App\Entity\Enum\SuiviDelayedType;
+use App\Entity\Enum\TravauxMiseEnConformite;
 use App\Entity\File;
 use App\Entity\Intervention;
 use App\Entity\Partner;
 use App\Entity\Signalement;
+use App\Entity\SignalementProcedure;
 use App\Entity\Suivi;
 use App\Entity\SuiviDelayed;
 use App\Entity\SuiviFile;
@@ -250,46 +254,36 @@ class SuiviManager
     }
 
     /**
-     * @param array<string, mixed> $params
+     * @param array{
+     *     subject: string,
+     *     motif_cloture: MotifCloture,
+     *     motif_suivi: ?string,
+     *     travaux_mise_en_conformite?: ?TravauxMiseEnConformite,
+     *     procedures?: iterable<SignalementProcedure>,
+     * } $params
      */
-    public static function buildDescriptionClotureSignalement(array $params): string
+    public function buildDescriptionClotureSignalement(array $params, SuiviCategory $category = SuiviCategory::SIGNALEMENT_IS_CLOSED): string
     {
-        $motifSuivi = Sanitizer::sanitize($params['motif_suivi']);
-
-        $motifCloture = '<strong>'.$params['motif_cloture']->label().'</strong>';
-        if (!empty($params['travaux_mise_en_conformite'])) {
-            $motifCloture .= '<br><strong>'.SuiviDescriptionHelper::DESCRIPTION_TRAVAUX_MISE_EN_CONFORMITE.'</strong>'.$params['travaux_mise_en_conformite']->label();
+        $procedureLabels = [];
+        foreach ($params['procedures'] ?? [] as $procedure) {
+            $procedureLabels[] = $procedure->getProcedureType()->label();
         }
 
-        $description = \sprintf(SuiviDescriptionHelper::DESCRIPTION_MOTIF_CLOTURE_PARTNER, $params['subject']);
-        $description .= '<br>';
-        $description .= $motifCloture;
-        $description .= '<br>';
-        if (isset($params['procedures']) && is_iterable($params['procedures'])) {
-            $procedureLabels = [];
-            foreach ($params['procedures'] as $procedure) {
-                $procedureLabels[] = $procedure->getProcedureType()->label();
-            }
-            if ([] !== $procedureLabels) {
-                $description .= '<strong>Procédures engagées : </strong>';
-                $description .= implode(' / ', $procedureLabels);
-                $description .= '<br>';
-            }
-        }
-        $description .= '<strong>Desc. : </strong>'.$motifSuivi;
-
-        return $description;
+        return $this->suiviDescriptionHelper->buildDescriptionForCreation($category, [
+            'subject' => $params['subject'],
+            'motifCloture' => $params['motif_cloture']->label(),
+            'travauxMiseEnConformite' => !empty($params['travaux_mise_en_conformite']) ? $params['travaux_mise_en_conformite']->label() : null,
+            'procedures' => $procedureLabels,
+            'motifSuivi' => Sanitizer::sanitize($params['motif_suivi']),
+        ]);
     }
 
-    /**
-     * @param array<string, mixed> $params
-     */
-    public static function buildDescriptionAnswerAffectation(array $params): string
+    public function buildDescriptionAnswerAffectation(?string $commentaire, ?MotifRefus $motifRefus): string
     {
-        $motifRejected = !empty($params['motifRefus']) ? $params['motifRefus']->label() : 'Non précisé';
-        $commentaire = Sanitizer::sanitize($params['suivi']);
-
-        return 'Le signalement a été refusé avec le motif suivant : '.$motifRejected.'.<br>Plus précisément :<br>'.$commentaire;
+        return $this->suiviDescriptionHelper->buildDescriptionForCreation(SuiviCategory::AFFECTATION_IS_REFUSED, [
+            'motif' => $motifRefus?->label(),
+            'commentaire' => Sanitizer::sanitize($commentaire),
+        ]);
     }
 
     /**

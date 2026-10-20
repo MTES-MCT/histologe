@@ -7,9 +7,6 @@ use Twig\Environment;
 
 class SuiviDescriptionHelper
 {
-    public const string DESCRIPTION_MOTIF_CLOTURE_PARTNER = 'Le signalement a été clôturé pour %s avec le motif suivant :';
-    public const string DESCRIPTION_TRAVAUX_MISE_EN_CONFORMITE = 'Travaux de mise en conformité réalisés ? ';
-
     /**
      * Textes fixes (sans variable), calculés à chaque affichage : la description en base est vide et ignorée.
      * Ne jamais y mettre un template avec variables : elles seraient vides à l'affichage.
@@ -48,6 +45,9 @@ class SuiviDescriptionHelper
         ],
         SuiviCategory::INJONCTION_BAILLEUR_EXPIREE->value => [
             SuiviRecipient::DEFAULT->value => 'suivi/injonction_bailleur_expiree.html.twig',
+        ],
+        SuiviCategory::SIGNALEMENT_IS_INJONCTION->value => [
+            SuiviRecipient::DEFAULT->value => 'suivi/signalement_is_injonction.html.twig',
         ],
     ];
 
@@ -106,6 +106,23 @@ class SuiviDescriptionHelper
         ],
         SuiviCategory::MESSAGE_ESABORA_SCHS->value => [
             SuiviDescriptionVariant::DEFAULT->value => 'suivi/message_esabora_schs.html.twig',
+        ],
+        SuiviCategory::SIGNALEMENT_IS_CLOSED->value => [
+            SuiviDescriptionVariant::DEFAULT->value => 'suivi/signalement_is_closed.html.twig',
+            SuiviDescriptionVariant::CLOTURE_AUTOMATIQUE_INJONCTION->value => 'suivi/signalement_is_closed_cloture_automatique_injonction.html.twig',
+        ],
+        // Même template que SIGNALEMENT_IS_CLOSED
+        SuiviCategory::AFFECTATION_IS_CLOSED->value => [
+            SuiviDescriptionVariant::DEFAULT->value => 'suivi/signalement_is_closed.html.twig',
+        ],
+        SuiviCategory::SIGNALEMENT_IS_REFUSED->value => [
+            SuiviDescriptionVariant::DEFAULT->value => 'suivi/signalement_is_refused.html.twig',
+        ],
+        SuiviCategory::AFFECTATION_IS_REFUSED->value => [
+            SuiviDescriptionVariant::DEFAULT->value => 'suivi/affectation_is_refused.html.twig',
+        ],
+        SuiviCategory::SIGNALEMENT_IS_REOPENED->value => [
+            SuiviDescriptionVariant::DEFAULT->value => 'suivi/signalement_is_reopened.html.twig',
         ],
     ];
 

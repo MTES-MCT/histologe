@@ -6,6 +6,7 @@ use App\Entity\Enum\MotifClotureUsager;
 use App\Entity\Enum\SuiviCategory;
 use App\Service\Signalement\Suivi\SuiviDescriptionHelper;
 use App\Service\Signalement\Suivi\SuiviDescriptionVariant;
+use App\Service\Signalement\Suivi\SuiviRecipient;
 use PHPUnit\Framework\Attributes\DataProvider;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 
@@ -297,5 +298,90 @@ class SuiviDescriptionHelperTest extends KernelTestCase
             'commentaireSas' => null,
             'dossNum' => null,
         ], $params));
+    }
+
+    public function testBuildDescriptionForCreationSignalementIsClosedWithAllSections(): void
+    {
+        $description = $this->suiviDescriptionHelper->buildDescriptionForCreation(SuiviCategory::SIGNALEMENT_IS_CLOSED, [
+            'subject' => 'Partenaire 13-01',
+            'motifCloture' => 'Non décence',
+            'travauxMiseEnConformite' => 'Oui',
+            'procedures' => ['Non décence', 'Insalubrité'],
+            'motifSuivi' => 'Travaux <b>réalisés</b>',
+        ]);
+
+        $this->assertSame(
+            'Le signalement a été clôturé pour Partenaire 13-01 avec le motif suivant :<br><strong>Non décence</strong>'
+            .'<br><strong>Travaux de mise en conformité réalisés ? </strong>Oui<br>'
+            .'<strong>Procédures engagées : </strong>Non décence / Insalubrité<br>'
+            .'<strong>Desc. : </strong>Travaux <b>réalisés</b>',
+            $description
+        );
+    }
+
+    public function testBuildDescriptionForCreationAffectationIsClosedWithoutOptionalSections(): void
+    {
+        $description = $this->suiviDescriptionHelper->buildDescriptionForCreation(SuiviCategory::AFFECTATION_IS_CLOSED, [
+            'subject' => 'tous les partenaires',
+            'motifCloture' => 'Autre',
+            'travauxMiseEnConformite' => null,
+            'procedures' => [],
+            'motifSuivi' => 'Dossier traité',
+        ]);
+
+        $this->assertSame(
+            'Le signalement a été clôturé pour tous les partenaires avec le motif suivant :<br><strong>Autre</strong><br><strong>Desc. : </strong>Dossier traité',
+            $description
+        );
+    }
+
+    public function testBuildDescriptionForCreationSignalementIsClosedClotureAutomatiqueInjonction(): void
+    {
+        $description = $this->suiviDescriptionHelper->buildDescriptionForCreation(
+            SuiviCategory::SIGNALEMENT_IS_CLOSED,
+            variant: SuiviDescriptionVariant::CLOTURE_AUTOMATIQUE_INJONCTION,
+        );
+
+        $this->assertSame('En l\'absence de réponse ou d\'opposition du déclarant dans le délai imparti, le dossier est clôturé et réputé résolu.', $description);
+    }
+
+    public function testBuildDescriptionForCreationSignalementIsRefusedKeepsSeparatorUsedForEmail(): void
+    {
+        $description = $this->suiviDescriptionHelper->buildDescriptionForCreation(SuiviCategory::SIGNALEMENT_IS_REFUSED, [
+            'motif' => 'Hors périmètre',
+            'description' => 'Le logement est situé hors du territoire',
+        ]);
+
+        $this->assertSame('Signalement clôturé car non-valide avec le motif suivant : Hors périmètre<br>Plus précisément :<br>Le logement est situé hors du territoire', $description);
+    }
+
+    public function testBuildDescriptionForCreationAffectationIsRefused(): void
+    {
+        $description = $this->suiviDescriptionHelper->buildDescriptionForCreation(SuiviCategory::AFFECTATION_IS_REFUSED, [
+            'motif' => null,
+            'commentaire' => 'Pas notre compétence',
+        ]);
+
+        $this->assertSame('Le signalement a été refusé avec le motif suivant : Non précisé.<br>Plus précisément :<br>Pas notre compétence', $description);
+    }
+
+    public function testBuildDescriptionForCreationSignalementIsReopened(): void
+    {
+        $this->assertSame(
+            'Signalement rouvert pour PARTENAIRE 13-01',
+            $this->suiviDescriptionHelper->buildDescriptionForCreation(SuiviCategory::SIGNALEMENT_IS_REOPENED, ['partnerName' => 'Partenaire 13-01'])
+        );
+        $this->assertSame(
+            'Signalement rouvert pour tous les partenaires',
+            $this->suiviDescriptionHelper->buildDescriptionForCreation(SuiviCategory::SIGNALEMENT_IS_REOPENED, ['partnerName' => null])
+        );
+    }
+
+    public function testGetDisplayDescriptionSignalementIsInjonction(): void
+    {
+        $this->assertSame(
+            'Dossier déposé dans le cadre de la démarche accélérée',
+            $this->suiviDescriptionHelper->getDisplayDescription(SuiviCategory::SIGNALEMENT_IS_INJONCTION, SuiviRecipient::DEFAULT)
+        );
     }
 }

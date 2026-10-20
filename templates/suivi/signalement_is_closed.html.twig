@@ -1,0 +1,13 @@
+{#-
+    Utilisé pour SIGNALEMENT_IS_CLOSED et AFFECTATION_IS_CLOSED.
+    motifSuivi est la saisie de l'agent, déjà passée dans Sanitizer::sanitize() : |raw comme avant, le HtmlSanitizer de createSuivi() la nettoie.
+-#}
+Le signalement a été clôturé pour {{ subject }} avec le motif suivant :<br><strong>{{ motifCloture }}</strong>
+{%- if travauxMiseEnConformite -%}
+    <br><strong>Travaux de mise en conformité réalisés ? </strong>{{ travauxMiseEnConformite }}
+{%- endif -%}
+<br>
+{%- if procedures is not empty -%}
+    <strong>Procédures engagées : </strong>{{ procedures|join(' / ') }}<br>
+{%- endif -%}
+<strong>Desc. : </strong>{{ motifSuivi|raw }}

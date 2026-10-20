@@ -34,7 +34,7 @@ readonly class SignalementClosedSubscriber implements EventSubscriberInterface
 
         $suivi = $this->suiviManager->createSuivi(
             signalement: $signalement,
-            description: SuiviManager::buildDescriptionClotureSignalement(
+            description: $this->suiviManager->buildDescriptionClotureSignalement(
                 [
                     'subject' => $signalementAffectationClose->getSubject(),
                     'motif_cloture' => $signalementAffectationClose->getMotifCloture(),

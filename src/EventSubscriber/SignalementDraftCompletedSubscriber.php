@@ -148,7 +148,7 @@ class SignalementDraftCompletedSubscriber implements EventSubscriberInterface
         if (SignalementStatus::INJONCTION_BAILLEUR === $signalement->getStatut()) {
             $this->suiviManager->createSuivi(
                 signalement: $signalement,
-                description: 'Dossier déposé dans le cadre de la démarche accélérée',
+                description: '',
                 category: SuiviCategory::SIGNALEMENT_IS_INJONCTION,
                 user: $this->userRepository->findOneBy(['email' => $this->parameterBag->get('user_system_email')])
             );
