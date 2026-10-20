@@ -56,22 +56,23 @@ readonly class InterventionCreatedSubscriber implements EventSubscriberInterface
                 $suiviCategory = SuiviCategory::INTERVENTION_IS_CREATED;
         }
 
+        // Arrêté : la description du suivi reprend les détails de l'arrêté, générés par InterventionDescriptionGenerator
         if (InterventionType::ARRETE_PREFECTORAL === $intervention->getType()) {
-            $params = ['details' => $intervention->getDetails()];
+            $description = (string) $intervention->getDetails();
         } else {
-            $params = [
+            $description = $this->suiviDescriptionHelper->buildDescriptionForCreation($suiviCategory, [
                 'typeLabel' => $intervention->getType()->label(),
                 'isInPast' => $isInPast,
                 'address' => $signalement->getAddress()->getHousenumberAndStreet(),
                 'date' => $intervention->getScheduledAtFormated(),
                 'partnerName' => $intervention->getExternalOperator() ?? $intervention->getPartner()?->getNom() ?? 'Non renseigné',
                 'commentBeforeVisite' => !$isInPast ? $intervention->getCommentBeforeVisite() : null,
-            ];
+            ]);
         }
 
         $suivi = $this->suiviManager->createSuivi(
             signalement: $intervention->getSignalement(),
-            description: $this->suiviDescriptionHelper->buildDescriptionForCreation($suiviCategory, $params),
+            description: $description,
             category : $suiviCategory,
             partner: $event->getPartner(),
             user: $event->getUser(),

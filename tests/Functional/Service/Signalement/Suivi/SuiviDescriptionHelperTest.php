@@ -458,25 +458,6 @@ class SuiviDescriptionHelperTest extends KernelTestCase
         ];
     }
 
-    #[DataProvider('provideInterventionArrete')]
-    public function testBuildDescriptionForCreationInterventionArrete(SuiviCategory $category): void
-    {
-        $description = $this->suiviDescriptionHelper->buildDescriptionForCreation($category, [
-            'details' => 'L\'arrêté 2023/DD13/00664 du 14/06/2023 a été pris dans le dossier de n°2023/DD13/0010.<br>Type arrêté : Suroccupation<br>',
-        ]);
-
-        $this->assertSame(
-            'L\'arrêté 2023/DD13/00664 du 14/06/2023 a été pris dans le dossier de n°2023/DD13/0010.<br>Type arrêté : Suroccupation<br>',
-            $description
-        );
-    }
-
-    public static function provideInterventionArrete(): \Generator
-    {
-        yield 'Création' => [SuiviCategory::INTERVENTION_ARRETE_IS_CREATED];
-        yield 'Modification' => [SuiviCategory::INTERVENTION_ARRETE_IS_RESCHEDULED];
-    }
-
     public function testBuildDescriptionForCreationInterventionIsRescheduled(): void
     {
         $description = $this->suiviDescriptionHelper->buildDescriptionForCreation(SuiviCategory::INTERVENTION_IS_RESCHEDULED, [

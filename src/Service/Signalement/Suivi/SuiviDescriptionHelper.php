@@ -151,12 +151,6 @@ class SuiviDescriptionHelper
         SuiviCategory::INTERVENTION_CONTROLE_IS_DONE->value => [
             SuiviDescriptionVariant::DEFAULT->value => 'suivi/intervention_is_created.html.twig', // Même template que INTERVENTION_IS_CREATED
         ],
-        SuiviCategory::INTERVENTION_ARRETE_IS_CREATED->value => [
-            SuiviDescriptionVariant::DEFAULT->value => 'suivi/intervention_arrete_is_created.html.twig',
-        ],
-        SuiviCategory::INTERVENTION_ARRETE_IS_RESCHEDULED->value => [
-            SuiviDescriptionVariant::DEFAULT->value => 'suivi/intervention_arrete_is_created.html.twig', // Même template que INTERVENTION_ARRETE_IS_CREATED
-        ],
         SuiviCategory::INTERVENTION_IS_RESCHEDULED->value => [
             SuiviDescriptionVariant::DEFAULT->value => 'suivi/intervention_is_rescheduled.html.twig',
             SuiviDescriptionVariant::ESABORA->value => 'suivi/intervention_is_rescheduled_esabora.html.twig',

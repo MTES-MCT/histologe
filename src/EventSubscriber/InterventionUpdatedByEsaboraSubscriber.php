@@ -48,11 +48,9 @@ readonly class InterventionUpdatedByEsaboraSubscriber implements EventSubscriber
                 $suiviCategory = SuiviCategory::INTERVENTION_IS_RESCHEDULED;
         }
 
+        // Arrêté : la description du suivi reprend les détails de l'arrêté, générés par InterventionDescriptionGenerator
         if (InterventionType::ARRETE_PREFECTORAL === $intervention->getType()) {
-            $description = $this->suiviDescriptionHelper->buildDescriptionForCreation(
-                $suiviCategory,
-                ['details' => $intervention->getDetails()],
-            );
+            $description = (string) $intervention->getDetails();
         } else {
             // Pour l'instant le seul besoin remonté par SISH est celui de la modification de date
             // Mais l'opérateur pourrait aussi être modifié (que ce soit ARS ou un opérateur externe)
