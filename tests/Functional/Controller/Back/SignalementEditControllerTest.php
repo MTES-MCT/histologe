@@ -296,7 +296,7 @@ class SignalementEditControllerTest extends WebTestCase
         $this->assertTrue($signalement->getIsLogementVacant());
         $suivDelayed = $this->suiviDelayedRepository->findOneBy(['signalement' => $signalement, 'suiviDelayedType' => SuiviDelayedType::BO_EDIT_OCCUPATION_LOGEMENT]);
         $this->assertNotNull($suivDelayed);
-        $this->assertStringContainsString('Le logement a été marqué comme vacant.', $suivDelayed->getChanges()['description']);
+        $this->assertTrue($suivDelayed->getChanges()['logementVacant']);
 
         /** @var Session $session */
         $session = $this->client->getRequest()->getSession();

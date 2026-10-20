@@ -302,12 +302,15 @@ class SuiviManager
         $category = $suivisDelayed[0]->getSuiviCategory();
         $changesGroupedByType = [];
         $changesCountedByType = [];
+        $logementVacant = null;
         $filesToAttach = [];
         foreach ($suivisDelayed as $suiviDelayed) {
             $type = $suiviDelayed->getSuiviDelayedType()->value;
             if ($suiviDelayed->getChanges()) {
                 if ($type === SuiviDelayedType::BO_EDIT_OCCUPATION_LOGEMENT->value) {
-                    $changesCountedByType[$type] = $suiviDelayed->getChanges()['description'];
+                    // seul le dernier changement d'occupation compte, l'entrée garde la position du type dans la liste
+                    $changesCountedByType[$type] = 1;
+                    $logementVacant = (bool) $suiviDelayed->getChanges()['logementVacant'];
                 } else {
                     $changesGroupedByType[$type] = array_merge($changesGroupedByType[$type] ?? [], $suiviDelayed->getChanges());
                 }
@@ -326,19 +329,19 @@ class SuiviManager
         foreach ($changesGroupedByType as $type => $changes) {
             $groupedChanges[] = [
                 'label' => SuiviDelayedType::from($type)->label(),
-                // valeurs déjà formatées en HTML (échappées) par formatValue()
-                'changes' => array_map(fn (mixed $value): string => $this->formatValue($value), $changes),
+                'changes' => array_map(fn (mixed $value): ?string => $this->formatValue($value), $changes),
             ];
         }
 
         $otherChanges = [];
-        foreach ($changesCountedByType as $type => $value) {
+        foreach ($changesCountedByType as $type => $count) {
             $suiviDelayedType = SuiviDelayedType::from($type);
-            $otherChanges[] = match ($suiviDelayedType) {
-                SuiviDelayedType::FO_FILE_DELETED => $value.' '.$suiviDelayedType->label(),
-                SuiviDelayedType::BO_EDIT_OCCUPATION_LOGEMENT => (string) $value,
-                default => $suiviDelayedType->label(),
-            };
+            $otherChanges[] = [
+                'type' => $suiviDelayedType->value,
+                'label' => $suiviDelayedType->label(),
+                'count' => SuiviDelayedType::FO_FILE_DELETED === $suiviDelayedType ? $count : null,
+                'logementVacant' => SuiviDelayedType::BO_EDIT_OCCUPATION_LOGEMENT === $suiviDelayedType ? $logementVacant : null,
+            ];
         }
 
         $description = $this->suiviDescriptionHelper->buildDescriptionForCreation($category, [
@@ -366,25 +369,24 @@ class SuiviManager
         );
     }
 
-    private function formatValue(mixed $value): string
+    /**
+     * Valeur lisible (texte brut) d'un champ modifié, ou null si la valeur a été supprimée.
+     * La mise en forme (échappement, retours à la ligne) est faite dans suivi/signalement_edited.html.twig.
+     */
+    private function formatValue(mixed $value): ?string
     {
         // Si c'est un champ de type DateTimeInterface, on formate la date pour que ce soit plus lisible dans le suivi
         if ($value instanceof \DateTimeInterface) {
-            $value = $value->format('d/m/Y');
-        } else {
-            $dateFormatted = empty($value) ? false : DateHelper::formatDateString($value, 'Y-m-d', self::DATE_FORMAT);
-            if (false !== $dateFormatted) {
-                return $dateFormatted;
-            }
-            if (null !== $value) {
-                $value = $this->dictionaryProvider->translate($value, 'suivi');
-                $value = nl2br(htmlentities($value));
-            }
+            return $value->format('d/m/Y');
+        }
+        $dateFormatted = empty($value) ? false : DateHelper::formatDateString($value, 'Y-m-d', self::DATE_FORMAT);
+        if (false !== $dateFormatted) {
+            return $dateFormatted;
         }
         if (null === $value || '' === $value) {
-            $value = '<i>(valeur supprimée)</i>';
+            return null;
         }
 
-        return $value;
+        return $this->dictionaryProvider->translate($value, 'suivi');
     }
 }
