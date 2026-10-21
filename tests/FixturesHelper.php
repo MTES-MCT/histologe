@@ -197,19 +197,6 @@ trait FixturesHelper
         ];
     }
 
-    /**
-     * @return array<string>
-     */
-    public function getAdditionalInformationArrete(): array
-    {
-        return [
-            'arrete_numero' => '2023/DD13/00664',
-            'arrete_type' => 'Arrêté L.511-11 - Suroccupation',
-            'arrete_mainlevee_date' => '01/08/2023',
-            'arrete_mainlevee_numero' => '2023-DD13-00173',
-        ];
-    }
-
     protected function getDossierMessageSCHS(): DossierMessageSCHS
     {
         $faker = Factory::create();

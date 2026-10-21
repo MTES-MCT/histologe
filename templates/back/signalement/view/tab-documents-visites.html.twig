@@ -1,3 +1,4 @@
+{# TODO migration arretes : supprimer aprés migration et suppression physique des données #}
 {% for intervention in signalement.interventions | filter(intervention => intervention.type != enum('App\\Entity\\Enum\\InterventionType').ARRETE_PREFECTORAL) %}
     <div class="fr-mt-5v"></div>
     {% include 'back/signalement/view/photos-documents.html.twig' with {

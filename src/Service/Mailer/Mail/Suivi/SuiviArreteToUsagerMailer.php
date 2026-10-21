@@ -33,16 +33,13 @@ class SuiviArreteToUsagerMailer extends AbstractNotificationMailer
     public function getMailerParamsFromNotification(NotificationMail $notificationMail): array
     {
         $signalement = $notificationMail->getSignalement();
-        $intervention = $notificationMail->getIntervention();
-        $interventionScheduledAt = $intervention->getScheduledAtFormated();
-        $partnerName = $intervention->getPartner() ? $intervention->getPartner()->getNom() : 'Non renseigné';
+        $arreteDate = $notificationMail->getParams()['arrete_date'];
 
         return [
             'signalement_addressHousenumberAndStreet' => $signalement->getAddress()->getHousenumberAndStreet(),
             'signalement_addressPostCode' => $signalement->getAddress()->getPostCode(),
             'signalement_addressCity' => $signalement->getAddress()->getCity(),
-            'arrete_date' => $interventionScheduledAt,
-            'partner_name' => $partnerName,
+            'arrete_date' => $arreteDate,
             'lien_suivi' => $this->generateLink(
                 'front_suivi_signalement',
                 ['code' => $signalement->getCodeSuivi()],

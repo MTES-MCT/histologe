@@ -89,3 +89,15 @@ arretes:
   arreteType: "Ordinaire remédiable"
   syndic: "Syndic A"
   address: "25 bis Rue desiree clary 13002 Marseille"
+- 
+  dateArrete: "2025-01-12"
+  arreteType: "Suroccupation"
+  signalement: "2023-20"
+  arreteCreationSource: "API"
+  user: "api-01@signal-logement.fr"
+  additionalInformation:
+    numero_dossier: "ABC/123"
+    arrete_numero: "123456789"
+    arrete_mainlevee_numero: null
+    arrete_modificatif_date: null
+    arrete_modificatif_numero: null

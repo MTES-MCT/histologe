@@ -169,6 +169,7 @@ readonly class SignalementResponseFactory
                 $signalementResponse->suivis[] = new Suivi($suivi);
             }
             foreach ($signalement->getInterventions() as $intervention) {
+                // TODO migration arretes : supprimer aprés migration et suppression physique des données
                 if (InterventionType::ARRETE_PREFECTORAL !== $intervention->getType()) {
                     $signalementResponse->visites[] = $this->visiteFactory->createInstance($intervention);
                 }

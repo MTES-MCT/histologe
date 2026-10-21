@@ -9,7 +9,6 @@ use App\Entity\Intervention;
 use App\Factory\FileFactory;
 use App\Factory\InterventionFactory;
 use App\Manager\InterventionManager;
-use App\Repository\InterventionRepository;
 use App\Repository\SignalementRepository;
 use App\Repository\UserRepository;
 use App\Service\Signalement\Qualification\SignalementQualificationUpdater;
@@ -24,7 +23,6 @@ use Symfony\Component\Workflow\WorkflowInterface;
 
 class InterventionManagerTest extends KernelTestCase
 {
-    private InterventionRepository $interventionRepository;
     private InterventionFactory $interventionFactory;
     private WorkflowInterface $workflow;
     private SignalementRepository $signalementRepository;
@@ -43,7 +41,6 @@ class InterventionManagerTest extends KernelTestCase
     protected function setUp(): void
     {
         self::bootKernel();
-        $this->interventionRepository = static::getContainer()->get(InterventionRepository::class);
         $this->interventionFactory = static::getContainer()->get(InterventionFactory::class);
         $this->workflow = static::getContainer()->get('state_machine.intervention_planning');
         $this->signalementQualificationUpdater = static::getContainer()->get(SignalementQualificationUpdater::class);
@@ -59,7 +56,6 @@ class InterventionManagerTest extends KernelTestCase
         static::getContainer()->get('security.token_storage')->setToken(new UsernamePasswordToken($user, 'main', $user->getRoles()));
 
         $this->interventionManager = new InterventionManager(
-            $this->interventionRepository,
             $this->interventionFactory,
             $this->workflow,
             $this->signalementQualificationUpdater,

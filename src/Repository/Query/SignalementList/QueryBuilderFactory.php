@@ -175,7 +175,7 @@ readonly class QueryBuilderFactory
             IDENTITY(address.territory) as territoryId
             ');
         $qb->leftJoin('s.signalementQualifications', 'sq', 'WITH', 'sq.status LIKE \'%AVEREE%\' OR sq.status LIKE \'%CHECK%\'');
-        $qb->leftJoin('s.interventions', 'i', 'WITH', 'i.type LIKE \'VISITE\' OR i.type LIKE \'ARRETE_PREFECTORAL\'');
+        $qb->leftJoin('s.interventions', 'i', 'WITH', 'i.type LIKE \'VISITE\'');
         $qb->leftJoin('a.partner', 'p');
         $qb->setParameter('concat_separator', SignalementAffectationListView::SEPARATOR_CONCAT);
         $qb->setParameter('group_concat_separator', SignalementAffectationListView::SEPARATOR_GROUP_CONCAT);

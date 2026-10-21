@@ -38,14 +38,46 @@ class ArreteRequest implements RequestInterface
     public ?string $numero = null;
 
     #[OA\Property(
-        description: 'Le type de l\'arrêté doit commencer par <strong>Arrêté L. suivi d\'un numéro d\'article de loi</strong>.',
-        example: ['Arrêté L.511-11 - Suroccupation'],
+        description: 'Le type de l\'arrêté.',
+        enum: [
+            'Mise en sécurité procédure ordinaire',
+            'Mise en sécurité procédure urgente',
+            'Mise en sécurité modificatif',
+            'Impropre',
+            'Ordinaire irrémédiable',
+            'Ordinaire remédiable',
+            'Suroccupation',
+            'Usage non approprié',
+            'Insalubrité',
+            'Insalubrité & Saturnisme',
+            'Saturnisme',
+            'Arrêté L1331-26',
+            'Arrêté L.1311-4',
+            'Arrêté Letchimy : article 10',
+        ],
+        example: ['Suroccupation'],
     )]
     #[Assert\NotBlank]
-    #[Assert\Regex(
-        pattern: "/^Arrêté L\.\d+/",
-        message: "Le type doit commencer par 'Arrêté L.' suivi d'un numéro d'article de loi."
+    #[Assert\Choice(
+        choices: [
+            'Mise en sécurité procédure ordinaire',
+            'Mise en sécurité procédure urgente',
+            'Mise en sécurité modificatif',
+            'Impropre',
+            'Ordinaire irrémédiable',
+            'Ordinaire remédiable',
+            'Suroccupation',
+            'Usage non approprié',
+            'Insalubrité',
+            'Insalubrité & Saturnisme',
+            'Saturnisme',
+            'Arrêté L1331-26',
+            'Arrêté L.1311-4',
+            'Arrêté Letchimy : article 10',
+        ],
+        message: 'Cette valeur doit être l\'un des choix suivants : {{ choices }}'
     )]
+    // TODO basculer en Enum ArreteType
     public ?string $type = null;
 
     #[OA\Property(
