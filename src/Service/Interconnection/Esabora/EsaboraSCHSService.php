@@ -26,8 +26,9 @@ class EsaboraSCHSService extends AbstractEsaboraService
         HttpClientInterface $client,
         LoggerInterface $logger,
         UploadHandlerService $uploadHandlerService,
+        EsaboraTokenProvider $esaboraTokenProvider,
     ) {
-        parent::__construct($client, $logger, $uploadHandlerService);
+        parent::__construct($client, $logger, $uploadHandlerService, $esaboraTokenProvider);
     }
 
     public function pushDossier(DossierMessageSCHS $dossierMessage): ResponseInterface|JsonResponse
@@ -55,7 +56,8 @@ class EsaboraSCHSService extends AbstractEsaboraService
 
     public function getStateDossier(Affectation $affectation, string $uuidSignalement): DossierStateSCHSResponse
     {
-        list($url, $token) = $affectation->getPartner()->getEsaboraCredential();
+        $url = $affectation->getPartner()->getEsaboraUrl();
+        $token = $this->esaboraTokenProvider->getToken($affectation->getPartner());
         $payload = [
             'searchName' => 'WS_ETAT_DOSSIER_SAS',
             'criterionList' => [
@@ -102,7 +104,8 @@ class EsaboraSCHSService extends AbstractEsaboraService
 
     public function getDossierEvents(Affectation $affectation, string $uuidSignalement): DossierEventsSCHSCollectionResponse
     {
-        list($url, $token) = $affectation->getPartner()->getEsaboraCredential();
+        $url = $affectation->getPartner()->getEsaboraUrl();
+        $token = $this->esaboraTokenProvider->getToken($affectation->getPartner());
         $statusCode = Response::HTTP_SERVICE_UNAVAILABLE;
         $payload = [
             'searchName' => 'WS_EVT_DOSSIER_SAS',
@@ -153,7 +156,8 @@ class EsaboraSCHSService extends AbstractEsaboraService
         Affectation $affectation,
         DossierEventSCHS $dossierEventSCHS,
     ): DossierEventFilesSCHSResponse {
-        list($url, $token) = $affectation->getPartner()->getEsaboraCredential();
+        $url = $affectation->getPartner()->getEsaboraUrl();
+        $token = $this->esaboraTokenProvider->getToken($affectation->getPartner());
         $url .= self::TASK_GET_DOCUMENTS;
         $options['query'] = [
             'searchId' => $dossierEventSCHS->getSearchId(),

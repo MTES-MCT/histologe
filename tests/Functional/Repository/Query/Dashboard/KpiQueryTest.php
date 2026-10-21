@@ -94,7 +94,7 @@ class KpiQueryTest extends KernelTestCase
     {
         $countAll = $this->kpiQuery->countPartnerInterfaces([]);
         $this->assertIsInt($countAll);
-        $this->assertEquals(4, $countAll);
+        $this->assertEquals(5, $countAll);
 
         $territory = $this->entityManager->getRepository(Territory::class)->findOneBy([]);
         if ($territory) {
