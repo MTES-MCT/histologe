@@ -4,24 +4,20 @@ namespace App\Controller\Api;
 
 use App\Dto\Api\Request\ArreteRequest;
 use App\Dto\Api\Response\ArreteResponse;
-use App\Entity\Enum\ProcedureType;
-use App\Entity\Enum\Qualification;
 use App\Entity\Signalement;
 use App\Entity\User;
-use App\Event\InterventionCreatedEvent;
-use App\Manager\InterventionManager;
+use App\Manager\ArreteManager;
 use App\Security\Voter\Api\ApiSignalementPartnerVoter;
 use App\Service\Security\PartnerAuthorizedResolver;
-use App\Service\Signalement\Qualification\SignalementQualificationUpdater;
 use Doctrine\ORM\EntityManagerInterface;
 use Nelmio\ApiDocBundle\Attribute\Model;
 use OpenApi\Attributes as OA;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Attribute\MapRequestPayload;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Validator\ConstraintViolation;
 use Symfony\Component\Validator\Exception\ValidationFailedException;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
@@ -30,9 +26,7 @@ class ArreteCreateController extends AbstractController
 {
     public function __construct(
         private readonly ValidatorInterface $validator,
-        private readonly EventDispatcherInterface $eventDispatcher,
-        private readonly InterventionManager $interventionManager,
-        private readonly SignalementQualificationUpdater $signalementQualificationUpdater,
+        private readonly ArreteManager $arreteManager,
         private readonly PartnerAuthorizedResolver $partnerAuthorizedResolver,
         private readonly EntityManagerInterface $entityManager,
     ) {
@@ -185,27 +179,23 @@ class ArreteCreateController extends AbstractController
         $affectation = $signalement->getAffectationForPartner($partner);
 
         $errors = $this->validator->validate($arreteRequest);
+        // le doublon n'est vérifié que si la payload est valide (date et type exploitables)
+        if (0 === count($errors) && $this->arreteManager->arreteAlreadyExists($arreteRequest, $signalement)) {
+            $errors->add(new ConstraintViolation(
+                'L\'arrêté existe déja.',
+                null,
+                [],
+                $arreteRequest,
+                'date',
+                $arreteRequest->date
+            ));
+        }
         if (count($errors) > 0) {
             throw new ValidationFailedException($arreteRequest, $errors);
         }
-        $isNew = false;
-        $intervention = $this->interventionManager->createArreteFromRequest($arreteRequest, $affectation, $isNew);
-        if ($isNew) {
-            $signalement->addIntervention($intervention);
-            if (!$signalement->hasQualificaton(Qualification::INSALUBRITE)) {
-                $this->signalementQualificationUpdater->updateQualificationFromVisiteProcedureList(
-                    $signalement,
-                    [ProcedureType::INSALUBRITE]
-                );
-            }
-        }
-        $interventionCreatedEvent = $this->eventDispatcher->dispatch(
-            new InterventionCreatedEvent($intervention, $user, $partner),
-            InterventionCreatedEvent::NAME
-        );
-        $suivi = $interventionCreatedEvent->getSuivi();
+        $arrete = $this->arreteManager->createArreteFromApiRequest($arreteRequest, $affectation);
         $this->entityManager->flush();
 
-        return $this->json(new ArreteResponse($intervention, $suivi), Response::HTTP_CREATED);
+        return $this->json(new ArreteResponse($arrete), Response::HTTP_CREATED);
     }
 }

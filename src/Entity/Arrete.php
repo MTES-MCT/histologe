@@ -3,6 +3,7 @@
 namespace App\Entity;
 
 use App\Entity\Behaviour\EntityHistoryInterface;
+use App\Entity\Enum\ArreteCreationSource;
 use App\Entity\Enum\ArreteType;
 use App\Entity\Enum\HistoryEntryEvent;
 use App\Repository\ArreteRepository;
@@ -42,6 +43,20 @@ class Arrete implements EntityHistoryInterface
 
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $identifiantParcellaire = null;
+
+    /** @var array<mixed> $additionalInformation */
+    #[ORM\Column]
+    private array $additionalInformation = [];
+
+    #[ORM\ManyToOne(targetEntity: Signalement::class)]
+    #[ORM\JoinColumn(nullable: true)]
+    private ?Signalement $signalement = null;
+
+    #[ORM\Column(enumType: ArreteCreationSource::class)]
+    private ArreteCreationSource $arreteCreationSource;
+
+    #[ORM\Column(nullable: true, options: ['comment' => 'Unique id used by the provider'])]
+    private ?int $providerId = null;
 
     public function getId(): ?int
     {
@@ -145,6 +160,60 @@ class Arrete implements EntityHistoryInterface
     public function setIdentifiantParcellaire(?string $identifiantParcellaire): static
     {
         $this->identifiantParcellaire = $identifiantParcellaire;
+
+        return $this;
+    }
+
+    /**
+     * @return array<mixed>
+     */
+    public function getAdditionalInformation(): array
+    {
+        return $this->additionalInformation;
+    }
+
+    /**
+     * @param array<mixed> $additionalInformation
+     */
+    public function setAdditionalInformation(array $additionalInformation): static
+    {
+        $this->additionalInformation = $additionalInformation;
+
+        return $this;
+    }
+
+    public function getSignalement(): ?Signalement
+    {
+        return $this->signalement;
+    }
+
+    public function setSignalement(?Signalement $signalement): static
+    {
+        $this->signalement = $signalement;
+
+        return $this;
+    }
+
+    public function getArreteCreationSource(): ArreteCreationSource
+    {
+        return $this->arreteCreationSource;
+    }
+
+    public function setArreteCreationSource(ArreteCreationSource $arreteCreationSource): static
+    {
+        $this->arreteCreationSource = $arreteCreationSource;
+
+        return $this;
+    }
+
+    public function getProviderId(): ?int
+    {
+        return $this->providerId;
+    }
+
+    public function setProviderId(?int $providerId): static
+    {
+        $this->providerId = $providerId;
 
         return $this;
     }

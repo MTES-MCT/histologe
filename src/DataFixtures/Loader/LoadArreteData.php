@@ -3,8 +3,11 @@
 namespace App\DataFixtures\Loader;
 
 use App\Entity\Arrete;
+use App\Entity\Enum\ArreteCreationSource;
 use App\Entity\Enum\ArreteType;
 use App\Repository\AddressRepository;
+use App\Repository\SignalementRepository;
+use App\Repository\UserRepository;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Common\DataFixtures\OrderedFixtureInterface;
 use Doctrine\Persistence\ObjectManager;
@@ -17,6 +20,8 @@ class LoadArreteData extends Fixture implements OrderedFixtureInterface
 
     public function __construct(
         private readonly AddressRepository $addressRepository,
+        private readonly SignalementRepository $signalementRepository,
+        private readonly UserRepository $userRepository,
     ) {
     }
 
@@ -46,16 +51,28 @@ class LoadArreteData extends Fixture implements OrderedFixtureInterface
             ->setDateArrete(new \DateTimeImmutable($row['dateArrete']))
             ->setArreteType(ArreteType::fromLabel($row['arreteType']))
             ->setSyndic($row['syndic'] ?? null)
-            ->setAddress($this->addresses[$row['address']])
             ->setDateMainLevee(isset($row['dateMainLevee']) ? new \DateTimeImmutable($row['dateMainLevee']) : null)
             ->setImportedAt(new \DateTimeImmutable())
             ->setIdentifiantParcellaire($row['identifiantParcellaire'] ?? null)
         ;
+        if (isset($row['signalement'])) {
+            $signalement = $this->signalementRepository->findOneBy(['reference' => $row['signalement']]);
+            $user = $this->userRepository->findOneBy(['email' => $row['user']]);
+            $arrete->setSignalement($signalement);
+            $arrete->setAddress($signalement->getAddress());
+            $arrete->setArreteCreationSource(ArreteCreationSource::from($row['arreteCreationSource']));
+            $arrete->setCreatedBy($user);
+            $arrete->setAdditionalInformation($row['additionalInformation']);
+        } else {
+            $arrete->setAddress($this->addresses[$row['address']]);
+            $arrete->setArreteCreationSource(ArreteCreationSource::IMPORT);
+        }
+
         $manager->persist($arrete);
     }
 
     public function getOrder(): int
     {
-        return 3;
+        return 14;
     }
 }

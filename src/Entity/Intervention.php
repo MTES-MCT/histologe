@@ -92,6 +92,7 @@ class Intervention implements EntityHistoryInterface, EntitySanitizerInterface
     #[ORM\Column(nullable: true, options: ['comment' => 'Unique id used by the provider'])]
     private ?int $providerId = null;
 
+    // TODO migration arretes : supprimer cette propriété et sa colonne en base
     /** @var array<mixed> $additionalInformation */
     #[ORM\Column(nullable: true)]
     private ?array $additionalInformation = [];
