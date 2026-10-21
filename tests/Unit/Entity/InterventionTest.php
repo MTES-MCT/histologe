@@ -22,8 +22,7 @@ class InterventionTest extends TestCase
             ->setDetails('Tout est OK')
             ->setType(InterventionType::VISITE)
             ->setScheduledAt($visiteScheduledAt)
-            ->setStatus(Intervention::STATUS_PLANNED)
-            ->setAdditionalInformation($this->getAdditionalInformationArrete());
+            ->setStatus(Intervention::STATUS_PLANNED);
 
         $this->assertEquals(Intervention::STATUS_PLANNED, $intervention->getStatus());
         $this->assertEquals($affectation->getSignalement(), $intervention->getSignalement());
@@ -31,9 +30,5 @@ class InterventionTest extends TestCase
         $this->assertEquals('Tout est OK', $intervention->getDetails());
         $this->assertEquals(InterventionType::VISITE, $intervention->getType());
         $this->assertEquals($visiteScheduledAt, $intervention->getScheduledAt());
-        $this->assertArrayHasKey('arrete_numero', $intervention->getAdditionalInformation());
-        $this->assertArrayHasKey('arrete_type', $intervention->getAdditionalInformation());
-        $this->assertArrayHasKey('arrete_mainlevee_date', $intervention->getAdditionalInformation());
-        $this->assertArrayHasKey('arrete_mainlevee_numero', $intervention->getAdditionalInformation());
     }
 }

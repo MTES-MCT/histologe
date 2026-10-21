@@ -2,11 +2,9 @@
 
 namespace App\Manager;
 
-use App\Dto\Api\Request\ArreteRequest;
 use App\Entity\Affectation;
 use App\Entity\Enum\DocumentType;
 use App\Entity\Enum\InterventionType;
-use App\Entity\Enum\ProcedureType;
 use App\Entity\Intervention;
 use App\Entity\Partner;
 use App\Entity\User;
@@ -15,8 +13,6 @@ use App\Event\InterventionEditedEvent;
 use App\Event\InterventionRescheduledEvent;
 use App\Factory\FileFactory;
 use App\Factory\InterventionFactory;
-use App\Repository\InterventionRepository;
-use App\Service\Intervention\InterventionDescriptionGenerator;
 use App\Service\Signalement\Qualification\SignalementQualificationUpdater;
 use App\Service\TimezoneProvider;
 use App\Utils\DateHelper;
@@ -31,7 +27,6 @@ use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 class InterventionManager
 {
     public function __construct(
-        private readonly InterventionRepository $interventionRepository,
         private readonly InterventionFactory $interventionFactory,
         #[Target('interventionPlanningStateMachine')]
         private readonly WorkflowInterface $interventionPlanningStateMachine,
@@ -141,44 +136,6 @@ class InterventionManager
             );
             $intervention->addFile($file);
         }
-    }
-
-    /**
-     * @throws \DateMalformedStringException
-     */
-    public function createArreteFromRequest(ArreteRequest $arreteRequest, Affectation $affectation, bool &$isNew): ?Intervention
-    {
-        $description = InterventionDescriptionGenerator::buildDescriptionArreteCreatedFromRequest($arreteRequest);
-        /** @var Intervention|null $intervention */
-        $intervention = $this->interventionRepository->findOneBy([
-            'signalement' => $affectation->getSignalement(),
-            'type' => InterventionType::ARRETE_PREFECTORAL,
-            'details' => $this->htmlSanitizer->sanitize($description),
-        ]);
-        if (null === $intervention) {
-            $isNew = true;
-            $additionalInformation = [
-                'arrete_numero' => $arreteRequest->numero,
-                'arrete_type' => $arreteRequest->type,
-                'arrete_mainlevee_date' => $arreteRequest->mainLeveeDate,
-                'arrete_mainlevee_numero' => $arreteRequest->mainLeveeNumero,
-            ];
-            $intervention = $this->interventionFactory->createInstanceFrom(
-                affectation: $affectation,
-                type: InterventionType::ARRETE_PREFECTORAL,
-                scheduledAt: new \DateTimeImmutable($arreteRequest->date),
-                registeredAt: new \DateTimeImmutable(),
-                status: Intervention::STATUS_DONE,
-                details: InterventionDescriptionGenerator::buildDescriptionArreteCreatedFromRequest($arreteRequest),
-                additionalInformation: $additionalInformation,
-                concludeProcedures: [ProcedureType::INSALUBRITE]
-            );
-
-            $this->entityManager->persist($intervention);
-            $this->entityManager->flush();
-        }
-
-        return $intervention;
     }
 
     public function createVisiteFromImport(Affectation $affectation, \DateTimeImmutable $dateVisite, string $conclusionVisite): ?Intervention
