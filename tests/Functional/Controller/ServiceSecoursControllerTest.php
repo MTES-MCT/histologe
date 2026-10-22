@@ -25,7 +25,7 @@ class ServiceSecoursControllerTest extends WebTestCase
         /** @var ServiceSecoursRouteRepository $serviceSecoursRouteRepository */
         $serviceSecoursRouteRepository = static::getContainer()->get(ServiceSecoursRouteRepository::class);
         $routes = $serviceSecoursRouteRepository->findAll();
-        $this->assertCount(2, $routes);
+        $this->assertCount(6, $routes);
 
         /** @var RouterInterface $router */
         $router = static::getContainer()->get(RouterInterface::class);

@@ -4,6 +4,7 @@ namespace App\Entity;
 
 use App\Entity\Behaviour\EntityHistoryInterface;
 use App\Entity\Enum\HistoryEntryEvent;
+use App\Entity\Enum\ServiceSecoursCategory;
 use App\Repository\ServiceSecoursRouteRepository;
 use App\Validator as AppAssert;
 use Doctrine\Common\Collections\ArrayCollection;
@@ -15,7 +16,14 @@ use Symfony\Component\Uid\Uuid;
 use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: ServiceSecoursRouteRepository::class)]
+#[ORM\Table(name: 'service_secours_route')]
+#[ORM\UniqueConstraint(name: 'unique_territory_category', columns: ['territory_id', 'category'])]
 #[UniqueEntity('name')]
+#[UniqueEntity(
+    fields: ['territory', 'category'],
+    message: 'Une configuration existe déjà pour ce territoire et cette catégorie.',
+    errorPath: 'category',
+)]
 class ServiceSecoursRoute implements EntityHistoryInterface
 {
     #[ORM\Id]
@@ -27,6 +35,10 @@ class ServiceSecoursRoute implements EntityHistoryInterface
     #[Assert\NotBlank]
     #[ORM\JoinColumn]
     private ?Territory $territory = null;
+
+    #[ORM\Column(type: 'string', length: 50, enumType: ServiceSecoursCategory::class)]
+    #[Assert\NotNull(message: 'Merci de choisir une catégorie.')]
+    private ServiceSecoursCategory $category;
 
     #[ORM\Column(type: 'uuid', unique: true)]
     private string|Uuid $uuid;
@@ -51,7 +63,7 @@ class ServiceSecoursRoute implements EntityHistoryInterface
     /**
      * @var Collection<int, Signalement>
      */
-    #[ORM\OneToMany(mappedBy: 'serviceSecours', targetEntity: Signalement::class)]
+    #[ORM\OneToMany(targetEntity: Signalement::class, mappedBy: 'serviceSecours')]
     private Collection $signalements;
 
     public function __construct()
@@ -73,6 +85,18 @@ class ServiceSecoursRoute implements EntityHistoryInterface
     public function setTerritory(?Territory $territory): static
     {
         $this->territory = $territory;
+
+        return $this;
+    }
+
+    public function getCategory(): ?ServiceSecoursCategory
+    {
+        return $this->category;
+    }
+
+    public function setCategory(?ServiceSecoursCategory $category): static
+    {
+        $this->category = $category;
 
         return $this;
     }

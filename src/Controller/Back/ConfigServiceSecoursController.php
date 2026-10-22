@@ -125,6 +125,31 @@ class ConfigServiceSecoursController extends AbstractController
         ]);
     }
 
+    #[Route('/{id}/editer', name: 'back_config_service_secours_route_edit', methods: ['GET', 'POST'])]
+    public function edit(
+        Request $request,
+        ServiceSecoursRoute $serviceSecoursRoute,
+        EntityManagerInterface $entityManager,
+    ): Response {
+        $form = $this->createForm(ServiceSecoursRouteType::class, $serviceSecoursRoute);
+        $form->handleRequest($request);
+        if ($form->isSubmitted() && $form->isValid()) {
+            $entityManager->flush();
+            $this->addFlash('success', [
+                'title' => 'Route modifiée',
+                'message' => 'La route a bien été modifiée.',
+            ]);
+
+            return $this->redirectToRoute('back_config_service_secours_route_index', [], Response::HTTP_SEE_OTHER);
+        }
+
+        return $this->render('back/config-service-secours-route/edit.html.twig', [
+            'serviceSecoursRoute' => $serviceSecoursRoute,
+            'form' => $form,
+            'create' => false,
+        ]);
+    }
+
     #[Route('/{id}/qr-code', name: 'back_config_service_secours_route_qr_code', methods: ['GET'])]
     public function qrCode(
         ServiceSecoursRoute $serviceSecoursRoute,

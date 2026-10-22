@@ -34,6 +34,16 @@ class ServiceSecoursRouteRepository extends ServiceEntityRepository
             $qb->orderBy('ssr.name', 'ASC');
         }
 
+        if ($searchServiceSecoursRoute->getTerritory()) {
+            $qb->andWhere('ssr.territory = :territory')
+                ->setParameter('territory', $searchServiceSecoursRoute->getTerritory());
+        }
+
+        if ($searchServiceSecoursRoute->getCategory()) {
+            $qb->andWhere('ssr.category = :category')
+                ->setParameter('category', $searchServiceSecoursRoute->getCategory());
+        }
+
         if ($searchServiceSecoursRoute->getQueryName()) {
             $qb->andWhere('LOWER(ssr.name) LIKE :queryName');
             $qb->setParameter('queryName', '%'.strtolower($searchServiceSecoursRoute->getQueryName()).'%');
