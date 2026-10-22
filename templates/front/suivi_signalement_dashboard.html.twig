@@ -68,18 +68,6 @@
 									data-matomo-clickable-event-name="Signalement fermé"
 									><span class="fr-hidden">Signalement fermé</span></a>
 							</h3>  
-						{% elseif signalement.statut is same as enum('App\\Entity\\Enum\\SignalementStatus').ARCHIVED %}
-							<p class="fr-tile__detail">Votre signalement a été archivé, vous ne pouvez plus envoyer de messages.</p>            
-							<div class="fr-tile__start">
-								<p class="fr-badge fr-badge--sm fr-badge--no-icon fr-badge--error">Signalement archivé</p>           
-							</div>
-							<h3 class="fr-tile__title">
-								<a href="{{ path('front_suivi_signalement_messages', {'code': signalement.codeSuivi}) }}"
-									data-matomo-clickable-event-category="Suivre mon signalement"
-									data-matomo-clickable-event-action="clickLink"
-									data-matomo-clickable-event-name="Signalement archivé"
-									><span class="fr-hidden">Signalement archivé</span></a>
-							</h3>
 						{% else %}
 							{% if suiviCategory %}
 								<h3 class="fr-tile__title">

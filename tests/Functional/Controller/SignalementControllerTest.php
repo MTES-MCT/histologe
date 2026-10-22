@@ -73,13 +73,7 @@ class SignalementControllerTest extends WebTestCase
         $client->loginUser($signalementUser, 'code_suivi');
         $crawler = $client->request('GET', $urlSuiviSignalementUser);
 
-        if (SignalementStatus::ARCHIVED->value === $status) {
-            $this->assertResponseStatusCodeSame(Response::HTTP_OK);
-            $this->assertEquals(
-                'Votre signalement a été archivé, vous ne pouvez plus envoyer de messages.',
-                $crawler->filter('.fr-tile__detail')->text()
-            );
-        } elseif (in_array($status, [SignalementStatus::ACTIVE->value, SignalementStatus::INJONCTION_BAILLEUR->value, SignalementStatus::INJONCTION_CLOSED->value])) {
+        if (in_array($status, [SignalementStatus::ACTIVE->value, SignalementStatus::INJONCTION_BAILLEUR->value, SignalementStatus::INJONCTION_CLOSED->value])) {
             $this->assertEquals('Votre dossier', $crawler->filter('h1')->text());
         } elseif (SignalementStatus::CLOSED->value === $status) {
             $this->assertEquals(
@@ -351,8 +345,6 @@ class SignalementControllerTest extends WebTestCase
             $this->assertEquals('Lorem Ipsum is simply dummy text of the printing and typesetting &lt;b&gt;industry&lt;/b&gt;', $suivisUsager[0]->getDescription());
         } elseif (SignalementStatus::REFUSED->value === $status) {
             $this->assertEquals('Votre signalement a été refusé, vous ne pouvez plus envoyer de messages.', $crawler->filter('.fr-notice p')->text());
-        } elseif (SignalementStatus::ARCHIVED->value === $status) {
-            $this->assertEquals('Votre signalement a été archivé, vous ne pouvez plus envoyer de messages.', $crawler->filter('.fr-notice p')->text());
         } elseif (SignalementStatus::CLOSED->value === $status) {
             $this->assertEquals('Votre message suite à la clôture de votre dossier a bien été envoyé. Vous ne pouvez désormais plus envoyer de messages.', $crawler->filter('.fr-notice p')->text());
         } elseif (SignalementStatus::INJONCTION_CLOSED->value === $status) {
