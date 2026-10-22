@@ -61,7 +61,7 @@ class SignalementRepository extends ServiceEntityRepository
             ->leftJoin('s.suivis', 'suivis', Join::WITH, 'suivis.isVisibleForUsager = 1 AND suivis.waitingNotification = 0')
             ->addSelect('suivis')
             ->andWhere('s.statut NOT IN (:statutDraft)')
-            ->setParameter('statutDraft', [SignalementStatus::DRAFT, SignalementStatus::DRAFT_ARCHIVED]);
+            ->setParameter('statutDraft', [SignalementStatus::DRAFT, SignalementStatus::DRAFT_ARCHIVED, SignalementStatus::ARCHIVED]);
 
         return $qb->getQuery()->getOneOrNullResult();
     }

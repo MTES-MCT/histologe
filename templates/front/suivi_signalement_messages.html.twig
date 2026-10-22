@@ -69,8 +69,6 @@
 					{% set errorMessage = 'Votre message suite à la clôture de votre dossier a bien été envoyé. Vous ne pouvez désormais plus envoyer de messages.' %}
 				{% elseif signalement.statut.name == 'CLOSED' and date(signalement.closedAt) < date('-30days') %}
 					{% set errorMessage = 'Votre dossier a été fermé il y a plus de 30 jours, vous ne pouvez plus envoyer de messages.' %}
-				{% elseif signalement.statut.name == 'ARCHIVED' %}
-					{% set errorMessage = 'Votre signalement a été archivé, vous ne pouvez plus envoyer de messages.' %}
 				{% elseif signalement.isLogementVacant %}
 					{% set errorMessage = 'Les services en charge du dossier ont indiqué que vous avez quitté votre logement. Par conséquent, vous ne pouvez plus envoyer de messages.' %}
 				{% else %}

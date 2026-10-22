@@ -77,7 +77,7 @@ class SignalementEditControllerTest extends WebTestCase
 
         $client->request('GET', $url);
 
-        if (in_array($status, [SignalementStatus::DRAFT->value, SignalementStatus::DRAFT_ARCHIVED->value])) {
+        if (in_array($status, [SignalementStatus::DRAFT->value, SignalementStatus::DRAFT_ARCHIVED->value, SignalementStatus::ARCHIVED->value])) {
             $this->assertResponseRedirects('/authentification/'.$signalement->getCodeSuivi());
         } elseif (in_array($status, [SignalementStatus::ACTIVE->value, SignalementStatus::NEED_VALIDATION->value, SignalementStatus::INJONCTION_BAILLEUR->value])) {
             $this->assertResponseIsSuccessful();
