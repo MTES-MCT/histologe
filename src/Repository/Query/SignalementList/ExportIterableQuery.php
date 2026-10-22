@@ -5,8 +5,11 @@ namespace App\Repository\Query\SignalementList;
 use App\Dto\SignalementAffectationListView;
 use App\Dto\SignalementExport;
 use App\Entity\Commune;
+use App\Entity\Enum\ProcedureCategory;
+use App\Entity\Enum\ProcedureType;
 use App\Entity\File;
 use App\Entity\Signalement;
+use App\Entity\SignalementProcedure;
 use App\Entity\User;
 use App\Entity\View\ViewLatestIntervention;
 use App\Service\Signalement\Export\SignalementExportSelectableColumns;
@@ -97,6 +100,11 @@ class ExportIterableQuery
             $zonesData = $this->fetchZonesData($signalementIds);
         }
 
+        $proceduresData = [];
+        if (\in_array('PROCEDURES_A_ENGAGER', $selectedColumns, true) || \in_array('PROCEDURES_RETENUES', $selectedColumns, true)) {
+            $proceduresData = $this->fetchProceduresData($signalementIds);
+        }
+
         foreach ($mainRows as $row) {
             $id = $row['id'];
             yield array_merge(
@@ -107,6 +115,7 @@ class ExportIterableQuery
                 $documentsData[$id] ?? [],
                 $visiteData[$id] ?? [],
                 $zonesData[$id] ?? [],
+                $proceduresData[$id] ?? [],
             );
         }
     }
@@ -377,6 +386,48 @@ class ExportIterableQuery
         $indexed = [];
         foreach ($result as $row) {
             $indexed[$row['signalementId']] = ['zones' => $row['zones']];
+        }
+
+        return $indexed;
+    }
+
+    /**
+     * @param array<int> $signalementIds
+     *
+     * @return array<int, array<string, mixed>>
+     */
+    private function fetchProceduresData(array $signalementIds): array
+    {
+        $result = $this->em->createQueryBuilder()
+            ->from(SignalementProcedure::class, 'sp')
+            ->select('IDENTITY(sp.signalement) AS signalementId, sp.procedureType, sp.procedureCategory')
+            ->where('sp.signalement IN (:signalementIds)')
+            ->setParameter('signalementIds', $signalementIds)
+            ->orderBy('sp.id')
+            ->getQuery()
+            ->getArrayResult();
+
+        // PROCEDURE_ENGAGEE : procédures à engager (onglet Orientation), PROCEDURE_RETENUE : procédures engagées (fermeture)
+        $keysByCategory = [
+            ProcedureCategory::PROCEDURE_ENGAGEE->value => 'proceduresAEngager',
+            ProcedureCategory::PROCEDURE_RETENUE->value => 'proceduresRetenues',
+        ];
+
+        $labels = [];
+        foreach ($result as $row) {
+            /** @var ProcedureType $procedureType */
+            $procedureType = $row['procedureType'];
+            /** @var ProcedureCategory $procedureCategory */
+            $procedureCategory = $row['procedureCategory'];
+            $labels[$row['signalementId']][$keysByCategory[$procedureCategory->value]][] = $procedureType->label();
+        }
+
+        $indexed = [];
+        foreach ($labels as $id => $labelsByKey) {
+            $indexed[$id] = array_map(
+                static fn (array $procedureLabels) => implode(SignalementExport::SEPARATOR_GROUP_CONCAT, $procedureLabels),
+                $labelsByKey
+            );
         }
 
         return $indexed;

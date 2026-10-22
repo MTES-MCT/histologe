@@ -67,6 +67,7 @@ class SignalementExportSelectableColumns
         'EMAIL_TIERS' => ['name' => 'E-mail tiers', 'description' => 'L\'adresse e-mail du tiers déclarant', 'export' => 's.mailDeclarant', 'preselected' => false],
         'STRUCTURE_TIERS' => ['name' => 'Structure tiers', 'description' => 'La structure du tiers déclarant', 'export' => 's.structureDeclarant', 'preselected' => false],
         'LIEN_TIERS' => ['name' => 'Lien tiers occupant', 'description' => 'Le lien du tiers déclarant avec l\'occupant (voisin, proche, pro...)', 'export' => 's.lienDeclarantOccupant', 'preselected' => false],
+        'PROCEDURES_A_ENGAGER' => ['name' => 'Procédures à engager', 'description' => 'Les procédures à engager sur le dossier, sélectionnées par les responsables de territoire en fonction des informations disponibles dans le dossier', 'export' => 'proceduresToEngage', 'preselected' => false, 'specificSelect' => true],
         'NB_VISITES' => ['name' => 'Nombre de visites', 'description' => 'Le nombre de visites enregistrée sur le logement', 'export' => 'nbVisites', 'preselected' => false, 'specificSelect' => true],
         'DATE_VISITE' => ['name' => 'Date de la dernière visite', 'description' => 'La date de la dernière visite du logement', 'export' => 'dateVisite', 'preselected' => false, 'specificSelect' => true],
         'OCCUPANT_PRESENT_VISITE' => ['name' => 'Occupant présent dernière visite', 'description' => 'Si l\'occupant était présent ou non pendant la dernière visite', 'export' => 'isOccupantPresentVisite', 'preselected' => false, 'specificSelect' => true],
@@ -74,18 +75,28 @@ class SignalementExportSelectableColumns
         'CONCLUSION_VISITE' => ['name' => 'Ccl. de la dernière visite', 'description' => 'La conclusion de la dernière visite (procédures constatées)', 'export' => 'interventionConcludeProcedure', 'preselected' => false, 'specificSelect' => true],
         'COMMENTAIRE_VISITE' => ['name' => 'Comm. de la dernière visite', 'description' => 'Le commentaire laissé par l\'opérateur suite à la dernière visite', 'export' => 'interventionDetails', 'preselected' => false, 'specificSelect' => true],
         'DERNIERE_MAJ' => ['name' => 'Dernière MAJ le', 'description' => 'La date de la dernière mise à jour du signalement', 'export' => 's.modifiedAt', 'preselected' => false],
-        'DATE_CLOTURE' => ['name' => 'Fermé le', 'description' => 'La date de clôture du signalement', 'export' => 's.closedAt', 'preselected' => false],
-        'MOTIF_CLOTURE' => ['name' => 'Motif de clôture', 'description' => 'Le motif de clôture du signalement', 'export' => 's.motifCloture', 'preselected' => false],
-        'COM_CLOTURE' => ['name' => 'Commentaire de clôture', 'description' => 'Le commentaire de clôture du signalement', 'export' => 's.comCloture', 'preselected' => false],
+        'DATE_CLOTURE' => ['name' => 'Fermé le', 'description' => 'La date de fermeture du signalement', 'export' => 's.closedAt', 'preselected' => false],
+        'MOTIF_CLOTURE' => ['name' => 'Motif de fermeture', 'description' => 'Le motif de fermeture du signalement', 'export' => 's.motifCloture', 'preselected' => false],
+        'TRAVAUX_MISE_EN_CONFORMITE' => ['name' => 'Travaux', 'description' => 'L\'état d\'avancement des travaux', 'export' => 's.travauxMiseEnConformite', 'preselected' => false],
+        'COM_CLOTURE' => ['name' => 'Commentaire de fermeture', 'description' => 'Le commentaire de fermeture du signalement', 'export' => 's.comCloture', 'preselected' => false],
+        'PROCEDURES_RETENUES' => ['name' => 'Procédures engagées', 'description' => 'Liste des procédures qui ont été engagées sur le dossier (indiquées à la fermeture)', 'export' => 'procedures', 'preselected' => false, 'specificSelect' => true],
         'GEOLOCALISATION' => ['name' => 'Géolocalisation', 'description' => 'Les coordonnées GPS du logement', 'export' => 's.geoloc, address.point as addressPoint', 'preselected' => false],
         'ZONES' => ['name' => 'Zones', 'description' => 'Les zones dans lesquelles se trouve le signalement', 'export' => 'zones', 'preselected' => false, 'specificSelect' => true],
     ];
 
     /**
+     * @warning The exporter must call this method without filter, so that unchecked columns are removed from the headers
+     *
      * @return array<mixed>
      */
-    public static function getColumns(): array
+    // TODO à la suppression de FEATURE_ORIENTATION : supprimer le paramètre $featureOrientation
+    public static function getColumns(bool $featureOrientation = true): array
     {
-        return self::SELECTABLE_COLS;
+        $columns = self::SELECTABLE_COLS;
+        if (!$featureOrientation) {
+            unset($columns['PROCEDURES_A_ENGAGER']);
+        }
+
+        return $columns;
     }
 }

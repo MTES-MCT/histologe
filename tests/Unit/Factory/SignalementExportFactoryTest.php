@@ -8,6 +8,7 @@ use App\Entity\Enum\MotifCloture;
 use App\Entity\Enum\ProfileDeclarant;
 use App\Entity\Enum\ProfileOccupant;
 use App\Entity\Enum\SignalementStatus;
+use App\Entity\Enum\TravauxMiseEnConformite;
 use App\Entity\Enum\VisiteStatus;
 use App\Entity\User;
 use App\Factory\SignalementExportFactory;
@@ -21,9 +22,82 @@ class SignalementExportFactoryTest extends TestCase
 
     public function testCreateSignalementExportFactory(): void
     {
+        $data = $this->getData();
+
+        $user = $this->getUserFromRole(User::ROLE_ADMIN);
+
+        $signalementExportFactory = (new SignalementExportFactory())->createInstanceFrom($user, $data);
+        $this->assertInstanceOf(SignalementExport::class, $signalementExportFactory);
+        $this->assertEquals('en cours', $signalementExportFactory->statut);
+        $this->assertEquals(MotifCloture::INSALUBRITE->label(), $signalementExportFactory->motifCloture);
+        $this->assertEquals(ProfileDeclarant::LOCATAIRE->label(), $signalementExportFactory->typeDeclarant);
+        $this->assertEquals(ProfileOccupant::LOCATAIRE->label(), $signalementExportFactory->profileOccupant);
+
+        $dateFormatted = (new \DateTimeImmutable())->format(SignalementExportFactory::DATE_FORMAT);
+        $this->assertEquals($dateFormatted, $signalementExportFactory->createdAt);
+        $this->assertEquals($dateFormatted, $signalementExportFactory->modifiedAt);
+        $this->assertEquals($dateFormatted, $signalementExportFactory->closedAt);
+        $this->assertEquals('09/06/2024', $signalementExportFactory->dateVisite);
+        $this->assertEquals('Oui', $signalementExportFactory->isOccupantPresentVisite);
+        $this->assertEquals(2, $signalementExportFactory->nbVisites);
+
+        $this->assertEquals(SignalementExportFactory::NON_RENSEIGNE, $signalementExportFactory->telephoneOccupantBis);
+        $this->assertEquals(SignalementExportFactory::NON_RENSEIGNE, $signalementExportFactory->etageOccupant);
+        $this->assertEquals(SignalementExportFactory::NON_RENSEIGNE, $signalementExportFactory->escalierOccupant);
+        $this->assertEquals(SignalementExportFactory::NON_RENSEIGNE, $signalementExportFactory->numAppartOccupant);
+        $this->assertEquals(SignalementExportFactory::NON_RENSEIGNE, $signalementExportFactory->adresseAutreOccupant);
+        $this->assertEquals(SignalementExportFactory::NON_RENSEIGNE, $signalementExportFactory->numAllocataire);
+        $this->assertEquals(SignalementExportFactory::NON_RENSEIGNE, $signalementExportFactory->natureLogement);
+        $this->assertEquals(SignalementExportFactory::OUI, $signalementExportFactory->autresOccupantsDesordre);
+        $this->assertEquals(SignalementExportFactory::NON_RENSEIGNE, $signalementExportFactory->superficie);
+
+        $this->assertEquals('Non', $signalementExportFactory->photos);
+        $this->assertEquals('Non', $signalementExportFactory->documents);
+        $this->assertEquals(SignalementExportFactory::OUI, $signalementExportFactory->isProprioAverti);
+        $this->assertEquals('03/2026', $signalementExportFactory->infoProcedureBailDate);
+        $this->assertEquals(SignalementExportFactory::OUI, $signalementExportFactory->isAllocataire);
+        $this->assertEquals(SignalementExportFactory::NON_RENSEIGNE, $signalementExportFactory->isLogementSocial);
+        $this->assertEquals(SignalementExportFactory::NON, $signalementExportFactory->isPreavisDepart);
+        $this->assertEquals(SignalementExportFactory::NON_RENSEIGNE, $signalementExportFactory->isRelogement);
+        $this->assertEquals(SignalementExportFactory::NON, $signalementExportFactory->isNotOccupant);
+        $this->assertEquals(VisiteStatus::TERMINEE->value, $signalementExportFactory->interventionStatus);
+        $this->assertEquals('RSD,INSALUBRITE', $signalementExportFactory->interventionConcludeProcedure);
+        $this->assertEquals('Entre 1 et 2 ans', $signalementExportFactory->debutDesordres);
+        $this->assertEquals('dossier envoyé à ARS pour une suspicion d\'insalubrité', $signalementExportFactory->interventionDetails);
+
+        $this->assertEquals('', $signalementExportFactory->zones);
+
+        // Données absentes : pas concerné par les travaux, aucune procédure
+        $this->assertEquals('', $signalementExportFactory->travauxMiseEnConformite);
+        $this->assertEquals('-', $signalementExportFactory->proceduresAEngager);
+        $this->assertEquals('', $signalementExportFactory->proceduresRetenues);
+    }
+
+    public function testCreateSignalementExportFactoryWithTravauxAndProcedures(): void
+    {
+        $procedures = 'Non décence'.SignalementExport::SEPARATOR_GROUP_CONCAT.'Insalubrité';
+        $data = array_merge($this->getData(), [
+            'travauxMiseEnConformite' => TravauxMiseEnConformite::EN_COURS,
+            'proceduresAEngager' => $procedures,
+            'proceduresRetenues' => $procedures,
+        ]);
+
+        $user = $this->getUserFromRole(User::ROLE_ADMIN);
+
+        $signalementExportFactory = (new SignalementExportFactory())->createInstanceFrom($user, $data);
+        $this->assertEquals('Travaux en cours', $signalementExportFactory->travauxMiseEnConformite);
+        $this->assertEquals($procedures, $signalementExportFactory->proceduresAEngager);
+        $this->assertEquals($procedures, $signalementExportFactory->proceduresRetenues);
+    }
+
+    /**
+     * @return array<string, mixed>
+     */
+    private function getData(): array
+    {
         $faker = Factory::create();
 
-        $data = [
+        return [
             'id' => 21081,
             'uuid' => '661c23e9-8abb-4840-ab9d-4880f475ccfb',
             'reference' => '2023-542',
@@ -86,48 +160,5 @@ class SignalementExportFactoryTest extends TestCase
             'interventionConcludeProcedure' => 'RSD,INSALUBRITE',
             'interventionDetails' => '<p>dossier envoyé à ARS pour une suspicion d&#039;insalubrité</p>',
         ];
-
-        $user = $this->getUserFromRole(User::ROLE_ADMIN);
-
-        $signalementExportFactory = (new SignalementExportFactory())->createInstanceFrom($user, $data);
-        $this->assertInstanceOf(SignalementExport::class, $signalementExportFactory);
-        $this->assertEquals('en cours', $signalementExportFactory->statut);
-        $this->assertEquals(MotifCloture::INSALUBRITE->label(), $signalementExportFactory->motifCloture);
-        $this->assertEquals(ProfileDeclarant::LOCATAIRE->label(), $signalementExportFactory->typeDeclarant);
-        $this->assertEquals(ProfileOccupant::LOCATAIRE->label(), $signalementExportFactory->profileOccupant);
-
-        $dateFormatted = (new \DateTimeImmutable())->format(SignalementExportFactory::DATE_FORMAT);
-        $this->assertEquals($dateFormatted, $signalementExportFactory->createdAt);
-        $this->assertEquals($dateFormatted, $signalementExportFactory->modifiedAt);
-        $this->assertEquals($dateFormatted, $signalementExportFactory->closedAt);
-        $this->assertEquals('09/06/2024', $signalementExportFactory->dateVisite);
-        $this->assertEquals('Oui', $signalementExportFactory->isOccupantPresentVisite);
-        $this->assertEquals(2, $signalementExportFactory->nbVisites);
-
-        $this->assertEquals(SignalementExportFactory::NON_RENSEIGNE, $signalementExportFactory->telephoneOccupantBis);
-        $this->assertEquals(SignalementExportFactory::NON_RENSEIGNE, $signalementExportFactory->etageOccupant);
-        $this->assertEquals(SignalementExportFactory::NON_RENSEIGNE, $signalementExportFactory->escalierOccupant);
-        $this->assertEquals(SignalementExportFactory::NON_RENSEIGNE, $signalementExportFactory->numAppartOccupant);
-        $this->assertEquals(SignalementExportFactory::NON_RENSEIGNE, $signalementExportFactory->adresseAutreOccupant);
-        $this->assertEquals(SignalementExportFactory::NON_RENSEIGNE, $signalementExportFactory->numAllocataire);
-        $this->assertEquals(SignalementExportFactory::NON_RENSEIGNE, $signalementExportFactory->natureLogement);
-        $this->assertEquals(SignalementExportFactory::OUI, $signalementExportFactory->autresOccupantsDesordre);
-        $this->assertEquals(SignalementExportFactory::NON_RENSEIGNE, $signalementExportFactory->superficie);
-
-        $this->assertEquals('Non', $signalementExportFactory->photos);
-        $this->assertEquals('Non', $signalementExportFactory->documents);
-        $this->assertEquals(SignalementExportFactory::OUI, $signalementExportFactory->isProprioAverti);
-        $this->assertEquals('03/2026', $signalementExportFactory->infoProcedureBailDate);
-        $this->assertEquals(SignalementExportFactory::OUI, $signalementExportFactory->isAllocataire);
-        $this->assertEquals(SignalementExportFactory::NON_RENSEIGNE, $signalementExportFactory->isLogementSocial);
-        $this->assertEquals(SignalementExportFactory::NON, $signalementExportFactory->isPreavisDepart);
-        $this->assertEquals(SignalementExportFactory::NON_RENSEIGNE, $signalementExportFactory->isRelogement);
-        $this->assertEquals(SignalementExportFactory::NON, $signalementExportFactory->isNotOccupant);
-        $this->assertEquals(VisiteStatus::TERMINEE->value, $signalementExportFactory->interventionStatus);
-        $this->assertEquals('RSD,INSALUBRITE', $signalementExportFactory->interventionConcludeProcedure);
-        $this->assertEquals('Entre 1 et 2 ans', $signalementExportFactory->debutDesordres);
-        $this->assertEquals('dossier envoyé à ARS pour une suspicion d\'insalubrité', $signalementExportFactory->interventionDetails);
-
-        $this->assertEquals('', $signalementExportFactory->zones);
     }
 }

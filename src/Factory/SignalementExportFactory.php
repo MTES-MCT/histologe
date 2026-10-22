@@ -7,6 +7,7 @@ use App\Entity\Enum\MotifCloture;
 use App\Entity\Enum\MoyenContact;
 use App\Entity\Enum\ProfileDeclarant;
 use App\Entity\Enum\ProfileOccupant;
+use App\Entity\Enum\TravauxMiseEnConformite;
 use App\Entity\Enum\VisiteStatus;
 use App\Entity\Intervention;
 use App\Entity\Model\InformationProcedure;
@@ -52,6 +53,7 @@ class SignalementExportFactory
             'nomDeclarant', 'matriculeDeclarant', 'mailDeclarant', 'structureDeclarant',
             'lienDeclarantOccupant', 'interventionNbVisites', 'interventionConcludeProcedure',
             'interventionDetails', 'comCloture', 'zones', 'addressPoint',
+            'travauxMiseEnConformite', 'proceduresAEngager', 'proceduresRetenues',
         ], null);
 
         $createdAt = $data['createdAt'] instanceof \DateTimeImmutable
@@ -186,6 +188,7 @@ class SignalementExportFactory
             emailDeclarant: $data['mailDeclarant'] ?? '-',
             structureDeclarant: $data['structureDeclarant'] ?? '-',
             lienDeclarantOccupant: $data['lienDeclarantOccupant'] ?? '-',
+            proceduresAEngager: $data['proceduresAEngager'] ?? '-',
             nbVisites: $data['interventionNbVisites'],
             dateVisite: $dateVisite,
             isOccupantPresentVisite: ($isOccupantPresentVisite && '-' !== $isOccupantPresentVisite) ? self::OUI : ('0' === $isOccupantPresentVisite ? self::NON : ''),
@@ -195,7 +198,9 @@ class SignalementExportFactory
             modifiedAt: $modifiedAt,
             closedAt: $closedAt,
             motifCloture: $motifCloture,
+            travauxMiseEnConformite: $data['travauxMiseEnConformite'] instanceof TravauxMiseEnConformite ? $data['travauxMiseEnConformite']->labelForExport() : '',
             comCloture: $data['comCloture'] ? HtmlCleaner::clean($data['comCloture']) : '',
+            proceduresRetenues: $data['proceduresRetenues'] ? HtmlCleaner::clean($data['proceduresRetenues']) : '',
             longitude: $longitude,
             latitude: $latitude,
             zones: $data['zones'] ?? null,

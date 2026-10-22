@@ -35,4 +35,14 @@ enum TravauxMiseEnConformite: string
 
         return $labels[$this->name];
     }
+
+    public function labelForExport(): string
+    {
+        return match ($this) {
+            self::OUI => 'Travaux faits',
+            self::EN_COURS => 'Travaux en cours',
+            self::NON => 'Aucun travaux',
+            self::NE_SAIT_PAS => 'Ne sait pas',
+        };
+    }
 }
