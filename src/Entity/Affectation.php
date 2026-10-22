@@ -99,6 +99,16 @@ class Affectation implements EntityHistoryInterface
                 ->atPath('travauxMiseEnConformite')
                 ->addViolation();
         }
+        if ($this->travauxMiseEnConformite && !in_array($this->motifCloture, MotifCloture::getListNeedTravauxPrecisions(), true)) {
+            $context->buildViolation('Erreur lors de la soumission du formulaire.')
+                ->atPath('travauxMiseEnConformite')
+                ->addViolation();
+        }
+        if ($this->travauxMiseEnConformite === TravauxMiseEnConformite::NON && $this->motifCloture === MotifCloture::LOGEMENT_MIS_EN_CONFORMITE) {
+            $context->buildViolation('Merci de sélectionner une option valable.')
+                ->atPath('travauxMiseEnConformite')
+                ->addViolation();
+        }
     }
 
     public function __toString(): string

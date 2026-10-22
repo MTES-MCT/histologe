@@ -33,7 +33,10 @@ class CloseAffectationType extends AbstractType
                 },
                 'choice_attr' => static function ($choice) {
                     if (in_array($choice, MotifCloture::getListNeedTravauxPrecisions(), true)) {
-                        return ['data-need-travaux-precisions' => 'true'];
+                        return [
+                            'data-need-travaux-precisions' => 'true',
+                            'data-need-travaux-precisions-non' => $choice === MotifCloture::LOGEMENT_MIS_EN_CONFORMITE ? 'false' : 'true',
+                        ];
                     }
 
                     return [];
