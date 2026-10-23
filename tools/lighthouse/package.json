@@ -9,13 +9,13 @@
   },
   "devDependencies": {
     "@lhci/cli": "0.15.1",
-    "lighthouse": "13.4.1"
+    "lighthouse": "13.5.0"
   },
   "overrides": {
-    "lighthouse": "13.4.1",
-    "qs": "6.16.0",
+    "lighthouse": "13.5.0",
+    "qs": "6.16.1",
     "tmp": "0.2.7",
-    "uuid": "11.1.1"
+    "uuid": "14.0.3"
   },
   "engines": {
     "node": "24"
