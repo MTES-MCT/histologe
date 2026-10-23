@@ -124,6 +124,41 @@ class SuiviDescriptionHelper
         SuiviCategory::SIGNALEMENT_IS_REOPENED->value => [
             SuiviDescriptionVariant::DEFAULT->value => 'suivi/signalement_is_reopened.html.twig',
         ],
+        SuiviCategory::INTERVENTION_PLANNED_REMINDER->value => [
+            SuiviDescriptionVariant::DEFAULT->value => 'suivi/intervention_planned_reminder.html.twig',
+        ],
+        SuiviCategory::INTERVENTION_IS_ABORTED->value => [
+            SuiviDescriptionVariant::DEFAULT->value => 'suivi/intervention_is_aborted.html.twig',
+        ],
+        SuiviCategory::INTERVENTION_IS_CANCELED->value => [
+            SuiviDescriptionVariant::DEFAULT->value => 'suivi/intervention_is_canceled.html.twig',
+        ],
+        SuiviCategory::INTERVENTION_HAS_CONCLUSION->value => [
+            SuiviDescriptionVariant::DEFAULT->value => 'suivi/intervention_has_conclusion.html.twig',
+        ],
+        SuiviCategory::INTERVENTION_HAS_CONCLUSION_EDITED->value => [
+            SuiviDescriptionVariant::DEFAULT->value => 'suivi/intervention_has_conclusion_edited.html.twig',
+        ],
+        SuiviCategory::INTERVENTION_IS_CREATED->value => [
+            SuiviDescriptionVariant::DEFAULT->value => 'suivi/intervention_is_created.html.twig',
+        ],
+        SuiviCategory::INTERVENTION_IS_DONE->value => [
+            SuiviDescriptionVariant::DEFAULT->value => 'suivi/intervention_is_created.html.twig', // Même template que INTERVENTION_IS_CREATED
+        ],
+        SuiviCategory::INTERVENTION_CONTROLE_IS_CREATED->value => [
+            SuiviDescriptionVariant::DEFAULT->value => 'suivi/intervention_is_created.html.twig', // Même template que INTERVENTION_IS_CREATED
+        ],
+        SuiviCategory::INTERVENTION_CONTROLE_IS_DONE->value => [
+            SuiviDescriptionVariant::DEFAULT->value => 'suivi/intervention_is_created.html.twig', // Même template que INTERVENTION_IS_CREATED
+        ],
+        SuiviCategory::INTERVENTION_IS_RESCHEDULED->value => [
+            SuiviDescriptionVariant::DEFAULT->value => 'suivi/intervention_is_rescheduled.html.twig',
+            SuiviDescriptionVariant::ESABORA->value => 'suivi/intervention_is_rescheduled_esabora.html.twig',
+        ],
+        // Pas de variante DEFAULT : la date d'une visite de contrôle n'est modifiée que depuis Esabora
+        SuiviCategory::INTERVENTION_CONTROLE_IS_RESCHEDULED->value => [
+            SuiviDescriptionVariant::ESABORA->value => 'suivi/intervention_is_rescheduled_esabora.html.twig',
+        ],
     ];
 
     private const SPECIFIC_DESCRIPTIONS = [

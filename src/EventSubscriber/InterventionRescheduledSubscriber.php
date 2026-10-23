@@ -8,6 +8,7 @@ use App\Entity\Intervention;
 use App\Event\InterventionRescheduledEvent;
 use App\Manager\SuiviManager;
 use App\Service\Mailer\NotificationMailerType;
+use App\Service\Signalement\Suivi\SuiviDescriptionHelper;
 use App\Service\Signalement\VisiteNotifier;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
@@ -16,6 +17,7 @@ class InterventionRescheduledSubscriber implements EventSubscriberInterface
     public function __construct(
         private readonly VisiteNotifier $visiteNotifier,
         private readonly SuiviManager $suiviManager,
+        private readonly SuiviDescriptionHelper $suiviDescriptionHelper,
     ) {
     }
 
@@ -33,21 +35,16 @@ class InterventionRescheduledSubscriber implements EventSubscriberInterface
             $today = new \DateTimeImmutable();
             $isInPast = $today > $intervention->getScheduledAt()
                 && Intervention::STATUS_DONE === $intervention->getStatus();
-            $commentBeforeVisite = !$isInPast ? $intervention->getCommentBeforeVisite() : '';
-            $partnerName = $intervention->getPartner() ? $intervention->getPartner()->getNom() : 'Non renseigné';
-            $description = 'Changement de date de visite : la visite du logement initialement prévue le ';
-            $description .= $event->getPreviousDate()->format('d/m/Y');
-            $description .= ' a été décalée au ';
-            $description .= $intervention->getScheduledAt()->format('d/m/Y').'.';
-            $description .= '<br>';
-            $description .= 'La visite sera effectuée par '.$partnerName.'.';
-            if (!empty($commentBeforeVisite)) {
-                $description .= '<br>Informations complémentaires : '.$commentBeforeVisite;
-            }
+            $category = SuiviCategory::INTERVENTION_IS_RESCHEDULED;
             $suivi = $this->suiviManager->createSuivi(
                 signalement: $intervention->getSignalement(),
-                description: $description,
-                category: SuiviCategory::INTERVENTION_IS_RESCHEDULED,
+                description: $this->suiviDescriptionHelper->buildDescriptionForCreation($category, [
+                    'previousDate' => $event->getPreviousDate()->format('d/m/Y'),
+                    'date' => $intervention->getScheduledAt()->format('d/m/Y'),
+                    'partnerName' => $intervention->getPartner()?->getNom() ?? 'Non renseigné',
+                    'commentBeforeVisite' => !$isInPast ? $intervention->getCommentBeforeVisite() : null,
+                ]),
+                category: $category,
                 partner: $event->getPartner(),
                 user: $event->getUser(),
                 isVisibleForUsager: true,

@@ -10,6 +10,7 @@ use App\Repository\InterventionRepository;
 use App\Service\Mailer\NotificationMail;
 use App\Service\Mailer\NotificationMailerRegistry;
 use App\Service\Mailer\NotificationMailerType;
+use App\Service\Signalement\Suivi\SuiviDescriptionHelper;
 use App\Service\Signalement\VisiteNotifier;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Console\Attribute\AsCommand;
@@ -33,6 +34,7 @@ class NotifyVisitsCommand extends AbstractCronCommand
         private readonly NotificationMailerRegistry $notificationMailerRegistry,
         private readonly ParameterBagInterface $parameterBag,
         private readonly EntityManagerInterface $entityManager,
+        private readonly SuiviDescriptionHelper $suiviDescriptionHelper,
     ) {
         parent::__construct($this->parameterBag);
     }
@@ -56,19 +58,19 @@ class NotifyVisitsCommand extends AbstractCronCommand
 
         $listFutureVisits = $this->interventionRepository->getFutureVisits();
         foreach ($listFutureVisits as $intervention) {
-            $partnerName = $intervention->getPartner() ? $intervention->getPartner()->getNom() : 'Non renseigné';
             $signalement = $intervention->getSignalement();
             if (!$signalement || SignalementStatus::ACTIVE !== $signalement->getStatut()) {
                 continue;
             }
-            $description = '<strong>Rappel de visite :</strong> la visite du logement situé ';
-            $description .= $signalement->getAddress()->getFull();
-            $description .= ' aura lieu le '.$intervention->getScheduledAt()->format('d/m/Y');
-            $description .= '<br>La visite sera effectuée par '.$partnerName.'.';
+            $category = SuiviCategory::INTERVENTION_PLANNED_REMINDER;
             $suivi = $this->suiviManager->createSuivi(
                 signalement: $signalement,
-                description: $description,
-                category: SuiviCategory::INTERVENTION_PLANNED_REMINDER,
+                description: $this->suiviDescriptionHelper->buildDescriptionForCreation($category, [
+                    'address' => $signalement->getAddress()->getFull(),
+                    'date' => $intervention->getScheduledAt()->format('d/m/Y'),
+                    'partnerName' => $intervention->getPartner()?->getNom() ?? 'Non renseigné',
+                ]),
+                category: $category,
                 sendMail: false,
                 isVisibleForUsager: true,
             );

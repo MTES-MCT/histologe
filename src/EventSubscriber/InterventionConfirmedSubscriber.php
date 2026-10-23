@@ -3,12 +3,14 @@
 namespace App\EventSubscriber;
 
 use App\Entity\Enum\InterventionType;
+use App\Entity\Enum\ProcedureType;
 use App\Entity\Enum\SuiviCategory;
 use App\Entity\Intervention;
 use App\Entity\Signalement;
 use App\Entity\User;
 use App\Manager\SuiviManager;
 use App\Service\Mailer\NotificationMailerType;
+use App\Service\Signalement\Suivi\SuiviDescriptionHelper;
 use App\Service\Signalement\VisiteNotifier;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\SecurityBundle\Security;
@@ -24,6 +26,7 @@ class InterventionConfirmedSubscriber implements EventSubscriberInterface
         private readonly VisiteNotifier $visiteNotifier,
         private readonly SuiviManager $suiviManager,
         private readonly EntityManagerInterface $entityManager,
+        private readonly SuiviDescriptionHelper $suiviDescriptionHelper,
     ) {
     }
 
@@ -45,22 +48,18 @@ class InterventionConfirmedSubscriber implements EventSubscriberInterface
         $currentUser = $this->security->getUser();
         $context = $event->getContext();
         if (InterventionType::VISITE === $intervention->getType() && !isset($context['esabora'])) {
-            $partnerName = $intervention->getPartner() ? $intervention->getPartner()->getNom() : 'Non renseigné';
-            $description = 'Après visite du logement';
-            if ($intervention->getPartner()) {
-                $description .= ' par '.$partnerName;
-            }
-            $description .= ', la situation observée du logement est :<br>';
-            foreach ($intervention->getConcludeProcedure() as $concludeProcedure) {
-                $description .= '- '.$concludeProcedure->label().'<br>';
-            }
-            $description .= '<br>Commentaire opérateur :<br>';
-            $description .= $intervention->getDetails();
-
+            $category = SuiviCategory::INTERVENTION_HAS_CONCLUSION;
             $suivi = $this->suiviManager->createSuivi(
                 signalement: $intervention->getSignalement(),
-                description: $description,
-                category: SuiviCategory::INTERVENTION_HAS_CONCLUSION,
+                description: $this->suiviDescriptionHelper->buildDescriptionForCreation($category, [
+                    'partnerName' => $intervention->getPartner()?->getNom(),
+                    'concludeProcedures' => array_map(
+                        static fn (ProcedureType $procedure) => $procedure->label(),
+                        $intervention->getConcludeProcedure() ?? []
+                    ),
+                    'details' => $intervention->getDetails(),
+                ]),
+                category: $category,
                 partner: $context['createdByPartner'],
                 user: $currentUser,
                 isVisibleForUsager: $intervention->getNotifyUsager(),

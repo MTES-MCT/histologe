@@ -20,4 +20,6 @@ enum SuiviDescriptionVariant: string
     case IDOSS = 'IDOSS';
     // Clôture automatique d'une démarche accélérée sans réponse du déclarant
     case CLOTURE_AUTOMATIQUE_INJONCTION = 'CLOTURE_AUTOMATIQUE_INJONCTION';
+    // Mise à jour d'une intervention provenant d'Esabora (SI-SH)
+    case ESABORA = 'ESABORA';
 }

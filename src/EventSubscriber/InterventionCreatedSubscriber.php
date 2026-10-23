@@ -8,8 +8,8 @@ use App\Entity\Intervention;
 use App\Event\InterventionCreatedEvent;
 use App\Manager\SuiviManager;
 use App\Service\Interconnection\Esabora\EsaboraSISHService;
-use App\Service\Intervention\InterventionDescriptionGenerator;
 use App\Service\Mailer\NotificationMailerType;
+use App\Service\Signalement\Suivi\SuiviDescriptionHelper;
 use App\Service\Signalement\VisiteNotifier;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
@@ -18,6 +18,7 @@ readonly class InterventionCreatedSubscriber implements EventSubscriberInterface
     public function __construct(
         private VisiteNotifier $visiteNotifier,
         private SuiviManager $suiviManager,
+        private SuiviDescriptionHelper $suiviDescriptionHelper,
     ) {
     }
 
@@ -32,7 +33,6 @@ readonly class InterventionCreatedSubscriber implements EventSubscriberInterface
     {
         $intervention = $event->getIntervention();
         $signalement = $intervention->getSignalement();
-        $description = (string) InterventionDescriptionGenerator::generate($intervention, InterventionCreatedEvent::NAME);
         $isVisibleForUsager = true;
         if (EsaboraSISHService::NAME_SI === $event->getSource() && $signalement->isTiersDeclarant()) {
             $isVisibleForUsager = false;
@@ -54,6 +54,20 @@ readonly class InterventionCreatedSubscriber implements EventSubscriberInterface
                 break;
             default:
                 $suiviCategory = SuiviCategory::INTERVENTION_IS_CREATED;
+        }
+
+        // Arrêté : la description du suivi reprend les détails de l'arrêté, générés par InterventionDescriptionGenerator
+        if (InterventionType::ARRETE_PREFECTORAL === $intervention->getType()) {
+            $description = (string) $intervention->getDetails();
+        } else {
+            $description = $this->suiviDescriptionHelper->buildDescriptionForCreation($suiviCategory, [
+                'typeLabel' => $intervention->getType()->label(),
+                'isInPast' => $isInPast,
+                'address' => $signalement->getAddress()->getHousenumberAndStreet(),
+                'date' => $intervention->getScheduledAtFormated(),
+                'partnerName' => $intervention->getExternalOperator() ?? $intervention->getPartner()?->getNom() ?? 'Non renseigné',
+                'commentBeforeVisite' => !$isInPast ? $intervention->getCommentBeforeVisite() : null,
+            ]);
         }
 
         $suivi = $this->suiviManager->createSuivi(

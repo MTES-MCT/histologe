@@ -1,0 +1,12 @@
+{#- details : saisie HTML du partenaire, passée en |raw comme avant, le HtmlSanitizer de createSuivi() la nettoie -#}
+{%- if not hasChanges -%}
+    Edition de la conclusion de la visite par {{ partnerName }}.<br>Commentaire opérateur :<br>{{ details|raw }}
+{%- else -%}
+    Les informations sur la visite du logement effectuée le {{ date }} par {{ partnerName }} ont été modifiées.
+    {%- if concludeProcedureChanged -%}
+        <br><br>{{ concludeProcedures|length > 1 ? 'Les nouvelles situations observées du logement sont : ' : 'La nouvelle situation observée du logement est : ' }}<br>{{ concludeProcedures|join(', ') }}.
+    {%- endif -%}
+    {%- if detailsChanged -%}
+        <br><br>Commentaire opérateur : {{ details|raw }}
+    {%- endif -%}
+{%- endif -%}

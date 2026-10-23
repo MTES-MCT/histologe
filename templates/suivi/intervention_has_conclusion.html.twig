@@ -1,0 +1,8 @@
+{#- details : saisie HTML du partenaire, passée en |raw comme avant, le HtmlSanitizer de createSuivi() la nettoie -#}
+Après visite du logement
+{%- if partnerName %} par {{ partnerName }}{% endif -%}
+, la situation observée du logement est :<br>
+{%- for concludeProcedure in concludeProcedures -%}
+    - {{ concludeProcedure }}<br>
+{%- endfor -%}
+<br>Commentaire opérateur :<br>{{ details|raw }}

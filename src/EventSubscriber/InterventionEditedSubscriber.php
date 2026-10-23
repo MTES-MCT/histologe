@@ -3,10 +3,12 @@
 namespace App\EventSubscriber;
 
 use App\Entity\Enum\InterventionType;
+use App\Entity\Enum\ProcedureType;
 use App\Entity\Enum\SuiviCategory;
 use App\Event\InterventionEditedEvent;
 use App\Manager\SuiviManager;
 use App\Service\Mailer\NotificationMailerType;
+use App\Service\Signalement\Suivi\SuiviDescriptionHelper;
 use App\Service\Signalement\VisiteNotifier;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
@@ -15,6 +17,7 @@ readonly class InterventionEditedSubscriber implements EventSubscriberInterface
     public function __construct(
         private VisiteNotifier $visiteNotifier,
         private SuiviManager $suiviManager,
+        private SuiviDescriptionHelper $suiviDescriptionHelper,
     ) {
     }
 
@@ -30,36 +33,24 @@ readonly class InterventionEditedSubscriber implements EventSubscriberInterface
         $intervention = $event->getIntervention();
         if (InterventionType::VISITE === $intervention->getType()) {
             $currentUser = $event->getUser();
-            $partnerName = $intervention->getPartner() ? $intervention->getPartner()->getNom() : 'Non renseigné';
-            if (empty($intervention->getChangesForMail())) {
-                $description = 'Edition de la conclusion de la visite par '.$partnerName.'.<br>';
-                $description .= 'Commentaire opérateur :<br>';
-                $description .= $intervention->getDetails();
-            } else {
-                $description = sprintf(
-                    'Les informations sur la visite du logement effectuée le %s par %s ont été modifiées.',
-                    $intervention->getScheduledAtFormated(),
-                    $partnerName
-                );
-                /** @var array<string, array{old?: string, new?: string}> $changes */
-                $changes = $intervention->getChangesForMail();
-                if (isset($changes['concludeProcedure']['new'])) {
-                    $description .= count($intervention->getConcludeProcedure()) > 1
-                        ? '<br><br>Les nouvelles situations observées du logement sont : <br>' :
-                        '<br><br>La nouvelle situation observeé du logement est : <br>';
-
-                    $description .= $intervention->getConcludeProcedureString().'.';
-                }
-
-                if (isset($changes['details']['new'])) {
-                    $description .= sprintf('<br><br>Commentaire opérateur : %s', $intervention->getDetails());
-                }
-            }
-
+            /** @var array<string, array{old?: string, new?: string}> $changes */
+            $changes = $intervention->getChangesForMail();
+            $category = SuiviCategory::INTERVENTION_HAS_CONCLUSION_EDITED;
             $suivi = $this->suiviManager->createSuivi(
                 signalement: $intervention->getSignalement(),
-                description: $description,
-                category: SuiviCategory::INTERVENTION_HAS_CONCLUSION_EDITED,
+                description: $this->suiviDescriptionHelper->buildDescriptionForCreation($category, [
+                    'hasChanges' => !empty($changes),
+                    'date' => $intervention->getScheduledAtFormated(),
+                    'partnerName' => $intervention->getPartner()?->getNom() ?? 'Non renseigné',
+                    'concludeProcedureChanged' => isset($changes['concludeProcedure']['new']),
+                    'concludeProcedures' => array_map(
+                        static fn (ProcedureType $procedure) => $procedure->label(),
+                        $intervention->getConcludeProcedure() ?? []
+                    ),
+                    'detailsChanged' => isset($changes['details']['new']),
+                    'details' => $intervention->getDetails(),
+                ]),
+                category: $category,
                 partner: $event->getPartner(),
                 user: $currentUser,
                 isVisibleForUsager: $intervention->getNotifyUsager() ?? true,
