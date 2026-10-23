@@ -28,6 +28,13 @@ function updateTravauxVisibilityAffectation() {
   const selectedOption = motifClotureSelect.options[motifClotureSelect.selectedIndex];
   const needTravaux = selectedOption?.hasAttribute('data-need-travaux-precisions');
   travauxContainer.classList.toggle('fr-hidden', !needTravaux);
+  if (needTravaux && travauxContainer) {
+    const needTravauxNon = selectedOption?.getAttribute('data-need-travaux-precisions-non');
+    const travauxRadioNon = travauxContainer.querySelector('input[value="NON"]');
+    if (travauxRadioNon) {
+      travauxRadioNon.parentElement.parentElement.classList.toggle('fr-hidden', needTravauxNon === 'false');
+    }
+  }
 }
 
 motifClotureSelect?.addEventListener('change', updateTravauxVisibilityAffectation);
@@ -58,6 +65,13 @@ function initCloseSignalementForm() {
       motifClotureSelectSignalement.options[motifClotureSelectSignalement.selectedIndex];
     const needTravaux = selectedOption?.hasAttribute('data-need-travaux-precisions');
     travauxContainerSignalement.classList.toggle('fr-hidden', !needTravaux);
+    if (needTravaux && travauxContainerSignalement) {
+      const needTravauxNon = selectedOption?.getAttribute('data-need-travaux-precisions-non');
+      const travauxRadioNon = travauxContainerSignalement.querySelector('input[value="NON"]');
+      if (travauxRadioNon) {
+        travauxRadioNon.parentElement.parentElement.classList.toggle('fr-hidden', needTravauxNon === 'false');
+      }
+    }
   }
 
   function updateTravauxWarningSignalement() {

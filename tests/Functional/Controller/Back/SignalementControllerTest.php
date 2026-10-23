@@ -474,7 +474,7 @@ class SignalementControllerTest extends WebTestCase
             'Fermer pour mon partenaire',
             [
                 'close_affectation[motifCloture]' => 'LOGEMENT_MIS_EN_CONFORMITE',
-                'close_affectation[travauxMiseEnConformite]' => 'NON',
+                'close_affectation[travauxMiseEnConformite]' => 'OUI',
                 'close_affectation[precisionsCloture]' => 'Lorem ipsum dolor sit amet, consectetur adipiscing elit',
             ]
         );
@@ -494,7 +494,7 @@ class SignalementControllerTest extends WebTestCase
         $affectation = $affectationRepository->findOneBy(['signalement' => $signalement, 'partner' => $user->getPartnerInTerritoryOrFirstOne($signalement->getAddress()->getTerritory())]);
         $this->assertEquals(AffectationStatus::CLOSED, $affectation->getStatut());
         $this->assertEquals('LOGEMENT_MIS_EN_CONFORMITE', $affectation->getMotifCloture()->value);
-        $this->assertEquals('NON', $affectation->getTravauxMiseEnConformite()->value);
+        $this->assertEquals('OUI', $affectation->getTravauxMiseEnConformite()->value);
         $this->assertEquals('Lorem ipsum dolor sit amet, consectetur adipiscing elit', $affectation->getPrecisionsCloture());
     }
 
