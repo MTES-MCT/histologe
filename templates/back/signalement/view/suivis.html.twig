@@ -9,7 +9,7 @@
             </strong>
             <br>
             {% if suivi.createdBy is not null %}
-                <span class="fr-tooltip fr-placement" id="tooltip_suivi_{{ suivi.id }}" role="tooltip">
+                <div class="fr-tooltip fr-placement" id="tooltip_suivi_{{ suivi.id }}" role="tooltip">
                     <strong class="fr-ws-nowrap">
                         {{ suivi.createdByNomComplet }}
                     </strong>
@@ -23,21 +23,21 @@
                         <hr>
                         <span class="fr-ws-nowrap">{{ suivi.createdBy.phoneDecoded|phone }}</span>
                     {% endif %}
-                </span>
-                <span aria-describedby="tooltip_suivi_{{ suivi.id }}">
+                </div>
+                <div aria-describedby="tooltip_suivi_{{ suivi.id }}">
                     {{ suivi.getCreatedByLabel('\n')|nl2br }}
-                </span>
+                </div>
             {% elseif suivi.isSubmittedByBailleur() %}
-                <span class="fr-tooltip fr-placement" id="tooltip_suivi_{{ suivi.id }}" role="tooltip">
+                <div class="fr-tooltip fr-placement" id="tooltip_suivi_{{ suivi.id }}" role="tooltip">
                     <strong class="fr-ws-nowrap">{{ suivi.signalement.displayedNomProprio }}</strong>
                     {% if suivi.signalement.mailProprio %}
                         <hr>
                         <span class="fr-ws-nowrap">{{ suivi.signalement.mailProprio }}</span>
                     {% endif %}
-                </span>
-                <span aria-describedby="tooltip_suivi_{{ suivi.id }}">
+                </div>
+                <div aria-describedby="tooltip_suivi_{{ suivi.id }}">
                     {{ suivi.getCreatedByLabel('\n')|nl2br }}
-                </span>
+                </div>
             {% else %}
                 {{ suivi.getCreatedByLabel('\n')|nl2br }}
             {% endif %}

@@ -7,7 +7,7 @@
         <div class="side-panel__content fr-mx-3w">
             <h1 id="panel-edit-occupation-logement-title" class="fr-modal__title title-blue-france">Modifier les informations du logement</h1>
 
-            <form method="POST" id="form-edit-occupation-logement" enctype="application/json" action="{{ path('back_signalement_edit_occupation_logement',{uuid:signalement.uuid}) }}">
+            <form method="POST" id="form-edit-occupation-logement" action="{{ path('back_signalement_edit_occupation_logement',{uuid:signalement.uuid}) }}">
                 <p>Tous les champs sont obligatoires, sauf mention contraire.</p>
                 
                 <div class="fr-input-group">
@@ -65,7 +65,7 @@
                         }}
                     </label>
                     <select class="fr-select" id="occupationLogementCompositionLogementEnfants" name="compositionLogementEnfants">
-                        <option value="" {{ compositionLogementEnfants not in ['oui', 'non', 'nsp'] ? 'selected' : '' }}></option>
+                        <option value="" {{ compositionLogementEnfants not in ['oui', 'non', 'nsp'] ? 'selected' : '' }} disabled hidden>Sélectionnez un choix</option>
                         <option value="oui" {{ compositionLogementEnfants == 'oui' ? 'selected' : '' }}>Oui</option>
                         <option value="non" {{ compositionLogementEnfants == 'non' ? 'selected' : '' }}>Non</option>
                         <option value="nsp" {{ compositionLogementEnfants == 'nsp' ? 'selected' : '' }}>Je ne sais pas</option>
@@ -118,7 +118,7 @@
                         }}
                     </label>
                     <select class="fr-select" id="occupationLogementBailDpeBail" name="bailDpeBail">
-                        <option value="" {{ bailDpeBail not in ['oui', 'non', 'nsp'] ? 'selected' : '' }}></option>
+                        <option value="" {{ bailDpeBail not in ['oui', 'non', 'nsp'] ? 'selected' : '' }} disabled hidden>Sélectionnez un choix</option>
                         <option value="oui" {{ bailDpeBail == 'oui' ? 'selected' : '' }}>Oui</option>
                         <option value="non" {{ bailDpeBail == 'non' ? 'selected' : '' }}>Non</option>
                         <option value="nsp" {{ bailDpeBail == 'nsp' ? 'selected' : '' }}>Je ne sais pas</option>
@@ -136,7 +136,7 @@
                         }}
                     </label>
                     <select class="fr-select" id="occupationLogementBailDpeEtatDesLieux" name="bailDpeEtatDesLieux">
-                        <option value="" {{ bailDpeEtatDesLieux not in ['oui', 'non', 'nsp'] ? 'selected' : '' }}></option>
+                        <option value="" {{ bailDpeEtatDesLieux not in ['oui', 'non', 'nsp'] ? 'selected' : '' }} disabled hidden>Sélectionnez un choix</option>
                         <option value="oui" {{ bailDpeEtatDesLieux == 'oui' ? 'selected' : '' }}>Oui</option>
                         <option value="non" {{ bailDpeEtatDesLieux == 'non' ? 'selected' : '' }}>Non</option>
                         <option value="nsp" {{ bailDpeEtatDesLieux == 'nsp' ? 'selected' : '' }}>Je ne sais pas</option>
@@ -152,7 +152,7 @@
                     {% set loyersPayes = signalement.informationComplementaire ? signalement.informationComplementaire.informationsComplementairesSituationOccupantsLoyersPayes : null %}
                     <label class="fr-label" for="occupationLogementLoyersPayes">Paiement loyers à jour (facultatif)</label>
                     <select class="fr-select" id="occupationLogementLoyersPayes" name="loyersPayes">
-                        <option value="" {{ loyersPayes not in ['oui', 'non'] ? 'selected' : '' }}></option>
+                        <option value="" {{ loyersPayes not in ['oui', 'non'] ? 'selected' : '' }} disabled hidden>Sélectionnez un choix</option>
                         <option value="oui" {{ loyersPayes is same as 'oui' ? 'selected' : '' }}>Oui</option>
                         <option value="non" {{ loyersPayes is same as 'non' ? 'selected' : '' }}>Non</option>
                     </select>
@@ -164,7 +164,7 @@
                         {% set anneeConstruction = signalement.informationComplementaire.informationsComplementairesLogementAnneeConstruction %}
                     {% endif %}
                     <label class="fr-label" for="occupationLogementAnneeConstruction">Année de construction (facultatif)</label>
-                    <input class="fr-input" type="number" id="occupationLogementAnneeConstruction" name="anneeConstruction" value="{{ anneeConstruction }}" maxlength="4">
+                    <input class="fr-input" type="number" id="occupationLogementAnneeConstruction" name="anneeConstruction" value="{{ anneeConstruction }}" max="3000">
                 </div>
                 
                 <div id="autresOccupantsDesordre-container">
@@ -175,7 +175,7 @@
                     <label class="fr-label" for="autresOccupantsDesordre">D'autres occupants de l'immeuble ont rencontré des désordres (facultatif)
                     </label>
                     <select class="fr-select" id="autresOccupantsDesordre" name="autresOccupantsDesordre">
-                        <option value="" {{ autresOccupantsDesordre not in ['oui', 'non', 'nsp'] ? 'selected' : '' }}></option>
+                        <option value="" {{ autresOccupantsDesordre not in ['oui', 'non', 'nsp'] ? 'selected' : '' }} disabled hidden>Sélectionnez un choix</option>
                         <option value="oui" {{ autresOccupantsDesordre == 'oui' ? 'selected' : '' }}>Oui</option>
                         <option value="non" {{ autresOccupantsDesordre == 'non' ? 'selected' : '' }}>Non</option>
                         <option value="nsp" {{ autresOccupantsDesordre == 'nsp' ? 'selected' : '' }}>Je ne sais pas</option>

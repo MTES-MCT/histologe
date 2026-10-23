@@ -7,7 +7,7 @@
         <div class="side-panel__content fr-mx-3w">
             <h1 id="panel-edit-coordonnees-foyer-title" class="fr-modal__title title-blue-france">Modifier les coordonnées du foyer</h1>
 
-            <form method="POST" id="form-edit-coordonnees-foyer" enctype="application/json" action="{{ path('back_signalement_edit_coordonnees_foyer',{uuid:signalement.uuid}) }}">
+            <form method="POST" id="form-edit-coordonnees-foyer" action="{{ path('back_signalement_edit_coordonnees_foyer',{uuid:signalement.uuid}) }}">
                 <p>Tous les champs sont obligatoires, sauf mention contraire.</p>
 
                 {% if signalement.profileDeclarant and signalement.profileDeclarant is same as enum('App\\Entity\\Enum\\ProfileDeclarant').BAILLEUR_OCCUPANT %}
@@ -33,7 +33,7 @@
                             signalement.profileDeclarant)  }}
                     </label>
                     <select class="fr-select" id="coordonneesFoyerCivilite" name="civilite">
-                        <option value="" {{ signalement.civiliteOccupant not in ['mme', 'mr'] ? 'selected' : '' }}></option>
+                        <option value="" {{ signalement.civiliteOccupant not in ['mme', 'mr'] ? 'selected' : '' }} disabled hidden>Sélectionnez une civilité</option>
                         <option value="mme" {{ signalement.civiliteOccupant is same as 'mme' ? 'selected' : '' }}>Madame</option>
                         <option value="mr" {{ signalement.civiliteOccupant is same as 'mr' ? 'selected' : '' }}>Monsieur</option>
                     </select>

@@ -7,7 +7,7 @@
         <div class="side-panel__content fr-mx-3w">
             <h1 id="panel-edit-situation-foyer-title" class="fr-modal__title title-blue-france">Modifier la situation du foyer</h1>
 
-            <form method="POST" id="form-edit-situation-foyer" enctype="application/json" action="{{ path('back_signalement_edit_situation_foyer',{uuid:signalement.uuid}) }}">
+            <form method="POST" id="form-edit-situation-foyer" action="{{ path('back_signalement_edit_situation_foyer',{uuid:signalement.uuid}) }}">
                 <p>Tous les champs sont obligatoires, sauf mention contraire.</p>
                 
                 <div class="fr-select-group">
@@ -31,7 +31,7 @@
                         }}
                     </label>
                     <select class="fr-select" id="situationFoyerIsAllocataire" name="isAllocataire">
-                        <option value="" {{isAllocataire in [null, ''] ? 'selected' : '' }}></option>
+                        <option value="" {{isAllocataire in [null, ''] ? 'selected' : '' }} disabled hidden>Sélectionnez un choix</option>
                         <option value="CAF" {{ isAllocataire is same as 'CAF' ? 'selected' : '' }}>CAF</option>
                         <option value="MSA" {{ isAllocataire is same as 'MSA' ? 'selected' : '' }}>MSA</option>
                         <option value="oui" {{ isAllocataire in ['oui', 'Oui', '1'] ? 'selected' : '' }}>Oui</option>
@@ -68,7 +68,7 @@
                         }}
                     </label>
                     <select class="fr-select" id="situationFoyerIsRelogement" name="isRelogement">
-                        <option value=""></option>
+                        <option value="" disabled hidden>Sélectionnez un choix</option>
                         <option value="oui" {{ signalement.isRelogement is same as true ? 'selected' : '' }}>Oui</option>
                         <option value="non" {{ signalement.isRelogement is same as false ? 'selected' : '' }}>Non</option>
                     </select>
@@ -85,7 +85,7 @@
                         }}
                     </label>
                     <select class="fr-select" id="situationFoyerTravailleurSocialQuitteLogement" name="travailleurSocialQuitteLogement">
-                        <option value="" {{ travailleurSocialQuitteLogement not in ['oui', 'non', 'nsp'] ? 'selected' : '' }}></option>
+                        <option value="" {{ travailleurSocialQuitteLogement not in ['oui', 'non', 'nsp'] ? 'selected' : '' }} disabled hidden>Sélectionnez un choix</option>
                         <option value="oui" {{ travailleurSocialQuitteLogement is same as 'oui' ? 'selected' : '' }}>Oui</option>
                         <option value="non" {{ travailleurSocialQuitteLogement is same as 'non' ? 'selected' : '' }}>Non</option>
                         <option value="nsp" {{ travailleurSocialQuitteLogement is same as 'nsp' ? 'selected' : '' }}>Je ne sais pas</option>
@@ -103,7 +103,7 @@
                     {% endif %}
                     <label class="fr-label" for="situationFoyerTravailleurSocialPreavisDepart">Préavis de départ (si souhaite quitter le logement)</label>
                     <select class="fr-select" id="situationFoyerTravailleurSocialPreavisDepart" name="travailleurSocialPreavisDepart">
-                        <option value="" {{ travailleurSocialPreavisDepart not in ['oui', 'non', 'nsp'] ? 'selected' : '' }}></option>
+                        <option value="" {{ travailleurSocialPreavisDepart not in ['oui', 'non', 'nsp'] ? 'selected' : '' }} disabled hidden>Sélectionnez un choix</option>
                         <option value="oui" {{ travailleurSocialPreavisDepart is same as 'oui' ? 'selected' : '' }}>Oui</option>
                         <option value="non" {{ travailleurSocialPreavisDepart is same as 'non' ? 'selected' : '' }}>Non</option>
                         <option value="nsp" {{ travailleurSocialPreavisDepart is same as 'nsp' ? 'selected' : '' }}>Je ne sais pas</option>
@@ -122,7 +122,7 @@
                     </label>
                     {# Attention : la question est inversée par rapport à la donnée enregistrée (départ après travaux) #}
                     <select class="fr-select" id="situationFoyerInfoProcedureDepartApresTravaux" name="infoProcedureDepartApresTravaux">
-                        <option value="" {{ infoProcedureDepartApresTravaux not in ['oui', 'non', 'nsp'] ? 'selected' : '' }}></option>
+                        <option value="" {{ infoProcedureDepartApresTravaux not in ['oui', 'non', 'nsp'] ? 'selected' : '' }} disabled hidden>Sélectionnez un choix</option>
                         <option value="non" {{ infoProcedureDepartApresTravaux is same as 'non' ? 'selected' : '' }}>Oui</option>
                         <option value="oui" {{ infoProcedureDepartApresTravaux is same as 'oui' ? 'selected' : '' }}>Non</option>
                         <option value="nsp" {{ infoProcedureDepartApresTravaux is same as 'nsp' ? 'selected' : '' }}>Je ne sais pas</option>
@@ -141,7 +141,7 @@
                         }}
                     </label>
                     <select class="fr-select" id="situationFoyerTravailleurSocialAccompagnement" name="travailleurSocialAccompagnement">
-                        <option value="" {{ travailleurSocialAccompagnement not in ['oui', 'non', 'nsp'] ? 'selected' : '' }}></option>
+                        <option value="" {{ travailleurSocialAccompagnement not in ['oui', 'non', 'nsp'] ? 'selected' : '' }} disabled hidden>Sélectionnez un choix</option>
                         <option value="oui" {{ travailleurSocialAccompagnement is same as 'oui' ? 'selected' : '' }}>Oui</option>
                         <option value="non" {{ travailleurSocialAccompagnement is same as 'non' ? 'selected' : '' }}>Non</option>
                         <option value="nsp" {{ travailleurSocialAccompagnement is same as 'nsp' ? 'selected' : '' }}>Je ne sais pas</option>
@@ -167,7 +167,7 @@
                     {% set beneficiaireRsa = signalement.informationComplementaire ? signalement.informationComplementaire.informationsComplementairesSituationOccupantsBeneficiaireRsa : null %}
                     <label class="fr-label" for="situationFoyerBeneficiaireRsa">Bénéficiaire RSA (facultatif)</label>
                     <select class="fr-select" id="situationFoyerBeneficiaireRsa" name="beneficiaireRsa">
-                        <option value="" {{ beneficiaireRsa not in ['oui', 'non'] ? 'selected' : '' }}></option>
+                        <option value="" {{ beneficiaireRsa not in ['oui', 'non'] ? 'selected' : '' }} disabled hidden>Sélectionnez un choix</option>
                         <option value="oui" {{ beneficiaireRsa is same as 'oui' ? 'selected' : '' }}>Oui</option>
                         <option value="non" {{ beneficiaireRsa is same as 'non' ? 'selected' : '' }}>Non</option>
                     </select>
@@ -177,7 +177,7 @@
                     {% set beneficiaireFsl = signalement.informationComplementaire ? signalement.informationComplementaire.informationsComplementairesSituationOccupantsBeneficiaireFsl : null %}
                     <label class="fr-label" for="situationFoyerBeneficiaireFsl">Bénéficiaire FSL (facultatif)</label>
                     <select class="fr-select" id="situationFoyerBeneficiaireFsl" name="beneficiaireFsl">
-                        <option value="" {{ beneficiaireFsl not in ['oui', 'non'] ? 'selected' : '' }}></option>
+                        <option value="" {{ beneficiaireFsl not in ['oui', 'non'] ? 'selected' : '' }} disabled hidden>Sélectionnez un choix</option>
                         <option value="oui" {{ beneficiaireFsl is same as 'oui' ? 'selected' : '' }}>Oui</option>
                         <option value="non" {{ beneficiaireFsl is same as 'non' ? 'selected' : '' }}>Non</option>
                     </select>

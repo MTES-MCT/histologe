@@ -7,7 +7,7 @@
         <div class="side-panel__content fr-mx-3w">
             <h1 id="panel-edit-coordonnees-tiers-title" class="fr-modal__title title-blue-france">Modifier les coordonnées du tiers déclarant</h1>
 
-            <form method="POST" id="form-edit-coordonnees-tiers" enctype="application/json" action="{{ path('back_signalement_edit_coordonnees_tiers',{uuid:signalement.uuid}) }}">
+            <form method="POST" id="form-edit-coordonnees-tiers" action="{{ path('back_signalement_edit_coordonnees_tiers',{uuid:signalement.uuid}) }}">
                 <p>Tous les champs sont obligatoires, sauf mention contraire.</p>
 
                 <div class="fr-input-group">
@@ -31,7 +31,7 @@
                     <label class="fr-label" for="coordonneesTiersLien">Lien avec l'occupant (facultatif)</label>
                     {% set OccupantLink = enum('\\App\\Entity\\Enum\\OccupantLink') %}
                     <select class="fr-select" id="coordonneesTiersLien" name="lien">
-                        <option value="" {{ signalement.lienDeclarantOccupant not in OccupantLink.names() ? 'selected' : '' }}></option>
+                        <option value="" {{ signalement.lienDeclarantOccupant not in OccupantLink.names() ? 'selected' : '' }} disabled hidden>Sélectionnez un lien avec l'occupant</option>
                         <option value="PROCHE" {{ signalement.lienDeclarantOccupant is same as 'PROCHE' ? 'selected' : '' }}>Proche</option>
                         <option value="VOISIN" {{ signalement.lienDeclarantOccupant is same as 'VOISIN' ? 'selected' : '' }}>Voisinage</option>
                         <option value="SECOURS" {{ signalement.lienDeclarantOccupant is same as 'SECOURS' ? 'selected' : '' }}>Service de secours</option>
