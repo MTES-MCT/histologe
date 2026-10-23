@@ -5,6 +5,7 @@ namespace App\Controller\Back;
 use App\Entity\Enum\DocumentType;
 use App\Entity\File;
 use App\Entity\Intervention;
+use App\Entity\Partner;
 use App\Entity\Signalement;
 use App\Entity\User;
 use App\Exception\File\EmptyFileException;
@@ -33,6 +34,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\DependencyInjection\Attribute\Target;
 use Symfony\Component\Form\FormFactoryInterface;
+use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -113,6 +115,7 @@ class SignalementVisitesController extends AbstractController
         array $options = [],
     ): Response {
         $signalement = $intervention->getSignalement();
+        $this->entityManager->refresh($signalement);
         $visites = $this->interventionRepository->getOrderedVisitesForSignalement($signalement);
         $infoDesordres = $this->signalementDesordresProcessor->process($signalement);
         $allPhotosOrdered = PhotoHelper::getSortedPhotos($signalement);
@@ -209,7 +212,7 @@ class SignalementVisitesController extends AbstractController
             intervention: $intervention,
             scheduledAt: $addVisiteForm->get('scheduledAt')->getData(),
             scheduledAtTime: $addVisiteForm->get('scheduledAtTime')->getData(),
-            partnerChoice: $addVisiteForm->get('partnerChoice')->getData(),
+            partnerChoice: $this->getPartnerChoice($addVisiteForm, $intervention),
             visiteDone: $addVisiteForm->get('visiteDone')->getData(),
             fileName: $fileNameOrError,
         );
@@ -303,7 +306,7 @@ class SignalementVisitesController extends AbstractController
                 intervention: $intervention,
                 scheduledAt: $rescheduleVisiteForm->get('scheduledAt')->getData(),
                 scheduledAtTime: $rescheduleVisiteForm->get('scheduledAtTime')->getData(),
-                partnerChoice: $rescheduleVisiteForm->get('partnerChoice')->getData(),
+                partnerChoice: $this->getPartnerChoice($rescheduleVisiteForm, $intervention),
                 visiteDone: $rescheduleVisiteForm->get('visiteDone')->getData(),
                 fileName: $fileNameOrError,
                 eventType: 'reschedule',
@@ -443,5 +446,22 @@ class SignalementVisitesController extends AbstractController
         $flashMessages[] = ['type' => 'success', 'title' => 'Document supprimé', 'message' => 'Le rapport de visite a bien été supprimé.'];
 
         return $this->buildVisitesAjaxResponse(intervention: $intervention, flashMessages: $flashMessages);
+    }
+
+    /**
+     * @param FormInterface<mixed> $form
+     */
+    private function getPartnerChoice(FormInterface $form, Intervention $intervention): string|Partner
+    {
+        if ($form->has('partnerChoice')) {
+            return $form->get('partnerChoice')->getData();
+        }
+        if ($intervention->getPartner()) {
+            return $intervention->getPartner();
+        }
+        /** @var User $user */
+        $user = $this->getUser();
+
+        return $user->getPartnerInTerritoryOrFirstOne($intervention->getSignalement()->getAddress()->getTerritory());
     }
 }
