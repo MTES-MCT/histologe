@@ -81,7 +81,7 @@
                         {% set bailDpeClasseEnergetique = signalement.typeCompositionLogement ? signalement.typeCompositionLogement.bailDpeClasseEnergetique : null %}
                         <label class="fr-label" for="signalement-edit-consommation-energetique-classe-energetique">Classe énergétique</label>
                         <select class="fr-select" id="signalement-edit-consommation-energetique-classe-energetique" name="classeEnergetique">
-                            <option value="" {{ bailDpeClasseEnergetique not in ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'nsp'] ? 'selected' : '' }}></option>
+                            <option value="" {{ bailDpeClasseEnergetique not in ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'nsp'] ? 'selected' : '' }} disabled hidden>Sélectionnez un choix</option>
                             <option value="A" {{ bailDpeClasseEnergetique is same as 'A' ? 'selected' : '' }}>A</option>
                             <option value="B" {{ bailDpeClasseEnergetique is same as 'B' ? 'selected' : '' }}>B</option>
                             <option value="C" {{ bailDpeClasseEnergetique is same as 'C' ? 'selected' : '' }}>C</option>
@@ -121,7 +121,7 @@
                                 <label class="fr-label" for="signalement-edit-consommation-energetique-conso-energie">
                                     Consommation énergétique
                                 </label>
-                                <input class="fr-input fr-col-9 fr-display-inline" pattern="[0-9]*" inputmode="numeric" type="number" id="signalement-edit-consommation-energetique-conso-energie" name="consommationEnergie" value="{{ consommationEnergie }}" >
+                                <input class="fr-input fr-col-9 fr-display-inline" inputmode="numeric" type="number" id="signalement-edit-consommation-energetique-conso-energie" name="consommationEnergie" value="{{ consommationEnergie }}" >
                                 kWh<span class="{% if not isDPE2023 %}fr-hidden{% endif %} field-consommation-energetique-conso-energie-unity">/m²</span>/an
                             </div>
                         </div>
@@ -131,7 +131,7 @@
                                 <label class="fr-label" for="signalement-edit-consommation-energetique-superficie">
                                     Superficie du logement
                                 </label>
-                                <input class="fr-input fr-col-10 fr-display-inline" pattern="[0-9]*" type="number" id="signalement-edit-consommation-energetique-superficie" name="superficie" value="{{signalement.superficie}}" max="9999"> m²
+                                <input class="fr-input fr-col-10 fr-display-inline" type="number" id="signalement-edit-consommation-energetique-superficie" name="superficie" value="{{signalement.superficie}}" max="9999"> m²
                                 {% endblock %}
                             </div>
                         </div>
