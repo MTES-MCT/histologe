@@ -50,10 +50,8 @@ class SearchServiceSecoursRoute
         return $this->orderType;
     }
 
-    public function setOrderType(?string $orderType): self
+    public function setOrderType(?string $orderType): void
     {
         $this->orderType = $orderType;
-
-        return $this;
     }
 }
