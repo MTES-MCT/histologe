@@ -6,6 +6,7 @@ use App\Dto\AgentSelection;
 use App\Dto\RefusAffectation;
 use App\Entity\Affectation;
 use App\Entity\Enum\AffectationStatus;
+use App\Entity\Enum\MotifCloture;
 use App\Entity\Enum\SignalementStatus;
 use App\Entity\Signalement;
 use App\Entity\User;
@@ -400,6 +401,10 @@ class AffectationController extends AbstractController
             $response = ['code' => Response::HTTP_BAD_REQUEST, 'errors' => FormHelper::getErrorsFromForm(form: $form, withPrefix: true)];
 
             return $this->json($response, $response['code']);
+        }
+
+        if ($affectation->getTravauxMiseEnConformite() && !in_array($affectation->getMotifCloture(), MotifCloture::getListNeedTravauxPrecisions(), true)) {
+            $affectation->setTravauxMiseEnConformite(null);
         }
 
         $affectationManager->closeAffectation(

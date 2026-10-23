@@ -5,6 +5,7 @@ namespace App\Controller\Back;
 use App\Dto\AgentSelection;
 use App\Dto\RefusSignalement;
 use App\Entity\Enum\AffectationStatus;
+use App\Entity\Enum\MotifCloture;
 use App\Entity\Enum\ProcedureCategory;
 use App\Entity\Enum\SignalementStatus;
 use App\Entity\Enum\SuiviCategory;
@@ -261,6 +262,10 @@ class SignalementActionController extends AbstractController
         $signalement->setClosedAt(new \DateTimeImmutable());
         $signalement->setComCloture($this->htmlSanitizer->sanitize($signalement->getComCloture()));
         $signalement->setClosedBy($user);
+
+        if ($signalement->getTravauxMiseEnConformite() && !in_array($signalement->getMotifCloture(), MotifCloture::getListNeedTravauxPrecisions(), true)) {
+            $signalement->setTravauxMiseEnConformite(null);
+        }
 
         $description = $this->suiviManager->buildDescriptionClotureSignalement([
             'subject' => 'tous les partenaires',
