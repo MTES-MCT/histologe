@@ -47,7 +47,7 @@ class CloseSignalementType extends AbstractType
                     if (in_array($choice, MotifCloture::getListNeedTravauxPrecisions(), true)) {
                         return [
                             'data-need-travaux-precisions' => 'true',
-                            'data-need-travaux-precisions-non' => $choice === MotifCloture::LOGEMENT_MIS_EN_CONFORMITE ? 'false' : 'true',
+                            'data-need-travaux-precisions-non' => MotifCloture::LOGEMENT_MIS_EN_CONFORMITE === $choice ? 'false' : 'true',
                         ];
                     }
 
