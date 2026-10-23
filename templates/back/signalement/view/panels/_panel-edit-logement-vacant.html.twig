@@ -4,7 +4,7 @@
             <button type="button" class="fr-btn--close fr-btn js-close-panel" data-panel="panel-edit-logement-vacant" aria-controls="panel-edit-logement-vacant" aria-expanded="false">Fermer</button>
         </div>
         <div class="side-panel__content fr-mx-3w">
-            <form method="POST" id="form-edit-logement-vacant" enctype="application/json" action="{{ path('back_signalement_edit_logement_vacant',{uuid:signalement.uuid}) }}">
+            <form method="POST" id="form-edit-logement-vacant" action="{{ path('back_signalement_edit_logement_vacant',{uuid:signalement.uuid}) }}">
                 <h1 id="panel-edit-logement-vacant-title" class="fr-modal__title title-blue-france">Enregistrer l'occupation du logement</h1>
                 {% if signalement.isLogementVacant %}
                     <div class="fr-alert fr-alert--warning fr-my-2v">

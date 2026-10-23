@@ -308,7 +308,7 @@ public function editCoordonneesSyndic(
         <div class="fr-grid-row fr-grid-row--center">
             <div class="fr-col-12 fr-col-md-8 fr-col-lg-6">
                 <div class="fr-modal__body">
-                    <form method="POST" id="form-edit-coordonnees-syndic" enctype="application/json" action="{{ path('back_signalement_edit_coordonnees_syndic',{uuid:signalement.uuid}) }}">
+                    <form method="POST" id="form-edit-coordonnees-syndic" action="{{ path('back_signalement_edit_coordonnees_syndic',{uuid:signalement.uuid}) }}">
                         <div class="fr-modal__header">
                             <button type="button" class="fr-btn--close fr-btn" aria-controls="fr-modal-edit-coordonnees-syndic">Fermer</button>
                         </div>
