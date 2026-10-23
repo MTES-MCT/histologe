@@ -36,7 +36,7 @@ class SignalementExportFiltersDisplay
         'tags' => 'Etiquettes',
         'housetypes' => 'Nature du parc',
         'allocs' => 'Allocataire',
-        'motifCloture' => 'Motif de clôture',
+        'motifCloture' => 'Motif de fermeture',
     ];
 
     /** @var array<string> STATUS_AFFECTATION */

@@ -12,6 +12,7 @@ use App\Service\Signalement\Export\SignalementExportSelectableColumns;
 use App\Service\Signalement\SearchFilter;
 use App\Utils\ExportFormat;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -28,6 +29,8 @@ class ExportSignalementController extends AbstractController
         SignalementManager $signalementManager,
         SearchFilter $searchFilter,
         SignalementSearchQueryFactory $signalementSearchQueryFactory,
+        #[Autowire(env: 'FEATURE_ORIENTATION')]
+        bool $featureOrientation,
     ): Response {
         /** @var User $user */
         $user = $this->getUser();
@@ -42,7 +45,7 @@ class ExportSignalementController extends AbstractController
 
         return $this->render('back/signalement_export/index.html.twig', [
             'filters' => $textFilters,
-            'selectable_cols' => SignalementExportSelectableColumns::getColumns(),
+            'selectable_cols' => SignalementExportSelectableColumns::getColumns($featureOrientation),
             'selected_cols' => $request->getSession()->get('selectedCols'),
             'count_signalements' => $count_signalements,
         ]);
