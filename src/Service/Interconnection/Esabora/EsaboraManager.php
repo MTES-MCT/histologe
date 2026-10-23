@@ -4,9 +4,9 @@ namespace App\Service\Interconnection\Esabora;
 
 use App\Entity\Affectation;
 use App\Entity\Enum\AffectationStatus;
+use App\Entity\Enum\ArreteCreationSource;
 use App\Entity\Enum\InterfacageType;
 use App\Entity\Enum\InterventionType;
-use App\Entity\Enum\ProcedureType;
 use App\Entity\Enum\SuiviCategory;
 use App\Entity\File;
 use App\Entity\Intervention;
@@ -18,9 +18,11 @@ use App\Event\InterventionUpdatedByEsaboraEvent;
 use App\Factory\FileFactory;
 use App\Factory\InterventionFactory;
 use App\Manager\AffectationManager;
+use App\Manager\ArreteManager;
 use App\Manager\SuiviManager;
 use App\Manager\UserManager;
 use App\Manager\UserSignalementSubscriptionManager;
+use App\Repository\ArreteRepository;
 use App\Repository\InterventionRepository;
 use App\Repository\SuiviRepository;
 use App\Service\Files\ImageManipulationHandler;
@@ -31,16 +33,13 @@ use App\Service\Interconnection\Esabora\Response\DossierResponseInterface;
 use App\Service\Interconnection\Esabora\Response\Model\DossierArreteSISH;
 use App\Service\Interconnection\Esabora\Response\Model\DossierEventSCHS;
 use App\Service\Interconnection\Esabora\Response\Model\DossierVisiteSISH;
-use App\Service\Intervention\InterventionDescriptionGenerator;
 use App\Service\Security\FileScanner;
-use App\Service\Signalement\Qualification\SignalementQualificationUpdater;
 use App\Service\Signalement\Suivi\SuiviDescriptionHelper;
 use App\Service\UploadHandlerService;
 use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
-use Symfony\Component\HtmlSanitizer\HtmlSanitizerInterface;
 use Symfony\Component\HttpFoundation\File\File as SymfonyFile;
 use Symfony\Component\Workflow\WorkflowInterface;
 
@@ -51,7 +50,9 @@ class EsaboraManager
         private readonly SuiviManager $suiviManager,
         private readonly SuiviRepository $suiviRepository,
         private readonly InterventionRepository $interventionRepository,
+        private readonly ArreteRepository $arreteRepository,
         private readonly InterventionFactory $interventionFactory,
+        private readonly ArreteManager $arreteManager,
         private readonly EventDispatcherInterface $eventDispatcher,
         private readonly UserManager $userManager,
         private readonly LoggerInterface $logger,
@@ -61,9 +62,6 @@ class EsaboraManager
         private readonly UploadHandlerService $uploadHandlerService,
         private readonly ImageManipulationHandler $imageManipulationHandler,
         private readonly FileFactory $fileFactory,
-        private readonly SignalementQualificationUpdater $signalementQualificationUpdater,
-        #[Autowire(service: 'html_sanitizer.sanitizer.app.message_sanitizer')]
-        private readonly HtmlSanitizerInterface $htmlSanitizer,
         #[Autowire(service: 'state_machine.intervention_planning')]
         private readonly WorkflowInterface $workflow,
         private readonly UserSignalementSubscriptionManager $userSignalementSubscriptionManager,
@@ -252,56 +250,22 @@ class EsaboraManager
      */
     public function createOrUpdateArrete(Affectation $affectation, DossierArreteSISH $dossierArreteSISH): void
     {
-        $signalement = $affectation->getSignalement();
-        $intervention = $this->interventionRepository->findOneBy(['providerId' => $dossierArreteSISH->getArreteId()]);
-        $hasArreteModificatif = null !== $dossierArreteSISH->getArreteModificatifDate();
-        $additionalInformation = [
-            'arrete_numero' => $dossierArreteSISH->getArreteNumero(),
-            'arrete_type' => $dossierArreteSISH->getArreteType(),
-            'arrete_mainlevee_date' => $dossierArreteSISH->getArreteMLDate(),
-            'arrete_mainlevee_numero' => $dossierArreteSISH->getArreteMLNumero(),
-            'arrete_modificatif_date' => $hasArreteModificatif ? $dossierArreteSISH->getArreteModificatifDate() : null,
-            'arrete_modificatif_numero' => $hasArreteModificatif ? $dossierArreteSISH->getArreteModificatifNumero() : null,
-        ];
+        $arrete = $this->arreteRepository->findOneBy(['providerId' => $dossierArreteSISH->getArreteId(), 'arreteCreationSource' => ArreteCreationSource::ESABORA]);
 
-        if (null !== $intervention) {
-            $isArreteUpdated = $this->updateFromDossierArrete($intervention, $dossierArreteSISH, $additionalInformation);
-            if ($isArreteUpdated) {
-                $this->eventDispatcher->dispatch(
-                    new InterventionUpdatedByEsaboraEvent($intervention, $this->userManager->getSystemUser(), $affectation->getPartner()),
-                    InterventionUpdatedByEsaboraEvent::NAME
-                );
+        if (null !== $arrete) {
+            try {
+                $this->arreteManager->updateFromDossierArreteSISH($arrete, $dossierArreteSISH, $affectation);
                 $this->entityManager->flush();
+            } catch (\Exception $e) {
+                $this->logger->error('Error updating Arrete from Esabora : '.$e->getMessage());
             }
         } else {
-            $intervention = $this->interventionFactory->createInstanceFrom(
-                affectation: $affectation,
-                type: InterventionType::ARRETE_PREFECTORAL,
-                scheduledAt: DateParser::parse($dossierArreteSISH->getArreteDate()),
-                registeredAt: new \DateTimeImmutable(),
-                status: Intervention::STATUS_DONE,
-                providerName: InterfacageType::ESABORA->value,
-                providerId: $dossierArreteSISH->getArreteId(),
-                details: InterventionDescriptionGenerator::buildDescriptionArreteCreated($dossierArreteSISH),
-                additionalInformation: $additionalInformation,
-                concludeProcedures: [ProcedureType::INSALUBRITE]
-            );
-
-            $this->entityManager->persist($intervention);
-            $this->entityManager->flush();
-            $this->signalementQualificationUpdater->updateQualificationFromVisiteProcedureList(
-                $signalement,
-                [ProcedureType::INSALUBRITE]
-            );
-            $this->eventDispatcher->dispatch(
-                new InterventionCreatedEvent(
-                    $intervention,
-                    $this->userManager->getSystemUser(),
-                    $affectation->getPartner(),
-                    EsaboraSISHService::NAME_SI
-                ),
-                InterventionCreatedEvent::NAME
-            );
+            try {
+                $this->arreteManager->createArreteFromDossierArreteSISH($dossierArreteSISH, $affectation);
+                $this->entityManager->flush();
+            } catch (\Exception $e) {
+                $this->logger->error('Error creating Arrete from Esabora : '.$e->getMessage());
+            }
         }
     }
 
@@ -425,89 +389,6 @@ class EsaboraManager
         return $hasChanged;
     }
 
-    /**
-     * @param array{
-     *      arrete_numero: string|null,
-     *      arrete_type: string|null,
-     *      arrete_mainlevee_date: string|null,
-     *      arrete_mainlevee_numero: string|null,
-     *      arrete_modificatif_date: string|null,
-     *      arrete_modificatif_numero: string|null
-     *  } $additionalInformation
-     *
-     * @throws \Exception
-     */
-    private function updateFromDossierArrete(
-        Intervention $intervention,
-        DossierArreteSISH $dossierArreteSISH,
-        array $additionalInformation,
-    ): bool {
-        $hasChanged = false;
-        $currentAdditionalInformationSorted = $intervention->getAdditionalInformation() ?? [];
-        $currentAdditionalInformationSorted['arrete_date'] = $intervention->getScheduledAt()?->format(AbstractEsaboraService::FORMAT_DATE);
-
-        // Pour rappel, une seule intervention regroupe les arrêtés successifs.
-        // Un arrêté seul produit un tableau `$additionalInformation` avec des champs de main-levée et modificatif à null,
-        // tandis qu'un arrêté modificatif ou de main-levée produit un tableau `$additionalInformation` avec ces champs renseignés.
-        // Si les champs de mainlevée ou de modificatif sont tous les deux null dans la réponse entrante (cas d'un objet issu du split),
-        // on conserve les informations existantes en base s'il y en a.
-        $mergedAdditionalInformation = array_replace($currentAdditionalInformationSorted, $additionalInformation);
-        if (null === $additionalInformation['arrete_mainlevee_date']
-            && null === $additionalInformation['arrete_mainlevee_numero']
-            && (!empty($currentAdditionalInformationSorted['arrete_mainlevee_numero']) || !empty($currentAdditionalInformationSorted['arrete_mainlevee_date']))
-        ) {
-            $mergedAdditionalInformation['arrete_mainlevee_date'] = $currentAdditionalInformationSorted['arrete_mainlevee_date'] ?? null;
-            $mergedAdditionalInformation['arrete_mainlevee_numero'] = $currentAdditionalInformationSorted['arrete_mainlevee_numero'] ?? null;
-        }
-        if (null === $additionalInformation['arrete_modificatif_date']
-            && null === $additionalInformation['arrete_modificatif_numero']
-            && (!empty($currentAdditionalInformationSorted['arrete_modificatif_numero']) || !empty($currentAdditionalInformationSorted['arrete_modificatif_date']))
-        ) {
-            $mergedAdditionalInformation['arrete_modificatif_date'] = $currentAdditionalInformationSorted['arrete_modificatif_date'] ?? null;
-            $mergedAdditionalInformation['arrete_modificatif_numero'] = $currentAdditionalInformationSorted['arrete_modificatif_numero'] ?? null;
-        }
-        unset($mergedAdditionalInformation['arrete_date']);
-        $mergedAdditionalInformationSorted = $mergedAdditionalInformation;
-        $mergedAdditionalInformationSorted['arrete_date'] = $dossierArreteSISH->getArreteDate();
-        ksort($currentAdditionalInformationSorted);
-        ksort($mergedAdditionalInformationSorted);
-
-        if ($currentAdditionalInformationSorted !== $mergedAdditionalInformationSorted) {
-            $isNewMainLevee = $this->isNewMainLevee($currentAdditionalInformationSorted, $mergedAdditionalInformationSorted);
-            $isNewArreteModificatif = $this->isNewArreteModificatif($currentAdditionalInformationSorted, $mergedAdditionalInformationSorted);
-            $hasNoChangesArrete = $this->hasNoChangesArrete($currentAdditionalInformationSorted, $mergedAdditionalInformationSorted);
-
-            if (($isNewMainLevee || $isNewArreteModificatif) && $hasNoChangesArrete) {
-                $newDetails = InterventionDescriptionGenerator::buildDescriptionArreteCreated($dossierArreteSISH);
-            } else {
-                $newDetails = InterventionDescriptionGenerator::buildDescriptionArreteUpdated($intervention, $dossierArreteSISH);
-            }
-
-            if (null === $newDetails) {
-                return false;
-            }
-
-            $intervention->setDetails($this->htmlSanitizer->sanitize($newDetails));
-            $intervention->setAdditionalInformation($mergedAdditionalInformation);
-            $scheduledAt = null !== $mergedAdditionalInformationSorted['arrete_date'] ? DateParser::parse($mergedAdditionalInformationSorted['arrete_date']) : null;
-            if ($intervention->getScheduledAt() != $scheduledAt) {
-                $intervention->setScheduledAt($scheduledAt);
-            }
-            $hasChanged = true;
-        }
-
-        if (Intervention::STATUS_DONE !== $intervention->getStatus()) {
-            $intervention->setStatus(Intervention::STATUS_DONE);
-            $hasChanged = true;
-        }
-
-        if ($hasChanged) {
-            $this->entityManager->flush();
-        }
-
-        return $hasChanged;
-    }
-
     private function shouldBeAcceptedViaEsabora(string $esaboraDossierStatus, AffectationStatus $currentStatus): bool
     {
         return EsaboraStatus::ESABORA_IN_PROGRESS->value === $esaboraDossierStatus
@@ -518,34 +399,5 @@ class EsaboraManager
     {
         return EsaboraStatus::ESABORA_CLOSED->value === $esaboraDossierStatus
             && AffectationStatus::CLOSED !== $currentStatus;
-    }
-
-    /**
-     * @param array<string, mixed> $currentAdditionalInformation
-     * @param array<string, mixed> $mergedAdditionalInformation
-     */
-    private function isNewMainLevee(array $currentAdditionalInformation, array $mergedAdditionalInformation): bool
-    {
-        return (empty($currentAdditionalInformation['arrete_mainlevee_date']) && !empty($mergedAdditionalInformation['arrete_mainlevee_date']))
-            || (empty($currentAdditionalInformation['arrete_mainlevee_numero']) && !empty($mergedAdditionalInformation['arrete_mainlevee_numero']));
-    }
-
-    /**
-     * @param array<string, mixed> $currentAdditionalInformation
-     * @param array<string, mixed> $mergedAdditionalInformation
-     */
-    private function isNewArreteModificatif(array $currentAdditionalInformation, array $mergedAdditionalInformation): bool
-    {
-        return empty($currentAdditionalInformation['arrete_modificatif_date']) && !empty($mergedAdditionalInformation['arrete_modificatif_date']);
-    }
-
-    /**
-     * @param array<string, mixed> $currentAdditionalInformation
-     * @param array<string, mixed> $mergedAdditionalInformation
-     */
-    private function hasNoChangesArrete(array $currentAdditionalInformation, array $mergedAdditionalInformation): bool
-    {
-        return $mergedAdditionalInformation['arrete_numero'] === $currentAdditionalInformation['arrete_numero']
-            && $mergedAdditionalInformation['arrete_date'] === $currentAdditionalInformation['arrete_date'];
     }
 }

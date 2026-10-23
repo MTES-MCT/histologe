@@ -49,26 +49,18 @@ readonly class InterventionCreatedSubscriber implements EventSubscriberInterface
             case InterventionType::VISITE_CONTROLE:
                 $suiviCategory = $isInPast ? SuiviCategory::INTERVENTION_CONTROLE_IS_DONE : SuiviCategory::INTERVENTION_CONTROLE_IS_CREATED;
                 break;
-            case InterventionType::ARRETE_PREFECTORAL:
-                $suiviCategory = SuiviCategory::INTERVENTION_ARRETE_IS_CREATED;
-                break;
             default:
                 $suiviCategory = SuiviCategory::INTERVENTION_IS_CREATED;
         }
 
-        // Arrêté : la description du suivi reprend les détails de l'arrêté, générés par InterventionDescriptionGenerator
-        if (InterventionType::ARRETE_PREFECTORAL === $intervention->getType()) {
-            $description = (string) $intervention->getDetails();
-        } else {
-            $description = $this->suiviDescriptionHelper->buildDescriptionForCreation($suiviCategory, [
-                'typeLabel' => $intervention->getType()->label(),
-                'isInPast' => $isInPast,
-                'address' => $signalement->getAddress()->getHousenumberAndStreet(),
-                'date' => $intervention->getScheduledAtFormated(),
-                'partnerName' => $intervention->getExternalOperator() ?? $intervention->getPartner()?->getNom() ?? 'Non renseigné',
-                'commentBeforeVisite' => !$isInPast ? $intervention->getCommentBeforeVisite() : null,
-            ]);
-        }
+        $description = $this->suiviDescriptionHelper->buildDescriptionForCreation($suiviCategory, [
+            'typeLabel' => $intervention->getType()->label(),
+            'isInPast' => $isInPast,
+            'address' => $signalement->getAddress()->getHousenumberAndStreet(),
+            'date' => $intervention->getScheduledAtFormated(),
+            'partnerName' => $intervention->getExternalOperator() ?? $intervention->getPartner()?->getNom() ?? 'Non renseigné',
+            'commentBeforeVisite' => !$isInPast ? $intervention->getCommentBeforeVisite() : null,
+        ]);
 
         $suivi = $this->suiviManager->createSuivi(
             signalement: $intervention->getSignalement(),
@@ -86,13 +78,6 @@ readonly class InterventionCreatedSubscriber implements EventSubscriberInterface
             $this->visiteNotifier->notifyUsagers(
                 intervention: $intervention,
                 notificationMailerType: NotificationMailerType::TYPE_VISITE_CREATED_TO_USAGER,
-            );
-        }
-
-        if (InterventionType::ARRETE_PREFECTORAL === $intervention->getType() && $suivi->getIsVisibleForUsager()) {
-            $this->visiteNotifier->notifyUsagers(
-                intervention: $intervention,
-                notificationMailerType: NotificationMailerType::TYPE_ARRETE_CREATED_TO_USAGER,
             );
         }
 

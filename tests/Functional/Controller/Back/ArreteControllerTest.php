@@ -32,7 +32,7 @@ class ArreteControllerTest extends WebTestCase
         $route = $router->generate('back_territory_management_arrete_index');
         $client->request('GET', $route);
 
-        $this->assertSelectorTextContains('h2#desc-table', '19 arrêtés trouvés');
+        $this->assertSelectorTextContains('h2#desc-table', '20 arrêtés trouvés');
     }
 
     public function testIndexForRT(): void
