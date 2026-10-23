@@ -32,7 +32,7 @@
                                 {% if child.featureEnable and child.label is not empty and is_granted(child.roleGranted) and not is_granted(child.roleNotGranted) %}
                                     {% if child.externalLink %}
                                         <li>
-                                            <a class="fr-nav__link" href="{{ child.externalLink }}" target="_blank" rel="noopener" aria-current="false">{{ child.label }}</a>
+                                            <a class="fr-nav__link" href="{{ child.externalLink }}" target="_blank" rel="noopener external" aria-current="false" title="{{ child.label }} - Ouvre une nouvelle fenêtre">{{ child.label }}</a>
                                         </li>
                                     {% else %}
                                         <li>
