@@ -522,6 +522,8 @@ class SuiviDescriptionHelperTest extends KernelTestCase
             'dateReaffectation' => null,
             'commentaireSas' => null,
             'dossNum' => null,
+            'type' => null,
+            'problematique' => null,
         ], $params));
     }
 
