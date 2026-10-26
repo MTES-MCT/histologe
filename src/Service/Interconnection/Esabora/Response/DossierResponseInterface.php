@@ -19,4 +19,8 @@ interface DossierResponseInterface
     public function getNameSI(): ?string;
 
     public function getCommentaireSas(): ?string;
+
+    public function getType(): ?string;
+
+    public function getProblematique(): ?string;
 }

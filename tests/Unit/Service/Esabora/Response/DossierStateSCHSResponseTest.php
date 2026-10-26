@@ -24,6 +24,8 @@ class DossierStateSCHSResponseTest extends TestCase
         $this->assertNull($dossierResponse->getDateCloture());
         $this->assertEquals(200, $dossierResponse->getStatusCode());
         $this->assertNull($dossierResponse->getErrorReason());
+        $this->assertEquals('Hygiène de l\'habitat', $dossierResponse->getType());
+        $this->assertEquals('Humidité, moisissures, champignons', $dossierResponse->getProblematique());
     }
 
     public function testDossierResponseFailed(): void
@@ -41,6 +43,8 @@ class DossierStateSCHSResponseTest extends TestCase
         $this->assertNull($dossierResponse->getDateCloture());
         $this->assertEquals(Response::HTTP_BAD_REQUEST, $dossierResponse->getStatusCode());
         $this->assertNotNull($dossierResponse->getErrorReason());
+        $this->assertNull($dossierResponse->getType());
+        $this->assertNull($dossierResponse->getProblematique());
     }
 
     public function testDossierResponseWithoutDossID(): void
@@ -58,6 +62,8 @@ class DossierStateSCHSResponseTest extends TestCase
         $this->assertEquals('en cours', $dossierResponse->getEtat());
         $this->assertNull($dossierResponse->getDateCloture());
         $this->assertNull($dossierResponse->getErrorReason());
+        $this->assertEquals('Hygiène de l\'habitat', $dossierResponse->getType());
+        $this->assertEquals('Habitabilité', $dossierResponse->getProblematique());
     }
 
     public function testDossierResponseDifferentOrder(): void

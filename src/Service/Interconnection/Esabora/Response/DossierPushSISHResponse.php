@@ -77,4 +77,14 @@ class DossierPushSISHResponse implements DossierResponseInterface
     {
         return null;
     }
+
+    public function getType(): ?string
+    {
+        return null;
+    }
+
+    public function getProblematique(): ?string
+    {
+        return null;
+    }
 }
