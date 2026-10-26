@@ -92,6 +92,8 @@ class EsaboraSCHSServiceTest extends KernelTestCase
         $this->assertEquals('Importé', $dossierResponse->getSasEtat());
         $this->assertEquals(Response::HTTP_OK, $dossierResponse->getStatusCode());
         $this->assertEquals('en cours', $dossierResponse->getEtat());
+        $this->assertEquals('Hygiène de l\'habitat', $dossierResponse->getType());
+        $this->assertEquals('Humidité, moisissures, champignons', $dossierResponse->getProblematique());
     }
 
     public function testGetStateDossierFromEsaboraThrownException(): void

@@ -183,6 +183,8 @@ class EsaboraManager
             'dateReaffectation' => $dateReaffectation,
             'commentaireSas' => $dossierResponse->getCommentaireSas(),
             'dossNum' => $dossierResponse->getDossNum(),
+            'type' => $dossierResponse->getType(),
+            'problematique' => $dossierResponse->getProblematique(),
         ]);
     }
 

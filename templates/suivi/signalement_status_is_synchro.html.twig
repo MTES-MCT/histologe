@@ -28,3 +28,9 @@ Signalement <b>
     {{ ' (Dossier ' ~ dossNum ~ ')' }}
 {%- endif -%}
 </b>
+{%- if type -%}
+    <br>Type de dossier créé : {{ type }}
+{%- endif -%}
+{%- if problematique -%}
+    <br>Libellé de la problématique principale : {{ problematique }}
+{%- endif -%}

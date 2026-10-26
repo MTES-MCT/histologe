@@ -163,4 +163,14 @@ class DossierStateSISHResponse implements DossierResponseInterface
     {
         return EsaboraSISHService::NAME_SI;
     }
+
+    public function getType(): ?string
+    {
+        return null;
+    }
+
+    public function getProblematique(): ?string
+    {
+        return null;
+    }
 }

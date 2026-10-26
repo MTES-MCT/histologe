@@ -12,6 +12,8 @@ class DossierStateSCHSResponse implements DossierResponseInterface
     public const string COL_DOSS_STATUT = 'Doss_Statut';
     public const string COL_DOSS_ETAT = 'Doss_Etat';
     public const string COL_DOSS_CLOTURE = 'Doss_Cloture';
+    public const string COL_DOSS_TYPE = 'Doss_Type';
+    public const string COL_DOSS_PROBLEMATIQUE = 'Doss_Problématique';
 
     private ?string $sasReference = null;
     private ?string $sasEtat = null;
@@ -23,6 +25,8 @@ class DossierStateSCHSResponse implements DossierResponseInterface
     private ?string $dateCloture = null;
     private ?int $statusCode = null;
     private ?string $errorReason = null;
+    private ?string $type = null; // type de dossier créé
+    private ?string $problematique = null; // Libellé de la problématique principale
 
     /**
      * @param array<mixed> $response
@@ -46,6 +50,8 @@ class DossierStateSCHSResponse implements DossierResponseInterface
                     $this->statut = $data[self::COL_DOSS_STATUT] ?? null;
                     $this->etat = $data[self::COL_DOSS_ETAT] ?? null;
                     $this->dateCloture = $data[self::COL_DOSS_CLOTURE] ?? null;
+                    $this->type = $data[self::COL_DOSS_TYPE] ?? null;
+                    $this->problematique = $data[self::COL_DOSS_PROBLEMATIQUE] ?? null;
                 }
             } else {
                 $this->errorReason = (string) json_encode($response);
@@ -102,6 +108,16 @@ class DossierStateSCHSResponse implements DossierResponseInterface
     public function getErrorReason(): ?string
     {
         return $this->errorReason;
+    }
+
+    public function getType(): ?string
+    {
+        return $this->type;
+    }
+
+    public function getProblematique(): ?string
+    {
+        return $this->problematique;
     }
 
     public function getSasCauseRefus(): ?string
