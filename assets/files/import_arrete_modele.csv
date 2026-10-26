@@ -1,4 +1,4 @@
-,,"(inclure également l'indice de répétition : bis, ter, etc.)",,,,,(format dd/mm/aaaa),
+(format dd/mm/aaaa),,"(inclure également l'indice de répétition : bis, ter, etc.)",,,,,(format dd/mm/aaaa),
 date arrêté,classification arrêté,numéro de voie,nom de la voie,code postal,commune,identifiant parcellaire,date arrêté main levée,dénomination syndic
 01/01/2023,Mise en sécurité procédure ordinaire,10,Rue de la République,13001,Marseille,13001000AB0001,,Syndic A
 15/01/2023,Mise en sécurité procédure urgente,25bis,Avenue du Prado,13008,Marseille,13008000CD0002,20/02/2023,
