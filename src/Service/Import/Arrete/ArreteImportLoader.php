@@ -39,11 +39,14 @@ class ArreteImportLoader
         $detailedErrors = [];
         $countAddressToValidate = 0;
         $csvParser = new CsvParser()
-            ->setFirstLine(ArreteImportRow::FIRST_LINE)
-            ->autoDetectDelimiter($filepath);
+            ->autoDetectDelimiter($filepath)
+            ->autoDetectFirstLine($filepath, ArreteImportHeader::REQUIRED_HEADERS);
+        $firstLine = (int) ($csvParser->getOptions()['first_line'] ?? 1);
         $data = $csvParser->parseAsDict($filepath);
         foreach ($data as $index => $row) {
+            $lineNumber = $index + $firstLine + 1;
             $arreteImportRow = new ArreteImportRow()
+                ->setLineNumber($lineNumber)
                 ->setDateArrete($row[ArreteImportHeader::DATE_ARRETE] ?? null)
                 ->setClassificationArrete($row[ArreteImportHeader::CLASSIFICATION_ARRETE] ?? null)
                 ->setNumeroVoie($row[ArreteImportHeader::NUMERO_VOIE] ?? null)
@@ -59,7 +62,6 @@ class ArreteImportLoader
 
             $violations = $this->validator->validate($arreteImportRow);
             if ($violations->count() > 0) {
-                $lineNumber = $index + ArreteImportRow::FIRST_LINE + 1;
                 $invalidLineNumbers[] = $lineNumber;
                 foreach ($violations as $violation) {
                     $detailedErrors[] = sprintf('Ligne %d : %s', $lineNumber, $violation->getMessage());
@@ -201,10 +203,12 @@ class ArreteImportLoader
             return true;
         }
 
+        $lineNumber = $arreteImportRow->getLineNumber() ?? ($index + 1);
+
         foreach ($violations as $violation) {
             $this->metadata['errors'][] = sprintf(
                 'Ligne %d : %s - %s',
-                $index + ArreteImportRow::FIRST_LINE + 1,
+                $lineNumber,
                 $violation->getPropertyPath(),
                 $violation->getMessage()
             );

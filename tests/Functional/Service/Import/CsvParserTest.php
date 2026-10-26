@@ -8,7 +8,7 @@ use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 
 class CsvParserTest extends KernelTestCase
 {
-    private const FILEPATH = '/tmp/data.csv';
+    private const string FILEPATH = '/tmp/data.csv';
 
     private string $projectDir = '';
 
@@ -133,6 +133,54 @@ class CsvParserTest extends KernelTestCase
 
         unlink($filepathSemicolon);
         unlink($filepathComma);
+    }
+
+    public function testAutoDetectFirstLine(): void
+    {
+        $expectedHeaders = ['nom', 'prenom', 'email'];
+
+        $filepathLine1 = $this->projectDir.'/tmp/data_line1.csv';
+        file_put_contents($filepathLine1, "nom,prenom,email\nDupont,Jean,jean@example.com");
+
+        $csvParser1 = new CsvParser();
+        $csvParser1->autoDetectFirstLine($filepathLine1, $expectedHeaders);
+        $this->assertEquals(1, $csvParser1->getOptions()['first_line']);
+        $this->assertEquals($expectedHeaders, $csvParser1->getHeaders($filepathLine1));
+
+        $filepathLine2 = $this->projectDir.'/tmp/data_line2.csv';
+        file_put_contents($filepathLine2, "LIGNE D'AIDE OU D'INSTRUCTION\nnom,prenom,email\nDupont,Jean,jean@example.com");
+
+        $csvParser2 = new CsvParser();
+        $csvParser2->autoDetectFirstLine($filepathLine2, $expectedHeaders);
+        $this->assertEquals(2, $csvParser2->getOptions()['first_line']);
+        $this->assertEquals($expectedHeaders, $csvParser2->getHeaders($filepathLine2));
+
+        unlink($filepathLine1);
+        unlink($filepathLine2);
+    }
+
+    public function testParseWithUtf8Bom(): void
+    {
+        $expectedHeaders = ['date arrêté', 'commune', 'nom de la voie'];
+        $filepathBom = $this->projectDir.'/tmp/data_bom.csv';
+
+        // Write UTF-8 BOM (\xEF\xBB\xBF) followed by headers and data
+        file_put_contents($filepathBom, "\xEF\xBB\xBFdate arrêté;commune;nom de la voie\n01/01/2023;Marseille;Rue de la République");
+
+        $csvParser = new CsvParser();
+        $csvParser->autoDetectDelimiter($filepathBom);
+        $csvParser->autoDetectFirstLine($filepathBom, $expectedHeaders);
+
+        $headers = $csvParser->getHeaders($filepathBom);
+        $this->assertEquals($expectedHeaders, $headers);
+        $this->assertEquals('date arrêté', $headers[0]);
+
+        $dict = $csvParser->parseAsDict($filepathBom);
+        $this->assertCount(1, $dict);
+        $this->assertArrayHasKey('date arrêté', $dict[0]);
+        $this->assertEquals('01/01/2023', $dict[0]['date arrêté']);
+
+        unlink($filepathBom);
     }
 
     protected function tearDown(): void

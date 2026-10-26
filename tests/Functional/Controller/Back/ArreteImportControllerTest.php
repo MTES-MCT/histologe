@@ -181,6 +181,67 @@ class ArreteImportControllerTest extends WebTestCase
         unlink($tmpFile);
     }
 
+    public function testImportUploadCsvSuccessWithoutInstructionLine(): void
+    {
+        $client = static::createClient();
+        $entityManager = self::getContainer()->get('doctrine.orm.entity_manager');
+        $user = $entityManager->getRepository(User::class)->findOneBy(['email' => 'admin-01@signal-logement.fr']);
+        $client->loginUser($user);
+
+        $csrfToken = $this->generateCsrfToken($client, 'import_arrete');
+
+        $headers = [
+            ArreteImportHeader::DATE_ARRETE,
+            ArreteImportHeader::CLASSIFICATION_ARRETE,
+            ArreteImportHeader::DATE_ARRETE_MAIN_LEVEE,
+            ArreteImportHeader::NUMERO_VOIE,
+            ArreteImportHeader::NOM_VOIE,
+            ArreteImportHeader::CODE_POSTAL,
+            ArreteImportHeader::COMMUNE,
+            ArreteImportHeader::DENOMINATION_SYNDIC,
+            ArreteImportHeader::ID_PARCELLAIRE,
+        ];
+
+        $content = implode(',', $headers)."\n"
+            ."01/01/2023,Insalubrité,,8,Rue de la tourmentinerie,44850,Saint-Mars-du-Désert,,441860001AL0151\n"
+            .'02/01/2023,Mise en sécurité procédure ordinaire,,8,Rue de la tourmentinerie,44850,Saint-Mars-du-Désert,,441860001AL0151';
+
+        $tmpFile = tempnam(sys_get_temp_dir(), 'test_arrete_success_line1_');
+        file_put_contents($tmpFile, $content);
+
+        $uploadedFile = new UploadedFile(
+            $tmpFile,
+            'success_line1.csv',
+            'text/csv',
+            null,
+            true
+        );
+
+        $client->request(
+            'POST',
+            self::ROUTE_IMPORT_UPLOAD,
+            [
+                'import_arrete' => [
+                    '_token' => $csrfToken,
+                ],
+            ],
+            ['import_arrete' => ['file' => $uploadedFile]],
+            ['HTTP_X-Requested-With' => 'XMLHttpRequest']
+        );
+
+        $response = $client->getResponse();
+        $this->assertEquals(Response::HTTP_OK, $response->getStatusCode());
+        /** @var string $content */
+        $content = $response->getContent();
+        $data = json_decode($content, true);
+
+        $this->assertArrayNotHasKey('errors', $data);
+        $this->assertArrayHasKey('data', $data);
+        $this->assertCount(2, $data['data']);
+
+        unlink($tmpFile);
+    }
+
     public function testImportConfirmFullSuccess(): void
     {
         $client = static::createClient();
@@ -326,7 +387,7 @@ class ArreteImportControllerTest extends WebTestCase
         yield 'Missing headers' => [
             "date arrêté,classification arrêté\n01/01/2023,Insalubrité",
             'missing_headers.csv',
-            'Le fichier CSV ne contient pas les colonnes attendues. Colonnes manquantes : numéro de voie, nom de la voie, code postal, commune, classification arrêté, date arrêté, identifiant parcellaire.',
+            'Le fichier CSV ne contient pas les colonnes attendues. Colonnes manquantes : numéro de voie, nom de la voie, code postal, commune, identifiant parcellaire.',
         ];
 
         $headers = implode(',', ArreteImportHeader::REQUIRED_HEADERS);
@@ -352,6 +413,13 @@ class ArreteImportControllerTest extends WebTestCase
             $lines,
             'duplicate_lines.csv',
             'Le fichier CSV contient des lignes en doublon aux lignes : 4.',
+        ];
+
+        $linesNoInstruction = $headers."\n".$duplicateData.$duplicateData;
+        yield 'Duplicate lines without instruction line' => [
+            $linesNoInstruction,
+            'duplicate_lines_no_instruction.csv',
+            'Le fichier CSV contient des lignes en doublon aux lignes : 3.',
         ];
     }
 }
