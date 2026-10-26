@@ -78,6 +78,40 @@ class SignalementVisitesControllerTest extends WebTestCase
         $this->assertStringContainsString('Commentaire avant visite', $highlights->eq(0)->text());
     }
 
+    public function testAddFutureVisiteAsPartnerAdminWithoutPartnerChoiceField(): void
+    {
+        $user = $this->userRepository->findOneBy(['email' => 'admin-partenaire-13-01@signal-logement.fr']);
+        $this->client->loginUser($user);
+
+        $signalement = $this->signalementRepository->findOneBy(['reference' => '2023-26']);
+        $partner = $this->partnerRepository->findOneBy(['nom' => 'Partenaire 13-01']);
+
+        $route = $this->router->generate('back_signalement_visite_add', ['uuid' => $signalement->getUuid()]);
+        $this->client->request(
+            'POST',
+            $route,
+            [
+                'add_and_reschedule_visite' => [
+                    'scheduledAt' => '2123-01-01',
+                    'scheduledAtTime' => '10:00',
+                    'commentBeforeVisite' => 'Commentaire avant visite',
+                    '_token' => $this->generateCsrfToken($this->client, 'add_and_reschedule_visite'),
+                ],
+            ]
+        );
+
+        $this->assertResponseIsSuccessful();
+        $response = json_decode((string) $this->client->getResponse()->getContent(), true);
+        $this->assertEquals('La date de visite a bien été définie.', $response['flashMessages'][0]['message']);
+
+        $interventions = $this->interventionRepository->findBy([
+            'signalement' => $signalement,
+            'status' => Intervention::STATUS_PLANNED,
+        ]);
+        $this->assertCount(1, $interventions);
+        $this->assertSame($partner->getId(), $interventions[0]->getPartner()->getId());
+    }
+
     public function testAddFutureVisiteOnExternalOperator(): void
     {
         $signalement = $this->signalementRepository->findOneBy(['uuid' => '00000000-0000-0000-2022-000000000001']);
