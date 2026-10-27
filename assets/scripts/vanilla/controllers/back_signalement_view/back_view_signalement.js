@@ -35,11 +35,14 @@ if (document?.querySelector('.fr-breadcrumb.can-fix')) {
   };
 }
 
-document.addEventListener('click', (e) => {
-  if (e.target.closest('.open-panel-reinit-affectation')) {
+const signalementView = document.getElementById('signalement-view');
+
+signalementView?.addEventListener('click', (e) => {
+  const button = e.target.closest('.open-panel-reinit-affectation');
+  if (button) {
     document.querySelector('#panel-reinit-affectation .partner-nom').textContent =
-      e.target.dataset.partnerNom;
-    document.querySelector('form#form-reinit-affectation').action = e.target.dataset.action;
+      button.dataset.partnerNom;
+    document.querySelector('form#form-reinit-affectation').action = button.dataset.action;
   }
 });
 
@@ -102,7 +105,7 @@ export function openPhotoAlbumAddEventListeners() {
 }
 
 // L'album photo (#photos-album-container) est remplacé lors des rechargements AJAX :
-// les écouteurs sont donc délégués au document pour survivre au remplacement des boutons.
+// les écouteurs sont donc délégués à #signalement-view pour survivre au remplacement des boutons.
 initPhotoAlbumListeners();
 
 function getAlbumPhotoIds() {
@@ -112,7 +115,7 @@ function getAlbumPhotoIds() {
 }
 
 function initPhotoAlbumListeners() {
-  document.addEventListener('click', (e) => {
+  signalementView?.addEventListener('click', (e) => {
     const target = e.target;
     if (!(target instanceof Element)) {
       return;
@@ -430,7 +433,7 @@ if (submitModalDuplicateAddresses) {
   });
 }
 
-document.addEventListener('click', (event) => {
+signalementView?.addEventListener('click', (event) => {
   const btn = event.target.closest('.btn-edit-suivi');
   if (!btn) {
     return;
@@ -530,7 +533,7 @@ function initToggleSections() {
   });
 }
 
-document.addEventListener('click', (event) => {
+signalementView?.addEventListener('click', (event) => {
   const button = event.target.closest('[data-toggle-section]');
   if (!button) return;
 

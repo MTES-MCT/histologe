@@ -9,7 +9,7 @@ export function reloadPersonalNoteEditor() {
   initTinyMCE('#personal-note-content');
 }
 
-document.addEventListener('click', (event) => {
+document.getElementById('signalement-view')?.addEventListener('click', (event) => {
   const editButton = event.target.closest('.signalement-personal-note-edit-btn');
   if (editButton) {
     const container = editButton.closest(personalNoteContainerSelector);

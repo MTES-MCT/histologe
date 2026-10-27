@@ -1,7 +1,7 @@
 import * as Sentry from '@sentry/browser';
 
 export default function paginationHandler(loadPanelContent) {
-  document.addEventListener('click', async function (e) {
+  document.getElementById('dashboard')?.addEventListener('click', async function (e) {
     const link = e.target.closest('.fr-pagination__link');
     if (!link || link.getAttribute('aria-disabled')) return;
 

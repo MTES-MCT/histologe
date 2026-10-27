@@ -130,37 +130,44 @@ function updateMailingSumaryState() {
   }
 }
 
-document.addEventListener('click', (evt) => {
-  const target = evt.target.closest('.btn-transfer-partner-user');
-  if (!target) return;
+document.getElementById('view-agent-list')?.addEventListener('click', (evt) => {
+  const transferBtn = evt.target.closest('.btn-transfer-partner-user');
+  if (transferBtn) {
+    document.querySelector('#fr-modal-user-transfer_username').textContent =
+      transferBtn.getAttribute('data-username');
+    histoUpdateValueFromData('#fr-modal-user-transfer_userid', 'data-userid', transferBtn);
+    return;
+  }
 
-  document.querySelector('#fr-modal-user-transfer_username').textContent =
-    target.getAttribute('data-username');
-  histoUpdateValueFromData('#fr-modal-user-transfer_userid', 'data-userid', target);
+  const deleteBtn = evt.target.closest('.btn-delete-partner-user');
+  if (deleteBtn) {
+    document.querySelectorAll('.fr-modal-user-delete_username').forEach((userItem) => {
+      userItem.textContent = deleteBtn.getAttribute('data-username');
+    });
+    document.querySelectorAll('.fr-modal-user-delete_useremail').forEach((userItem) => {
+      userItem.textContent = deleteBtn.getAttribute('data-useremail');
+    });
+    histoUpdateValueFromData('#fr-modal-user-delete_userid', 'data-userid', deleteBtn);
+    return;
+  }
+
+  const editBtn = evt.target.closest('.btn-edit-partner-user');
+  if (editBtn) {
+    handleEditPartnerUser(editBtn);
+  }
 });
 
-document.addEventListener('click', (evt) => {
-  const target = evt.target.closest('.btn-delete-partner-user');
-  if (!target) return;
+if (document.getElementById('search-partner-form')) {
+  document.getElementById('table-list-results')?.addEventListener('click', (evt) => {
+    const target = evt.target.closest('.btn-delete-partner');
+    if (!target) return;
 
-  document.querySelectorAll('.fr-modal-user-delete_username').forEach((userItem) => {
-    userItem.textContent = target.getAttribute('data-username');
+    document.querySelectorAll('.fr-modal-partner-delete_name').forEach((userItem) => {
+      userItem.textContent = target.getAttribute('data-partnername');
+    });
+    histoUpdateValueFromData('#fr-modal-partner-delete_partnerid', 'data-partnerid', target);
   });
-  document.querySelectorAll('.fr-modal-user-delete_useremail').forEach((userItem) => {
-    userItem.textContent = target.getAttribute('data-useremail');
-  });
-  histoUpdateValueFromData('#fr-modal-user-delete_userid', 'data-userid', target);
-});
-
-document.addEventListener('click', (evt) => {
-  const target = evt.target.closest('.btn-delete-partner');
-  if (!target) return;
-
-  document.querySelectorAll('.fr-modal-partner-delete_name').forEach((userItem) => {
-    userItem.textContent = target.getAttribute('data-partnername');
-  });
-  histoUpdateValueFromData('#fr-modal-partner-delete_partnerid', 'data-partnerid', target);
-});
+}
 
 if (document.querySelector('#partner_type')) {
   histoUpdateFieldsVisibility();
@@ -235,10 +242,14 @@ updateLocalStorageOnEvent('change', '#partner-filters-territories', 'back_link_p
 updateLocalStorageOnEvent('change', '#partner-filters-types', 'back_link_partners');
 updateLocalStorageWithPaginationParams('click', '#partner-pagination a', 'back_link_partners');
 
-document.addEventListener('click', (evt) => {
+document.getElementById('user-list-results')?.addEventListener('click', (evt) => {
   const target = evt.target.closest('.btn-edit-partner-user');
-  if (!target) return;
+  if (target) {
+    handleEditPartnerUser(target);
+  }
+});
 
+function handleEditPartnerUser(target) {
   const refreshUrl = target.dataset.refreshUrl;
   document.querySelector('#fr-modal-user-edit button[type="submit"]').disabled = true;
   document.querySelector('#fr-modal-user-edit-title').innerHTML = 'Chargement en cours...';
@@ -246,7 +257,7 @@ document.addEventListener('click', (evt) => {
   fetch(refreshUrl).then((response) => {
     updateModaleFromResponse(response, '#fr-modal-user-edit', addEventListenerOnFormUser);
   });
-});
+}
 
 const modalPartnerUserCreate = document?.querySelector('#fr-modal-user-create');
 if (modalPartnerUserCreate) {
