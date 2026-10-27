@@ -97,10 +97,14 @@ export default defineComponent({
     },
     modelValue(newValue: string[]) {
       this.selectedValues = [...newValue]
+    },
+    isOpen(open: boolean) {
+      if (open) {
+        document.addEventListener('click', this.handleClickOutside)
+      } else {
+        document.removeEventListener('click', this.handleClickOutside)
+      }
     }
-  },
-  mounted() {
-    document.addEventListener('click', this.handleClickOutside)
   },
   beforeUnmount() {
     document.removeEventListener('click', this.handleClickOutside)

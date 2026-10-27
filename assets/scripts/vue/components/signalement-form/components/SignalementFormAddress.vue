@@ -299,8 +299,14 @@ export default defineComponent({
       this.$nextTick(() => this.initMap())
     }
   },
-  mounted () {
-    document.addEventListener('click', this.handleClickOutside)
+  watch: {
+    'suggestions.length' (length: number) {
+      if (length > 0) {
+        document.addEventListener('click', this.handleClickOutside)
+      } else {
+        document.removeEventListener('click', this.handleClickOutside)
+      }
+    }
   },
   beforeUnmount () {
     document.removeEventListener('click', this.handleClickOutside)

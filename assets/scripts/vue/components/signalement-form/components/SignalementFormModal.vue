@@ -4,7 +4,7 @@
     :aria-labelledby="label !== '' ? id + '-fr-modal-title' : undefined"
     :id="id"
     class="fr-modal"
-    ref="modalDialog"
+    @click.self="closeModal"
     >
     <div class="fr-container fr-container--fluid fr-container-md">
       <div class="fr-grid-row fr-grid-row--center">
@@ -32,7 +32,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, Ref } from 'vue'
+import { defineComponent } from 'vue'
 
 export default defineComponent({
   name: 'SignalementFormModal',
@@ -59,21 +59,22 @@ export default defineComponent({
       if (event.key === 'Escape') {
         this.closeModal()
       }
-    },
-    handleClickOutside (event: any) {
-      const modalDialog = this.$refs.modalDialog as Ref<HTMLElement>
-      if (modalDialog && event.target === modalDialog) {
-        this.closeModal()
-      }
     }
   },
-  mounted () {
-    document.addEventListener('keyup', this.handleEscapeKey)
-    document.addEventListener('click', this.handleClickOutside)
+  watch: {
+    modelValue: {
+      handler (opened: boolean) {
+        if (opened) {
+          document.addEventListener('keyup', this.handleEscapeKey)
+        } else {
+          document.removeEventListener('keyup', this.handleEscapeKey)
+        }
+      },
+      immediate: true
+    }
   },
   beforeUnmount () {
     document.removeEventListener('keyup', this.handleEscapeKey)
-    document.removeEventListener('click', this.handleClickOutside)
   }
 })
 </script>
