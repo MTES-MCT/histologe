@@ -89,7 +89,7 @@
 
     {{ form_end(form) }}
 
-    <section class="fr-col-12">
+    <section class="fr-col-12" id="user-list-results">
         {% set tableHead %}
             {% if is_granted('ROLE_ADMIN') or (is_granted('ROLE_ADMIN_TERRITORY') and app.user.userPartners|length > 1) %}
                 <th scope="col">Territoire</th>
