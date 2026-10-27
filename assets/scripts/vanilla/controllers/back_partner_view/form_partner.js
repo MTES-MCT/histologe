@@ -134,7 +134,7 @@ document.getElementById('view-agent-list')?.addEventListener('click', (evt) => {
   const transferBtn = evt.target.closest('.btn-transfer-partner-user');
   if (transferBtn) {
     document.querySelector('#fr-modal-user-transfer_username').textContent =
-      transferBtn.getAttribute('data-username');
+      transferBtn.dataset.username;
     histoUpdateValueFromData('#fr-modal-user-transfer_userid', 'data-userid', transferBtn);
     return;
   }
@@ -142,10 +142,10 @@ document.getElementById('view-agent-list')?.addEventListener('click', (evt) => {
   const deleteBtn = evt.target.closest('.btn-delete-partner-user');
   if (deleteBtn) {
     document.querySelectorAll('.fr-modal-user-delete_username').forEach((userItem) => {
-      userItem.textContent = deleteBtn.getAttribute('data-username');
+      userItem.textContent = deleteBtn.dataset.username;
     });
     document.querySelectorAll('.fr-modal-user-delete_useremail').forEach((userItem) => {
-      userItem.textContent = deleteBtn.getAttribute('data-useremail');
+      userItem.textContent = deleteBtn.dataset.useremail;
     });
     histoUpdateValueFromData('#fr-modal-user-delete_userid', 'data-userid', deleteBtn);
     return;
@@ -163,7 +163,7 @@ if (document.getElementById('search-partner-form')) {
     if (!target) return;
 
     document.querySelectorAll('.fr-modal-partner-delete_name').forEach((userItem) => {
-      userItem.textContent = target.getAttribute('data-partnername');
+      userItem.textContent = target.dataset.partnername;
     });
     histoUpdateValueFromData('#fr-modal-partner-delete_partnerid', 'data-partnerid', target);
   });
