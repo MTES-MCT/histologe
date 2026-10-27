@@ -6,6 +6,7 @@ use App\Entity\Arrete;
 use App\Entity\User;
 use App\Form\SearchArreteType;
 use App\Repository\ArreteRepository;
+use App\Security\Voter\ArreteVoter;
 use App\Service\ListFilters\SearchArrete;
 use App\Service\MessageHelper;
 use App\Utils\FormHelper;
@@ -69,7 +70,7 @@ class ArreteController extends AbstractController
     }
 
     #[Route('/supprimer/{arrete}', name: 'back_territory_management_arrete_delete', methods: ['POST'])]
-    #[IsGranted('ROLE_ADMIN_TERRITORY')]
+    #[IsGranted(ArreteVoter::ARRETE_DELETE, subject: 'arrete')]
     public function delete(Arrete $arrete, Request $request, EntityManagerInterface $entityManager): Response
     {
         if (!$this->isCsrfTokenValid('arrete_delete', $request->query->get('_token'))) {

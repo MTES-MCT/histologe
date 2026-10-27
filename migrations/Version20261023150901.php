@@ -32,8 +32,8 @@ final class Version20261023150901 extends AbstractMigration
             $dateMainLevee = isset($information['arrete_mainlevee_date']) ? \DateTimeImmutable::createFromFormat('!d/m/Y', $information['arrete_mainlevee_date']) ?: null : null;
 
             $this->addSql(
-                'INSERT INTO arrete (address_id, date_arrete, arrete_type, date_main_levee, additional_information, arrete_creation_source, signalement_id, provider_id)
-                VALUES (:address_id, :date_arrete, :arrete_type, :date_main_levee, :additional_information, :arrete_creation_source, :signalement_id, :provider_id)',
+                'INSERT INTO arrete (address_id, date_arrete, arrete_type, date_main_levee, additional_information, arrete_creation_source, signalement_id, provider_id, imported_at)
+                VALUES (:address_id, :date_arrete, :arrete_type, :date_main_levee, :additional_information, :arrete_creation_source, :signalement_id, :provider_id, :imported_at)',
                 [
                     'address_id' => $intervention['address_id'],
                     'date_arrete' => (new \DateTimeImmutable($intervention['scheduled_at']))->format('Y-m-d'),
@@ -48,6 +48,7 @@ final class Version20261023150901 extends AbstractMigration
                     'arrete_creation_source' => ArreteCreationSource::ESABORA->value,
                     'signalement_id' => $intervention['signalement_id'],
                     'provider_id' => $intervention['provider_id'],
+                    'imported_at' => (new \DateTimeImmutable())->format('Y-m-d H:i:s'),
                 ],
             );
         }
