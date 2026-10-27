@@ -137,6 +137,7 @@ function handleSidePanelSubmit(elements) {
 
     addressContainer?.classList.remove('import-csv-card--valid-address');
     addressContainer?.classList.add('fr-input-group--error');
+    addressContainer?.querySelector('[data-arrete-adresse-error]')?.classList.remove('fr-hidden');
 
     if (!card.classList.contains('import-csv-card--ignored')) {
       card.classList.remove('import-csv-card--valid');
@@ -312,7 +313,7 @@ async function handleConfirm(elements) {
     });
 
     if (!response.ok) {
-      showErrors(elements, ["Une erreur est survenue lors de la validation de l'import."]);
+      showErrors(elements, ['Une erreur est survenue lors de la validation de l\'import.']);
       updateValidationState(elements);
       return;
     }
@@ -453,6 +454,8 @@ function configureAddressInput(clone, row, index) {
   const input = clone.querySelector('[data-arrete-adresse-complete]');
   const label = clone.querySelector('[data-arrete-adresse-complete-label]');
   const helpText = clone.querySelector('[data-arrete-adresse-help]');
+  const errorText = clone.querySelector('[data-arrete-adresse-error]');
+  const addressContainer = clone.querySelector('[data-address-container]');
   const wrap = input?.closest('.fr-input-wrap');
   const form = clone.querySelector('form');
 
@@ -460,12 +463,16 @@ function configureAddressInput(clone, row, index) {
 
   const id = `address-complete-${index}`;
   const helpId = `address-help-${index}`;
+  const errorId = `address-error-${index}`;
   form.id = `form-address-${index}`;
   input.id = id;
   input.name = id;
-  input.setAttribute('aria-describedby', helpId);
+  input.setAttribute('aria-describedby', `${helpId} ${errorId}`);
   if (helpText) {
     helpText.id = helpId;
+  }
+  if (errorText) {
+    errorText.id = errorId;
   }
   input.value =
     `${row.numeroVoie ?? ''} ${row.nomVoie ?? ''} ${row.codePostal ?? ''} ${row.commune ?? ''}`.trim();
@@ -474,11 +481,14 @@ function configureAddressInput(clone, row, index) {
   const isValid = (!row.addressToValidate || Boolean(row.rnbId)) && !row.isIgnored;
   if (isValid) {
     wrap?.classList.add('fr-icon-check-line');
-    clone
-      .querySelector('[data-address-container]')
-      ?.classList.add('import-csv-card--valid-address');
+    addressContainer?.classList.add('import-csv-card--valid-address');
+    addressContainer?.classList.remove('fr-input-group--error');
+    errorText?.classList.add('fr-hidden');
   } else if (!row.isIgnored) {
     wrap?.classList.add('fr-icon-search-line');
+    addressContainer?.classList.remove('import-csv-card--valid-address');
+    addressContainer?.classList.add('fr-input-group--error');
+    errorText?.classList.remove('fr-hidden');
   }
 
   const suggestions = clone.querySelector('[data-arrete-adresse-suggestions]');
@@ -682,7 +692,8 @@ function configureIgnoreCheckbox(elements, clone, card, index) {
     if (isIgnored) {
       card?.classList.add('import-csv-card--ignored');
       card?.classList.remove('import-csv-card--to-check', 'import-csv-card--valid');
-      addressContainer?.classList.remove('import-csv-card--valid-address');
+      addressContainer?.classList.remove('import-csv-card--valid-address', 'fr-input-group--error');
+      addressContainer?.querySelector('[data-arrete-adresse-error]')?.classList.add('fr-hidden');
       if (addressInput) {
         addressInput.readOnly = true;
       }
@@ -706,6 +717,14 @@ function configureIgnoreCheckbox(elements, clone, card, index) {
       card?.classList.add(isValid ? 'import-csv-card--valid' : 'import-csv-card--to-check');
       if (isValid) {
         addressContainer?.classList.add('import-csv-card--valid-address');
+        addressContainer?.classList.remove('fr-input-group--error');
+        addressContainer?.querySelector('[data-arrete-adresse-error]')?.classList.add('fr-hidden');
+      } else {
+        addressContainer?.classList.remove('import-csv-card--valid-address');
+        addressContainer?.classList.add('fr-input-group--error');
+        addressContainer
+          ?.querySelector('[data-arrete-adresse-error]')
+          ?.classList.remove('fr-hidden');
       }
     }
 
