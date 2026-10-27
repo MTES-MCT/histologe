@@ -16,13 +16,15 @@
 </template>
 
 <script setup lang="ts">
-import { onMounted } from 'vue'
+import { defineAsyncComponent, onMounted } from 'vue'
 import { store } from './composables/useAddressesHistoryStore'
 import { useAddressesHistoryFilters } from './composables/useAddressesHistoryFilters'
 
 import AddressesHistoryHeader from './components/AddressesHistoryHeader.vue'
-import AddressesHistoryMap from './components/AddressesHistoryMap.vue'
 import AddressesHistoryList from './components/AddressesHistoryList.vue'
+
+// Chargé à la demande : la carte embarque maplibre-gl et carte-facile, inutiles en vue liste
+const AddressesHistoryMap = defineAsyncComponent(() => import('./components/AddressesHistoryMap.vue'))
 
 // State
 const sharedState = store.state

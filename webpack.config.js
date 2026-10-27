@@ -16,6 +16,7 @@ const vendorVersions = {
     'build/leaflet.vectorgrid/': readVersion('leaflet.vectorgrid'),
     'build/tinymce/': `${readVersion('tinymce')}-${readVersion('tinymce-i18n')}`,
 };
+const maplibreVersion = readVersion('maplibre-gl');
 
 Encore
     // directory where compiled assets will be stored
@@ -60,11 +61,16 @@ Encore
         from: './node_modules/leaflet/dist/images',
         to: 'images/leaflet/[name].[ext]'
     })
-    // Voir setWorkerUrl() dans vanilla/services/component/maplibre-worker.js.
+    // maplibre-gl est chargé comme module ES natif depuis ce dossier (voir addExternals plus bas) :
+    // il y retrouve son worker via import.meta.url, et le worker partage le même maplibre-gl-shared.mjs.
+    // Le numéro de version dans le chemin invalide le cache navigateur, y compris pour les imports relatifs entre ces fichiers.
     .copyFiles({
         from: './node_modules/maplibre-gl/dist/',
-        to: 'maplibre-gl/[name].[ext]',
-        pattern: /maplibre-gl-(worker|shared)\.mjs$/
+        to: `maplibre-gl/${maplibreVersion}/[name].[ext]`,
+        pattern: /maplibre-gl(-worker|-shared)?\.mjs$/
+    })
+    .addExternals({
+        'maplibre-gl': `import /build/maplibre-gl/${maplibreVersion}/maplibre-gl.mjs`,
     })
 
     // public path used by the web server to access the output path
@@ -149,4 +155,9 @@ Encore.enableStimulusBridge('./assets/controllers.json')
     }))
 ;
 
-export default await Encore.getWebpackConfig();
+const config = await Encore.getWebpackConfig();
+// Sans browserslist, Webpack suppose un environnement ES5 : on déclare le support de import(),
+// nécessaire pour charger maplibre-gl comme module ES natif (external de type "import").
+config.output.environment = { ...config.output.environment, dynamicImport: true };
+
+export default config;
