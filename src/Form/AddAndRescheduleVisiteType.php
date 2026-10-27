@@ -89,6 +89,7 @@ class AddAndRescheduleVisiteType extends AbstractType
                 'label' => 'Opérateur de visite <span class="fr-text-default--error">*</span>',
                 'label_html' => true,
                 'mapped' => false,
+                'placeholder' => 'Sélectionnez un opérateur de visite',
                 'choices' => [...$partners, 'extern'],
                 'choice_label' => static fn ($choice) => $choice instanceof Partner ? mb_strtoupper($choice->getNom()) : 'Opérateur Externe',
                 'choice_value' => static fn ($choice) => $choice instanceof Partner ? (string) $choice->getId() : ('extern' === $choice ? 'extern' : ''),

@@ -8,13 +8,13 @@
         <div class="side-panel__content fr-mx-3w">
             <h1 id="panel-edit-coordonnees-bailleur-old-title" class="fr-modal__title title-blue-france">Modifier les coordonnées du bailleur</h1>
 
-            <form method="POST" id="form-edit-coordonnees-bailleur-old" enctype="application/json" action="{{ path('back_signalement_edit_coordonnees_bailleur_old',{uuid:signalement.uuid}) }}">
+            <form method="POST" id="form-edit-coordonnees-bailleur-old" action="{{ path('back_signalement_edit_coordonnees_bailleur_old',{uuid:signalement.uuid}) }}">
                 <p>Tous les champs sont obligatoires, sauf mention contraire.</p>
 
                 <div class="fr-select-group">
                     <label class="fr-label" for="coordonneesBailleurTypeProprio">Type</label>
                     <select class="fr-select" id="coordonneesBailleurTypeProprio" name="typeProprio">
-                        <option value="" disabled hidden>Sélectionnez un choix</option>
+                        <option value="" disabled hidden>Sélectionnez une option</option>
                         <option value="" {{ signalement.typeProprio is same as '' ? 'selected' : '' }}>N/C</option>
                         <option value="{{ enum('App\\Entity\\Enum\\ProprioType').ORGANISME_SOCIETE.name }}" {{ signalement.typeProprio is same as enum('App\\Entity\\Enum\\ProprioType').ORGANISME_SOCIETE ? 'selected' : '' }}>{{ enum('App\\Entity\\Enum\\ProprioType').ORGANISME_SOCIETE.label }}</option>
                         <option value="{{ enum('App\\Entity\\Enum\\ProprioType').PARTICULIER.name }}" {{ signalement.typeProprio is same as enum('App\\Entity\\Enum\\ProprioType').PARTICULIER ? 'selected' : '' }}>{{ enum('App\\Entity\\Enum\\ProprioType').PARTICULIER.label }}</option>

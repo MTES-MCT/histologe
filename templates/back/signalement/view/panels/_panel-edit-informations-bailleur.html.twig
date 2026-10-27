@@ -7,14 +7,14 @@
         <div class="side-panel__content fr-mx-3w">
             <h1 id="panel-edit-informations-bailleur-title" class="fr-modal__title title-blue-france">Modifier les informations du bailleur</h1>
 
-            <form method="POST" id="form-edit-informations-bailleur" enctype="application/json" action="{{ path('back_signalement_edit_informations_bailleur',{uuid:signalement.uuid}) }}">
+            <form method="POST" id="form-edit-informations-bailleur" action="{{ path('back_signalement_edit_informations_bailleur',{uuid:signalement.uuid}) }}">
                 <p>Tous les champs sont facultatifs.</p>
 
                 <div class="fr-select-group">
                     {% set bailleurBeneficiaireRsa = signalement.informationComplementaire ? signalement.informationComplementaire.informationsComplementairesSituationBailleurBeneficiaireRsa : null %}
                     <label class="fr-label" for="coordonneesBailleurBeneficiaireRsa">Bénéficiaire RSA (facultatif)</label>
                     <select class="fr-select" id="coordonneesBailleurBeneficiaireRsa" name="beneficiaireRsa">
-                        <option value="" {{ bailleurBeneficiaireRsa not in ['oui', 'non'] ? 'selected' : '' }}></option>
+                        <option value="" {{ bailleurBeneficiaireRsa not in ['oui', 'non'] ? 'selected' : '' }} disabled hidden>Sélectionnez une option</option>
                         <option value="oui" {{ bailleurBeneficiaireRsa is same as 'oui' ? 'selected' : '' }}>Oui</option>
                         <option value="non" {{ bailleurBeneficiaireRsa is same as 'non' ? 'selected' : '' }}>Non</option>
                     </select>
@@ -34,7 +34,7 @@
                     {% set bailleurBeneficiaireFsl = signalement.informationComplementaire ? signalement.informationComplementaire.informationsComplementairesSituationBailleurBeneficiaireFsl : null %}
                     <label class="fr-label" for="coordonneesBailleurBeneficiaireFsl">Bénéficiaire FSL (facultatif)</label>
                     <select class="fr-select" id="coordonneesBailleurBeneficiaireFsl" name="beneficiaireFsl">
-                        <option value="" {{ bailleurBeneficiaireFsl not in ['oui', 'non'] ? 'selected' : '' }}></option>
+                        <option value="" {{ bailleurBeneficiaireFsl not in ['oui', 'non'] ? 'selected' : '' }} disabled hidden>Sélectionnez une option</option>
                         <option value="oui" {{ bailleurBeneficiaireFsl is same as 'oui' ? 'selected' : '' }}>Oui</option>
                         <option value="non" {{ bailleurBeneficiaireFsl is same as 'non' ? 'selected' : '' }}>Non</option>
                     </select>

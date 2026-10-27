@@ -7,7 +7,7 @@
         <div class="side-panel__content fr-mx-3w">
             <h1 id="panel-edit-procedure-demarches-title" class="fr-modal__title title-blue-france">Modifier procédure et démarches</h1>
 
-            <form method="POST" id="form-edit-procedure-demarches" enctype="application/json" action="{{ path('back_signalement_edit_procedure_demarches',{uuid:signalement.uuid}) }}">
+            <form method="POST" id="form-edit-procedure-demarches" action="{{ path('back_signalement_edit_procedure_demarches',{uuid:signalement.uuid}) }}">
                 <p>Tous les champs sont obligatoires, sauf mention contraire.</p>
 
                 <div class="fr-select-group">
@@ -21,7 +21,7 @@
                         }}
                     </label>
                     <select class="fr-select" id="procedureDemarchesIsProprioAverti" name="isProprioAverti">
-                        <option value="" {{ isProprioAverti is same as null ? 'selected' : '' }}></option>
+                        <option value="" {{ isProprioAverti is same as null ? 'selected' : '' }} disabled hidden>Sélectionnez une option</option>
                         <option value="1" {{ isProprioAverti is same as true ? 'selected' : '' }}>Oui</option>
                         <option value="0" {{ isProprioAverti is same as false ? 'selected' : '' }}>Non</option>
                     </select>
@@ -40,7 +40,7 @@
                     </label>
                     {% set MoyenContact = enum('\\App\\Entity\\Enum\\MoyenContact') %}
                     <select class="fr-select" id="procedureDemarchesinfoProcedureBailMoyen" name="infoProcedureBailMoyen">
-                        <option value="" {{ infoProcedureBailMoyen|upper not in MoyenContact.names() ? 'selected' : '' }}></option>
+                        <option value="" {{ infoProcedureBailMoyen|upper not in MoyenContact.names() ? 'selected' : '' }} disabled hidden>Sélectionnez une option</option>
                         <option value="courrier" {{ infoProcedureBailMoyen is same as 'courrier' ? 'selected' : '' }}>Courrier</option>
                         <option value="email" {{ infoProcedureBailMoyen is same as 'email' ? 'selected' : '' }}>E-mail</option>
                         <option value="telephone" {{ infoProcedureBailMoyen is same as 'telephone' ? 'selected' : '' }}>Téléphone</option>
@@ -91,7 +91,7 @@
                         }}
                     </label>
                     <select class="fr-select" id="procedureDemarchesInfoProcedureAssuranceContactee" name="infoProcedureAssuranceContactee">
-                        <option value="" {{ infoProcedureAssuranceContactee not in ['oui', 'non', 'pas_assurance_logement'] ? 'selected' : '' }}></option>
+                        <option value="" {{ infoProcedureAssuranceContactee not in ['oui', 'non', 'pas_assurance_logement'] ? 'selected' : '' }} disabled hidden>Sélectionnez une option</option>
                         <option value="oui" {{ infoProcedureAssuranceContactee is same as 'oui' ? 'selected' : '' }}>Oui</option>
                         <option value="non" {{ infoProcedureAssuranceContactee is same as 'non' ? 'selected' : '' }}>Non</option>
                         <option value="pas_assurance_logement" {{ infoProcedureAssuranceContactee is same as 'pas_assurance_logement' ? 'selected' : '' }}>Pas d'assurance logement</option>

@@ -59,10 +59,6 @@ class AffectationToggleType extends AbstractType
     public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([
-            'attr' => [
-                'id' => 'signalement-affectation-form',
-                'data-submit-type' => 'formData',
-            ],
             'validation_groups' => false,
         ]);
     }

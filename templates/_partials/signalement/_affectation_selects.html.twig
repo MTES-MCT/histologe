@@ -1,1 +1,3 @@
-{{ form(affectationToggleForm) }}
+{{ form_start(affectationToggleForm, {attr: {id: 'signalement-affectation-form', 'data-submit-type': 'formData'}}) }}
+    {{ form_widget(affectationToggleForm) }}
+{{ form_end(affectationToggleForm) }}

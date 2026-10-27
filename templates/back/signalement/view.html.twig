@@ -43,10 +43,11 @@
             <div data-ajax-form>
                 {% include 'back/signalement/view/panels/_panel-invite-tiers.html.twig' %}
             </div>
-        {% endif %}
+        {% else %}
         <div data-ajax-form>
             {% include 'back/signalement/view/panels/_panel-edit-coordonnees-tiers.html.twig' %}
         </div>
+        {% endif %}
         <div data-ajax-form>
             {% include 'back/signalement/view/panels/_panel-edit-coordonnees-foyer.html.twig' %}
         </div>
@@ -179,7 +180,6 @@
     <div data-ajax-form>
         {% include 'back/signalement/view/panels/_panel-edit-suivi.html.twig' %}
     </div>
-    {% include '_partials/_modal_historique_affectation.html.twig' %}
 
     {% if is_granted('SIGN_REOPEN', signalement) %}
         {% include 'back/signalement/view/panels/_panel-reopen-signalement.html.twig' with { 'all': '1' } %}

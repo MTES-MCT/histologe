@@ -48,6 +48,10 @@ export function initTinyMCE(selector) {
       toolbar: toolbar,
       ui_mode: 'split', // on attache le menu de suggestions à l'éditeur
       menubar: false,
+      // Accessibilité : le bouton de redimensionnement de l'éditeur n'est pas valide au niveau du RGAA
+      // Option possible : supprimer cette fonctionnalité en passant resize: false, 
+      // mais on perd la possibilité de redimensionner l'éditeur
+      // L'impact est quasi-nul. On choisit d'être non valide à ce niveau-là
       height: 320,
       content_style: 'html { height: 100%; } body { min-height: 100%; margin: 0; padding: 1rem; box-sizing: border-box; }',
       setup: (ed) => {
@@ -79,6 +83,26 @@ export function initTinyMCE(selector) {
         });
         //Les fenêtres doivent rester dans le dialog natif (side-panel), au-dessus de son backdrop. (concerne la fenêtre du bouton lien)
         ed.on('init', () => {
+          // Accessibilité : rattacher le label au conteneur de l'éditeur
+          // Sinon le label est rattaché au textarea qui est caché
+          const textarea = ed.getElement();
+          const label = document.querySelector(`label[for="${textarea.id}"]`);
+          const labelText = label?.firstChild?.textContent.trim() || 'Éditeur de texte';
+          if (label) {
+            label.id ||= `${textarea.id}-label`;
+            label.removeAttribute('for');
+            label.addEventListener('click', () => ed.focus());
+            ed.getContainer().setAttribute('aria-labelledby', label.id);
+          }
+          ed.iframeElement.title = labelText;
+          ed.getDoc().documentElement.lang = 'fr';
+          const body = ed.getBody();
+          body.setAttribute('role', 'textbox');
+          body.setAttribute('aria-multiline', 'true');
+          body.setAttribute('aria-label', labelText);
+          // Les boutons svg de l'éditeur sont décoratifs, on les masque aux lecteurs d'écran
+          ed.getContainer().querySelectorAll('svg').forEach((svg) => svg.setAttribute('aria-hidden', 'true'));
+
           const panel = ed.getElement().closest('dialog.side-panel');
           if (panel) {
             panel.appendChild(ed.theme.getSinkElement('dialog'));

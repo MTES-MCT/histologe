@@ -8,12 +8,12 @@
         <div class="side-panel__content fr-mx-3w">
             <h1 id="panel-edit-composition-logement-title" class="fr-modal__title title-blue-france">Modifier la description du logement</h1>
     
-            <form method="POST" id="form-edit-composition-logement" enctype="application/json" action="{{ path('back_signalement_edit_composition_logement',{uuid:signalement.uuid}) }}">
+            <form method="POST" id="form-edit-composition-logement" action="{{ path('back_signalement_edit_composition_logement',{uuid:signalement.uuid}) }}">
                 <p>Tous les champs sont obligatoires, sauf mention contraire.</p>
                 <div class="fr-select-group">
                     <label class="fr-label" for="compositionLogementType">Type</label>
                     <select class="fr-select" id="compositionLogementType" name="type">
-                        <option value="" disabled hidden>Sélectionnez un choix</option>
+                        <option value="" disabled hidden>Sélectionnez une option</option>
                         <option value="appartement" {{ signalement.natureLogement is same as 'appartement' ? 'selected' : '' }}>Appartement</option>
                         <option value="maison" {{ signalement.natureLogement is same as 'maison' ? 'selected' : '' }}>Maison</option>
                         <option value="autre" {{ signalement.natureLogement is same as 'autre' ? 'selected' : '' }}>Autre</option>
@@ -41,7 +41,7 @@
                         }}
                     </label>
                     <select class="fr-select" id="compositionLogementTypeCompositionLogement" name="typeCompositionLogement">
-                        <option value="" {{ compositionLogementPieceUnique not in ['piece_unique', 'plusieurs_pieces'] ? 'selected' : '' }}></option>
+                        <option value="" {{ compositionLogementPieceUnique not in ['piece_unique', 'plusieurs_pieces'] ? 'selected' : '' }} disabled hidden>Sélectionnez une option</option>
                         <option value="piece_unique" {{ compositionLogementPieceUnique is same as 'piece_unique' ? 'selected' : '' }}>Pièce unique</option>
                         <option value="plusieurs_pieces" {{ compositionLogementPieceUnique is same as 'plusieurs_pieces' ? 'selected' : '' }}>Plusieurs pièces</option>
                     </select>
@@ -68,11 +68,11 @@
 
                 <div class="fr-input-group">
                     <label class="fr-label" for="nombreEtages">Nombre d'étages (facultatif)</label>
-                    <input class="fr-input" type="number" id="nombreEtages" name="nombreEtages" value="{{ signalement.informationComplementaire.informationsComplementairesLogementNombreEtages ?? 1 }}" maxlength="5">
+                    <input class="fr-input" type="number" id="nombreEtages" name="nombreEtages" value="{{ signalement.informationComplementaire.informationsComplementairesLogementNombreEtages ?? 1 }}" max="999">
                 </div>
 
                 <div id="signalement-edit-composition-etage-container" class="fr-mb-6v">
-                    {% include 'back/signalement/view/panels/_panel-edit-composition-logement-etage.html.twig' %}
+                    {% include 'back/signalement/view/panels/_panel-edit-composition-logement-etage.html.twig' with {'context': 'composition-logement'} %}
                 </div>
 
                 <div class="fr-select-group">
@@ -98,7 +98,7 @@
                     {% endif %}
                     <label class="fr-label" for="compositionLogementAppartementAvecFenetres">Avec fenêtres ?</label>
                     <select class="fr-select" id="compositionLogementAppartementAvecFenetres" name="avecFenetres">
-                        <option value="" {{ typeLogementAppartementAvecFenetres not in ['oui', 'non'] ? 'selected' : '' }}></option>
+                        <option value="" {{ typeLogementAppartementAvecFenetres not in ['oui', 'non'] ? 'selected' : '' }} disabled hidden>Sélectionnez une option</option>
                         <option value="oui" {{ typeLogementAppartementAvecFenetres is same as 'oui' ? 'selected' : '' }}>Oui</option>
                         <option value="non" {{ typeLogementAppartementAvecFenetres is same as 'non' ? 'selected' : '' }}>Non</option>
                     </select>
@@ -116,7 +116,7 @@
                         }}
                     </label>
                     <select class="fr-select" id="compositionLogementTypeLogementCommoditesPieceAVivre9m" name="typeLogementCommoditesPieceAVivre9m">
-                        <option value="" {{ typeLogementCommoditesPieceAVivre9m not in ['oui', 'non', 'nsp'] ? 'selected' : '' }}></option>
+                        <option value="" {{ typeLogementCommoditesPieceAVivre9m not in ['oui', 'non', 'nsp'] ? 'selected' : '' }} disabled hidden>Sélectionnez une option</option>
                         <option value="oui" {{ typeLogementCommoditesPieceAVivre9m is same as 'oui' ? 'selected' : '' }}>Oui</option>
                         <option value="non" {{ typeLogementCommoditesPieceAVivre9m is same as 'non' ? 'selected' : '' }}>Non</option>
                         <option value="nsp" {{ typeLogementCommoditesPieceAVivre9m is same as 'nsp' ? 'selected' : '' }}>Je ne sais pas</option>
@@ -127,7 +127,7 @@
                     {% set typeLogementCommoditesCuisine = signalement.typeCompositionLogement ? signalement.typeCompositionLogement.typeLogementCommoditesCuisine : null %}
                     <label class="fr-label" for="compositionLogementTypeLogementCommoditesCuisine">Cuisine (ou coin cuisine) dans le logement ?</label>
                     <select class="fr-select" id="compositionLogementTypeLogementCommoditesCuisine" name="typeLogementCommoditesCuisine">
-                        <option value="" {{ typeLogementCommoditesCuisine not in ['oui', 'non', 'nsp'] ? 'selected' : '' }}></option>
+                        <option value="" {{ typeLogementCommoditesCuisine not in ['oui', 'non', 'nsp'] ? 'selected' : '' }} disabled hidden>Sélectionnez une option</option>
                         <option value="oui" {{ typeLogementCommoditesCuisine is same as 'oui' ? 'selected' : '' }}>Oui</option>
                         <option value="non" {{ typeLogementCommoditesCuisine is same as 'non' ? 'selected' : '' }}>Non</option>
                         <option value="nsp" {{ typeLogementCommoditesCuisine is same as 'nsp' ? 'selected' : '' }}>Je ne sais pas</option>
@@ -138,7 +138,7 @@
                     {% set typeLogementCommoditesCuisineCollective = signalement.typeCompositionLogement ? signalement.typeCompositionLogement.typeLogementCommoditesCuisineCollective : null %}
                     <label class="fr-label" for="compositionLogementTypeLogementCommoditesCuisineCollective">Cuisine (ou coin cuisine) collective ? (si pas de cuisine)</label>
                     <select class="fr-select" id="compositionLogementTypeLogementCommoditesCuisineCollective" name="typeLogementCommoditesCuisineCollective">
-                        <option value="" {{ typeLogementCommoditesCuisineCollective not in ['oui', 'non'] ? 'selected' : '' }}></option>
+                        <option value="" {{ typeLogementCommoditesCuisineCollective not in ['oui', 'non'] ? 'selected' : '' }} disabled hidden>Sélectionnez une option</option>
                         <option value="oui" {{ typeLogementCommoditesCuisineCollective is same as 'oui' ? 'selected' : '' }}>Oui</option>
                         <option value="non" {{ typeLogementCommoditesCuisineCollective is same as 'non' ? 'selected' : '' }}>Non</option>
                     </select>
@@ -148,7 +148,7 @@
                     {% set typeLogementCommoditesSalleDeBain = signalement.typeCompositionLogement ? signalement.typeCompositionLogement.typeLogementCommoditesSalleDeBain : null %}
                     <label class="fr-label" for="compositionLogementTypeLogementCommoditesSalleDeBain">SDB (baignoire ou douche) dans le logement ?</label>
                     <select class="fr-select" id="compositionLogementTypeLogementCommoditesSalleDeBain" name="typeLogementCommoditesSalleDeBain">
-                        <option value="" {{ typeLogementCommoditesSalleDeBain not in ['oui', 'non', 'nsp'] ? 'selected' : '' }}></option>
+                        <option value="" {{ typeLogementCommoditesSalleDeBain not in ['oui', 'non', 'nsp'] ? 'selected' : '' }} disabled hidden>Sélectionnez une option</option>
                         <option value="oui" {{ typeLogementCommoditesSalleDeBain is same as 'oui' ? 'selected' : '' }}>Oui</option>
                         <option value="non" {{ typeLogementCommoditesSalleDeBain is same as 'non' ? 'selected' : '' }}>Non</option>
                         <option value="nsp" {{ typeLogementCommoditesSalleDeBain is same as 'nsp' ? 'selected' : '' }}>Je ne sais pas</option>
@@ -159,7 +159,7 @@
                     {% set typeLogementCommoditesSalleDeBainCollective = signalement.typeCompositionLogement ? signalement.typeCompositionLogement.typeLogementCommoditesSalleDeBainCollective : null %}
                     <label class="fr-label" for="compositionLogementTypeLogementCommoditesSalleDeBainCollective">SDB (baignoire ou douche) collective ? (si pas de salle de bain)</label>
                     <select class="fr-select" id="compositionLogementTypeLogementCommoditesSalleDeBainCollective" name="typeLogementCommoditesSalleDeBainCollective">
-                        <option value="" {{ typeLogementCommoditesSalleDeBainCollective not in ['oui', 'non'] ? 'selected' : '' }}></option>
+                        <option value="" {{ typeLogementCommoditesSalleDeBainCollective not in ['oui', 'non'] ? 'selected' : '' }} disabled hidden>Sélectionnez une option</option>
                         <option value="oui" {{ typeLogementCommoditesSalleDeBainCollective is same as 'oui' ? 'selected' : '' }}>Oui</option>
                         <option value="non" {{ typeLogementCommoditesSalleDeBainCollective is same as 'non' ? 'selected' : '' }}>Non</option>
                     </select>
@@ -169,7 +169,7 @@
                     {% set typeLogementCommoditesWc = signalement.typeCompositionLogement ? signalement.typeCompositionLogement.typeLogementCommoditesWc : null %}
                     <label class="fr-label" for="compositionLogementTypeLogementCommoditesWc">WC dans le logement ?</label>
                     <select class="fr-select" id="compositionLogementTypeLogementCommoditesWc" name="typeLogementCommoditesWc">
-                        <option value="" {{ typeLogementCommoditesWc not in ['oui', 'non', 'nsp'] ? 'selected' : '' }}></option>
+                        <option value="" {{ typeLogementCommoditesWc not in ['oui', 'non', 'nsp'] ? 'selected' : '' }} disabled hidden>Sélectionnez une option</option>
                         <option value="oui" {{ typeLogementCommoditesWc is same as 'oui' ? 'selected' : '' }}>Oui</option>
                         <option value="non" {{ typeLogementCommoditesWc is same as 'non' ? 'selected' : '' }}>Non</option>
                         <option value="nsp" {{ typeLogementCommoditesWc is same as 'nsp' ? 'selected' : '' }}>Je ne sais pas</option>
@@ -180,7 +180,7 @@
                     {% set typeLogementCommoditesWcCollective = signalement.typeCompositionLogement ? signalement.typeCompositionLogement.typeLogementCommoditesWcCollective : null %}
                     <label class="fr-label" for="compositionLogementTypeLogementCommoditesWcCollective">WC collectifs ? (si pas de wc)</label>
                     <select class="fr-select" id="compositionLogementTypeLogementCommoditesWcCollective" name="typeLogementCommoditesWcCollective">
-                        <option value="" {{ typeLogementCommoditesWcCollective not in ['oui', 'non'] ? 'selected' : '' }}></option>
+                        <option value="" {{ typeLogementCommoditesWcCollective not in ['oui', 'non'] ? 'selected' : '' }} disabled hidden>Sélectionnez une option</option>
                         <option value="oui" {{ typeLogementCommoditesWcCollective is same as 'oui' ? 'selected' : '' }}>Oui</option>
                         <option value="non" {{ typeLogementCommoditesWcCollective is same as 'non' ? 'selected' : '' }}>Non</option>
                     </select>
@@ -190,7 +190,7 @@
                     {% set typeLogementCommoditesWcCuisine = signalement.typeCompositionLogement ? signalement.typeCompositionLogement.typeLogementCommoditesWcCuisine : null %}
                     <label class="fr-label" for="compositionLogementTypeLogementCommoditesWcCuisine">WC et cuisine dans la même pièce ? (si cuisine et wc)</label>
                     <select class="fr-select" id="compositionLogementTypeLogementCommoditesWcCuisine" name="typeLogementCommoditesWcCuisine">
-                        <option value="" {{ typeLogementCommoditesWcCuisine not in ['oui', 'non'] ? 'selected' : '' }}></option>
+                        <option value="" {{ typeLogementCommoditesWcCuisine not in ['oui', 'non'] ? 'selected' : '' }} disabled hidden>Sélectionnez une option</option>
                         <option value="oui" {{ typeLogementCommoditesWcCuisine is same as 'oui' ? 'selected' : '' }}>Oui</option>
                         <option value="non" {{ typeLogementCommoditesWcCuisine is same as 'non' ? 'selected' : '' }}>Non</option>
                     </select>

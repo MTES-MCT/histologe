@@ -6,7 +6,7 @@
         <div class="side-panel__content fr-mx-3w">
             <h1 id="panel-edit-file-title" class="fr-modal__title title-blue-france">Editer le document</h1>
 
-            <form method="POST" name="form-edit-file" id="form-edit-file" enctype="application/json"
+            <form method="POST" name="form-edit-file" id="form-edit-file"
                 action="{{ path('back_signalement_edit_file',{uuid:signalement.uuid}) }}"
                 data-submit-type="formData"
                 >
@@ -29,9 +29,9 @@
                     <select class="fr-select" name="documentType" id="document-type-select"></select>
                 </div>                            
 
-                <div id="fr-modal-edit-file-description" class="fr-input-group fr-hidden fr-col-12  fr-mb-2w">
+                <div id="fr-modal-edit-file-description" class="fr-input-group fr-hidden fr-col-12 fr-mb-2w">
                     <label class="fr-label" for="fileDescription">Description (250 caractères maximum - facultatif) :</label>
-                    <textarea class="fr-input" type="text" id="fileDescription" name="description" maxlength="250">
+                    <textarea class="fr-input" id="fileDescription" name="description" maxlength="250">
                     </textarea>
                 </div>  
 
@@ -43,7 +43,7 @@
         <div class="side-panel__footer">
             <ul class="fr-btns-group fr-btns-group--right fr-btns-group--inline-reverse fr-btns-group--inline-sm fr-btns-group--icon-left">
                 <li>
-                    <button type="submit" class="fr-btn fr-btn--icon-left fr-icon-check-line" type="button" form="form-edit-file"
+                    <button type="submit" class="fr-btn fr-btn--icon-left fr-icon-check-line" form="form-edit-file"
                         >Valider</button>
                 </li>
                 <li>

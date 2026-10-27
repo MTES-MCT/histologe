@@ -8,7 +8,7 @@
             <h1 id="panel-reinit-affectation-title" class="fr-modal__title title-blue-france"
                 >Réaffecter le partenaire <span class="partner-nom"></span></h1>
                 <p>Voulez-vous vraiment réaffecter ce partenaire ?</p>
-                <form id="form-reinit-affectation" action="" method="POST" data-submit-type="formData">
+                <form id="form-reinit-affectation" method="POST" data-submit-type="formData">
                     <input type="hidden" name="_token" value="{{ csrf_token('reinit_affectation_'~signalement.uuid) }}">
                 </form>
         </div>
