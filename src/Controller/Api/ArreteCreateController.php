@@ -179,7 +179,6 @@ class ArreteCreateController extends AbstractController
         $affectation = $signalement->getAffectationForPartner($partner);
 
         $errors = $this->validator->validate($arreteRequest);
-        // le doublon n'est vérifié que si la payload est valide (date et type exploitables)
         if (0 === count($errors) && $this->arreteManager->arreteAlreadyExists($arreteRequest, $signalement)) {
             $errors->add(new ConstraintViolation(
                 'L\'arrêté existe déja.',
