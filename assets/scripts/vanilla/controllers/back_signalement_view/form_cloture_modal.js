@@ -32,7 +32,10 @@ function updateTravauxVisibilityAffectation() {
     const needTravauxNon = selectedOption?.getAttribute('data-need-travaux-precisions-non');
     const travauxRadioNon = travauxContainer.querySelector('input[value="NON"]');
     if (travauxRadioNon) {
-      travauxRadioNon.parentElement.parentElement.classList.toggle('fr-hidden', needTravauxNon === 'false');
+      travauxRadioNon.parentElement.parentElement.classList.toggle(
+        'fr-hidden',
+        needTravauxNon === 'false'
+      );
     }
   }
 }
@@ -69,7 +72,10 @@ function initCloseSignalementForm() {
       const needTravauxNon = selectedOption?.getAttribute('data-need-travaux-precisions-non');
       const travauxRadioNon = travauxContainerSignalement.querySelector('input[value="NON"]');
       if (travauxRadioNon) {
-        travauxRadioNon.parentElement.parentElement.classList.toggle('fr-hidden', needTravauxNon === 'false');
+        travauxRadioNon.parentElement.parentElement.classList.toggle(
+          'fr-hidden',
+          needTravauxNon === 'false'
+        );
       }
     }
   }

@@ -53,7 +53,8 @@ export function initTinyMCE(selector) {
       // mais on perd la possibilité de redimensionner l'éditeur
       // L'impact est quasi-nul. On choisit d'être non valide à ce niveau-là
       height: 320,
-      content_style: 'html { height: 100%; } body { min-height: 100%; margin: 0; padding: 1rem; box-sizing: border-box; }',
+      content_style:
+        'html { height: 100%; } body { min-height: 100%; margin: 0; padding: 1rem; box-sizing: border-box; }',
       setup: (ed) => {
         //modification des classes des boutons et champs de texte dans la fenêtre de dialogue pour etre sur le theme DSFR (concerne la fenêtre du bouton lien)
         ed.on('OpenWindow', () => {
