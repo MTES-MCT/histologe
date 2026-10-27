@@ -127,6 +127,15 @@
     </div>
     <div class="fr-col-12 fr-mb-2v">
         <span class="fr-text--medium">Invariant fiscal récupéré (base DGFIP) :</span>
-        {{ signalement.numeroInvariantRial}}
+        {{ signalement.numeroInvariantRial }}
+        {% if is_granted('ROLE_ADMIN') and not signalement.numeroInvariantRial %}
+            <button type="button"
+                class="fr-btn fr-btn--tertiary fr-btn--sm fr-btn--icon-left fr-icon-edit-line btn-edit-invariant-fiscal"
+                data-url-get-invariant-list="{{ path('back_signalement_get_invariant_list', {uuid:signalement.uuid}) }}"
+                data-url-edit-invariant="{{ path('back_signalement_edit_invariant_fiscal', {uuid:signalement.uuid}) }}"
+                data-panel-open="panel-edit-invariant-fiscal"
+                aria-controls="panel-edit-invariant-fiscal"
+                data-fr-opened="false">Récupérer un invariant</button>
+        {% endif %}
     </div>
 </div>

@@ -41,6 +41,7 @@ use App\Repository\UserSignalementSubscriptionRepository;
 use App\Security\Voter\AffectationVoter;
 use App\Security\Voter\SignalementVoter;
 use App\Service\EmailAlert\EmailAlertChecker;
+use App\Service\Gouv\Rial\RialService;
 use App\Service\MessageHelper;
 use App\Service\Notification\NotificationAndMailSender;
 use App\Service\Signalement\PhotoHelper;
@@ -437,5 +438,44 @@ class SignalementController extends AbstractController
         );
 
         return $this->redirect($this->generateUrl('back_signalement_view', ['uuid' => $signalement->getUuid()]));
+    }
+
+    #[Route('/{uuid:signalement}/get-invariant-list', name: 'back_signalement_get_invariant_list')]
+    public function getInvariantList(
+        Signalement $signalement,
+        RialService $rialService,
+    ): JsonResponse {
+        $this->denyAccessUnlessGranted(SignalementVoter::SIGN_VIEW, $signalement);
+        if (!$signalement->getAddress() || !$signalement->getAddress()->getBanId()) {
+            $invariants = null;
+        } else {
+            $locauxByBanId = $rialService->searchLocauxByBanId($signalement->getAddress()->getBanId());
+            $invariants = [];
+            foreach ($locauxByBanId as $local) {
+                $invariants []= $rialService->searchLocalByIdFiscal($local);
+            }
+        }
+
+        $html = $this->renderView('back/signalement/view/panels/content/invariants.html.twig', [
+            'invariants' => $invariants,
+        ]);
+
+        return $this->json(['html' => $html]);
+    }
+
+    #[Route('/{uuid:signalement}/edit-invariant-fiscal', name: 'back_signalement_edit_invariant_fiscal', methods: 'POST')]
+    public function editInvariantFiscal(
+        Signalement $signalement,
+        Request $request,
+        EntityManagerInterface $entityManager,
+    ): JsonResponse {
+        $this->denyAccessUnlessGranted(SignalementVoter::SIGN_VIEW, $signalement);
+        $invariantId = $request->request->get('invariant');
+        if (!$invariantId) {
+            return $this->json(['code' => Response::HTTP_BAD_REQUEST, 'message' => 'Aucun invariant fiscal sélectionné.'], Response::HTTP_BAD_REQUEST);
+        }
+        $signalement->setNumeroInvariantRial($invariantId);
+        $entityManager->flush();
+        return $this->json(['code' => Response::HTTP_OK, 'message' => 'Invariant fiscal mis à jour.']);
     }
 }

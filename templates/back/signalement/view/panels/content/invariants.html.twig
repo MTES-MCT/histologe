@@ -1,0 +1,29 @@
+{% if invariants is null %}
+    <div class="fr-notice fr-notice--alert">
+        <div class="fr-container">
+            <div class="fr-notice__body">
+                <p>
+                    <span class="fr-notice__title">Erreur</span>
+                    <span class="fr-notice__desc">Ce signalement n'a pas d'adresse associée ou l'adresse n'a pas de ID BAN.</span>
+                </p>
+            </div>
+        </div>
+    </div>
+{% elseif invariants %}
+    {% for invariant in invariants %}
+        <div class="fr-input-group">
+            {{ dump(invariant) }}
+        </div>
+    {% endfor %}
+{%  else %}
+    <div class="fr-notice fr-notice--warning">
+        <div class="fr-container">
+            <div class="fr-notice__body">
+                <p>
+                    <span class="fr-notice__title">Erreur</span>
+                    <span class="fr-notice__desc">Rial ne retourne aucun invariant fiscal pour cette adresse.</span>
+                </p>
+            </div>
+        </div>
+    </div>
+{% endif %}
