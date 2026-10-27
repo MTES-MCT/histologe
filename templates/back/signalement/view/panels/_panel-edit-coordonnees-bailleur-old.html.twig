@@ -14,7 +14,7 @@
                 <div class="fr-select-group">
                     <label class="fr-label" for="coordonneesBailleurTypeProprio">Type</label>
                     <select class="fr-select" id="coordonneesBailleurTypeProprio" name="typeProprio">
-                        <option value="" disabled hidden>Sélectionnez un choix</option>
+                        <option value="" disabled hidden>Sélectionnez une option</option>
                         <option value="" {{ signalement.typeProprio is same as '' ? 'selected' : '' }}>N/C</option>
                         <option value="{{ enum('App\\Entity\\Enum\\ProprioType').ORGANISME_SOCIETE.name }}" {{ signalement.typeProprio is same as enum('App\\Entity\\Enum\\ProprioType').ORGANISME_SOCIETE ? 'selected' : '' }}>{{ enum('App\\Entity\\Enum\\ProprioType').ORGANISME_SOCIETE.label }}</option>
                         <option value="{{ enum('App\\Entity\\Enum\\ProprioType').PARTICULIER.name }}" {{ signalement.typeProprio is same as enum('App\\Entity\\Enum\\ProprioType').PARTICULIER ? 'selected' : '' }}>{{ enum('App\\Entity\\Enum\\ProprioType').PARTICULIER.label }}</option>

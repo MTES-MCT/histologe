@@ -14,7 +14,7 @@
                 <div class="fr-select-group">
                     <label class="fr-label" for="coordonneesFoyerTypeProprio">Type</label>
                     <select class="fr-select" id="coordonneesFoyerTypeProprio" name="typeProprio">
-                        <option value="" disabled hidden>Sélectionnez un choix</option>
+                        <option value="" disabled hidden>Sélectionnez une option</option>
                         <option value="" {{ signalement.typeProprio is same as '' ? 'selected' : '' }}>N/C</option>
                         <option value="{{ enum('App\\Entity\\Enum\\ProprioType').ORGANISME_SOCIETE.name }}" {{ signalement.typeProprio is same as enum('App\\Entity\\Enum\\ProprioType').ORGANISME_SOCIETE ? 'selected' : '' }}>{{ enum('App\\Entity\\Enum\\ProprioType').ORGANISME_SOCIETE.label }}</option>
                         <option value="{{ enum('App\\Entity\\Enum\\ProprioType').PARTICULIER.name }}" {{ signalement.typeProprio is same as enum('App\\Entity\\Enum\\ProprioType').PARTICULIER ? 'selected' : '' }}>{{ enum('App\\Entity\\Enum\\ProprioType').PARTICULIER.label }}</option>
@@ -89,7 +89,7 @@
                     <label class="fr-label" for="coordonneesFoyerProfileOccupant">Type d'occupant</label>
                     {% set ProfileOccupant = enum('\\App\\Entity\\Enum\\ProfileOccupant') %}
                     <select class="fr-select" id="coordonneesFoyerProfileOccupant" name="profileOccupant">
-                        <option value="" disabled hidden>Sélectionnez un choix</option>
+                        <option value="" disabled hidden>Sélectionnez une option</option>
                         <option value="" {{ signalement.profileOccupant is same as '' ? 'selected' : '' }}>N/C</option>
                         <option value="{{ enum('App\\Entity\\Enum\\ProfileOccupant').LOCATAIRE.name }}" {{ signalement.profileOccupant is same as enum('App\\Entity\\Enum\\ProfileOccupant').LOCATAIRE ? 'selected' : '' }}>{{ enum('App\\Entity\\Enum\\ProfileOccupant').LOCATAIRE.label }}</option>
                         <option value="{{ enum('App\\Entity\\Enum\\ProfileOccupant').BAILLEUR_OCCUPANT.name }}" {{ signalement.profileOccupant is same as enum('App\\Entity\\Enum\\ProfileOccupant').BAILLEUR_OCCUPANT ? 'selected' : '' }}>{{ enum('App\\Entity\\Enum\\ProfileOccupant').BAILLEUR_OCCUPANT.label }}</option>
