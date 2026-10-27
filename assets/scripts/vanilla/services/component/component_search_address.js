@@ -1,6 +1,3 @@
-let isClickOutsideEventAttached = false;
-const autocompleteInputsByGroup = new WeakMap();
-
 export function attacheAutocompleteAddressEvents() {
   document.querySelectorAll('[data-fr-adresse-autocomplete]').forEach((inputAdresse) => {
     attacheAutocompleteAddressEvent(inputAdresse);
@@ -15,33 +12,10 @@ document
   .querySelector('#form-edit-address-ville')
   ?.addEventListener('input', (event) => setResetInsee(event.target));
 
-function attachAutocompleteClickOutsideEvent() {
-  if (isClickOutsideEventAttached) {
-    return;
-  }
-
-  isClickOutsideEventAttached = true;
-  document.addEventListener('click', function (event) {
-    document
-      ?.querySelectorAll('.fr-address-group, .fr-address-group-bo')
-      .forEach((addressGroup) => {
-        const inputAdresse = autocompleteInputsByGroup.get(addressGroup);
-        const isClickInside =
-          addressGroup.contains(event.target) || inputAdresse?.contains(event.target);
-        if (!isClickInside) {
-          addressGroup.dispatchEvent(new CustomEvent('autocompleteAddressClosed'));
-          addressGroup.innerHTML = '';
-        }
-      });
-  });
-}
-
 export function attacheAutocompleteAddressEvent(inputAdresse) {
   if (!inputAdresse) {
     return false;
   }
-
-  attachAutocompleteClickOutsideEvent();
 
   let selectionIndex = -1;
   let suffix = '';
@@ -54,14 +28,34 @@ export function attacheAutocompleteAddressEvent(inputAdresse) {
     '#' + idForm + ' [data-autocomplete-address-filter' + suffix + ']'
   );
 
-  autocompleteInputsByGroup.set(addressGroup, inputAdresse);
-
   const apiAdresse = 'https://data.geopf.fr/geocodage/search/?q=';
   let addressAbortController;
-  addressGroup.addEventListener('autocompleteAddressClosed', () => {
+  // écouteur "clic en dehors" actif uniquement entre le lancement d'une recherche et la fermeture
+  let outsideClickController = null;
+
+  const closeSuggestions = () => {
+    outsideClickController?.abort();
+    outsideClickController = null;
     addressAbortController?.abort();
     selectionIndex = -1;
-  });
+    addressGroup.innerHTML = '';
+  };
+
+  const attachOutsideClickListener = () => {
+    if (outsideClickController) {
+      return;
+    }
+    outsideClickController = new AbortController();
+    document.addEventListener(
+      'click',
+      (event) => {
+        if (!addressGroup.contains(event.target) && !inputAdresse.contains(event.target)) {
+          closeSuggestions();
+        }
+      },
+      { signal: outsideClickController.signal }
+    );
+  };
 
   const searchAddress = (adresse) => {
     if (addressAbortController) {
@@ -73,6 +67,7 @@ export function attacheAutocompleteAddressEvent(inputAdresse) {
     }
 
     addressAbortController = new AbortController();
+    attachOutsideClickListener();
     let depcode = '';
     if (fieldFilterAddress) {
       if (fieldFilterAddress.tagName === 'SELECT') {
@@ -108,8 +103,9 @@ export function attacheAutocompleteAddressEvent(inputAdresse) {
             'fr-text-label--blue-france',
             'fr-adresse-suggestion'
           );
-          suggestion.innerHTML = feature.properties.label;
+          suggestion.textContent = feature.properties.label;
           attachAddressSuggestionEvent(inputAdresse, suggestion, feature, suffix);
+          suggestion.addEventListener('click', closeSuggestions);
           addressGroup.appendChild(suggestion);
         });
       })
@@ -127,7 +123,7 @@ export function attacheAutocompleteAddressEvent(inputAdresse) {
     searchAddress(adresse);
 
     if (adresse.length === 0) {
-      addressGroup.innerHTML = '';
+      closeSuggestions();
       if (
         document?.querySelector('#' + idForm + ' [data-autocomplete-housenumber' + suffix + ']')
       ) {
@@ -170,8 +166,7 @@ export function attacheAutocompleteAddressEvent(inputAdresse) {
 
   inputAdresse.addEventListener('keydown', (e) => {
     if (e.key === 'Escape' || e.key === 'Tab') {
-      addressGroup.innerHTML = '';
-      selectionIndex = -1;
+      closeSuggestions();
     }
 
     if (e.key === 'ArrowDown') {
@@ -193,8 +188,7 @@ export function attacheAutocompleteAddressEvent(inputAdresse) {
       if (selectionIndex > -1 && selectionIndex < addressGroup.children.length) {
         addressGroup.children[selectionIndex].click();
       }
-      addressGroup.innerHTML = '';
-      selectionIndex = -1;
+      closeSuggestions();
     }
 
     document.querySelectorAll('.fr-adresse-suggestion').forEach((element) => {
