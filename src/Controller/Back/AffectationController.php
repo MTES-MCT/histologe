@@ -30,7 +30,6 @@ use App\Utils\FormHelper;
 use Doctrine\ORM\EntityManagerInterface;
 use Psr\Cache\InvalidArgumentException;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -49,8 +48,6 @@ class AffectationController extends AbstractController
         private readonly AffectationManager $affectationManager,
         private readonly AffectationEsaboraPolicy $affectationEsaboraPolicy,
         private readonly EmailAlertChecker $emailAlertChecker,
-        #[Autowire(env: 'FEATURE_CLOTURE_V2')]
-        private readonly bool $featureClotureV2,
     ) {
     }
 
@@ -382,9 +379,6 @@ class AffectationController extends AbstractController
         EntityManagerInterface $entityManager,
         SignalementSearchQueryFactory $signalementSearchQueryFactory,
     ): JsonResponse {
-        if (!$this->featureClotureV2) {
-            return $this->json(['code' => Response::HTTP_NOT_FOUND], Response::HTTP_NOT_FOUND);
-        }
         /** @var User $user */
         $user = $this->getUser();
         $partner = $user->getPartnerInTerritoryOrFirstOne($signalement->getAddress()->getTerritory());

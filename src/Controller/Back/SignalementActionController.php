@@ -63,8 +63,6 @@ class SignalementActionController extends AbstractController
         private readonly bool $editionSuiviEnable,
         #[Autowire(env: 'DELAY_SUIVI_EDITABLE_IN_MINUTES')]
         private readonly int $delaySuiviEditableInMinutes,
-        #[Autowire(env: 'FEATURE_CLOTURE_V2')]
-        private readonly bool $featureClotureV2,
         private readonly SuiviDescriptionHelper $suiviDescriptionHelper,
     ) {
     }
@@ -216,9 +214,6 @@ class SignalementActionController extends AbstractController
         SignalementSearchQueryFactory $signalementSearchQueryFactory,
         EntityManagerInterface $entityManager,
     ): JsonResponse {
-        if (!$this->featureClotureV2) {
-            return $this->json(['code' => Response::HTTP_NOT_FOUND], Response::HTTP_NOT_FOUND);
-        }
         if (!$this->isGranted(SignalementVoter::SIGN_CLOSE, $signalement)) {
             return $this->json(['code' => Response::HTTP_FORBIDDEN, 'message' => 'Vous n\'êtes pas autorisé à fermer ce signalement ou cette affectation.'], Response::HTTP_FORBIDDEN);
         }

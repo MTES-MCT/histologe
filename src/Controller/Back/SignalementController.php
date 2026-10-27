@@ -5,8 +5,6 @@ namespace App\Controller\Back;
 use App\Dto\AgentSelection;
 use App\Dto\RefusAffectation;
 use App\Dto\RefusSignalement;
-use App\Dto\SignalementAffectationClose;
-use App\Entity\Affectation;
 use App\Entity\Enum\DocumentType;
 use App\Entity\Enum\SignalementStatus;
 use App\Entity\Enum\TiersInvitationStatus;
@@ -14,20 +12,16 @@ use App\Entity\Intervention;
 use App\Entity\Signalement;
 use App\Entity\Suivi;
 use App\Entity\User;
-use App\Event\SignalementClosedEvent;
 use App\Event\SignalementViewedEvent;
-use App\Factory\SignalementSearchQueryFactory;
 use App\Form\AddAndRescheduleVisiteType;
 use App\Form\AddSuiviType;
 use App\Form\AdminCancelInjonctionProcedureType;
 use App\Form\AffectationToggleType;
 use App\Form\AgentSelectionType;
 use App\Form\CloseAffectationType;
-use App\Form\ClotureType;
 use App\Form\ProcedureEngageeType;
 use App\Form\RefusAffectationType;
 use App\Form\RefusSignalementType;
-use App\Manager\AffectationManager;
 use App\Manager\SignalementManager;
 use App\Repository\CritereRepository;
 use App\Repository\DesordreCategorieRepository;
@@ -56,7 +50,6 @@ use App\Service\Signalement\SignalementSameAddressArreteFinder;
 use App\Service\Signalement\Suivi\SuiviSeenMarker;
 use App\Service\Signalement\TabOrientation\TabOrientationService;
 use App\Service\SignalementAddressContentService;
-use App\Utils\FormHelper;
 use Doctrine\DBAL\Exception;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ManagerRegistry;
@@ -74,8 +67,6 @@ class SignalementController extends AbstractController
 {
     public function __construct(
         private EmailAlertChecker $emailAlertChecker,
-        #[Autowire(env: 'FEATURE_CLOTURE_V2')]
-        private readonly bool $featureClotureV2,
         #[Autowire(env: 'FEATURE_ORIENTATION')]
         private readonly bool $featureOrientation,
     ) {
@@ -164,16 +155,9 @@ class SignalementController extends AbstractController
             $refusSignalementForm = $this->createForm(RefusSignalementType::class, $refusSignalement, ['action' => $refusSignalementRoute]);
         }
 
-        $clotureForm = null;
         $closeAffectationForm = null;
-        if ($this->featureClotureV2) {
-            if ($affectation && $this->isGranted(AffectationVoter::AFFECTATION_CLOSE, $affectation)) {
-                $closeAffectationForm = $this->createForm(CloseAffectationType::class, $affectation, ['action' => $this->generateUrl('back_affectation_close', ['uuid' => $signalement->getUuid()])]);
-            }
-        } else {
-            $signalementAffectationClose = (new SignalementAffectationClose())->setSignalement($signalement);
-            $clotureFormRoute = $this->generateUrl('back_signalement_close_affectation', ['uuid' => $signalement->getUuid()]);
-            $clotureForm = $this->createForm(ClotureType::class, $signalementAffectationClose, ['action' => $clotureFormRoute]);
+        if ($affectation && $this->isGranted(AffectationVoter::AFFECTATION_CLOSE, $affectation)) {
+            $closeAffectationForm = $this->createForm(CloseAffectationType::class, $affectation, ['action' => $this->generateUrl('back_affectation_close', ['uuid' => $signalement->getUuid()])]);
         }
 
         $newSuiviToAdd = (new Suivi())->setSignalement($signalement);
@@ -303,7 +287,6 @@ class SignalementController extends AbstractController
             'partner' => $partner,
             'partners' => $partners,
             'affectationToggleForm' => $affectationToggleForm,
-            'clotureForm' => $clotureForm,
             'closeAffectationForm' => $closeAffectationForm,
             'addSuiviForm' => $addSuiviForm,
             'acceptSignalementForm' => $acceptSignalementForm,
@@ -337,83 +320,6 @@ class SignalementController extends AbstractController
         ];
 
         return $this->render('back/signalement/view.html.twig', $twigParams);
-    }
-
-    #[Route('/{uuid:signalement}/close-signalement-affectation', name: 'back_signalement_close_affectation', methods: 'POST')]
-    public function closeAffectation(
-        Signalement $signalement,
-        Request $request,
-        AffectationManager $affectationManager,
-        SignalementManager $signalementManager,
-        EventDispatcherInterface $eventDispatcher,
-        SignalementSearchQueryFactory $signalementSearchQueryFactory,
-        EntityManagerInterface $entityManager,
-    ): JsonResponse {
-        if ($this->featureClotureV2) {
-            return $this->json(['code' => Response::HTTP_NOT_FOUND], Response::HTTP_NOT_FOUND);
-        }
-        /** @var User $user */
-        $user = $this->getUser();
-        $partner = $user->getPartnerInTerritoryOrFirstOne($signalement->getAddress()->getTerritory());
-        $affectation = $signalement->getAffectations()->filter(static function (Affectation $affectation) use ($partner) {
-            return $affectation->getPartner() === $partner;
-        })->first();
-        if (!$this->isGranted(SignalementVoter::SIGN_CLOSE, $signalement) && (!$affectation || !$this->isGranted(AffectationVoter::AFFECTATION_CLOSE, $affectation))) {
-            return $this->json(['code' => Response::HTTP_FORBIDDEN, 'message' => 'Vous n\'êtes pas autorisé à fermer ce signalement ou cette affectation.'], Response::HTTP_FORBIDDEN);
-        }
-
-        $signalementAffectationClose = (new SignalementAffectationClose())->setSignalement($signalement);
-        $clotureFormRoute = $this->generateUrl('back_signalement_close_affectation', ['uuid' => $signalement->getUuid()]);
-        $form = $this->createForm(ClotureType::class, $signalementAffectationClose, ['action' => $clotureFormRoute]);
-        $form->handleRequest($request);
-        if (!$form->isSubmitted()) {
-            return $this->json(['code' => Response::HTTP_BAD_REQUEST]);
-        }
-        if (!$form->isValid()) {
-            $response = ['code' => Response::HTTP_BAD_REQUEST, 'errors' => FormHelper::getErrorsFromForm(form: $form, withPrefix: true)];
-
-            return $this->json($response, $response['code']);
-        }
-        if (!$this->isGranted('ROLE_ADMIN_TERRITORY')) {
-            $signalementAffectationClose->setIsVisibleForUsager(false);
-        }
-        $signalementAffectationClose->setSubject($partner->getNom());
-
-        $entity = $reference = null;
-        if ('all' === $signalementAffectationClose->getType() && $this->isGranted('ROLE_ADMIN_TERRITORY')) {
-            $signalementAffectationClose->setSubject('tous les partenaires');
-            $entity = $signalement = $signalementManager->closeSignalement($signalementAffectationClose);
-            $reference = $signalement->getReference();
-            $eventDispatcher->dispatch(new SignalementClosedEvent($signalementAffectationClose, $partner), SignalementClosedEvent::NAME);
-            // on cloture les affectation et supprime les abonnnement des agent aprés le dispatch de l'event pour qu'ils soient notifiés de l'action
-            $affectationManager->closeBySignalement($signalement, $signalementAffectationClose->getMotifCloture(), $user, $partner);
-        } elseif ($affectation) {
-            $entity = $affectationManager->closeAffectation(
-                affectation: $affectation,
-                user: $user,
-                motif: $signalementAffectationClose->getMotifCloture(),
-                partner: $partner,
-                message: $signalementAffectationClose->getDescription(),
-                files: $signalementAffectationClose->getFiles(),
-                createSuiviAndNotifications: true
-            );
-            $reference = $entity->getSignalement()->getReference();
-        }
-        $entityManager->flush();
-
-        if (!empty($entity)) {
-            $this->addFlash('success', ['title' => 'Dossier fermé', 'message' => sprintf('Le dossier #%s a bien été fermé.', $reference)]);
-        }
-        $signalementSearchQuery = $signalementSearchQueryFactory->createFromCookie($request);
-
-        if (SignalementStatus::INJONCTION_BAILLEUR === $signalement->getStatut()) {
-            $url = $this->generateUrl('back_injonction_signalement_index', [], UrlGeneratorInterface::ABSOLUTE_URL);
-        } else {
-            $url = $this->generateUrl('back_signalements_index', [], UrlGeneratorInterface::ABSOLUTE_URL);
-            $url .= $signalementSearchQuery?->getQueryStringForUrl();
-        }
-
-        return $this->json(['redirect' => true, 'url' => $url]);
     }
 
     #[Route('/{uuid:signalement}/supprimer', name: 'back_signalement_delete', methods: 'POST')]

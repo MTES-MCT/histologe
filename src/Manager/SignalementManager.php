@@ -19,7 +19,6 @@ use App\Dto\Request\Signalement\ProcedureDemarchesRequest;
 use App\Dto\Request\Signalement\QualificationNDERequest;
 use App\Dto\Request\Signalement\SituationFoyerOldRequest;
 use App\Dto\Request\Signalement\SituationFoyerRequest;
-use App\Dto\SignalementAffectationClose;
 use App\Dto\SignalementAffectationListView;
 use App\Entity\Enum\AffectationStatus;
 use App\Entity\Enum\EtageType;
@@ -240,18 +239,6 @@ class SignalementManager
         }
 
         return $partners;
-    }
-
-    public function closeSignalement(SignalementAffectationClose $signalementAffectationClose): Signalement
-    {
-        $signalement = $signalementAffectationClose->getSignalement();
-        $signalement
-            ->setStatut(SignalementStatus::CLOSED)
-            ->setMotifCloture($signalementAffectationClose->getMotifCloture())
-            ->setClosedAt(new \DateTimeImmutable())
-            ->setComCloture($this->htmlSanitizer->sanitize($signalementAffectationClose->getDescription()));
-
-        return $signalement;
     }
 
     public function closeInjonction(
