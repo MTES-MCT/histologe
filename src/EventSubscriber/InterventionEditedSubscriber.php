@@ -56,18 +56,19 @@ readonly class InterventionEditedSubscriber implements EventSubscriberInterface
                 }
             }
 
+            $isVisibleForUsager = $intervention->getNotifyUsager() ?? false;
             $suivi = $this->suiviManager->createSuivi(
                 signalement: $intervention->getSignalement(),
                 description: $description,
                 category: SuiviCategory::INTERVENTION_HAS_CONCLUSION_EDITED,
                 partner: $event->getPartner(),
                 user: $currentUser,
-                isVisibleForUsager: $intervention->getNotifyUsager() ?? true,
+                isVisibleForUsager: $isVisibleForUsager,
                 sendMail: false,
                 files: $intervention->getFiles(),
             );
 
-            if ($intervention->getNotifyUsager()) {
+            if ($isVisibleForUsager) {
                 $this->visiteNotifier->notifyUsagers(
                     intervention: $intervention,
                     notificationMailerType: NotificationMailerType::TYPE_VISITE_EDITED_TO_USAGER,
