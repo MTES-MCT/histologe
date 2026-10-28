@@ -302,6 +302,11 @@ class SignalementVisitesController extends AbstractController
             }
         }
         if ($rescheduleVisiteForm->isSubmitted() && $rescheduleVisiteForm->isValid()) {
+            // toujours notifier l'usager si la date de visite est dans le futur
+            if ($rescheduleVisiteForm->get('scheduledAt')->getData() > new \DateTime()) {
+                $intervention->setNotifyUsager(true);
+            }
+
             $this->interventionManager->updateVisiteFromData(
                 intervention: $intervention,
                 scheduledAt: $rescheduleVisiteForm->get('scheduledAt')->getData(),
@@ -359,6 +364,8 @@ class SignalementVisitesController extends AbstractController
             }
         }
         if ($confirmVisiteForm->isSubmitted() && $confirmVisiteForm->isValid()) {
+            // Toujours notifier l'usager lorsque la visite est confirmée
+            $intervention->setNotifyUsager(true);
             /** @var User $user */
             $user = $this->getUser();
             $createdByPartner = $user->getPartnerInTerritory($intervention->getSignalement()->getAddress()->getTerritory());

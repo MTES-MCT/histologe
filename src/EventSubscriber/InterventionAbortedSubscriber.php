@@ -45,20 +45,23 @@ class InterventionAbortedSubscriber implements EventSubscriberInterface
             $description = 'La visite du logement prévue le '.$intervention->getScheduledAt()->format('d/m/Y');
             $description .= ' n\'a pas pu avoir lieu pour le motif suivant :<br>';
             $description .= $intervention->getDetails();
+            $isVisibleForUsager = $intervention->getNotifyUsager() ?? false;
             $suivi = $this->suiviManager->createSuivi(
                 signalement: $intervention->getSignalement(),
                 description: $description,
                 category: SuiviCategory::INTERVENTION_IS_ABORTED,
                 partner: $context['createdByPartner'],
                 user: $currentUser,
-                isVisibleForUsager: true,
+                isVisibleForUsager: $isVisibleForUsager,
                 sendMail: false,
             );
 
-            $this->visiteNotifier->notifyUsagers(
-                intervention: $intervention,
-                notificationMailerType: NotificationMailerType::TYPE_VISITE_ABORTED_TO_USAGER,
-            );
+            if ($isVisibleForUsager) {
+                $this->visiteNotifier->notifyUsagers(
+                    intervention: $intervention,
+                    notificationMailerType: NotificationMailerType::TYPE_VISITE_ABORTED_TO_USAGER,
+                );
+            }
 
             $this->visiteNotifier->notifySubscribers(
                 notificationMailerType: NotificationMailerType::TYPE_VISITE_ABORTED_TO_PARTNER,

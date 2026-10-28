@@ -293,6 +293,7 @@ class SignalementVisitesControllerTest extends WebTestCase
                     'visiteDone' => '0',
                     'occupantPresent' => '0',
                     'proprietairePresent' => '0',
+                    'notifyUsager' => '1',
                     'details' => 'Lorem Ipsum dolor sit amet',
                     '_token' => $this->generateCsrfToken($this->client, 'add_and_reschedule_visite'),
                 ],

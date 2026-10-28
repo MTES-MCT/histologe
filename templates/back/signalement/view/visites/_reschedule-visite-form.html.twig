@@ -33,7 +33,9 @@
         <div class="visite-conclude-procedure fr-mb-6v fr-hidden">
             {{ form_row(rescheduleVisiteForm.concludeProcedure)}}
         </div>
-        {{ form_row(rescheduleVisiteForm.notifyUsager) }}
+        {% if rescheduleVisiteForm.notifyUsager is defined %}
+            {{ form_row(rescheduleVisiteForm.notifyUsager) }}
+        {% endif %}
         {{ form_row(rescheduleVisiteForm.details) }}
         {% if rescheduleVisiteForm.rapportDeVisite is defined %}
             {{ form_row(rescheduleVisiteForm.rapportDeVisite) }}

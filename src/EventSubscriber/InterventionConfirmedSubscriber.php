@@ -57,18 +57,19 @@ class InterventionConfirmedSubscriber implements EventSubscriberInterface
             $description .= '<br>Commentaire opérateur :<br>';
             $description .= $intervention->getDetails();
 
+            $isVisibleForUsager = $intervention->getNotifyUsager() ?? false;
             $suivi = $this->suiviManager->createSuivi(
                 signalement: $intervention->getSignalement(),
                 description: $description,
                 category: SuiviCategory::INTERVENTION_HAS_CONCLUSION,
                 partner: $context['createdByPartner'],
                 user: $currentUser,
-                isVisibleForUsager: $intervention->getNotifyUsager(),
+                isVisibleForUsager: $isVisibleForUsager,
                 sendMail: false,
                 files: $intervention->getFiles(),
             );
 
-            if ($intervention->getNotifyUsager()) {
+            if ($isVisibleForUsager) {
                 $this->visiteNotifier->notifyUsagers(
                     intervention: $intervention,
                     notificationMailerType: NotificationMailerType::TYPE_VISITE_CONFIRMED_TO_USAGER,

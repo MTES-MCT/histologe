@@ -44,21 +44,24 @@ class InterventionRescheduledSubscriber implements EventSubscriberInterface
             if (!empty($commentBeforeVisite)) {
                 $description .= '<br>Informations complémentaires : '.$commentBeforeVisite;
             }
+            $isVisibleForUsager = $intervention->getNotifyUsager() ?? false;
             $suivi = $this->suiviManager->createSuivi(
                 signalement: $intervention->getSignalement(),
                 description: $description,
                 category: SuiviCategory::INTERVENTION_IS_RESCHEDULED,
                 partner: $event->getPartner(),
                 user: $event->getUser(),
-                isVisibleForUsager: true,
+                isVisibleForUsager: $isVisibleForUsager,
                 sendMail: false,
             );
 
-            $this->visiteNotifier->notifyUsagers(
-                intervention: $intervention,
-                notificationMailerType: NotificationMailerType::TYPE_VISITE_RESCHEDULED_TO_USAGER,
-                previousDate: $event->getPreviousDate()
-            );
+            if ($isVisibleForUsager) {
+                $this->visiteNotifier->notifyUsagers(
+                    intervention: $intervention,
+                    notificationMailerType: NotificationMailerType::TYPE_VISITE_RESCHEDULED_TO_USAGER,
+                    previousDate: $event->getPreviousDate()
+                );
+            }
 
             $this->visiteNotifier->notifyInAppSubscribers(
                 intervention: $intervention,
