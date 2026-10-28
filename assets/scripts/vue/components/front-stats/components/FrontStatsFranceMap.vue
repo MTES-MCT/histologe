@@ -1,16 +1,24 @@
 <template>
   <div class="histo-france-map">
-    <h2>Répartition des signalements par département</h2>
+    <h2 id="france-map-title">Répartition des signalements par département</h2>
 
     <div class="fr-container--fluid fr-my-10v">
       <div class="fr-grid-row fr-grid-row--gutters">
         <div v-if="displayTerritoryCaption" class="territory-caption" :style="{ left: territoryCaptionX+'px', top: territoryCaptionY+'px'}">
           {{ captionTerritoryName }} ({{ captionTerritoryZip }})<br>
-          {{ captionTerritoryCount }} signalement{{ captionTerritoryCountPlural }}
+          {{ formatCount(captionTerritoryCount) }}
         </div>
 
         <div ref="francemap" class="map fr-col-12 fr-col-md-12">
-          <svg viewBox="0 0 588 550" preserveAspectRatio="xMinYMin meet" @mouseover="handleStateHover" @mouseout="handleStateOut">
+          <svg
+            viewBox="0 0 588 550"
+            preserveAspectRatio="xMinYMin meet"
+            aria-labelledby="france-map-title"
+            @mouseover="handleStateHover"
+            @mouseout="handleStateOut"
+            @focus.capture="handleStateFocus"
+            @blur.capture="handleStateOut"
+            >
             <path id="dpt2B" inkscape:label="Haute-Corse" class="st0" d="M562.1,441.7l-2.8,1.9l0.4,1.9l1.5,1.9l-1.7,1.3l0.8,1.5l-1.1,1.3v1.7l1.9,1.7
               v2.6l-1.1,2.5l-1.3,0.6l-1.5-2.1l-2.7,0.2l-0.6-0.4h-2.3l-2.1,1.9l-0.8,3.2l-4.9,0.9l-3.8,3.2l-0.8,2.1l-1.9-0.2l-1-1.1l-0.5,3.2
               l-1.3,0.5l-0.4,3l0.6,1.3l-2.1,1.5l-0.6,1.5l2.1,0.4l0.4,1h3.8l1,0.7l2.8-0.5l1.2,0.7l-0.5,0.8l1.9,2.6h3.6l0.9,2.6h2.5l-0.2,1.5
@@ -684,12 +692,11 @@ const territoryCaptionY = ref(0)
 const captionTerritoryName = ref('')
 const captionTerritoryZip = ref('')
 const captionTerritoryCount = ref(0)
-const captionTerritoryCountPlural = ref('')
 
 const hexToRgb = (hex: string): number[] => [
-  parseInt(hex.slice(1, 3), 16),
-  parseInt(hex.slice(3, 5), 16),
-  parseInt(hex.slice(5, 7), 16)
+  Number.parseInt(hex.slice(1, 3), 16),
+  Number.parseInt(hex.slice(3, 5), 16),
+  Number.parseInt(hex.slice(5, 7), 16)
 ]
 
 const getBackgroundColor = (count: number): string => {
@@ -706,20 +713,27 @@ const getBackgroundColor = (count: number): string => {
 const getTerritoryItemByZip = (zip: string): TerritoryCount | undefined =>
   Object.entries(props.data).find(([, territoryItem]) => territoryItem.zip === zip)?.[1]
 
+const formatCount = (count: number): string => `${count} signalement${count > 1 ? 's' : ''}`
+
 /**
- * Colore chaque département en fonction de son nombre de signalements
+ * Colore chaque département déployé en fonction de son nombre de signalements
+ * et le rend accessible au clavier
  */
 const colorizeTerritories = (): void => {
   for (const [, territoryItem] of Object.entries(props.data)) {
     const el = francemap.value?.querySelector<SVGPathElement>('#dpt' + territoryItem.zip)
     if (el) {
       el.style.fill = getBackgroundColor(territoryItem.count)
+      el.setAttribute('tabindex', '0')
+      el.setAttribute('aria-label', `${territoryItem.name} (${territoryItem.zip}) : ${formatCount(territoryItem.count)}`)
     }
   }
 }
 
-const handleStateHover = (e: MouseEvent): void => {
-  const target = e.target as Element
+/**
+ * Affiche l'infobulle d'un département à la position donnée (coordonnées de la fenêtre)
+ */
+const showCaption = (target: Element, x: number, y: number): void => {
   if (target.tagName !== 'path') {
     return
   }
@@ -731,12 +745,21 @@ const handleStateHover = (e: MouseEvent): void => {
   captionTerritoryName.value = territoryItem.name
   captionTerritoryZip.value = territoryItem.zip
   captionTerritoryCount.value = territoryItem.count
-  captionTerritoryCountPlural.value = Number(territoryItem.count) > 1 ? 's' : ''
-  territoryCaptionX.value = e.clientX - 60
-  territoryCaptionY.value = e.clientY + 40
+  territoryCaptionX.value = x - 60
+  territoryCaptionY.value = y + 40
   if (window.top !== null) {
     territoryCaptionY.value += window.top.scrollY
   }
+}
+
+const handleStateHover = (e: MouseEvent): void => {
+  showCaption(e.target as Element, e.clientX, e.clientY)
+}
+
+const handleStateFocus = (e: FocusEvent): void => {
+  const target = e.target as Element
+  const rect = target.getBoundingClientRect()
+  showCaption(target, rect.left + rect.width / 2, rect.top + rect.height / 2)
 }
 
 const handleStateOut = (): void => {
