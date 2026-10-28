@@ -25,6 +25,7 @@ class UserApiType extends AbstractType
                 'label' => 'Adresse e-mail',
                 'required' => false,
                 'help' => 'Format attendu : exemple@domaine.com',
+                'empty_data' => '',
                 'constraints' => new Assert\NotBlank(
                     message: 'Veuillez saisir une adresse e-mail.',
                     groups: ['registration'],
