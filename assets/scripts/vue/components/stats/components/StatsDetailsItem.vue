@@ -2,21 +2,16 @@
   <div class="histo-stats-details-item fr-col-6 fr-col-lg-3 fr-col-xl-2">
     <div :class="[ 'color-' + color ]">
       <p><slot name="title"></slot></p>
-      <p>{{ data }}</p>
+      <p>{{ value }}</p>
     </div>
   </div>
 </template>
 
-<script lang="ts">
-import { defineComponent } from 'vue'
-
-export default defineComponent({
-  name: 'TheHistoStatsDetailsItem',
-  props: {
-    data: String,
-    color: String
-  }
-})
+<script setup lang="ts">
+defineProps<{
+  value: string
+  color: 'blue' | 'purple'
+}>()
 </script>
 
 <style>
