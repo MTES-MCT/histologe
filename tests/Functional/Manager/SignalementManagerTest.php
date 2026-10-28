@@ -5,7 +5,6 @@ namespace App\Tests\Functional\Manager;
 use App\Dto\Request\Signalement\CompositionLogementRequest;
 use App\Dto\Request\Signalement\ConsommationEnergetiqueRequest;
 use App\Dto\Request\Signalement\QualificationNDERequest;
-use App\Dto\SignalementAffectationClose;
 use App\Entity\Affectation;
 use App\Entity\Enum\AffectationStatus;
 use App\Entity\Enum\MotifCloture;
@@ -182,47 +181,6 @@ class SignalementManagerTest extends WebTestCase
         yield 'PARTENAIRE SCHS VIA SANTÉ HABITAT (déjà envoyé à SISH)' => ['PARTENAIRE SCHS VIA SANTÉ HABITAT', true];
         yield 'PARTENAIRE 13-05 ESABORA SCHS' => ['PARTENAIRE 13-05 ESABORA SCHS', false];
         yield 'PARTENAIRE 13-01' => ['PARTENAIRE 13-01', false];
-    }
-
-    public function testCloseSignalementForAllPartners(): void
-    {
-        /** @var SignalementRepository $signalementRepository */
-        $signalementRepository = $this->entityManager->getRepository(Signalement::class);
-        $signalementActive = $signalementRepository->findOneBy(['statut' => SignalementStatus::ACTIVE->value]);
-
-        $signalementAffectationClose = (new SignalementAffectationClose())
-            ->setSignalement($signalementActive)
-            ->setMotifCloture(MotifCloture::tryFrom('TRAVAUX_FAITS_OU_EN_COURS'))
-            ->setDescription('Tous les problèmes ont été résolus en moins de 15 ans');
-        $affectation = $signalementActive->getAffectations()->first() ?: null;
-        if (!$affectation) {
-            $this->fail('No affectation found for the signalement');
-        }
-        $signalementClosed = $this->signalementManager->closeSignalement($signalementAffectationClose);
-        /** @var User $user */
-        $user = $this->security->getUser();
-        $this->affectationManager->closeBySignalement(
-            $signalementClosed,
-            $signalementAffectationClose->getMotifCloture(),
-            $user,
-            $affectation->getPartner()
-        );
-
-        $this->assertEquals($signalementActive->getComCloture(), 'Tous les problèmes ont été résolus en moins de 15 ans');
-        $this->assertEquals($signalementClosed->getComCloture(), 'Tous les problèmes ont été résolus en moins de 15 ans');
-
-        $this->assertInstanceOf(Signalement::class, $signalementClosed);
-        $this->assertEquals(SignalementStatus::CLOSED, $signalementClosed->getStatut());
-        $this->assertEquals('Travaux faits ou en cours', $signalementClosed->getMotifCloture()->label());
-        $this->assertInstanceOf(\DateTimeInterface::class, $signalementClosed->getClosedAt());
-
-        $signalementHasAllAffectationsClosed = $signalementClosed->getAffectations()
-            ->forAll(static function (int $index, Affectation $affectation) {
-                return AffectationStatus::CLOSED === $affectation->getStatut()
-                && str_contains($affectation->getMotifCloture()->label(), 'Travaux faits ou en cours'); // TODO ??
-            });
-
-        $this->assertTrue($signalementHasAllAffectationsClosed);
     }
 
     public function testCloseInjonction(): void

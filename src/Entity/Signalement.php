@@ -31,7 +31,6 @@ use App\Repository\SignalementRepository;
 use App\Service\InjonctionBailleur\BailleurLoginCodeGenerator;
 use App\Service\InjonctionBailleur\InjonctionBailleurService;
 use App\Service\Signalement\PhotoHelper;
-use App\Utils\Address\AddressParser;
 use App\Utils\Phone;
 use App\Utils\TrimHelper;
 use App\Validator as AppAssert;
@@ -51,12 +50,10 @@ use Symfony\Component\Validator\Context\ExecutionContextInterface;
 #[ORM\Index(columns: ['creation_source'], name: 'idx_signalement_creation_source')]
 #[ORM\Index(columns: ['uuid'], name: 'idx_signalement_uuid')]
 #[ORM\Index(columns: ['code_suivi'], name: 'idx_signalement_code_suivi')]
-#[ORM\Index(columns: ['cp_occupant'], name: 'idx_signalement_cp_occupant')]
 #[ORM\Index(columns: ['statut', 'territory_id'], name: 'idx_signalement_statut_territory')]
 #[ORM\Index(columns: ['statut', 'id'], name: 'idx_signalement_statut_id')]
 #[ORM\Index(columns: ['mail_occupant'], name: 'idx_signalement_mail_occupant')]
 #[ORM\Index(columns: ['mail_declarant'], name: 'idx_signalement_mail_declarant')]
-#[ORM\Index(columns: ['adresse_occupant', 'cp_occupant', 'ville_occupant'], name: 'idx_signalement_same_address')]
 class Signalement implements EntityHistoryInterface, EntityHistoryCollectionInterface
 {
     use EntityChangesTrait;
@@ -223,44 +220,9 @@ class Signalement implements EntityHistoryInterface, EntityHistoryCollectionInte
     #[ORM\Column(type: 'string', length: 255, nullable: true)]
     private ?string $mailOccupantTemp = null;
 
-    // TODO ADDRESS : A SUPPRIMER
-    #[ORM\Column(type: 'string', length: 100, nullable: true)]
-    private ?string $adresseOccupant = null;
-
-    // TODO ADDRESS : A SUPPRIMER
-    #[ORM\Column(type: 'string', length: 5, nullable: true)]
-    private ?string $cpOccupant = null;
-
-    // TODO ADDRESS : A SUPPRIMER
-    #[ORM\Column(type: 'string', length: 100, nullable: true)]
-    private ?string $villeOccupant = null;
-
-    /**
-     * Identifiant BAN (Base Adresse Nationale) de l'adresse de l'occupant.
-     *
-     * Cette valeur est utilisée pour interroger
-     * le Référentiel National des Bâtiments (RNB) afin de retrouver
-     * les bâtiments associés à l'adresse.
-     *
-     * Attention : il s'agit de la clé d'interopérabilité BAN (ex : 13202_2333_00025)
-     * et non de l'UUID technique de la BAN dit `banId`
-     */
-    // TODO ADDRESS : A SUPPRIMER
-    #[ORM\Column(type: 'string', length: 50, nullable: true)]
-    private ?string $banIdOccupant = null;
-
-    #[ORM\Column(type: 'string', length: 10, nullable: true)]
-    // TODO ADDRESS : A SUPPRIMER
-    private ?string $inseeOccupant = null;
-
-    // TODO ADDRESS : A SUPPRIMER
     #[ORM\ManyToOne(targetEntity: Territory::class, inversedBy: 'signalements')]
     #[ORM\JoinColumn(nullable: true)]
     private ?Territory $territory = null;
-
-    // TODO ADDRESS : A SUPPRIMER
-    #[ORM\Column(type: 'boolean', nullable: true)]
-    private ?bool $manualAddressOccupant = null;
 
     /** @var array<mixed> $geoloc */
     #[ORM\Column(type: 'json')]
@@ -1220,36 +1182,6 @@ class Signalement implements EntityHistoryInterface, EntityHistoryCollectionInte
         return $this;
     }
 
-    // TODO ADDRESS : A SUPPRIMER
-    public function getAdresseOccupantDeprecated(): ?string
-    {
-        return $this->adresseOccupant;
-    }
-
-    // TODO ADDRESS : A SUPPRIMER
-    public function getCpOccupantDeprecated(): ?string
-    {
-        return $this->cpOccupant;
-    }
-
-    // TODO ADDRESS : A SUPPRIMER
-    public function getVilleOccupantDeprecated(): ?string
-    {
-        return $this->villeOccupant;
-    }
-
-    // TODO ADDRESS : A SUPPRIMER
-    public function getBanIdOccupantDeprecated(): ?string
-    {
-        return $this->banIdOccupant;
-    }
-
-    // // TODO ADDRESS : A SUPPRIMER
-    public function getTerritoryDeprecated(): ?Territory
-    {
-        return $this->territory;
-    }
-
     public function hasInfosAgence(): bool
     {
         return $this->nomAgence
@@ -1773,12 +1705,6 @@ class Signalement implements EntityHistoryInterface, EntityHistoryCollectionInte
         return mb_strtoupper(mb_substr($complement, 0, 1)).mb_substr($complement, 1);
     }
 
-    // TODO ADDRESS : A SUPPRIMER
-    public function getInseeOccupantDeprecated(): ?string
-    {
-        return $this->inseeOccupant;
-    }
-
     public function getCodeSuivi(): ?string
     {
         return $this->codeSuivi;
@@ -2144,22 +2070,7 @@ class Signalement implements EntityHistoryInterface, EntityHistoryCollectionInte
 
     public function getAddress(): Address
     {
-        if ($this->address) {
-            return $this->address;
-        }
-        // fallback pour l'affichage des signalements sans addresse en attendant que les cas particuliers soient traités
-        $address = new Address();
-        $parsedAddress = AddressParser::parse($this->adresseOccupant);
-        $houseNumber = $parsedAddress['numberAndSuffix'];
-        $address->setHouseNumber($houseNumber);
-        $address->setStreet((string) $parsedAddress['street']);
-        $address->setPostCode((string) $this->cpOccupant);
-        $address->setCity((string) $this->villeOccupant);
-        $address->setCityCode((string) $this->inseeOccupant);
-        $address->setBanId($this->banIdOccupant);
-        $address->setTerritory($this->territory);
-
-        return $address;
+        return $this->address;
     }
 
     public function setAddress(?Address $address): static

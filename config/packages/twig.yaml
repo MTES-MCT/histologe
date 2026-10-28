@@ -25,7 +25,6 @@ twig:
         document_ia_enable: '%env(bool:DOCUMENT_IA_ENABLE)%'
         s3_enable: '%env(bool:S3_ENABLE)%'
         feature_histo_address: '%env(bool:FEATURE_HISTO_ADDRESS)%'
-        feature_cloture_v2: '%env(bool:FEATURE_CLOTURE_V2)%'
         feature_orientation: '%env(bool:FEATURE_ORIENTATION)%'
     paths:
         # point this wherever your images live
