@@ -1,21 +1,16 @@
 <template>
   <div class="histo-front-stats-details-item fr-mb-5w">
     <div>
-      <p>{{ data }}</p>
+      <p>{{ value }}</p>
       <p><slot name="title"></slot></p>
     </div>
   </div>
 </template>
 
-<script lang="ts">
-import { defineComponent } from 'vue'
-
-export default defineComponent({
-  name: 'TheHistoFrontStatsDetailsItem',
-  props: {
-    data: String
-  }
-})
+<script setup lang="ts">
+defineProps<{
+  value: string
+}>()
 </script>
 
 <style>

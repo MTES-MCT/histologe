@@ -645,8 +645,8 @@
           <div class="legend-bar">
             <div class="legend-gradient"></div>
             <div class="legend-labels">
-              <span>{{ minValue }}</span>
-              <span>{{ maxValue }}+</span>
+              <span>{{ MIN_VALUE }}</span>
+              <span>{{ MAX_VALUE }}+</span>
             </div>
             <div class="legend-labels fr-my-1w">
               <div class="legend-undeployed"></div> Département non déployé
@@ -658,95 +658,93 @@
   </div>
 </template>
 
-<script lang="ts">
-import { defineComponent } from 'vue'
+<script setup lang="ts">
+import { onMounted, ref, watch } from 'vue'
+import type { TerritoryCount } from '../types'
 
-export default defineComponent({
-  name: 'HistoFranceMap',
-  components: {
-  },
-  props: {
-    data: {
-      type: Object,
-      default: () => {}
-    }
-  },
-  data () {
-    return {
-      displayTerritoryCaption: false,
-      territoryCaptionX: 0,
-      territoryCaptionY: 0,
-      captionTerritoryName: '',
-      captionTerritoryZip: '',
-      captionTerritoryCount: '',
-      captionTerritoryCountPlural: '',
-      minValue: 0,
-      maxValue: 6000,
-      minColor: '#bfc4d5',
-      maxColor: '#2F4077'
+interface Props {
+  data: Record<string, TerritoryCount>
+}
 
-    }
-  },
-  mounted () {
-    for (const [, territoryItem] of Object.entries(this.data)) {
-      const zipCode:string = territoryItem.zip
-      const el = this.$el.querySelector('#dpt' + zipCode)
-      if (el !== undefined) {
-        const color = this.getBackgroundColor(territoryItem.count)
-        el.style.fill = color
-      }
-    }
-  },
-  methods: {
-    getBackgroundColor (count:number) {
-      if (count > this.maxValue) {
-        return this.maxColor
-      } else {
-        const percent = count / this.maxValue
-        const color1 = this.hexToRgb(this.minColor)
-        const color2 = this.hexToRgb(this.maxColor)
-        const color = color1.map((channel: any, index: any) => Math.round(channel + (color2[index] - channel) * percent))
-        return `rgb(${color.join(',')})`
-      }
-    },
-    hexToRgb (hex: string) {
-      return [
-        parseInt(hex.slice(1, 3), 16),
-        parseInt(hex.slice(3, 5), 16),
-        parseInt(hex.slice(5, 7), 16)
-      ]
-    },
-    handleStateHover (e:any) {
-      if (e.target.tagName === 'path') {
-        const territoryItem = this.getTerritoryItemByZip(e.target.id.substring(3))
-        if (territoryItem) {
-          this.displayTerritoryCaption = true
-          this.captionTerritoryName = territoryItem.name
-          this.captionTerritoryZip = territoryItem.zip
-          this.captionTerritoryCount = territoryItem.count
-          this.captionTerritoryCountPlural = Number(this.captionTerritoryCount) > 1 ? 's' : ''
-          this.territoryCaptionX = e.clientX - 60
-          this.territoryCaptionY = e.clientY + 40
-          if (window !== undefined && window.top !== null && window.top.scrollY !== undefined) {
-            this.territoryCaptionY += window.top.scrollY
-          }
-        }
-      }
-    },
-    handleStateOut () {
-      this.displayTerritoryCaption = false
-    },
-    getTerritoryItemByZip (zip: string) {
-      for (const [, territoryItem] of Object.entries(this.data)) {
-        if (zip === territoryItem.zip) {
-          return territoryItem
-        }
-      }
-      return false
+// Annotation explicite : le code généré par le compilateur type les props en `any`
+const props: Props = defineProps<Props>()
+
+const MIN_VALUE = 0
+const MAX_VALUE = 6000
+const MIN_COLOR = '#bfc4d5'
+const MAX_COLOR = '#2F4077'
+
+// Refs
+const francemap = ref<HTMLElement | null>(null)
+
+// Infobulle
+const displayTerritoryCaption = ref(false)
+const territoryCaptionX = ref(0)
+const territoryCaptionY = ref(0)
+const captionTerritoryName = ref('')
+const captionTerritoryZip = ref('')
+const captionTerritoryCount = ref(0)
+const captionTerritoryCountPlural = ref('')
+
+const hexToRgb = (hex: string): number[] => [
+  parseInt(hex.slice(1, 3), 16),
+  parseInt(hex.slice(3, 5), 16),
+  parseInt(hex.slice(5, 7), 16)
+]
+
+const getBackgroundColor = (count: number): string => {
+  if (count > MAX_VALUE) {
+    return MAX_COLOR
+  }
+  const percent = count / MAX_VALUE
+  const color1 = hexToRgb(MIN_COLOR)
+  const color2 = hexToRgb(MAX_COLOR)
+  const color = color1.map((channel, index) => Math.round(channel + (color2[index] - channel) * percent))
+  return `rgb(${color.join(',')})`
+}
+
+const getTerritoryItemByZip = (zip: string): TerritoryCount | undefined =>
+  Object.entries(props.data).find(([, territoryItem]) => territoryItem.zip === zip)?.[1]
+
+/**
+ * Colore chaque département en fonction de son nombre de signalements
+ */
+const colorizeTerritories = (): void => {
+  for (const [, territoryItem] of Object.entries(props.data)) {
+    const el = francemap.value?.querySelector<SVGPathElement>('#dpt' + territoryItem.zip)
+    if (el) {
+      el.style.fill = getBackgroundColor(territoryItem.count)
     }
   }
+}
 
-})
+const handleStateHover = (e: MouseEvent): void => {
+  const target = e.target as Element
+  if (target.tagName !== 'path') {
+    return
+  }
+  const territoryItem = getTerritoryItemByZip(target.id.substring(3))
+  if (!territoryItem) {
+    return
+  }
+  displayTerritoryCaption.value = true
+  captionTerritoryName.value = territoryItem.name
+  captionTerritoryZip.value = territoryItem.zip
+  captionTerritoryCount.value = territoryItem.count
+  captionTerritoryCountPlural.value = Number(territoryItem.count) > 1 ? 's' : ''
+  territoryCaptionX.value = e.clientX - 60
+  territoryCaptionY.value = e.clientY + 40
+  if (window.top !== null) {
+    territoryCaptionY.value += window.top.scrollY
+  }
+}
+
+const handleStateOut = (): void => {
+  displayTerritoryCaption.value = false
+}
+
+onMounted(colorizeTerritories)
+watch(() => props.data, colorizeTerritories)
 </script>
 
 <style>
