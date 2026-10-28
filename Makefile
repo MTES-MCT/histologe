@@ -251,11 +251,11 @@ test-all: ## Run all tests
 test-coverage: ## Generate phpunit coverage report in html
 	@$(DOCKER_COMP) exec signal_logement_phpfpm sh -c "XDEBUG_MODE=coverage $(PHPUNIT) --coverage-html coverage -d memory_limit=-1"
 
-test-e2e: ## Run E2E tests
-	@cd tests/e2e/ ; $(NPX) playwright test
+test-e2e: ## Run E2E tests — use FILE=statistiques (or FILE=tests/statistiques.spec.ts) to run a specific test file
+	@cd tests/e2e/ ; $(NPX) playwright test $(FILE)
 
-test-e2e-ui: ## Run E2E tests
-	@cd tests/e2e/ ; $(NPX) playwright test --ui
+test-e2e-ui: ## Run E2E tests in UI mode — use FILE=statistiques to run a specific test file
+	@cd tests/e2e/ ; $(NPX) playwright test --ui $(FILE)
 
 create-test-e2e: ## Open Playwright
 	@cd tests/e2e/ ; $(NPX) playwright codegen

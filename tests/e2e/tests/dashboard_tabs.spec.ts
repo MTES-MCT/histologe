@@ -1,4 +1,5 @@
 import { test, Page } from '@playwright/test';
+import { login } from '../utils/auth-helper';
 
 async function clickTabAndTriggerDisclose(page: Page, tabName: string) {
   const tab = page.getByRole('tab', { name: tabName });
@@ -22,17 +23,7 @@ test('dashboard tabs for admin', async ({page, context}) => {
   await context.clearCookies();
   await context.clearPermissions();
 
-  await page.goto(`${process.env.BASE_URL ?? 'http://localhost:8080'}/connexion`);
-  await page.waitForLoadState('networkidle');
-
-  await page.getByRole('textbox', { name: 'Courriel Adresse utilisée' }).click();
-  await page.getByRole('textbox', { name: 'Courriel Adresse utilisée' }).fill('admin-01@signal-logement.fr');
-  await page.getByRole('textbox', { name: 'Mot de passe Mot de passe dé' }).click();
-  await page.getByRole('textbox', { name: 'Mot de passe Mot de passe dé' }).fill('signallogement');
-  await page.getByRole('button', { name: 'Se connecter' }).click();
-
-  // Attendre la navigation après connexion
-  await page.waitForURL('**/bo/**', { timeout: 10000 });
+  await login(page, 'admin-01@signal-logement.fr');
   await clickTabAndTriggerDisclose(page, 'Accueil');
   await page.getByRole('heading', { name: 'Vos dernières actions' }).click();
   await clickTabAndTriggerDisclose(page, 'Nouveaux dossiers');
@@ -57,17 +48,7 @@ test('dashboard tabs for RT', async ({page, context}) => {
   await context.clearCookies();
   await context.clearPermissions();
 
-  await page.goto(`${process.env.BASE_URL ?? 'http://localhost:8080'}/connexion`);
-  await page.waitForLoadState('networkidle');
-
-  await page.getByRole('textbox', { name: 'Courriel Adresse utilisée' }).click();
-  await page.getByRole('textbox', { name: 'Courriel Adresse utilisée' }).fill('admin-territoire-13-01@signal-logement.fr');
-  await page.getByRole('textbox', { name: 'Courriel Adresse utilisée' }).press('Tab');
-  await page.getByRole('textbox', { name: 'Mot de passe Mot de passe dé' }).fill('signallogement');
-  await page.getByRole('button', { name: 'Se connecter' }).click();
-
-  // Attendre la navigation après connexion
-  await page.waitForURL('**/bo/**', { timeout: 10000 });
+  await login(page, 'admin-territoire-13-01@signal-logement.fr');
   await clickTabAndTriggerDisclose(page, 'Accueil');
   await page.getByRole('heading', { name: 'Vos dernières actions' }).click();
   await clickTabAndTriggerDisclose(page, 'Nouveaux dossiers');
@@ -89,17 +70,7 @@ test('dashboard tabs for Agent', async ({page, context}) => {
   await context.clearCookies();
   await context.clearPermissions();
 
-  await page.goto(`${process.env.BASE_URL ?? 'http://localhost:8080'}/connexion`);
-  await page.waitForLoadState('networkidle');
-
-  await page.getByRole('textbox', { name: 'Courriel Adresse utilisée' }).click();
-  await page.getByRole('textbox', { name: 'Courriel Adresse utilisée' }).fill('user-13-01@signal-logement.fr');
-  await page.getByRole('textbox', { name: 'Courriel Adresse utilisée' }).press('Tab');
-  await page.getByRole('textbox', { name: 'Mot de passe Mot de passe dé' }).fill('signallogement');
-  await page.getByRole('button', { name: 'Se connecter' }).click();
-
-  // Attendre la navigation après connexion
-  await page.waitForURL('**/bo/**', { timeout: 10000 });
+  await login(page, 'user-13-01@signal-logement.fr');
   await clickTabAndTriggerDisclose(page, 'Accueil');
   await page.getByRole('heading', { name: 'Vos dernières actions' }).click();
   await clickTabAndTriggerDisclose(page, 'Nouveaux dossiers');
