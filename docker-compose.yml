@@ -94,7 +94,7 @@ services:
           - signal_logement_wiremock.local
 
   signal_logement_redis:
-    image: redis:7.2.14-alpine
+    image: redis:7.2.16-alpine
     container_name: signal_logement_redis
 
   signal_logement_clamav:
