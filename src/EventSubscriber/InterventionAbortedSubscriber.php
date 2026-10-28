@@ -45,6 +45,7 @@ class InterventionAbortedSubscriber implements EventSubscriberInterface
         $context = $event->getContext();
         if (InterventionType::VISITE === $intervention->getType()) {
             $category = SuiviCategory::INTERVENTION_IS_ABORTED;
+            $isVisibleForUsager = $intervention->getNotifyUsager() ?? false;
             $suivi = $this->suiviManager->createSuivi(
                 signalement: $intervention->getSignalement(),
                 description: $this->suiviDescriptionHelper->buildDescriptionForCreation($category, [
@@ -54,14 +55,16 @@ class InterventionAbortedSubscriber implements EventSubscriberInterface
                 category: $category,
                 partner: $context['createdByPartner'],
                 user: $currentUser,
-                isVisibleForUsager: true,
+                isVisibleForUsager: $isVisibleForUsager,
                 sendMail: false,
             );
 
-            $this->visiteNotifier->notifyUsagers(
-                intervention: $intervention,
-                notificationMailerType: NotificationMailerType::TYPE_VISITE_ABORTED_TO_USAGER,
-            );
+            if ($isVisibleForUsager) {
+                $this->visiteNotifier->notifyUsagers(
+                    intervention: $intervention,
+                    notificationMailerType: NotificationMailerType::TYPE_VISITE_ABORTED_TO_USAGER,
+                );
+            }
 
             $this->visiteNotifier->notifySubscribers(
                 notificationMailerType: NotificationMailerType::TYPE_VISITE_ABORTED_TO_PARTNER,

@@ -3,7 +3,9 @@
 {{ form_start(editConclusionVisiteForm, {'attr': {'id': 'edit-conclusion-visite-form', 'data-submit-type':'formData'}}) }}
     {{ form_errors(editConclusionVisiteForm) }}
 
-        {{ form_row(editConclusionVisiteForm.notifyUsager) }}
+        {% if editConclusionVisiteForm.notifyUsager is defined %}
+            {{ form_row(editConclusionVisiteForm.notifyUsager) }}
+        {% endif %}
         {{ form_row(editConclusionVisiteForm.concludeProcedure)}}
         {{ form_row(editConclusionVisiteForm.details) }}
         {% if editConclusionVisiteForm.rapportDeVisite is defined %}

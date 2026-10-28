@@ -36,6 +36,7 @@ class InterventionRescheduledSubscriber implements EventSubscriberInterface
             $isInPast = $today > $intervention->getScheduledAt()
                 && Intervention::STATUS_DONE === $intervention->getStatus();
             $category = SuiviCategory::INTERVENTION_IS_RESCHEDULED;
+            $isVisibleForUsager = $intervention->getNotifyUsager() ?? false;
             $suivi = $this->suiviManager->createSuivi(
                 signalement: $intervention->getSignalement(),
                 description: $this->suiviDescriptionHelper->buildDescriptionForCreation($category, [
@@ -47,15 +48,17 @@ class InterventionRescheduledSubscriber implements EventSubscriberInterface
                 category: $category,
                 partner: $event->getPartner(),
                 user: $event->getUser(),
-                isVisibleForUsager: true,
+                isVisibleForUsager: $isVisibleForUsager,
                 sendMail: false,
             );
 
-            $this->visiteNotifier->notifyUsagers(
-                intervention: $intervention,
-                notificationMailerType: NotificationMailerType::TYPE_VISITE_RESCHEDULED_TO_USAGER,
-                previousDate: $event->getPreviousDate()
-            );
+            if ($isVisibleForUsager) {
+                $this->visiteNotifier->notifyUsagers(
+                    intervention: $intervention,
+                    notificationMailerType: NotificationMailerType::TYPE_VISITE_RESCHEDULED_TO_USAGER,
+                    previousDate: $event->getPreviousDate()
+                );
+            }
 
             $this->visiteNotifier->notifyInAppSubscribers(
                 intervention: $intervention,

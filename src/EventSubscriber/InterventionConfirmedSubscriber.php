@@ -49,6 +49,7 @@ class InterventionConfirmedSubscriber implements EventSubscriberInterface
         $context = $event->getContext();
         if (InterventionType::VISITE === $intervention->getType() && !isset($context['esabora'])) {
             $category = SuiviCategory::INTERVENTION_HAS_CONCLUSION;
+            $isVisibleForUsager = $intervention->getNotifyUsager() ?? false;
             $suivi = $this->suiviManager->createSuivi(
                 signalement: $intervention->getSignalement(),
                 description: $this->suiviDescriptionHelper->buildDescriptionForCreation($category, [
@@ -62,12 +63,12 @@ class InterventionConfirmedSubscriber implements EventSubscriberInterface
                 category: $category,
                 partner: $context['createdByPartner'],
                 user: $currentUser,
-                isVisibleForUsager: $intervention->getNotifyUsager(),
+                isVisibleForUsager: $isVisibleForUsager,
                 sendMail: false,
                 files: $intervention->getFiles(),
             );
 
-            if ($intervention->getNotifyUsager()) {
+            if ($isVisibleForUsager) {
                 $this->visiteNotifier->notifyUsagers(
                     intervention: $intervention,
                     notificationMailerType: NotificationMailerType::TYPE_VISITE_CONFIRMED_TO_USAGER,
