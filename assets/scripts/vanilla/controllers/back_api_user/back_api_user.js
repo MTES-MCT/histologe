@@ -1,4 +1,4 @@
-document.addEventListener('click', (event) => {
+document.getElementById('table-list-results')?.addEventListener('click', (event) => {
   const btn = event.target.closest('.btn-delete-user-api-permission');
   if (btn) {
     document.querySelector('#user_api_permission_delete_form').action = btn.dataset.url;
