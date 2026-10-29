@@ -114,9 +114,9 @@ class ServiceSecoursController extends AbstractController
     ): Response {
         $serviceSecours = new FormServiceSecours();
         $user = $this->getUser();
-        if ($user instanceof ServiceSecoursUser && $user->getMatricule()) {
-            $serviceSecours->step1->matriculeDeclarant = $user->getMatricule();
-            $serviceSecours->step1->nomDeclarant = $user->getFullname();
+        if ($user instanceof ServiceSecoursUser) {
+            $serviceSecours->step1->matriculeDeclarant = $user->getMatricule() ?? null;
+            $serviceSecours->step1->nomDeclarant = $user->getFullname() ?? null;
         }
         /** @var FormFlowInterface $flow */
         $flow = $this->createForm(ServiceSecoursType::class, $serviceSecours);
