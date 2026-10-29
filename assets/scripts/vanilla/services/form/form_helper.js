@@ -49,7 +49,7 @@ export function initTinyMCE(selector) {
       ui_mode: 'split', // on attache le menu de suggestions à l'éditeur
       menubar: false,
       // Accessibilité : le bouton de redimensionnement de l'éditeur n'est pas valide au niveau du RGAA
-      // Option possible : supprimer cette fonctionnalité en passant resize: false, 
+      // Option possible : supprimer cette fonctionnalité en passant resize: false,
       // mais on perd la possibilité de redimensionner l'éditeur
       // L'impact est quasi-nul. On choisit d'être non valide à ce niveau-là
       height: 320,
@@ -102,7 +102,9 @@ export function initTinyMCE(selector) {
           body.setAttribute('aria-multiline', 'true');
           body.setAttribute('aria-label', labelText);
           // Les boutons svg de l'éditeur sont décoratifs, on les masque aux lecteurs d'écran
-          ed.getContainer().querySelectorAll('svg').forEach((svg) => svg.setAttribute('aria-hidden', 'true'));
+          ed.getContainer()
+            .querySelectorAll('svg')
+            .forEach((svg) => svg.setAttribute('aria-hidden', 'true'));
 
           const panel = ed.getElement().closest('dialog.side-panel');
           if (panel) {
