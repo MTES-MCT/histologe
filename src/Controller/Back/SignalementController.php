@@ -452,7 +452,10 @@ class SignalementController extends AbstractController
             $locauxByBanId = $rialService->searchLocauxByBanId($signalement->getAddress()->getBanId());
             $invariants = [];
             foreach ($locauxByBanId as $local) {
-                $invariants []= $rialService->searchLocalByIdFiscal($local);
+                $localInfo = $rialService->searchLocalByIdFiscal($local);
+                if ($localInfo) {
+                    $invariants[] = $localInfo;
+                }
             }
         }
 
@@ -461,21 +464,5 @@ class SignalementController extends AbstractController
         ]);
 
         return $this->json(['html' => $html]);
-    }
-
-    #[Route('/{uuid:signalement}/edit-invariant-fiscal', name: 'back_signalement_edit_invariant_fiscal', methods: 'POST')]
-    public function editInvariantFiscal(
-        Signalement $signalement,
-        Request $request,
-        EntityManagerInterface $entityManager,
-    ): JsonResponse {
-        $this->denyAccessUnlessGranted(SignalementVoter::SIGN_VIEW, $signalement);
-        $invariantId = $request->request->get('invariant');
-        if (!$invariantId) {
-            return $this->json(['code' => Response::HTTP_BAD_REQUEST, 'message' => 'Aucun invariant fiscal sélectionné.'], Response::HTTP_BAD_REQUEST);
-        }
-        $signalement->setNumeroInvariantRial($invariantId);
-        $entityManager->flush();
-        return $this->json(['code' => Response::HTTP_OK, 'message' => 'Invariant fiscal mis à jour.']);
     }
 }

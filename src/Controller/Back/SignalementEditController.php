@@ -1370,4 +1370,41 @@ class SignalementEditController extends AbstractController
 
         return $this->json(['stayOnPage' => true, 'flashMessages' => $flashMessages, 'closeModal' => true, 'htmlTargetContents' => $htmlTargetContents, 'functions' => $functions]);
     }
+
+    #[Route('/{uuid:signalement}/edit-invariant-fiscal', name: 'back_signalement_edit_invariant_fiscal', methods: 'POST')]
+    public function editInvariantFiscal(
+        Signalement $signalement,
+        Request $request,
+        EntityManagerInterface $entityManager,
+    ): JsonResponse {
+        $this->denyAccessUnlessGranted(SignalementVoter::SIGN_VIEW, $signalement);
+        /** @var array<string, mixed> $payload */
+        $payload = $request->getPayload()->all();
+        $token = is_scalar($payload['_token'] ?? null) ? (string) $payload['_token'] : '';
+        if (!$this->isCsrfTokenValid('signalement_edit_invariant_fiscal_'.$signalement->getId(), $token)) {
+            $flashMessages[] = ['type' => 'alert', 'title' => 'Erreur', 'message' => MessageHelper::ERROR_MESSAGE_CSRF];
+
+            return $this->json(['stayOnPage' => true, 'flashMessages' => $flashMessages]);
+        }
+
+        $invariantId = is_scalar($payload['invariant'] ?? null) ? trim((string) $payload['invariant']) : '';
+        if ('' === $invariantId) {
+            return $this->json([
+                'code' => Response::HTTP_BAD_REQUEST,
+                'errors' => ['invariant' => ['errors' => ['Veuillez sélectionner un invariant fiscal.']]],
+            ], Response::HTTP_BAD_REQUEST);
+        }
+        $signalement->setNumeroInvariant($invariantId);
+        $entityManager->flush();
+
+        $flashMessages[] = ['type' => 'success', 'title' => 'Modifications enregistrées', 'message' => 'L\'invariant fiscal a bien été mis à jour.'];
+        $htmlTargetContents[] = [
+            'target' => '#signalement-occupation-logement-container',
+            'content' => $this->renderView('back/signalement/view/details/occupation-logement.html.twig', [
+                'signalement' => $signalement,
+            ]),
+        ];
+
+        return $this->json(['stayOnPage' => true, 'flashMessages' => $flashMessages, 'closeModal' => true, 'htmlTargetContents' => $htmlTargetContents]);
+    }
 }
