@@ -745,11 +745,8 @@ const showCaption = (target: Element, x: number, y: number): void => {
   captionTerritoryName.value = territoryItem.name
   captionTerritoryZip.value = territoryItem.zip
   captionTerritoryCount.value = territoryItem.count
-  territoryCaptionX.value = x - 60
-  territoryCaptionY.value = y + 40
-  if (window.top !== null) {
-    territoryCaptionY.value += window.top.scrollY
-  }
+  territoryCaptionX.value = x - 60 + window.scrollX
+  territoryCaptionY.value = y + 40 + window.scrollY
 }
 
 const handleStateHover = (e: MouseEvent): void => {
