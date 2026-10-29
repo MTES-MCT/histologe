@@ -33,7 +33,6 @@ readonly class InterventionCreatedSubscriber implements EventSubscriberInterface
     {
         $intervention = $event->getIntervention();
         $signalement = $intervention->getSignalement();
-        $description = (string) InterventionDescriptionGenerator::generate($intervention, InterventionCreatedEvent::NAME);
         $isVisibleForUsager = true;
         if (EsaboraSISHService::NAME_SI === $event->getSource() && $signalement->isTiersDeclarant()) {
             $isVisibleForUsager = false;
