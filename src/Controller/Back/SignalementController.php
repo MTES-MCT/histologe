@@ -446,10 +446,10 @@ class SignalementController extends AbstractController
         RialService $rialService,
     ): JsonResponse {
         $this->denyAccessUnlessGranted(SignalementVoter::SIGN_VIEW, $signalement);
-        if (!$signalement->getAddress() || !$signalement->getAddress()->getBanId()) {
+        if (!$signalement->getAddress()->getBanId()) {
             $invariants = null;
         } else {
-            $locauxByBanId = $rialService->searchLocauxByBanId($signalement->getAddress()->getBanId());
+            $locauxByBanId = $rialService->searchLocauxByBanId($signalement->getAddress()->getBanId()) ?? [];
             $invariants = [];
             foreach ($locauxByBanId as $local) {
                 $localInfo = $rialService->searchLocalByIdFiscal($local);
