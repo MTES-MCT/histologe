@@ -4,6 +4,8 @@ namespace App\Service\Import;
 
 class CsvParser
 {
+    private const string REGEX_UTF8_BOM = '/^\xEF\xBB\xBF/';
+
     /**
      * @var array<string, int|string>
      */
@@ -39,7 +41,7 @@ class CsvParser
                 (string) $this->options['escape']
             )) !== false) {
                 if ($i >= $this->options['first_line']) {
-                    $row = array_map(static fn (?string $value) => trim((string) $value), $row);
+                    $row = array_map(fn (?string $value) => $this->cleanValue($value), $row);
                     $rows[] = $row;
                 }
                 ++$i;
@@ -102,7 +104,7 @@ class CsvParser
                 (string) $this->options['escape']
             )) !== false) {
                 if ($i === $headerLine) {
-                    $headers = array_map(static fn ($header) => trim((string) $header), $row);
+                    $headers = array_map(fn ($header) => $this->cleanValue((string) $header), $row);
                 } elseif ($i > $headerLine) {
                     $rows[] = $row;
                 }
@@ -115,6 +117,11 @@ class CsvParser
             'headers' => $headers,
             'rows' => $rows,
         ];
+    }
+
+    private function cleanValue(?string $value): string
+    {
+        return trim((string) preg_replace(self::REGEX_UTF8_BOM, '', (string) $value));
     }
 
     /**
@@ -160,6 +167,39 @@ class CsvParser
         }
 
         $this->options['delimiter'] = $delimiterDetected;
+
+        return $this;
+    }
+
+    /**
+     * @param string[] $expectedHeaders
+     */
+    public function autoDetectFirstLine(string $filepath, array $expectedHeaders = [], int $maxSearchLines = 2): self
+    {
+        if (empty($expectedHeaders)) {
+            return $this;
+        }
+
+        $bestLine = 1;
+        $minMissing = null;
+
+        for ($line = 1; $line <= $maxSearchLines; ++$line) {
+            $this->setFirstLine($line);
+            $headers = $this->getHeaders($filepath);
+            if (empty($headers)) {
+                continue;
+            }
+            $missing = \count(array_diff($expectedHeaders, $headers));
+            if (0 === $missing) {
+                return $this;
+            }
+            if (null === $minMissing || $missing < $minMissing) {
+                $minMissing = $missing;
+                $bestLine = $line;
+            }
+        }
+
+        $this->setFirstLine($bestLine);
 
         return $this;
     }

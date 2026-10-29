@@ -3,7 +3,6 @@
 namespace App\Validator;
 
 use App\Service\Import\Arrete\ArreteImportHeader;
-use App\Service\Import\Arrete\ArreteImportRow;
 use App\Service\Import\CsvParser;
 use Symfony\Component\Form\Exception\UnexpectedTypeException;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
@@ -23,8 +22,8 @@ class ArreteImportFileValidator extends ConstraintValidator
         }
 
         $csvParser = new CsvParser()
-            ->setFirstLine(ArreteImportRow::FIRST_LINE)
-            ->autoDetectDelimiter($value->getPathname());
+            ->autoDetectDelimiter($value->getPathname())
+            ->autoDetectFirstLine($value->getPathname(), ArreteImportHeader::REQUIRED_HEADERS);
         $headers = $csvParser->getHeaders($value->getPathname());
         $missingHeaders = array_diff(ArreteImportHeader::REQUIRED_HEADERS, $headers);
 

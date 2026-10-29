@@ -53,6 +53,8 @@ class ArreteImportRow
 
     private ?bool $addressToValidate = false;
 
+    private ?int $lineNumber = null;
+
     public function getAddress(): ?string
     {
         return $this->numeroVoie.' '.$this->nomVoie.' '.$this->codePostal.' '.$this->commune;
@@ -212,6 +214,18 @@ class ArreteImportRow
     public function setAddressToValidate(?bool $addressToValidate): self
     {
         $this->addressToValidate = $addressToValidate;
+
+        return $this;
+    }
+
+    public function getLineNumber(): ?int
+    {
+        return $this->lineNumber;
+    }
+
+    public function setLineNumber(?int $lineNumber): self
+    {
+        $this->lineNumber = $lineNumber;
 
         return $this;
     }

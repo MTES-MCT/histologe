@@ -58,6 +58,39 @@ class ArreteImportLoaderTest extends WebTestCase
         $this->assertNotNull($row3->getDateArreteMainLevee());
     }
 
+    public function testValidateWithoutInstructionLine(): void
+    {
+        self::bootKernel();
+        $container = self::getContainer();
+        $addressServiceFake = new AddressServiceFake();
+        $container->set(AddressService::class, $addressServiceFake);
+
+        /** @var ArreteImportLoader $arreteImportLoader */
+        $arreteImportLoader = $container->get(ArreteImportLoader::class);
+
+        $tmpFile = tempnam(sys_get_temp_dir(), 'arrete_line1_');
+        $content = "date arrêté,classification arrêté,date arrêté main levée,numéro de voie,nom de la voie,code postal,commune,dénomination syndic,identifiant parcellaire\n"
+            ."01/01/2023,Insalubrité,,8,Rue de la tourmentinerie,44850,Saint-Mars-du-Désert,,12345\n"
+            ."01/01/2023,Insalubrité,,,,,,,NON_VIDE\n";
+        file_put_contents($tmpFile, $content);
+
+        $entityManager = $container->get('doctrine.orm.entity_manager');
+        $user = $entityManager->getRepository(User::class)->findOneBy(['email' => 'admin-01@signal-logement.fr']);
+
+        [$errors, $validRows] = $arreteImportLoader->validate($tmpFile, $user);
+        unlink($tmpFile);
+
+        $this->assertCount(4, $errors);
+        $this->assertStringContainsString('1 ligne présentent une erreur de format', $errors[0]);
+        $this->assertStringContainsString('ligne 3', $errors[0]);
+        $this->assertEquals('Ligne 3 : Le nom de la voie est obligatoire.', $errors[1]);
+        $this->assertEquals('Ligne 3 : Le code postal est obligatoire.', $errors[2]);
+        $this->assertEquals('Ligne 3 : La commune est obligatoire.', $errors[3]);
+
+        $this->assertCount(1, $validRows);
+        $this->assertEquals('8', $validRows[0]->getNumeroVoie());
+    }
+
     /**
      * @throws InvalidValueException
      */
@@ -297,5 +330,40 @@ class ArreteImportLoaderTest extends WebTestCase
         $metadata = $arreteImportLoader->getMetadata();
         $this->assertCount(1, $arretes);
         $this->assertEquals(1, $metadata['countSuccess']);
+    }
+
+    /**
+     * @throws InvalidValueException
+     */
+    public function testLoadWithValidationErrorAndCustomLineNumber(): void
+    {
+        self::bootKernel();
+        $container = self::getContainer();
+        $addressServiceFake = new AddressServiceFake();
+        $container->set(AddressService::class, $addressServiceFake);
+
+        /** @var ArreteImportLoader $arreteImportLoader */
+        $arreteImportLoader = $container->get(ArreteImportLoader::class);
+
+        $entityManager = $container->get('doctrine.orm.entity_manager');
+        $user = $entityManager->getRepository(User::class)->findOneBy(['email' => 'admin-01@signal-logement.fr']);
+
+        $invalidRow = new ArreteImportRow()
+            ->setLineNumber(15)
+            ->setNumeroVoie('10')
+            ->setNomVoie('Rue de Paris')
+            ->setCodePostal('75001')
+            ->setCommune('Paris')
+            ->setIdentifiantParcellaire('12345678')
+            ->setClassificationArrete('Classification Inexistante')
+            ->setDateArrete(new \DateTimeImmutable('2024-03-01'));
+
+        $arretes = $arreteImportLoader->load([$invalidRow], $user);
+
+        $metadata = $arreteImportLoader->getMetadata();
+        $this->assertCount(0, $arretes);
+        $this->assertEquals(0, $metadata['countSuccess']);
+        $this->assertCount(1, $metadata['errors']);
+        $this->assertStringContainsString('Ligne 15 : classificationArrete - La classification de l\'arrêté est invalide.', $metadata['errors'][0]);
     }
 }
