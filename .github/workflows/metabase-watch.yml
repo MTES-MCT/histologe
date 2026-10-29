@@ -1,0 +1,190 @@
+name: Metabase Watch
+
+on:
+  schedule:
+    # Une fois par jour, en évitant le début d'heure
+    # Cron GitHub Actions en UTC
+    - cron: '23 7 * * *'
+
+  # Permet un lancement manuel
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  metabase-watch:
+    name: Check Metabase releases and security advisories
+    runs-on: ubuntu-latest
+
+    env:
+      SMTP_HOST: ${{ secrets.SMTP_HOST }}
+
+    steps:
+      - name: Fetch Metabase information
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          # ------------------------------------------------------------
+          # Releases
+          # ------------------------------------------------------------
+
+          RELEASES=$(curl -fsSL \
+            -H "Accept: application/vnd.github+json" \
+            -H "Authorization: Bearer $GH_TOKEN" \
+            -H "X-GitHub-Api-Version: 2022-11-28" \
+            "https://api.github.com/repos/metabase/metabase/releases?per_page=20")
+
+          echo "$RELEASES" | jq -r '
+            [
+              .[]
+              | select(.draft == false)
+              | select(.prerelease == false)
+            ]
+            | .[:5]
+            | .[]
+            | "- \(.tag_name) — \(.published_at | split("T")[0]) — \(.html_url)"
+          ' > /tmp/releases.txt
+
+          # ------------------------------------------------------------
+          # Hotfixes
+          # Versions Metabase de type v0.64.3.4
+          # Triées par date décroissante
+          # ------------------------------------------------------------
+
+          git clone \
+            --quiet \
+            --filter=blob:none \
+            --no-checkout \
+            https://github.com/metabase/metabase.git \
+            /tmp/metabase
+
+          git -C /tmp/metabase for-each-ref \
+            --sort=-creatordate \
+            --format='%(refname:short)|%(creatordate:short)' \
+            refs/tags \
+            | grep -E '^v0\.[0-9]+\.[0-9]+\.[0-9]+\|' \
+            | head -20 \
+            | awk -F'|' '{
+                print $1 " — " $2 " — https://github.com/metabase/metabase/releases/tag/" $1
+              }' \
+            > /tmp/hotfixes.txt
+
+          # ------------------------------------------------------------
+          # Security advisories
+          # Failles critiques publiées dans les 30 derniers jours
+          # ------------------------------------------------------------
+
+          ADVISORIES=$(curl -fsSL \
+            -H "Accept: application/vnd.github+json" \
+            -H "Authorization: Bearer $GH_TOKEN" \
+            -H "X-GitHub-Api-Version: 2022-11-28" \
+            "https://api.github.com/repos/metabase/metabase/security-advisories?state=published&sort=published&direction=desc&per_page=100")
+
+          LIMIT_DATE=$(date -d "30 days ago" -u +"%Y-%m-%dT%H:%M:%SZ")
+
+          echo "$ADVISORIES" | jq --arg limit "$LIMIT_DATE" -r '
+            .[]
+            | select(
+                .severity == "critical"
+                and .published_at >= $limit
+              )
+            |
+              "- \(.ghsa_id) — \(.summary)\n" +
+              "  Publiée le : \(.published_at | split("T")[0])\n" +
+              "  Versions affectées : " +
+              ([.vulnerabilities[].vulnerable_version_range] | join(", ")) +
+              "\n" +
+              "  Versions corrigées : " +
+              ([.vulnerabilities[].patched_versions // "Non précisée"] | join(", ")) +
+              "\n" +
+              "  \(.html_url)\n"
+          ' > /tmp/advisories.txt
+
+      - name: Generate GitHub summary
+        run: |
+          echo "# 🔎 Metabase Watch" >> "$GITHUB_STEP_SUMMARY"
+          echo "" >> "$GITHUB_STEP_SUMMARY"
+
+          # Releases
+          echo "## 📦 Dernières releases publiées" >> "$GITHUB_STEP_SUMMARY"
+          echo "" >> "$GITHUB_STEP_SUMMARY"
+
+          sed -E \
+            's#^- ([^ ]+) — ([^ ]+) — (.*)$#- [\1](\3) — \2#' \
+            /tmp/releases.txt \
+            >> "$GITHUB_STEP_SUMMARY"
+
+          # Hotfixes
+          echo "" >> "$GITHUB_STEP_SUMMARY"
+          echo "## 🩹 Derniers hotfixes" >> "$GITHUB_STEP_SUMMARY"
+          echo "" >> "$GITHUB_STEP_SUMMARY"
+
+          awk -F' — ' '{
+            print "- [" $1 "](" $3 ") — " $2
+          }' /tmp/hotfixes.txt >> "$GITHUB_STEP_SUMMARY"
+
+          # Security advisories
+          echo "" >> "$GITHUB_STEP_SUMMARY"
+          echo "## 🔐 Failles critiques des 30 derniers jours" >> "$GITHUB_STEP_SUMMARY"
+          echo "" >> "$GITHUB_STEP_SUMMARY"
+
+          if [ -s /tmp/advisories.txt ]; then
+            cat /tmp/advisories.txt >> "$GITHUB_STEP_SUMMARY"
+          else
+            echo "✅ Aucune faille critique publiée au cours des 30 derniers jours." \
+              >> "$GITHUB_STEP_SUMMARY"
+          fi
+
+      - name: Generate email
+        if: ${{ env.SMTP_HOST != '' }}
+        env:
+          SMTP_USERNAME: ${{ secrets.SMTP_USERNAME }}
+        run: |
+          {
+            echo "From: Metabase Watch <${SMTP_USERNAME}>"
+            echo "To: support@signal-logement.beta.gouv.fr"
+            echo "Subject: [Metabase Watch] Bulletin de veille quotidien"
+            echo "Content-Type: text/plain; charset=UTF-8"
+            echo ""
+
+            echo "METABASE WATCH"
+            echo ""
+
+            echo "Dernières releases publiées"
+            echo "----------------------------"
+            cat /tmp/releases.txt
+            echo ""
+
+            echo "Derniers hotfixes"
+            echo "-----------------"
+            cat /tmp/hotfixes.txt
+            echo ""
+
+            echo "Failles critiques des 30 derniers jours"
+            echo "----------------------------------------"
+
+            if [ -s /tmp/advisories.txt ]; then
+              cat /tmp/advisories.txt
+            else
+              echo "Aucune faille critique publiée au cours des 30 derniers jours."
+            fi
+
+            echo ""
+            echo "Ce rapport est généré automatiquement par GitHub Actions."
+          } > /tmp/email.txt
+
+      - name: Notify team by email
+        if: ${{ env.SMTP_HOST != '' }}
+        env:
+          SMTP_PORT: ${{ secrets.SMTP_PORT }}
+          SMTP_USERNAME: ${{ secrets.SMTP_USERNAME }}
+          SMTP_PASSWORD: ${{ secrets.SMTP_PASSWORD }}
+        run: |
+          curl --fail --show-error --silent \
+            --ssl-reqd \
+            --url "smtp://${SMTP_HOST}:${SMTP_PORT}" \
+            --user "${SMTP_USERNAME}:${SMTP_PASSWORD}" \
+            --mail-from "${SMTP_USERNAME}" \
+            --mail-rcpt "support@signal-logement.beta.gouv.fr" \
+            --upload-file /tmp/email.txt
