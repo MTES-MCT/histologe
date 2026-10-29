@@ -3,7 +3,7 @@ import * as Sentry from '@sentry/browser'
 import '@vuepic/vue-datepicker/dist/main.css'
 
 // Chargé à la demande : les statistiques embarquent chart.js et datatables.net, inutiles sur les autres pages
-const statsComponent = document.getElementById('app-stats')
+const statsComponent = document.getElementById('stats-app')
 if (statsComponent !== null) {
   try {
     const { default: StatsApp } = await import('./components/stats/StatsApp.vue')

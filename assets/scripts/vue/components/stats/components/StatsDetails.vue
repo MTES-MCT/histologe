@@ -1,5 +1,5 @@
 <template>
-  <section class="histo-stats-details">
+  <section class="stats-details">
     <div class="fr-container--fluid fr-my-10v">
       <div class="fr-grid-row fr-grid-row--gutters">
         <StatsDetailsItem :value="countSignalement" color="blue">

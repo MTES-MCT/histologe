@@ -1,5 +1,5 @@
 <template>
-  <section class="histo-stats-global">
+  <section class="stats-global">
     <h2 class="fr-h3 fr-mb-5v">Statistiques globales</h2>
 
     <div class="fr-container--fluid filter-territories fr-mb-5v" v-if="sharedState.options.canFilterTerritoires">

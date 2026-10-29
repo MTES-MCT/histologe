@@ -1,5 +1,5 @@
 <template>
-  <section id="histo-stats-filters" class="histo-stats-filters">
+  <section id="stats-filters" class="stats-filters">
     <h2 class="fr-h3 fr-mb-0">Statistiques détaillées</h2>
     <p class="fr-mb-5w">
       Modifiez les filtres et / ou la plage de dates pour mettre les données à jour.
@@ -148,15 +148,15 @@ const onReset = async (): Promise<void> => {
 </script>
 
 <style>
-  #histo-stats-filters .fr-container--fluid {
+  #stats-filters .fr-container--fluid {
     overflow: visible;
   }
 
-  #histo-stats-filters .align-right {
+  #stats-filters .align-right {
     text-align: right;
   }
 
-  #histo-stats-filters .fr-fi-refresh-line::before{
+  #stats-filters .fr-fi-refresh-line::before{
     margin-right: 5px;
     font-size: 1rem;
     color: var(--blue-france-sun-113-625);

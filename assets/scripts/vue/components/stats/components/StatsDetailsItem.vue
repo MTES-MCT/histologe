@@ -1,5 +1,5 @@
 <template>
-  <div class="histo-stats-details-item fr-col-6 fr-col-lg-3 fr-col-xl-2">
+  <div class="stats-details-item fr-col-6 fr-col-lg-3 fr-col-xl-2">
     <div :class="[ 'color-' + color ]">
       <p><slot name="title"></slot></p>
       <p>{{ value }}</p>
@@ -15,22 +15,22 @@ defineProps<{
 </script>
 
 <style>
-  .histo-stats-details-item div {
+  .stats-details-item div {
     text-align: center;
     font-weight: bold;
     background: #FFF;
     padding: 1rem 0.5rem;
     border: 1px solid var(--border-default-grey);
   }
-  .histo-stats-details-item div p:first-child {
+  .stats-details-item div p:first-child {
     font-size: 0.8rem;
     color: var(--grey-200-850);
   }
-  .histo-stats-details-item div p:last-child {
+  .stats-details-item div p:last-child {
     font-size: 2rem;
     color: var(--blue-france-sun-113-625);
   }
-  .histo-stats-details-item div.color-purple p:last-child {
+  .stats-details-item div.color-purple p:last-child {
     color: var(--purple-glycine-main-494);
   }
 </style>

@@ -14,7 +14,7 @@ async function gotoFrontStatistiques(page: Page) {
 }
 
 function territoryItem(page: Page, title: string) {
-  return page.locator('.histo-front-stats-territory-item').filter({ hasText: title });
+  return page.locator('.front-stats-territory-item').filter({ hasText: title });
 }
 
 test('front statistiques page', async ({page, context}) => {

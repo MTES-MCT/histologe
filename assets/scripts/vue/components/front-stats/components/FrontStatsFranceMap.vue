@@ -1,5 +1,5 @@
 <template>
-  <div class="histo-france-map">
+  <div class="front-stats-france-map">
     <h2 id="france-map-title">Répartition des signalements par département</h2>
 
     <div class="fr-container--fluid fr-my-10v">
@@ -771,7 +771,7 @@ watch(() => props.data, colorizeTerritories)
 </script>
 
 <style>
-  .histo-france-map {
+  .front-stats-france-map {
     margin-top: 10px;
     padding: 20px;
     padding-bottom: 0px;
@@ -779,14 +779,14 @@ watch(() => props.data, colorizeTerritories)
     box-shadow: 0px 3px 12px #16161633;
     border-radius: 4px;
   }
-  .histo-france-map h3 {
+  .front-stats-france-map h3 {
     color: var(--blue-france-sun-113-625);
     text-transform: uppercase;
     text-align: left;
     font-size: 18px;
     letter-spacing: 0px;
   }
-  .histo-france-map .map {
+  .front-stats-france-map .map {
     display: inline-block;
     position: relative;
     width: 100%;
@@ -794,45 +794,45 @@ watch(() => props.data, colorizeTerritories)
     vertical-align: middle;
     overflow: hidden;
   }
-  .histo-france-map .map svg {
+  .front-stats-france-map .map svg {
     display: inline-block;
     position: absolute;
     top: 0;
     left: 0;
   }
 
-  .histo-france-map .legend {
+  .front-stats-france-map .legend {
     display: flex;
     flex-direction: column;
     align-items: flex-start;
   }
 
-  .histo-france-map .legend-bar {
+  .front-stats-france-map .legend-bar {
     display: flex;
     flex-direction: column;
     align-items: center;
     width: 266px;
   }
 
-  .histo-france-map .legend-gradient {
+  .front-stats-france-map .legend-gradient {
     width: 266px;
     height: 24px;
     background: linear-gradient(to right, #bfc4d5, #2F4077);
   }
 
-  .histo-france-map .legend-undeployed {
+  .front-stats-france-map .legend-undeployed {
     width: 14px;
     height: 14px;
     background: #E5E5E5;
   }
 
-  .histo-france-map .legend-labels {
+  .front-stats-france-map .legend-labels {
     display: flex;
     justify-content: space-between;
     width: 100%;
   }
 
-  .histo-france-map .legend-title {
+  .front-stats-france-map .legend-title {
     margin-top: 8px;
     font-weight: bold;
   }

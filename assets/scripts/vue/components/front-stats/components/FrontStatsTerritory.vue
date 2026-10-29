@@ -1,5 +1,5 @@
 <template>
-  <div class="histo-front-stats-territory fr-px-5w fr-pt-5w">
+  <div class="front-stats-territory fr-px-5w fr-pt-5w">
     <div class="fr-container">
       <h2>Evolution territoriale du mal-logement</h2>
       <label for="filter-territoires">Sélectionnez un territoire pour afficher ses statistiques</label>
@@ -88,24 +88,24 @@ const chartItems = (key: ChartKey): StatsChartData => sharedState.stats.charts[k
 </script>
 
 <style>
-  div.histo-front-stats-territory {
+  div.front-stats-territory {
     background-color: var(--blue-france-975-75);
   }
 
-  div.histo-front-stats-territory h2 {
+  div.front-stats-territory h2 {
     color: var(--grey-50-1000);
     font-size: 32px;
     font-weight: bold;
   }
 
-  div.histo-front-stats-territory label {
+  div.front-stats-territory label {
     color: var(--grey-200-850);
     font-size: 18px;
     display: block;
     padding-bottom: 8px;
   }
 
-  div.histo-front-stats-territory .histo-select {
+  div.front-stats-territory .histo-select {
     display: block;
     max-width: 250px;
   }

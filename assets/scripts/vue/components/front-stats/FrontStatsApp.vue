@@ -1,5 +1,5 @@
 <template>
-  <div class="histo-app-front-stats fr-pt-5w">
+  <div class="front-stats-app fr-pt-5w">
     <div class="fr-container">
       <h1>{{ sharedProps.platformName }} en quelques chiffres</h1>
     </div>
@@ -39,7 +39,7 @@ const { reloadStats } = useFrontStats()
  * Initialisation
  */
 const init = async (): Promise<void> => {
-  const initElements = document.querySelector('#app-front-stats') as HTMLElement | null
+  const initElements = document.querySelector('#front-stats-app') as HTMLElement | null
   if (!initElements) {
     sharedState.hasErrorLoading = true
     return
@@ -56,15 +56,15 @@ onMounted(() => {
 </script>
 
 <style>
-  .histo-app-front-stats h1 {
+  .front-stats-app h1 {
     text-align: left;
     color: var(--blue-france-sun-113-625);
   }
-  .iframed .histo-app-front-stats h1 {
+  .iframed .front-stats-app h1 {
     display: none;
   }
 
-  .histo-app-front-stats a {
+  .front-stats-app a {
     color: var(--blue-france-sun-113-625);
   }
 

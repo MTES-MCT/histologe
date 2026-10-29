@@ -1,5 +1,5 @@
 <template>
-  <div class="histo-front-stats-year-toggle">
+  <div class="front-stats-year-toggle">
     <div>
       <button type="button" :class="{ selected: modelValue === 'year' }" @click="select('year')">{{ currentYear }}</button>
       <button v-if="isTotalActive" type="button" :class="{ selected: modelValue === 'all' }" @click="select('all')">Total</button>
@@ -32,22 +32,22 @@ const select = (yearType: YearType): void => {
 </script>
 
 <style>
-  .histo-front-stats-year-toggle button {
+  .front-stats-year-toggle button {
     font-size: 16px;
     color: var(--grey-50-1000);
     border: 1px solid var(--blue-france-sun-113-625);
     background-color: #FFFFFF;
     cursor: pointer;
   }
-  .histo-front-stats-year-toggle button.selected {
+  .front-stats-year-toggle button.selected {
     color: #FFFFFF;
     background-color: var(--blue-france-sun-113-625);
   }
 
-  .histo-front-stats-year-toggle button:first-child {
+  .front-stats-year-toggle button:first-child {
     border-radius: 4px 0px 0px 4px;
   }
-  .histo-front-stats-year-toggle button:last-child {
+  .front-stats-year-toggle button:last-child {
     border-radius: 0px 4px 4px 0px;
   }
 </style>

@@ -1,5 +1,5 @@
 <template>
-  <div class="histo-front-stats-details-item fr-mb-5w">
+  <div class="front-stats-details-item fr-mb-5w">
     <div>
       <p>{{ value }}</p>
       <p><slot name="title"></slot></p>
@@ -14,10 +14,10 @@ defineProps<{
 </script>
 
 <style>
-  .histo-front-stats-details-item:first-child {
+  .front-stats-details-item:first-child {
     margin-top: 10px;
   }
-  .histo-front-stats-details-item div {
+  .front-stats-details-item div {
     text-align: center;
     font-weight: bold;
     background: #FFF;
@@ -25,12 +25,12 @@ defineProps<{
     box-shadow: 0px 3px 12px #16161633;
     border-radius: 4px;
   }
-  .histo-front-stats-details-item div p:first-child {
+  .front-stats-details-item div p:first-child {
     margin-bottom: 0.5rem;
     font-size: 2rem;
     color: var(--blue-france-sun-113-625);
   }
-  .histo-front-stats-details-item div p:last-child {
+  .front-stats-details-item div p:last-child {
     margin-bottom: 0px;
     font-size: 0.8rem;
     color: var(--grey-200-850);

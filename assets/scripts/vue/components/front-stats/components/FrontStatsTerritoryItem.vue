@@ -1,5 +1,5 @@
 <template>
-  <div :class="[ 'histo-front-stats-territory-item fr-col-12 fr-mb-5w', 'fr-col-md-' + sizeClass ]">
+  <div :class="[ 'front-stats-territory-item fr-col-12 fr-mb-5w', 'fr-col-md-' + sizeClass ]">
     <div class="fr-p-2w">
       <div class="title"><slot name="title"></slot></div>
       <FrontStatsYearToggle
@@ -33,21 +33,21 @@ const emit = defineEmits<{
 </script>
 
 <style>
-  .histo-front-stats-territory-item > div {
+  .front-stats-territory-item > div {
     padding: 8px;
     background-color: #FFF;
   }
-  .histo-front-stats-territory-item > div div.title {
+  .front-stats-territory-item > div div.title {
     float: left;
     text-transform: uppercase;
     color: var(--blue-france-sun-113-625);
     font-weight: bold;
     font-size: 18px;
   }
-  .histo-front-stats-territory-item > div div.histo-front-stats-year-toggle {
+  .front-stats-territory-item > div div.front-stats-year-toggle {
     float: right;
   }
-  .histo-front-stats-territory-item .clear {
+  .front-stats-territory-item .clear {
     clear: both;
   }
 </style>

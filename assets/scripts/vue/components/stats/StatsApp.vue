@@ -1,5 +1,5 @@
 <template>
-  <div id="histo-app-stats" class="histo-app-stats fr-pt-4v">
+  <div id="stats-app" class="stats-app fr-pt-4v">
     <HistoBOTabHeader>
       <template #title>Statistiques</template>
     </HistoBOTabHeader>
@@ -49,7 +49,7 @@ const refresh = async (reinit: boolean): Promise<void> => {
 
   await nextTick()
 
-  const el = document.getElementById(reinit ? 'app-stats' : 'histo-stats-filters')
+  const el = document.getElementById(reinit ? 'stats-app' : 'stats-filters')
   el?.scrollIntoView({ behavior: 'smooth' })
 }
 
@@ -71,7 +71,7 @@ const onTerritoryChange = (): void => {
  * Initialisation
  */
 const init = async (): Promise<void> => {
-  const initElements = document.querySelector('#app-stats') as HTMLElement | null
+  const initElements = document.querySelector('#stats-app') as HTMLElement | null
   if (!initElements) {
     sharedState.hasErrorLoading = true
     return
