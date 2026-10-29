@@ -455,6 +455,26 @@ document.addEventListener('click', (event) => {
   });
 });
 
+document.addEventListener('click', (event) => {
+  const btn = event.target.closest('.btn-edit-invariant-fiscal');
+  if (!btn) {
+    return;
+  }
+  const url = btn.dataset.urlGetInvariantList;
+  document.querySelector('#panel-edit-invariant-fiscal .list-invariants').innerHTML = 'Chargement en cours...';
+  fetch(url).then((response) => {
+    if (response.ok) {
+      response.json().then((response) => {
+        document.querySelector('#panel-edit-invariant-fiscal .list-invariants').innerHTML = response.html;
+      });
+    } else {
+      const content =
+        '<div class="fr-notice fr-notice--alert"><div class="fr-container"><div class="fr-notice__body"><p><span class="fr-notice__title">Erreur</span><span class="fr-notice__desc">Une erreur s\'est produite. Veuillez actualiser la page.</span></p></div></div></div>';
+      document.querySelector('#panel-edit-invariant-fiscal .list-invariants').innerHTML = content;
+    }
+  });
+});
+
 const logementVacantPanel = document.querySelector('#panel-edit-logement-vacant');
 
 logementVacantPanel?.addEventListener('change', (event) => {

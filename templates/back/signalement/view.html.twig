@@ -103,6 +103,11 @@
                 {% include 'back/signalement/view/panels/_panel-edit-procedure-demarches-old.html.twig' %}
             </div>
         {% endif %}
+        {% if feature_orientation and is_granted('ROLE_ADMIN') and not signalement.numeroInvariantRial %}
+            <div data-ajax-form>
+                {% include 'back/signalement/view/panels/_panel-edit-invariant-fiscal.html.twig' %}
+            </div>
+        {% endif %}
     {% endif %}
     {% if signalementsOnSameAddress|length > 0 %}
         {% if is_granted('ROLE_ADMIN_TERRITORY') or app.user.isDuplicateModalDismissed %}
