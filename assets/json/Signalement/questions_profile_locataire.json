@@ -4,6 +4,7 @@
     "label": "Vos coordonnées",
     "slug": "vos_coordonnees_occupant",
     "screenCategory": "Adresse et coordonnées",
+    "description": "Sauf mention contraire tous les champs sont obligatoires.",
     "components": {
       "body": [
         {
@@ -60,7 +61,7 @@
           "description": "Format attendu : nom@domaine.fr",
           "validate": {
             "message": "Veuillez renseigner votre adresse e-mail.",
-            "patternMessage": "Veuillez renseigner une adresse e-mail valide."
+            "patternMessage": "Veuillez renseigner une adresse e-mail valide, exemple : nom@domaine.fr."
           },
           "accessibility": {
             "name": "mail",
@@ -115,6 +116,7 @@
     "label": "Les coordonnées du bailleur (propriétaire)",
     "slug": "coordonnees_bailleur",
     "screenCategory": "Adresse et coordonnées",
+    "description": "Sauf mention contraire tous les champs sont obligatoires.",
     "components": {
       "body": [
         {
@@ -179,8 +181,8 @@
           "slug": "coordonnees_bailleur_email",
           "description": "Format attendu : nom@domaine.fr",
           "validate": {
-            "message": "Veuillez renseigner une adresse e-mail valide.",
-            "patternMessage": "Veuillez renseigner une adresse e-mail valide.",
+            "message": "Veuillez renseigner une adresse e-mail valide, exemple : nom@domaine.fr.",
+            "patternMessage": "Veuillez renseigner une adresse e-mail valide, exemple : nom@domaine.fr.",
             "required": false
           },
           "accessibility": {
@@ -252,6 +254,7 @@
     "label": "",
     "slug": "info_procedure_bail",
     "screenCategory": "Adresse et coordonnées",
+    "description": "Sauf mention contraire tous les champs sont obligatoires.",
     "components": {
       "body": [
         {
@@ -493,6 +496,7 @@
     "label": "Bénéficiez d’une démarche accélérée",
     "slug": "injonction_bailleur",
     "screenCategory": "Démarche accélérée",
+    "description": "Sauf mention contraire tous les champs sont obligatoires.",
     "components": {
       "body": [
         {
@@ -568,8 +572,8 @@
           "slug": "coordonnees_bailleur_email",
           "description": "Format attendu : nom@domaine.fr",
           "validate": {
-            "message": "Veuillez renseigner une adresse e-mail valide.",
-            "patternMessage": "Veuillez renseigner une adresse e-mail valide.",
+            "message": "Veuillez renseigner une adresse e-mail valide, exemple : nom@domaine.fr.",
+            "patternMessage": "Veuillez renseigner une adresse e-mail valide, exemple : nom@domaine.fr.",
             "required": false
           },
           "accessibility": {
@@ -653,6 +657,7 @@
     "label": "Vous souhaitez signaler des problèmes sur",
     "slug": "zone_concernee",
     "screenCategory": "Adresse et coordonnées",
+    "description": "Sauf mention contraire tous les champs sont obligatoires.",
     "components": {
       "body": [
         {
@@ -847,6 +852,7 @@
     "label": "Précisions sur le logement",
     "slug": "type_logement",
     "screenCategory": "Type et composition",
+    "description": "Sauf mention contraire tous les champs sont obligatoires.",
     "components": {
       "body": [
         {
@@ -937,6 +943,7 @@
     "label": "",
     "slug": "composition_logement",
     "screenCategory": "Type et composition",
+    "description": "Sauf mention contraire tous les champs sont obligatoires.",
     "components": {
       "body": [
         {
@@ -963,20 +970,20 @@
         {
           "type": "SignalementFormCounter",
           "label": "Quelle est la superficie de votre logement (taille en m²)",
-          "description": "Format attendu : Saisir un nombre entier",
+          "description": "Format attendu : Saisir un nombre entier, exemple : 23.",
           "slug": "composition_logement_superficie",
           "validate": {
             "message": "Veuillez renseigner la superficie de votre logement",
             "pattern": "^[0-9]+$",
             "patternMessage": "Veuillez renseigner une superficie valide.",
             "expression": "parseInt(formStore.data.composition_logement_superficie) > 0 && parseInt(formStore.data.composition_logement_superficie) < 10000",
-            "expressionMessage": "Merci de saisir une information numérique comprise entre 1 et 9999 dans le champs superficie."
+            "expressionMessage": "Saisir une superficie comprise entre 1 et 9999, exemple : 23."
           }
         },
         {
           "type": "SignalementFormCounter",
           "label": "Quel est le nombre de pièces à vivre (salon, chambre) dans votre logement ?",
-          "description": "Format attendu : Saisir un nombre entier",
+          "description": "Format attendu : Saisir un nombre entier, exemple : 3.",
           "slug": "composition_logement_nb_pieces",
           "defaultValue": 1,
           "conditional": {
@@ -987,7 +994,7 @@
             "pattern": "^[0-9]*$",
             "patternMessage": "Veuillez renseigner un nombre de pièces valide.",
             "expression": "parseInt(formStore.data.composition_logement_nb_pieces) > 0 && parseInt(formStore.data.composition_logement_nb_pieces) < 1000",
-            "expressionMessage": "Merci de saisir une information numérique comprise entre 1 et 999 dans le champs nombre de pièces."
+            "expressionMessage": "Saisir un nombre de pièces compris entre 1 et 999, exemple : 3."
           }
         }
       ],
@@ -1043,6 +1050,7 @@
     "label": "",
     "slug": "type_logement_commodites",
     "screenCategory": "Type et composition",
+    "description": "Sauf mention contraire tous les champs sont obligatoires.",
     "components": {
       "body": [
         {
@@ -1288,19 +1296,20 @@
     "label": "",
     "slug": "composition_logement_personnes",
     "screenCategory": "Type et composition",
+    "description": "Sauf mention contraire tous les champs sont obligatoires.",
     "components": {
       "body": [        
         {
           "type": "SignalementFormCounter",
           "label": "Combien de personnes vivent dans votre logement ?",
-          "description": "Format attendu : Saisir un nombre entier",
+          "description": "Format attendu : Saisir un nombre entier, exemple : 3.",
           "slug": "composition_logement_nombre_personnes",
           "validate": {
             "message": "Veuillez renseigner le nombre de personnes vivant dans votre logement.",
             "pattern": "^[0-9]+$",
             "patternMessage": "Veuillez renseigner un nombre de personnes valide.",
             "expression": "parseInt(formStore.data.composition_logement_nombre_personnes) > 0 && parseInt(formStore.data.composition_logement_nombre_personnes) < 100",
-            "expressionMessage": "Merci de saisir une information numérique comprise entre 1 et 99 dans le champs nombre de personnes."
+            "expressionMessage": "Saisir un nombre compris entre 1 et 99, exemple : 3."
           },
           "accessibility": {
             "focus": true
@@ -1380,6 +1389,7 @@
     "label": "",
     "slug": "bail_dpe",
     "screenCategory": "Type et composition",
+    "description": "Sauf mention contraire tous les champs sont obligatoires.",
     "components": {
       "body": [
         {
@@ -1695,6 +1705,7 @@
     "label": "",
     "slug": "logement_social",
     "screenCategory": "Situation du foyer",
+    "description": "Sauf mention contraire tous les champs sont obligatoires.",
     "components": {
       "body": [
         {
@@ -1818,7 +1829,7 @@
         {
           "type": "SignalementFormCounter",
           "label": "Quel est le montant mensuel de votre allocation ? (facultatif)",
-          "description": "Format attendu : Saisir un nombre entier",
+          "description": "Format attendu : Saisir un nombre entier, exemple : 145.",
           "slug": "logement_social_montant_allocation",
           "conditional": {
             "show": "formStore.data.logement_social_allocation === 'oui'"
@@ -1869,6 +1880,7 @@
     "label": "",
     "slug": "travailleur_social",
     "screenCategory": "Situation du foyer",
+    "description": "Sauf mention contraire tous les champs sont obligatoires.",
     "components": {
       "body": [
         {
@@ -2034,7 +2046,7 @@
           "description": "Format attendu : nom@domaine.fr",
           "validate": {
             "maxLength": 50,
-            "patternMessage": "Veuillez renseigner une adresse e-mail valide."
+            "patternMessage": "Veuillez renseigner une adresse e-mail valide, exemple : nom@domaine.fr."
           },
           "conditional": {
             "show": "formStore.data.travailleur_social_accompagnement === 'oui' && formStore.data.travailleur_social_accompagnement_inviter_referent_comme_tiers === 'oui'"
@@ -2132,6 +2144,7 @@
     "label": "",
     "slug": "info_procedure_assurance",
     "screenCategory": "Procédure",
+    "description": "Sauf mention contraire tous les champs sont obligatoires.",
     "components": {
       "body": [
         {
@@ -2409,7 +2422,7 @@
               {
                 "type": "SignalementFormCounter",
                 "label": "Quel est le montant de votre loyer, sans les charges ?",
-                "description": "Format attendu : Saisir un nombre entier",
+                "description": "Format attendu : Saisir un nombre entier, exemple : 500.",
                 "slug": "informations_complementaires_logement_montant_loyer",
                 "validate": {
                   "pattern": "^[0-9]{0,20}$",
@@ -2420,7 +2433,7 @@
               {
                 "type": "SignalementFormCounter",
                 "label": "Votre logement est sur combien d'étages ?",
-                "description": "Format attendu : Saisir un nombre entier",
+                "description": "Format attendu : Saisir un nombre entier, exemple : 2.",
                 "slug": "informations_complementaires_logement_nombre_etages",
                 "conditional": {
                   "show": "formStore.data.composition_logement_piece_unique === 'plusieurs_pieces'"

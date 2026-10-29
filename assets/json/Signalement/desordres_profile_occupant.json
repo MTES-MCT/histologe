@@ -666,7 +666,7 @@
                   "description": "Format attendu : 50 caractères maximum",
                   "slug": "desordres_batiment_nuisibles_autres_details_type_nuisibles",
                   "validate": {
-                    "message": "Veuillez préciser le type de nuisible.",
+                    "message": "Veuillez préciser le type de nuisible, exemple : termites.",
                     "maxLength": 50
                   }
                 }
@@ -2798,7 +2798,7 @@
                   "description": "Format attendu : 50 caractères maximum",
                   "slug": "desordres_logement_nuisibles_autres_details_type_nuisibles",
                   "validate": {
-                    "message": "Veuillez préciser le type de nuisible.",
+                    "message": "Veuillez préciser le type de nuisible, exemple : termites.",
                     "maxLength": 50
                   }
                 },
@@ -3047,7 +3047,7 @@
                     {
                       "type": "SignalementFormTextfield",
                       "label": "{{dictionaryStore::desordres_logement_lumiere_plafond_trop_bas_taille}}",
-                      "description": "Format attendu : Saisir un nombre entier",
+                      "description": "Format attendu : Saisir un nombre entier, exemple : 180.",
                       "slug": "desordres_logement_lumiere_plafond_trop_bas_piece_a_vivre_taille",
                       "validate": {
                         "required": false,
@@ -3090,7 +3090,7 @@
                     {
                       "type": "SignalementFormTextfield",
                       "label": "{{dictionaryStore::desordres_logement_lumiere_plafond_trop_bas_taille}}",
-                      "description": "Format attendu : Saisir un nombre entier",
+                      "description": "Format attendu : Saisir un nombre entier, exemple : 180.",
                       "slug": "desordres_logement_lumiere_plafond_trop_bas_cuisine_taille",
                       "validate": {
                         "required": false,
@@ -3133,7 +3133,7 @@
                     {
                       "type": "SignalementFormTextfield",
                       "label": "{{dictionaryStore::desordres_logement_lumiere_plafond_trop_bas_taille}}",
-                      "description": "Format attendu : Saisir un nombre entier",
+                      "description": "Format attendu : Saisir un nombre entier, exemple : 180.",
                       "slug": "desordres_logement_lumiere_plafond_trop_bas_salle_de_bain_taille",
                       "validate": {
                         "required": false,

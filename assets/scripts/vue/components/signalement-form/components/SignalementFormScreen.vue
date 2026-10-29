@@ -13,7 +13,7 @@
       id="form-screen-warning"
       :label="formStore.data.errorMessage"
     ></SignalementFormWarning>
-    <div v-html="variablesReplacer.replace(description)"></div>
+    <div v-html="variablesReplacer.replace(description)" class="fr-mb-3v"></div>
     <div v-if="components != undefined">
       <template v-if="formStore.shouldAddFieldset(formStore.currentScreen?.components?.body)">
         <fieldset :id="formStore.currentScreen?.slug+'_screen_fieldset'" class="fr-fieldset form-screen-fieldset">

@@ -4,6 +4,7 @@
     "label": "Vos coordonnées",
     "slug": "vos_coordonnees_tiers",
     "screenCategory": "Adresse et coordonnées",
+    "description": "Sauf mention contraire tous les champs sont obligatoires.",
     "components": {
       "body": [
         {
@@ -56,7 +57,7 @@
           "description": "Format attendu : nom@domaine.fr",
           "validate": {
             "message": "Veuillez renseigner votre adresse e-mail.",
-            "patternMessage": "Veuillez renseigner une adresse e-mail valide."
+            "patternMessage": "Veuillez renseigner une adresse e-mail valide, exemple : nom@domaine.fr."
           },
           "accessibility": {
             "name": "mail",
@@ -111,6 +112,7 @@
     "label": "Les coordonnées des personnes occupant le logement",
     "slug": "coordonnees_occupant",
     "screenCategory": "Adresse et coordonnées",
+    "description": "Sauf mention contraire tous les champs sont obligatoires.",
     "components": {
       "body": [
         {
@@ -147,7 +149,7 @@
           "description": "Format attendu : nom@domaine.fr",
           "validate": {
             "required": false,
-            "patternMessage": "Veuillez renseigner une adresse e-mail valide.",
+            "patternMessage": "Veuillez renseigner une adresse e-mail valide, exemple : nom@domaine.fr.",
             "maxLength": 255
           },
           "accessibility": {
@@ -216,6 +218,7 @@
     "label": "Les coordonnées du bailleur (propriétaire)",
     "slug": "coordonnees_bailleur",
     "screenCategory": "Adresse et coordonnées",
+    "description": "Sauf mention contraire tous les champs sont obligatoires.",
     "components": {
       "body": [
         {
@@ -273,7 +276,7 @@
           "description": "Format attendu : nom@domaine.fr",
           "validate": {
             "required": false,
-            "patternMessage": "Veuillez renseigner une adresse e-mail valide.",
+            "patternMessage": "Veuillez renseigner une adresse e-mail valide, exemple : nom@domaine.fr.",
             "maxLength": 255
           },
           "accessibility": {
@@ -345,6 +348,7 @@
     "label": "",
     "slug": "info_procedure_bail",
     "screenCategory": "Adresse et coordonnées",
+    "description": "Sauf mention contraire tous les champs sont obligatoires.",
     "components": {
       "body": [
         {
@@ -584,6 +588,7 @@
     "label": "Vous souhaitez signaler des problèmes sur",
     "slug": "zone_concernee",
     "screenCategory": "Adresse et coordonnées",
+    "description": "Sauf mention contraire tous les champs sont obligatoires.",
     "components": {
       "body": [
         {
@@ -801,6 +806,7 @@
     "label": "Précisions sur le logement",
     "slug": "type_logement",
     "screenCategory": "Type et composition",
+    "description": "Sauf mention contraire tous les champs sont obligatoires.",
     "components": {
       "body": [
         {
@@ -891,6 +897,7 @@
     "label": "",
     "slug": "composition_logement",
     "screenCategory": "Type et composition",
+    "description": "Sauf mention contraire tous les champs sont obligatoires.",
     "components": {
       "body": [
         {
@@ -917,20 +924,20 @@
         {
           "type": "SignalementFormCounter",
           "label": "Quelle est la superficie du logement (taille en m²) (facultatif)",
-          "description": "Format attendu : Saisir un nombre entier",
+          "description": "Format attendu : Saisir un nombre entier, exemple : 23.",
           "slug": "composition_logement_superficie",
           "validate": {
             "pattern": "^[0-9]+$",
             "patternMessage": "Veuillez renseigner une superficie valide.",
             "expression": "parseInt(formStore.data.composition_logement_superficie) > 0 && parseInt(formStore.data.composition_logement_superficie) < 10000",
-            "expressionMessage": "Merci de saisir une information numérique comprise entre 1 et 9999 dans le champs superficie.",
+            "expressionMessage": "Saisir une superficie comprise entre 1 et 9999, exemple : 23.",
             "required": false
           }
         },
         {
           "type": "SignalementFormCounter",
           "label": "Quel est le nombre de pièces à vivre (salon, chambre) dans le logement ?",
-          "description": "Format attendu : Saisir un nombre entier",
+          "description": "Format attendu : Saisir un nombre entier, exemple : 3.",
           "slug": "composition_logement_nb_pieces",
           "defaultValue": 1,
           "conditional": {
@@ -941,7 +948,7 @@
             "pattern": "^[0-9]*$",
             "patternMessage": "Veuillez renseigner un nombre de pièces valide.",
             "expression": "parseInt(formStore.data.composition_logement_nb_pieces) > 0 && parseInt(formStore.data.composition_logement_nb_pieces) < 1000",
-            "expressionMessage": "Merci de saisir une information numérique comprise entre 1 et 999 dans le champs nombre de pièces."
+            "expressionMessage": "Saisir un nombre de pièces compris entre 1 et 999, exemple : 3."
           }
         }
       ],
@@ -997,6 +1004,7 @@
     "label": "",
     "slug": "type_logement_commodites",
     "screenCategory": "Type et composition",
+    "description": "Sauf mention contraire tous les champs sont obligatoires.",
     "components": {
       "body": [
         {
@@ -1242,19 +1250,20 @@
     "label": "",
     "slug": "composition_logement_personnes",
     "screenCategory": "Type et composition",
+    "description": "Sauf mention contraire tous les champs sont obligatoires.",
     "components": {
       "body": [
         {
           "type": "SignalementFormCounter",
           "label": "Combien de personnes vivent dans le logement ?",
-          "description": "Format attendu : Saisir un nombre entier",
+          "description": "Format attendu : Saisir un nombre entier, exemple : 3.",
           "slug": "composition_logement_nombre_personnes",
           "validate": {
             "message": "Veuillez renseigner le nombre de personnes vivant dans le logement.",
             "pattern": "^[0-9]+$",
             "patternMessage": "Veuillez renseigner un nombre de personnes valide.",
             "expression": "parseInt(formStore.data.composition_logement_nombre_personnes) > 0 && parseInt(formStore.data.composition_logement_nombre_personnes) < 100",
-            "expressionMessage": "Merci de saisir une information numérique comprise entre 1 et 99 dans le champs nombre de personnes."
+            "expressionMessage": "Saisir un nombre compris entre 1 et 99, exemple : 3."
           },
           "accessibility": {
             "focus": true
@@ -1313,6 +1322,7 @@
     "label": "",
     "slug": "bail_dpe",
     "screenCategory": "Type et composition",
+    "description": "Sauf mention contraire tous les champs sont obligatoires.",
     "components": {
       "body": [
         {
@@ -1612,6 +1622,7 @@
     "label": "",
     "slug": "info_procedure_assurance",
     "screenCategory": "Procédure",
+    "description": "Sauf mention contraire tous les champs sont obligatoires.",
     "components": {
       "body": [
         {
