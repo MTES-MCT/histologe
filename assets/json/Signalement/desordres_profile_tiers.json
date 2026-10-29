@@ -684,7 +684,7 @@
                   "description": "Format attendu : 50 caractères maximum",
                   "slug": "desordres_batiment_nuisibles_autres_details_type_nuisibles",
                   "validate": {
-                    "message": "Veuillez préciser le type de nuisible.",
+                    "message": "Veuillez préciser le type de nuisible, exemple : termites.",
                     "maxLength": 50
                   }
                 }
@@ -2753,7 +2753,7 @@
                   "description": "Format attendu : 50 caractères maximum",
                   "slug": "desordres_logement_nuisibles_autres_details_type_nuisibles",
                   "validate": {
-                    "message": "Veuillez préciser le type de nuisible.",
+                    "message": "Veuillez préciser le type de nuisible, exemple : termites.",
                     "maxLength": 50
                   }
                 },
