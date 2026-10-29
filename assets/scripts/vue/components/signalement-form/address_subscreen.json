@@ -3,6 +3,7 @@
         {
             "type": "SignalementFormTextfield",
             "label": "Numéro et voie",
+            "description": "Format attendu : 6 caractères minimum, exemple : 12 rue de la Paix",
             "slug": "detail_numero",
             "tagWhenEdit": "detail_manual",
             "validate": {
@@ -13,6 +14,7 @@
         {
             "type": "SignalementFormTextfield",
             "label": "Code postal",
+            "description": "Format attendu : 5 chiffres, exemple : 75011",
             "slug": "detail_code_postal",
             "tagWhenEdit": "detail_manual",
             "validate": {

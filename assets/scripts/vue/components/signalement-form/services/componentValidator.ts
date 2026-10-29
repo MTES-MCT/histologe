@@ -27,14 +27,14 @@ export const componentValidator = {
     if (variableTester.isNotEmpty(value) && component.type === 'SignalementFormPhonefield') {
       const countryCode = formStore.data[componentSlug + '_countrycode'].split(':')[0]
       if (!isValidPhoneNumber(value, countryCode)) {
-        formStore.validationErrors[componentSlug] = 'Veuillez renseigner un numéro de téléphone valide.'
+        formStore.validationErrors[componentSlug] = 'Veuillez renseigner un numéro de téléphone valide, exemple : 0702030405.'
       }
 
       const valueTelSecond = formStore.data[componentSlug + '_secondaire']
       if (variableTester.isNotEmpty(valueTelSecond)) {
         const countryCodeSecond = formStore.data[componentSlug + '_secondaire_countrycode'].split(':')[0]
         if (!isValidPhoneNumber(valueTelSecond, countryCodeSecond)) {
-          formStore.validationErrors[componentSlug + '_secondaire'] = 'Veuillez renseigner un numéro de téléphone valide.'
+          formStore.validationErrors[componentSlug + '_secondaire'] = 'Veuillez renseigner un numéro de téléphone valide, exemple : 0702030405.'
         }
       }
     }
@@ -47,12 +47,12 @@ export const componentValidator = {
     if (variableTester.isNotEmpty(value) && component.type === 'SignalementFormDate') {
       if (component.validate?.max === 'today'){
         if (Date.parse(value) >= Date.now()){
-          formStore.validationErrors[componentSlug] = 'Veuillez choisir une date de naissance dans le passé.'
+          formStore.validationErrors[componentSlug] = component.validate?.maxMessage ?? 'Saisir une date passée, exemple : 14/07/1985.'
         }
       }
       if (component.validate?.min !== undefined) {
         if (Date.parse(value) < Date.parse(component.validate.min)) {
-          formStore.validationErrors[componentSlug] = component.validate?.minMessage ?? 'Date invalide.'
+          formStore.validationErrors[componentSlug] = component.validate?.minMessage ?? 'Saisir une date valide, exemple : 14/07/1985.'
         }
       }
     }
@@ -60,7 +60,7 @@ export const componentValidator = {
     if (variableTester.isNotEmpty(value) && component.validate?.maxLength !== undefined) {
       if (value.length > component.validate?.maxLength) {
         const maxLength: string = component.validate?.maxLength.toString()
-        formStore.validationErrors[componentSlug] = 'La valeur dépasse la longueur autorisée ' + maxLength
+        formStore.validationErrors[componentSlug] = 'Saisir ' + maxLength + ' caractères maximum.'
       }
     }
 
@@ -101,7 +101,7 @@ export const componentValidator = {
       } else {
         const regexPattern = /^[0-9]*$/
         if (regexPattern.test(addressDetailNumero) || addressDetailNumero.length < 6 || addressDetailNumero.length > 100) {
-          formStore.validationErrors[componentSlug + '_detail_numero'] = 'Veuillez renseigner une adresse valide.'
+          formStore.validationErrors[componentSlug + '_detail_numero'] = 'Saisir le numéro et la voie, exemple : 12 rue de la Paix.'
         }
       }
 
@@ -110,7 +110,7 @@ export const componentValidator = {
 
       // vérification du code postal
       } else if (!/^\d{5}$/.test(formStore.data[componentSlug + '_detail_code_postal'])) {
-        formStore.validationErrors[componentSlug + '_detail_code_postal'] = 'Le code postal doit être composé de 5 chiffres'
+        formStore.validationErrors[componentSlug + '_detail_code_postal'] = 'Saisir un code postal à 5 chiffres, exemple : 75011.'
       }
 
       const addressDetailCommune = formStore.data[componentSlug + '_detail_commune']
@@ -120,7 +120,7 @@ export const componentValidator = {
         // en bdd on peut mettre jusqu'à 100 caractères pour le nom de la commune, mais l'API BAN crash au-dessus de 200 caractères
         // et le nom de commune le plus long de France est Saint-Remy-en-Bouzemont-Saint-Genest-et-Isson (45 caractères)
         if (addressDetailCommune.length > 95) {
-          formStore.validationErrors[componentSlug + '_detail_commune'] = 'Veuillez renseigner une commune valide.'
+          formStore.validationErrors[componentSlug + '_detail_commune'] = 'Saisir une commune de 95 caractères maximum.'
         }
       }
 

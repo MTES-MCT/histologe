@@ -72,7 +72,7 @@
           "validate": {
             "message": "Veuillez renseigner votre numéro de téléphone.",
             "expression": "!formStore.data.vos_coordonnees_tiers_tel || !/[\\s\\+\\-\\.]/.test(formStore.data.vos_coordonnees_tiers_tel)",
-            "expressionMessage": "Le numéro de téléphone ne doit pas contenir d'espaces, de tirets, de points ou d'indicatif international. Format attendu : 0702030405 ou 702030405"
+            "expressionMessage": "Saisir un numéro sans espace ni indicatif, exemple : 0702030405."
           },
           "accessibility": {
             "name": "telephone",
@@ -165,7 +165,7 @@
           "validate": {
             "required": false,
             "expression": "!formStore.data.coordonnees_occupant_tel || !/[\\s\\+\\-\\.]/.test(formStore.data.coordonnees_occupant_tel)",
-            "expressionMessage": "Le numéro de téléphone ne doit pas contenir d'espaces, de tirets, de points ou d'indicatif international. Format attendu : 0702030405 ou 702030405"
+            "expressionMessage": "Saisir un numéro sans espace ni indicatif, exemple : 0702030405."
           },
           "accessibility": {
             "name": "telephone",
@@ -292,7 +292,7 @@
           "validate": {
             "required": false,
             "expression": "!formStore.data.coordonnees_bailleur_tel || !/[\\s\\+\\-\\.]/.test(formStore.data.coordonnees_bailleur_tel)",
-            "expressionMessage": "Le numéro de téléphone ne doit pas contenir d'espaces, de tirets, de points ou d'indicatif international. Format attendu : 0702030405 ou 702030405"
+            "expressionMessage": "Saisir un numéro sans espace ni indicatif, exemple : 0702030405."
           },
           "accessibility": {
             "name": "telephone",
@@ -442,7 +442,7 @@
           "placeholder": "01/1970",
           "validate": {
             "pattern": "^(0[1-9]|1[0-2])\\/(19|20)\\d{2}$",
-            "patternMessage": "Veuillez renseigner une date passée valide et cohérente au format MM/AAAA.",
+            "patternMessage": "Saisir une date passée au format MM/AAAA, exemple : 03/2024.",
             "required": false,
             "maxLength": 7
           },
@@ -928,7 +928,7 @@
           "slug": "composition_logement_superficie",
           "validate": {
             "pattern": "^[0-9]+$",
-            "patternMessage": "Veuillez renseigner une superficie valide.",
+            "patternMessage": "Saisir une superficie en nombre entier, exemple : 23.",
             "expression": "parseInt(formStore.data.composition_logement_superficie) > 0 && parseInt(formStore.data.composition_logement_superficie) < 10000",
             "expressionMessage": "Saisir une superficie comprise entre 1 et 9999, exemple : 23.",
             "required": false
@@ -946,7 +946,7 @@
           "validate": {
             "message": "Veuillez renseigner le nombre de pièces à vivre.",
             "pattern": "^[0-9]*$",
-            "patternMessage": "Veuillez renseigner un nombre de pièces valide.",
+            "patternMessage": "Saisir un nombre de pièces en nombre entier, exemple : 3.",
             "expression": "parseInt(formStore.data.composition_logement_nb_pieces) > 0 && parseInt(formStore.data.composition_logement_nb_pieces) < 1000",
             "expressionMessage": "Saisir un nombre de pièces compris entre 1 et 999, exemple : 3."
           }
@@ -1261,7 +1261,7 @@
           "validate": {
             "message": "Veuillez renseigner le nombre de personnes vivant dans le logement.",
             "pattern": "^[0-9]+$",
-            "patternMessage": "Veuillez renseigner un nombre de personnes valide.",
+            "patternMessage": "Saisir un nombre de personnes en nombre entier, exemple : 3.",
             "expression": "parseInt(formStore.data.composition_logement_nombre_personnes) > 0 && parseInt(formStore.data.composition_logement_nombre_personnes) < 100",
             "expressionMessage": "Saisir un nombre compris entre 1 et 99, exemple : 3."
           },
@@ -1277,7 +1277,7 @@
           "validate": {
             "message": "Veuillez renseigner le nombre d'enfants vivant dans le logement.",
             "pattern": "^[0-9]*$",
-            "patternMessage": "Veuillez renseigner un nombre d'enfants valide.",
+            "patternMessage": "Saisir un nombre d'enfants en nombre entier, exemple : 1.",
             "expression": "parseInt(formStore.data.composition_logement_nombre_enfants) <= parseInt(formStore.data.composition_logement_nombre_personnes)",
             "expressionMessage": "Le nombre d'enfants doit être inférieur ou égal au nombre total de personnes du foyer."
           }
@@ -1724,7 +1724,7 @@
   {
     "type": "SignalementFormScreen",
     "label": "Utilisation du service",
-    "description": "Lisez attentivement les conditions ci-dessous.",
+    "description": "Lisez attentivement les conditions ci-dessous.<br>Sauf mention contraire tous les champs sont obligatoires.",
     "slug": "utilisation_service",
     "screenCategory": "Procédure",
     "icon": {

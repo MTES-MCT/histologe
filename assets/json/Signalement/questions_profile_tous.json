@@ -167,7 +167,7 @@
                 "type": "SignalementFormCounter",
                 "label": "Etage",
                 "slug": "adresse_logement_complement_adresse_etage_precision",
-                "description": "Format attendu : 2 chiffres maximum",
+                "description": "Format attendu : 2 chiffres maximum, exemple : 3",
                 "conditional": {
                   "show": "formStore.data.type_logement_nature === 'appartement' && formStore.data.adresse_logement_complement_adresse_etage === 'AUTRE'"
                 },
@@ -176,14 +176,14 @@
                   "maxLength": 2,
                   "message": "Veuillez préciser l'étage.",
                   "pattern": "^[0-9]*$",
-                  "patternMessage": "Veuillez renseigner un étage valide."
+                  "patternMessage": "Saisir un étage en nombre entier, exemple : 3."
                 }
               },
               {
                 "type": "SignalementFormTextfield",
                 "label": "Escalier (facultatif)",
                 "slug": "adresse_logement_complement_adresse_escalier",
-                "description": "Format attendu : 3 caractères maximum, exemple A2.",
+                "description": "Format attendu : 3 caractères maximum, exemple : A2.",
                 "conditional": {
                   "show": "formStore.data.type_logement_nature === 'appartement'"
                 },
@@ -196,7 +196,7 @@
                 "type": "SignalementFormTextfield",
                 "label": "Numéro d'appartement (facultatif)",
                 "slug": "adresse_logement_complement_adresse_numero_appartement",
-                "description": "Format attendu : 5 caractères maximum, exemple 207.",
+                "description": "Format attendu : 5 caractères maximum, exemple : 207.",
                 "conditional": {
                   "show": "formStore.data.type_logement_nature === 'appartement'"
                 },

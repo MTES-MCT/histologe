@@ -92,7 +92,7 @@
           "validate": {
             "message": "Veuillez renseigner votre numéro de téléphone.",
             "expression": "!formStore.data.vos_coordonnees_occupant_tel || !/[\\s\\+\\-\\.]/.test(formStore.data.vos_coordonnees_occupant_tel)",
-            "expressionMessage": "Le numéro de téléphone ne doit pas contenir d'espaces, de tirets, de points ou d'indicatif international. Format attendu : 0702030405 ou 702030405"
+            "expressionMessage": "Saisir un numéro sans espace ni indicatif, exemple : 0702030405."
           },
           "accessibility": {
             "name": "telephone",
@@ -427,7 +427,7 @@
           "validate": {
             "message": "Veuillez renseigner la superficie de votre logement",
             "pattern": "^[0-9]+$",
-            "patternMessage": "Veuillez renseigner une superficie valide.",
+            "patternMessage": "Saisir une superficie en nombre entier, exemple : 23.",
             "expression": "parseInt(formStore.data.composition_logement_superficie) > 0 && parseInt(formStore.data.composition_logement_superficie) < 10000",
             "expressionMessage": "Saisir une superficie comprise entre 1 et 9999, exemple : 23."
           }
@@ -444,7 +444,7 @@
           "validate": {
             "message": "Veuillez renseigner le nombre de pièces à vivre.",
             "pattern": "^[0-9]*$",
-            "patternMessage": "Veuillez renseigner un nombre de pièces valide.",
+            "patternMessage": "Saisir un nombre de pièces en nombre entier, exemple : 3.",
             "expression": "parseInt(formStore.data.composition_logement_nb_pieces) > 0 && parseInt(formStore.data.composition_logement_nb_pieces) < 1000",
             "expressionMessage": "Saisir un nombre de pièces compris entre 1 et 999, exemple : 3."
           }
@@ -759,7 +759,7 @@
           "validate": {
             "message": "Veuillez renseigner le nombre de personnes vivant dans votre logement.",
             "pattern": "^[0-9]+$",
-            "patternMessage": "Veuillez renseigner un nombre de personnes valide.",
+            "patternMessage": "Saisir un nombre de personnes en nombre entier, exemple : 3.",
             "expression": "parseInt(formStore.data.composition_logement_nombre_personnes) > 0 && parseInt(formStore.data.composition_logement_nombre_personnes) < 100",
             "expressionMessage": "Saisir un nombre compris entre 1 et 99, exemple : 3."
           },
@@ -775,7 +775,7 @@
           "validate": {
             "message": "Veuillez renseigner le nombre d'enfants vivant dans votre logement.",
             "pattern": "^[0-9]*$",
-            "patternMessage": "Veuillez renseigner un nombre d'enfants valide.",
+            "patternMessage": "Saisir un nombre d'enfants en nombre entier, exemple : 1.",
             "expression": "parseInt(formStore.data.composition_logement_nombre_enfants) <= parseInt(formStore.data.composition_logement_nombre_personnes)",
             "expressionMessage": "Le nombre d'enfants doit être inférieur ou égal au nombre total de personnes du foyer."
           }
@@ -847,7 +847,7 @@
         {
           "type": "SignalementFormDate",
           "label": "A quelle date avez-vous emménagé dans le logement ?",
-          "description": "Format attendu : JJ/MM/AAAA. Si vous ne connaissez pas la date exacte, sélectionnez un jour du mois d'emménagement",
+          "description": "Format attendu : JJ/MM/AAAA, exemple : 01/09/2020. Si vous ne connaissez pas la date exacte, sélectionnez un jour du mois d'emménagement",
           "slug": "bail_dpe_date_emmenagement",
           "validate": {
             "message": "Veuillez renseigner une date d'emménagement.",
@@ -1174,7 +1174,7 @@
           "type": "SignalementFormDate",
           "label": "Quelle est votre date de naissance ?",
           "slug": "logement_social_date_naissance",
-          "description": "Format attendu : JJ/MM/AAAA",
+          "description": "Format attendu : JJ/MM/AAAA, exemple : 14/07/1985",
           "conditional": {
             "show": "formStore.data.logement_social_allocation === 'oui'"
           },
@@ -1206,7 +1206,7 @@
           },
           "validate": {
             "pattern": "^[0-9]{0,20}$",
-            "patternMessage": "Veuillez renseigner un montant d'allocation valide.",
+            "patternMessage": "Saisir un montant en nombre entier, exemple : 145.",
             "required": false
           }
         }
@@ -1616,7 +1616,7 @@
   {
     "type": "SignalementFormScreen",
     "label": "Utilisation du service",
-    "description": "Lisez attentivement les conditions ci-dessous.",
+    "description": "Lisez attentivement les conditions ci-dessous.<br>Sauf mention contraire tous les champs sont obligatoires.",
     "slug": "utilisation_service",
     "screenCategory": "Procédure",
     "components": {
@@ -1752,7 +1752,7 @@
                 "slug": "informations_complementaires_situation_occupants_revenu_fiscal",
                 "validate": {
                   "pattern": "^[0-9]*$",
-                  "patternMessage": "Veuillez renseigner un revenu de référence valide.",
+                  "patternMessage": "Saisir un montant en nombre entier, exemple : 20000.",
                   "maxLength": 50,
                   "message": "Veuillez renseigner votre revenu fiscal de référence.",
                   "required": false
@@ -1778,7 +1778,7 @@
                 },
                 "validate": {
                   "pattern": "^[0-9]{0,5}$",
-                  "patternMessage": "Veuillez renseigner une numéro d'étage valide.",
+                  "patternMessage": "Saisir un nombre d'étages en nombre entier, exemple : 2.",
                   "required": false
                 }
               },
@@ -1786,11 +1786,11 @@
                 "type": "SignalementFormTextfield",
                 "label": "En quelle année votre logement a-t-il été construit ? (facultatif)",
                 "slug": "informations_complementaires_logement_annee_construction",
-                "description": "Format attendu : Saisir l'année de construction avec 4 chiffres",
+                "description": "Format attendu : Saisir l'année de construction avec 4 chiffres, exemple : 1975",
                 "placeholder": "1970",
                 "validate": {
                   "pattern": "^[0-9]{4}$",
-                  "patternMessage": "Veuillez renseigner une année valide.",
+                  "patternMessage": "Saisir une année sur 4 chiffres, exemple : 1975.",
                   "required": false
                 }
               }
