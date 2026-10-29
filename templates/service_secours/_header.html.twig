@@ -1,3 +1,4 @@
+{% set header_home_url = serviceSecoursRoute is defined ? path('service_secours_index', {'slug': serviceSecoursRoute.slug, 'uuid': serviceSecoursRoute.uuid, 'domain': root_domain(app.request.host)}) : path('service_secours_home', {'domain': root_domain(app.request.host)}) %}
 <header class="fr-header">
     <div class="fr-header__body">
         <div class="fr-container">
@@ -5,16 +6,21 @@
                 <div class="fr-header__brand fr-enlarge-link">
                     <div class="fr-header__brand-top">
                         <div class="fr-header__logo">
-                            <a href="{{path('service_secours_index', {'slug': serviceSecoursRoute.slug, 'uuid': serviceSecoursRoute.uuid, 'domain': root_domain(app.request.host)})}}" title="Accueil — Ministère de l'Aménagement du territoire et de la Décentralisation">
+                            <a href="{{ header_home_url }}" title="Accueil — Ministère de l'Aménagement du territoire et de la Décentralisation">
                                 <p class="fr-logo">Ministères<br>aménagement<br>du territoire<br>transition<br>écologique</p>
                             </a>
                         </div>
                         <div class="fr-header__operator">
-                            <img class="fr-responsive-img" src="{{ asset('img/logo-signal-logement-small.original.svg') }}" alt="Logo {{ platform.name }}" style="max-width:3,0rem;" data-fr-js-ratio="true">
+                            <img class="fr-responsive-img" src="{{ asset('img/logo-signal-logement-small.original.svg') }}" alt="Logo {{ platform.name }}" style="max-width: 3rem;" data-fr-js-ratio="true">
                         </div>
+                        {% if app.user %}
+                            <div class="fr-header__navbar">
+                                <button class="fr-btn--menu fr-btn" data-fr-opened="false" aria-controls="fr-menu-mobile" id="fr-btn-menu-mobile" title="Menu" data-fr-js-modal-button="true">Menu</button>
+                            </div>
+                        {% endif %}
                     </div>
                     <div class="fr-header__service">
-                        <a href="{{path('service_secours_index', {'slug': serviceSecoursRoute.slug, 'uuid': serviceSecoursRoute.uuid, 'domain': root_domain(app.request.host)})}}" title="Accueil — Lutter contre le mal logement">
+                        <a href="{{ header_home_url }}" title="Accueil — Lutter contre le mal logement">
                             <p class="fr-header__service-title">
                                 Lutter contre le mal logement
                             </p>
@@ -23,7 +29,36 @@
                         </p>
                     </div>
                 </div>
+                {% if app.user %}
+                    <div class="fr-header__tools">
+                        <div class="fr-header__tools-links" data-fr-js-header-links="true">
+                            <ul class="fr-btns-group">
+                                <li>
+                                    <a class="fr-btn fr-fi-logout-box-r-line" href="{{ path('service_secours_logout', {'domain': root_domain(app.request.host)}) }}">
+                                        Quitter
+                                    </a>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                {% endif %}
             </div>
         </div>
     </div>
+    {% if app.user %}
+        <div class="fr-header__menu fr-modal" id="fr-menu-mobile" data-fr-js-modal="true" data-fr-js-header-modal="true">
+            <div class="fr-container">
+                <button type="button" class="fr-btn--close fr-btn" id="bt-fermer-menu-mobile" aria-controls="fr-menu-mobile" data-fr-js-modal-button="true">Fermer</button>
+                <div class="fr-header__menu-links">
+                    <ul class="fr-btns-group">
+                        <li>
+                            <a class="fr-btn fr-fi-logout-box-r-line" href="{{ path('service_secours_logout', {'domain': root_domain(app.request.host)}) }}">
+                                Quitter
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    {% endif %}
 </header>

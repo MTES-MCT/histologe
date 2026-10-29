@@ -11,17 +11,22 @@ use App\Form\ServiceSecours\ServiceSecoursType;
 use App\Manager\UserManager;
 use App\Messenger\Message\SignalementServiceSecoursFileMessage;
 use App\Repository\DesordreCritereRepository;
+use App\Security\User\ServiceSecoursUser;
+use App\Service\Gouv\ProConnect\ProConnectAuthentication;
 use App\Service\Mailer\NotificationMail;
 use App\Service\Mailer\NotificationMailerRegistry;
 use App\Service\Mailer\NotificationMailerType;
 use App\Service\Signalement\AutoAssigner;
 use App\Service\Signalement\Export\ServiceSecoursPdfGenerator;
 use App\Service\Signalement\ReferenceGenerator;
+use App\Utils\UrlHelper;
 use Doctrine\ORM\EntityManagerInterface;
+use Psr\Log\LoggerInterface;
 use Symfony\Bridge\Doctrine\Attribute\MapEntity;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\Flow\FormFlowInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Messenger\Exception\ExceptionInterface;
@@ -37,6 +42,57 @@ use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 )]
 class ServiceSecoursController extends AbstractController
 {
+    #[Route('', name: 'service_secours_home', methods: ['GET'])]
+    public function home(): Response
+    {
+        return $this->render('service_secours/home.html.twig');
+    }
+
+    #[Route('/proconnect/login', name: 'service_secours_proconnect_login', methods: ['POST'])]
+    public function loginWithProConnect(
+        Request $request,
+        ProConnectAuthentication $proConnectAuthentication,
+        LoggerInterface $logger,
+    ): Response {
+        try {
+            $url = $proConnectAuthentication->getAuthorizationUrl();
+
+            return new RedirectResponse($url);
+        } catch (\Throwable $exception) {
+            $logger->error('Erreur ProConnect Service Secours getAuthorizationUrl', [
+                'exception' => $exception,
+            ]);
+
+            $rootDomain = UrlHelper::extractRootDomain($request->getHost());
+            $port = \in_array($request->getPort(), [80, 443], true) ? '' : ':'.$request->getPort();
+            $signalementUrl = sprintf('%s://%s%s/signalement', $request->getScheme(), $rootDomain, $port);
+
+            $errorMessage = sprintf(
+                'Une erreur est survenue lors de la connexion à ProConnect. Si le problème persiste, vous pouvez déposer votre signalement directement via le formulaire général en tant que service de secours : <a href="%s" class="fr-link">déposer un signalement</a>.',
+                htmlspecialchars($signalementUrl, \ENT_QUOTES | \ENT_SUBSTITUTE, 'UTF-8')
+            );
+
+            $this->addFlash('error error-raw', $errorMessage);
+
+            return $this->redirectToRoute('service_secours_home', [
+                'domain' => $request->attributes->get('domain'),
+            ]);
+        }
+    }
+
+    #[Route('/proconnect/login-callback', name: 'service_secours_proconnect_login_callback')]
+    public function handleProConnectCallback(): never
+    {
+        /* @see ServiceSecoursAuthenticator::authenticate() */
+        throw new \LogicException('Cette méthode peut rester vide - elle sera interceptée par ServiceSecoursAuthenticator.');
+    }
+
+    #[Route('/logout-service-secours', name: 'service_secours_logout', methods: ['GET'])]
+    public function logout(): never
+    {
+        throw new \LogicException('Cette méthode peut rester vide - elle sera interceptée par la clé logout du firewall.');
+    }
+
     /**
      * @throws ExceptionInterface
      */
@@ -57,6 +113,11 @@ class ServiceSecoursController extends AbstractController
         MessageBusInterface $messageBus,
     ): Response {
         $serviceSecours = new FormServiceSecours();
+        $user = $this->getUser();
+        if ($user instanceof ServiceSecoursUser) {
+            $serviceSecours->step1->matriculeDeclarant = $user->getMatricule() ?? null;
+            $serviceSecours->step1->nomDeclarant = $user->getFullname() ?? null;
+        }
         /** @var FormFlowInterface $flow */
         $flow = $this->createForm(ServiceSecoursType::class, $serviceSecours);
         $flow->handleRequest($request);
