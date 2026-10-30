@@ -47,6 +47,7 @@ interface FormStore {
     icon: PictureDescription
     components: ZoneComponents
     customCss: string
+    shouldAddFieldset?: boolean
   } | null
   alreadyExists: {
     type: string | null
@@ -66,8 +67,6 @@ interface FormStore {
   shouldShowField: (component: any) => boolean
   preprocessScreen: (screenBodyComponents: any) => Component[]
   hasDesordre: (categorieSlug: string) => boolean
-  shouldAddFieldset: (components: any) => boolean
-  countInputComponentsByScreen: (components: any) => number
 }
 
 const formStore: FormStore = reactive({
@@ -210,30 +209,6 @@ const formStore: FormStore = reactive({
     }
 
     return hasDesordre
-  },
-  shouldAddFieldset (components: any): boolean {
-    if (((components) != null) &&
-        this.countInputComponentsByScreen(components) > 1
-    ) {
-      return true
-    }
-    return false
-  },
-  countInputComponentsByScreen (components: any): number {
-    let inputComponentsByScreen = 0
-    for (const component of components) {
-      if (formStore.inputComponents.includes(component.type)) {
-        inputComponentsByScreen++
-      } else if ((component.type === 'SignalementFormSubscreen') &&
-        component.components !== null &&
-        component.components !== undefined) {
-        inputComponentsByScreen += this.countInputComponentsByScreen(component.components.body)
-      }
-      if (inputComponentsByScreen > 1) {
-        return inputComponentsByScreen
-      }
-    }
-    return inputComponentsByScreen
   },
   countMonthsSinceBailleurPrevenu (): number|undefined {
     if (formStore.data.info_procedure_bail_date === undefined || formStore.data.info_procedure_bail_date.indexOf('/') === -1) {

@@ -29,4 +29,5 @@ export interface Component {
   maxlength?: string
   autocomplete?: string
   accessibility?: any
+  shouldAddFieldset?: boolean
 }
