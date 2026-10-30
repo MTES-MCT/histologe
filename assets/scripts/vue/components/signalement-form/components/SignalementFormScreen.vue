@@ -89,12 +89,20 @@ export default defineComponent({
       if (!field.slug.includes('{{number}}')) {
         const component = document.querySelector('#' + field.slug)
         if (((field.validate === undefined && formStore.inputComponents.includes(field.type)) || // si c'est un composant de saisie sans objet de validation c'est qu'il est obligatoire
-            (field.validate && field.validate.required !== false)) && // ou il y a des règles de validation explicites
+            (field.validate && field.validate.required !== false) || // ou il y a des règles de validation explicites
+            this.isRequiredByCondition(field)) && // ou il est obligatoire selon la valeur d'un autre champ
             component?.classList.contains('fr-hidden') === false) { // et que le composant n'est pas caché par conditionnalité
           return true
         }
       }
       return false
+    },
+    isRequiredByCondition (field: any): boolean {
+      if (!field.validate?.requiredIf) {
+        return false
+      }
+      const data = formStore.data
+      return eval(field.validate.requiredIf.replace(/formStore\.data/g, 'data'))
     },
     needToValidateSubComponents (field: any): boolean {
       if (!field.slug.includes('{{number}}')) {
@@ -179,6 +187,7 @@ export default defineComponent({
             // Tableau contenant toutes les classes d'erreur possibles
             const errorClasses = [
               'signalement-form-roomlist-error',
+              'signalement-form-subscreen-error',
               'fr-fieldset--error',
               'fr-input--error',
               'fr-select--error',

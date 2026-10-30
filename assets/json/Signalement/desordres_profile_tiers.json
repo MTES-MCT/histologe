@@ -2960,6 +2960,11 @@
           "label": "",
           "description": "Dans quelle(s) pièce(s) ?",
           "slug": "desordres_logement_lumiere_plafond_trop_bas_pieces",
+          "validate": {
+            "required": false,
+            "requiredIf": "formStore.data.desordres_logement_lumiere_plafond_trop_bas_piece_a_vivre !== 1 && formStore.data.desordres_logement_lumiere_plafond_trop_bas_cuisine !== 1 && formStore.data.desordres_logement_lumiere_plafond_trop_bas_salle_de_bain !== 1",
+            "message": "Veuillez sélectionner la ou les pièces."
+          },
           "customCss": "signalement-form-subscreen-under-checkbox",
           "conditional": {
             "show": "formStore.data.desordres_logement_lumiere_plafond_trop_bas === 1 && formStore.data.composition_logement_piece_unique === 'plusieurs_pieces'"
@@ -2994,6 +2999,8 @@
                       "slug": "desordres_logement_lumiere_plafond_trop_bas_piece_a_vivre_taille",
                       "validate": {
                         "required": false,
+                        "requiredIf": "formStore.data.desordres_logement_lumiere_plafond_trop_bas_piece_a_vivre_taille_nsp !== 1",
+                        "message": "Saisir une hauteur ou cocher « Je ne sais pas ».",
                         "pattern": "^[0-9]*$",
                         "patternMessage": "Saisir une hauteur en centimètres, exemple : 180."
                       }
@@ -3037,6 +3044,8 @@
                       "slug": "desordres_logement_lumiere_plafond_trop_bas_cuisine_taille",
                       "validate": {
                         "required": false,
+                        "requiredIf": "formStore.data.desordres_logement_lumiere_plafond_trop_bas_cuisine_taille_nsp !== 1",
+                        "message": "Saisir une hauteur ou cocher « Je ne sais pas ».",
                         "pattern": "^[0-9]*$",
                         "patternMessage": "Saisir une hauteur en centimètres, exemple : 180."
                       }
@@ -3080,6 +3089,8 @@
                       "slug": "desordres_logement_lumiere_plafond_trop_bas_salle_de_bain_taille",
                       "validate": {
                         "required": false,
+                        "requiredIf": "formStore.data.desordres_logement_lumiere_plafond_trop_bas_salle_de_bain_taille_nsp !== 1",
+                        "message": "Saisir une hauteur ou cocher « Je ne sais pas ».",
                         "pattern": "^[0-9]*$",
                         "patternMessage": "Saisir une hauteur en centimètres, exemple : 180."
                       }
