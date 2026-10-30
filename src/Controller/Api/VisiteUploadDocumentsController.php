@@ -44,7 +44,7 @@ class VisiteUploadDocumentsController extends AbstractController
         private readonly SignalementFileProcessor $signalementFileProcessor,
         private readonly EntityManagerInterface $entityManager,
         private readonly EventDispatcherInterface $eventDispatcher,
-        private readonly VisiteFactory $interventionFactory,
+        private readonly VisiteFactory $visiteFactory,
         private readonly LoggerInterface $logger,
         #[Autowire(env: 'S3_ENABLE')]
         private readonly bool $s3Enable,
@@ -249,7 +249,7 @@ class VisiteUploadDocumentsController extends AbstractController
         }
         $this->entityManager->flush();
 
-        return $this->json($this->interventionFactory->createInstance($intervention), Response::HTTP_OK);
+        return $this->json($this->visiteFactory->createInstance($intervention), Response::HTTP_OK);
     }
 
     /**
