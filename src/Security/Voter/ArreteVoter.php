@@ -47,9 +47,6 @@ class ArreteVoter extends Voter
 
     private function canDelete(Arrete $arrete, User $user, ?Vote $vote): bool
     {
-        if (!$this->security->isGranted('ROLE_ADMIN_TERRITORY')) {
-            return false;
-        }
         if (ArreteCreationSource::ESABORA === $arrete->getArreteCreationSource()) {
             return false;
         }
@@ -57,7 +54,7 @@ class ArreteVoter extends Voter
         if ($this->security->isGranted('ROLE_ADMIN')) {
             return true;
         }
-        if ($user->hasPartnerInTerritory($arrete->getAddress()->getTerritory())) {
+        if ($this->security->isGranted('ROLE_ADMIN_TERRITORY') && $user->hasPartnerInTerritory($arrete->getAddress()->getTerritory())) {
             return true;
         }
 
