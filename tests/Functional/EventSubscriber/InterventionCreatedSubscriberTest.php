@@ -150,14 +150,6 @@ class InterventionCreatedSubscriberTest extends KernelTestCase
         $this->assertEmailCount(1);
     }
 
-    public function testInterventionNoVisitInPast(): void
-    {
-        $date = (new \DateTimeImmutable())->modify('-1 day');
-        $type = InterventionType::ARRETE_PREFECTORAL;
-        $this->testNbMailSent($date, $type, Intervention::STATUS_DONE);
-        $this->assertEmailCount(2);
-    }
-
     private function testNbMailSent(\DateTimeImmutable $date, InterventionType $type, string $status = Intervention::STATUS_PLANNED): void
     {
         $eventDispatcher = new EventDispatcher();

@@ -3,6 +3,7 @@
 namespace App\Tests\Unit\Service\Esabora;
 
 use App\Entity\Affectation;
+use App\Entity\Arrete;
 use App\Entity\Enum\AffectationStatus;
 use App\Entity\Enum\InterventionType;
 use App\Entity\Enum\PartnerType;
@@ -13,9 +14,11 @@ use App\Entity\User;
 use App\Factory\FileFactory;
 use App\Factory\InterventionFactory;
 use App\Manager\AffectationManager;
+use App\Manager\ArreteManager;
 use App\Manager\SuiviManager;
 use App\Manager\UserManager;
 use App\Manager\UserSignalementSubscriptionManager;
+use App\Repository\ArreteRepository;
 use App\Repository\InterventionRepository;
 use App\Repository\SuiviRepository;
 use App\Service\Files\ImageManipulationHandler;
@@ -23,9 +26,7 @@ use App\Service\Files\ZipHelper;
 use App\Service\Interconnection\Esabora\Enum\EsaboraStatus;
 use App\Service\Interconnection\Esabora\EsaboraManager;
 use App\Service\Interconnection\Esabora\Response\DossierResponseInterface;
-use App\Service\Interconnection\Esabora\Response\Model\DossierArreteSISH;
 use App\Service\Security\FileScanner;
-use App\Service\Signalement\Qualification\SignalementQualificationUpdater;
 use App\Service\Signalement\Suivi\SuiviDescriptionHelper;
 use App\Service\TimezoneProvider;
 use App\Service\UploadHandlerService;
@@ -35,7 +36,6 @@ use PHPUnit\Framework\MockObject\MockObject;
 use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 use Symfony\Component\EventDispatcher\EventDispatcher;
-use Symfony\Component\HtmlSanitizer\HtmlSanitizerInterface;
 use Symfony\Component\Workflow\WorkflowInterface;
 
 class EsaboraManagerTest extends KernelTestCase
@@ -48,7 +48,9 @@ class EsaboraManagerTest extends KernelTestCase
     protected MockObject&SuiviManager $suiviManager;
     protected MockObject&SuiviRepository $suiviRepository;
     protected MockObject&InterventionRepository $interventionRepository;
+    protected MockObject&ArreteRepository $arreteRepository;
     protected MockObject&InterventionFactory $interventionFactory;
+    protected MockObject&ArreteManager $arreteManager;
     protected EventDispatcher $eventDispatcher;
     protected MockObject&UserManager $userManager;
     private MockObject&LoggerInterface $logger;
@@ -58,8 +60,6 @@ class EsaboraManagerTest extends KernelTestCase
     private MockObject&UploadHandlerService $uploadHandler;
     private MockObject&ImageManipulationHandler $imageManipulationHandler;
     private MockObject&FileFactory $fileFactory;
-    private MockObject&SignalementQualificationUpdater $signalementQualificationUpdater;
-    private HtmlSanitizerInterface $htmlSanitizer;
     private WorkflowInterface $workflow;
     private MockObject&UserSignalementSubscriptionManager $userSignalementSubscriptionManager;
     private SuiviDescriptionHelper $suiviDescriptionHelper;
@@ -70,7 +70,9 @@ class EsaboraManagerTest extends KernelTestCase
         $this->suiviManager = $this->createMock(SuiviManager::class);
         $this->suiviRepository = $this->createMock(SuiviRepository::class);
         $this->interventionRepository = $this->createMock(InterventionRepository::class);
+        $this->arreteRepository = $this->createMock(ArreteRepository::class);
         $this->interventionFactory = $this->createMock(InterventionFactory::class);
+        $this->arreteManager = $this->createMock(ArreteManager::class);
         $this->userManager = $this->createMock(UserManager::class);
         $this->eventDispatcher = new EventDispatcher();
         $this->logger = $this->createMock(LoggerInterface::class);
@@ -80,8 +82,6 @@ class EsaboraManagerTest extends KernelTestCase
         $this->uploadHandler = $this->createMock(UploadHandlerService::class);
         $this->imageManipulationHandler = $this->createMock(ImageManipulationHandler::class);
         $this->fileFactory = $this->createMock(FileFactory::class);
-        $this->signalementQualificationUpdater = $this->createMock(SignalementQualificationUpdater::class);
-        $this->htmlSanitizer = static::getContainer()->get('html_sanitizer.sanitizer.app.message_sanitizer');
         $this->workflow = static::getContainer()->get('state_machine.intervention_planning');
         $this->userSignalementSubscriptionManager = $this->createMock(UserSignalementSubscriptionManager::class);
         $this->suiviDescriptionHelper = static::getContainer()->get(SuiviDescriptionHelper::class);
@@ -123,7 +123,9 @@ class EsaboraManagerTest extends KernelTestCase
             $this->suiviManager,
             $this->suiviRepository,
             $this->interventionRepository,
+            $this->arreteRepository,
             $this->interventionFactory,
+            $this->arreteManager,
             $this->eventDispatcher, // @phpstan-ignore-line
             $this->userManager,
             $this->logger,
@@ -133,8 +135,6 @@ class EsaboraManagerTest extends KernelTestCase
             $this->uploadHandler,
             $this->imageManipulationHandler,
             $this->fileFactory,
-            $this->signalementQualificationUpdater,
-            $this->htmlSanitizer,
             $this->workflow,
             $this->userSignalementSubscriptionManager,
             true,
@@ -159,10 +159,25 @@ class EsaboraManagerTest extends KernelTestCase
      */
     public function testCreateArrete(): void
     {
-        $dossierArreteCollection = $this->getDossierArreteSISHCollectionResponse()->getCollection();
-        $dossierArrete = $dossierArreteCollection[0];
-        $esaboraManager = $this->provideEsaboraManagerForIntervention(self::CREATE_ACTION, InterventionType::ARRETE_PREFECTORAL);
-        $esaboraManager->createOrUpdateArrete($this->getAffectation(PartnerType::ARS), $dossierArrete);
+        $dossierArrete = $this->getDossierArreteSISHCollectionResponse()->getCollection()[0];
+        $affectation = $this->getAffectation(PartnerType::ARS);
+
+        $this->arreteRepository
+            ->expects($this->once())
+            ->method('findOneBy')
+            ->willReturn(null);
+        $this->arreteManager
+            ->expects($this->once())
+            ->method('createArreteFromDossierArreteSISH')
+            ->with($dossierArrete, $affectation);
+        $this->arreteManager
+            ->expects($this->never())
+            ->method('updateFromDossierArreteSISH');
+        $this->entityManager
+            ->expects($this->once())
+            ->method('flush');
+
+        $this->createEsaboraManager()->createOrUpdateArrete($affectation, $dossierArrete);
     }
 
     /**
@@ -170,10 +185,75 @@ class EsaboraManagerTest extends KernelTestCase
      */
     public function testUpdateArrete(): void
     {
-        $dossierArreteCollection = $this->getDossierArreteSISHCollectionResponse()->getCollection();
-        $dossierArrete = $dossierArreteCollection[0];
-        $esaboraManager = $this->provideEsaboraManagerForIntervention(self::UPDATE_ACTION, InterventionType::ARRETE_PREFECTORAL);
-        $esaboraManager->createOrUpdateArrete($this->getAffectation(PartnerType::ARS), $dossierArrete);
+        $dossierArrete = $this->getDossierArreteSISHCollectionResponse()->getCollection()[0];
+        $affectation = $this->getAffectation(PartnerType::ARS);
+        $arrete = new Arrete();
+
+        $this->arreteRepository
+            ->expects($this->once())
+            ->method('findOneBy')
+            ->willReturn($arrete);
+        $this->arreteManager
+            ->expects($this->once())
+            ->method('updateFromDossierArreteSISH')
+            ->with($arrete, $dossierArrete, $affectation);
+        $this->arreteManager
+            ->expects($this->never())
+            ->method('createArreteFromDossierArreteSISH');
+        $this->entityManager
+            ->expects($this->once())
+            ->method('flush');
+
+        $this->createEsaboraManager()->createOrUpdateArrete($affectation, $dossierArrete);
+    }
+
+    public function testCreateArreteLogsErrorWhenDateIsInvalid(): void
+    {
+        $dossierArrete = $this->getDossierArreteSISHCollectionResponse()->getCollection()[0];
+        $affectation = $this->getAffectation(PartnerType::ARS);
+
+        $this->arreteRepository
+            ->expects($this->once())
+            ->method('findOneBy')
+            ->willReturn(null);
+        $this->arreteManager
+            ->expects($this->once())
+            ->method('createArreteFromDossierArreteSISH')
+            ->willThrowException(new \InvalidArgumentException('Date Esabora invalide'));
+        $this->entityManager
+            ->expects($this->never())
+            ->method('flush');
+        $this->logger
+            ->expects($this->once())
+            ->method('error');
+
+        $this->createEsaboraManager()->createOrUpdateArrete($affectation, $dossierArrete);
+    }
+
+    private function createEsaboraManager(): EsaboraManager
+    {
+        return new EsaboraManager(
+            $this->affectationManager,
+            $this->suiviManager,
+            $this->suiviRepository,
+            $this->interventionRepository,
+            $this->arreteRepository,
+            $this->interventionFactory,
+            $this->arreteManager,
+            $this->eventDispatcher, // @phpstan-ignore-line
+            $this->userManager,
+            $this->logger,
+            $this->entityManager,
+            $this->zipHelper,
+            $this->fileScanner,
+            $this->uploadHandler,
+            $this->imageManipulationHandler,
+            $this->fileFactory,
+            $this->workflow,
+            $this->userSignalementSubscriptionManager,
+            true,
+            $this->suiviDescriptionHelper,
+        );
     }
 
     private function provideEsaboraManagerForIntervention(string $action, InterventionType $interventionType): EsaboraManager
@@ -205,7 +285,9 @@ class EsaboraManagerTest extends KernelTestCase
             $this->suiviManager,
             $this->suiviRepository,
             $this->interventionRepository,
+            $this->arreteRepository,
             $this->interventionFactory,
+            $this->arreteManager,
             $this->eventDispatcher, // @phpstan-ignore-line
             $this->userManager,
             $this->logger,
@@ -215,8 +297,6 @@ class EsaboraManagerTest extends KernelTestCase
             $this->uploadHandler,
             $this->imageManipulationHandler,
             $this->fileFactory,
-            $this->signalementQualificationUpdater,
-            $this->htmlSanitizer,
             $this->workflow,
             $this->userSignalementSubscriptionManager,
             true,
@@ -252,7 +332,9 @@ class EsaboraManagerTest extends KernelTestCase
             $this->suiviManager,
             $this->suiviRepository,
             $this->interventionRepository,
+            $this->arreteRepository,
             $this->interventionFactory,
+            $this->arreteManager,
             $this->eventDispatcher, // @phpstan-ignore-line
             $this->userManager,
             $this->logger,
@@ -262,8 +344,6 @@ class EsaboraManagerTest extends KernelTestCase
             $this->uploadHandler,
             $this->imageManipulationHandler,
             $this->fileFactory,
-            $this->signalementQualificationUpdater,
-            $this->htmlSanitizer,
             $this->workflow,
             $this->userSignalementSubscriptionManager,
             true,
@@ -308,7 +388,9 @@ class EsaboraManagerTest extends KernelTestCase
             $this->suiviManager,
             $this->suiviRepository,
             $this->interventionRepository,
+            $this->arreteRepository,
             $this->interventionFactory,
+            $this->arreteManager,
             $this->eventDispatcher, // @phpstan-ignore-line
             $this->userManager,
             $this->logger,
@@ -318,8 +400,6 @@ class EsaboraManagerTest extends KernelTestCase
             $this->uploadHandler,
             $this->imageManipulationHandler,
             $this->fileFactory,
-            $this->signalementQualificationUpdater,
-            $this->htmlSanitizer,
             $this->workflow,
             $this->userSignalementSubscriptionManager,
             true,
@@ -374,7 +454,9 @@ class EsaboraManagerTest extends KernelTestCase
             $this->suiviManager,
             $suiviRepository,
             $this->interventionRepository,
+            $this->arreteRepository,
             $this->interventionFactory,
+            $this->arreteManager,
             $this->eventDispatcher,
             $this->userManager,
             $this->logger,
@@ -384,8 +466,6 @@ class EsaboraManagerTest extends KernelTestCase
             $this->uploadHandler,
             $this->imageManipulationHandler,
             $this->fileFactory,
-            $this->signalementQualificationUpdater,
-            $this->htmlSanitizer,
             $this->workflow,
             $this->userSignalementSubscriptionManager,
             true,
@@ -394,579 +474,5 @@ class EsaboraManagerTest extends KernelTestCase
 
         $description = $esaboraManager->updateStatusAndBuildDescription($affectation, $user, $dossierResponse);
         $this->assertStringContainsString('resynchronisé avec Partenaire 01-01 via SISH (Dossier 2023/SISH/0010)', $description);
-    }
-
-    /**
-     * @throws \ReflectionException
-     */
-    public function testUpdateFromDossierArretePartialWithExistingML(): void
-    {
-        $intervention = new Intervention();
-        $intervention->setScheduledAt(new \DateTimeImmutable('2024-01-01'));
-        $existingAdditionalInfo = [
-            'arrete_numero' => 'AP45OL022',
-            'arrete_type' => 'INSALUBRITE',
-            'arrete_mainlevee_date' => '01/01/2024',
-            'arrete_mainlevee_numero' => 'ML001',
-        ];
-        $intervention->setAdditionalInformation($existingAdditionalInfo);
-
-        $territory = $this->getTerritory();
-        $territory->setTimezone(TimezoneProvider::TIMEZONE_EUROPE_PARIS);
-        $signalement = $this->getSignalement($territory);
-
-        $affectation = new Affectation();
-        $affectation->setSignalement($signalement);
-
-        // Simule des données entrantes avec un nouvel Arrêté mais une Mainlevée nulle (synchronisation splitée)
-        $item = [
-            'keyDataList' => [null, 123],
-            'columnDataList' => [
-                'SISH',
-                'REF123',
-                'DOSS456',
-                '01/01/2024', // arrete_date
-                'AP45OL023', // new arrete_numero
-                'INSALUBRITE', // arrete_type
-                null, // arrete_mainlevee_date est nulle dans cette partie (split)
-                null, // arrete_mainlevee_numero est nulle dans cette partie (split)
-            ],
-        ];
-        $dossierArrete = new DossierArreteSISH($item);
-
-        $esaboraManager = new EsaboraManager(
-            $this->affectationManager,
-            $this->suiviManager,
-            $this->suiviRepository,
-            $this->interventionRepository,
-            $this->interventionFactory,
-            $this->eventDispatcher,
-            $this->userManager,
-            $this->logger,
-            $this->entityManager,
-            $this->zipHelper,
-            $this->fileScanner,
-            $this->uploadHandler,
-            $this->imageManipulationHandler,
-            $this->fileFactory,
-            $this->signalementQualificationUpdater,
-            $this->htmlSanitizer,
-            $this->workflow,
-            $this->userSignalementSubscriptionManager,
-            true,
-            $this->suiviDescriptionHelper,
-        );
-
-        $reflector = new \ReflectionClass($esaboraManager);
-        $method = $reflector->getMethod('updateFromDossierArrete');
-        $result = $method->invoke($esaboraManager, $intervention, $dossierArrete, [
-            'arrete_numero' => $dossierArrete->getArreteNumero(),
-            'arrete_type' => $dossierArrete->getArreteType(),
-            'arrete_mainlevee_date' => $dossierArrete->getArreteMLDate(),
-            'arrete_mainlevee_numero' => $dossierArrete->getArreteMLNumero(),
-        ]);
-
-        $this->assertTrue($result);
-        $additionalInformation = $intervention->getAdditionalInformation();
-        $this->assertEquals('AP45OL023', $additionalInformation['arrete_numero']);
-        // Vérifie que les informations de mainlevée ont été préservées même si des valeurs nulles ont été envoyées dans le premier objet splitté
-        $this->assertEquals('01/01/2024', $additionalInformation['arrete_mainlevee_date']);
-        $this->assertEquals('ML001', $additionalInformation['arrete_mainlevee_numero']);
-    }
-
-    /**
-     * @throws \ReflectionException
-     */
-    public function testUpdateFromDossierArreteWithNumeroTransitionToNull(): void
-    {
-        $intervention = new Intervention();
-        $intervention->setScheduledAt(new \DateTimeImmutable('2024-01-01'));
-        $existingAdditionalInfo = [
-            'arrete_numero' => 'AP45OL023',
-            'arrete_type' => 'INSALUBRITE',
-            'arrete_mainlevee_date' => '01/01/2024',
-            'arrete_mainlevee_numero' => 'ML001',
-        ];
-        $intervention->setAdditionalInformation($existingAdditionalInfo);
-
-        $territory = $this->getTerritory();
-        $territory->setTimezone(TimezoneProvider::TIMEZONE_EUROPE_PARIS);
-        $signalement = $this->getSignalement();
-        $signalement->getAddress()->setTerritory($territory);
-
-        $affectation = new Affectation();
-        $affectation->setSignalement($signalement);
-
-        // Données entrantes avec arrete_numero passant à null
-        $item = [
-            'keyDataList' => [null, 123],
-            'columnDataList' => [
-                'SISH',
-                'REF123',
-                'DOSS456',
-                '01/01/2024',
-                null, // arrete_numero passe à null
-                'INSALUBRITE',
-                null,
-                null,
-            ],
-        ];
-        $dossierArrete = new DossierArreteSISH($item);
-
-        $esaboraManager = new EsaboraManager(
-            $this->affectationManager,
-            $this->suiviManager,
-            $this->suiviRepository,
-            $this->interventionRepository,
-            $this->interventionFactory,
-            $this->eventDispatcher,
-            $this->userManager,
-            $this->logger,
-            $this->entityManager,
-            $this->zipHelper,
-            $this->fileScanner,
-            $this->uploadHandler,
-            $this->imageManipulationHandler,
-            $this->fileFactory,
-            $this->signalementQualificationUpdater,
-            $this->htmlSanitizer,
-            $this->workflow,
-            $this->userSignalementSubscriptionManager,
-            true,
-            $this->suiviDescriptionHelper,
-        );
-
-        $reflector = new \ReflectionClass($esaboraManager);
-        $method = $reflector->getMethod('updateFromDossierArrete');
-        $result = $method->invoke($esaboraManager, $intervention, $dossierArrete, [
-            'arrete_numero' => $dossierArrete->getArreteNumero(),
-            'arrete_type' => $dossierArrete->getArreteType(),
-            'arrete_mainlevee_date' => $dossierArrete->getArreteMLDate(),
-            'arrete_mainlevee_numero' => $dossierArrete->getArreteMLNumero(),
-        ]);
-
-        $this->assertTrue($result);
-        $additionalInformation = $intervention->getAdditionalInformation();
-        $this->assertNull($additionalInformation['arrete_numero']);
-        $this->assertEquals('01/01/2024', $additionalInformation['arrete_mainlevee_date']);
-        $this->assertEquals('ML001', $additionalInformation['arrete_mainlevee_numero']);
-    }
-
-    /**
-     * @throws \ReflectionException
-     */
-    public function testUpdateFromDossierArreteWithNumeroTransitionFromNull(): void
-    {
-        $intervention = new Intervention();
-        $intervention->setScheduledAt(new \DateTimeImmutable('2024-01-01'));
-        $existingAdditionalInfo = [
-            'arrete_numero' => null,
-            'arrete_type' => 'INSALUBRITE',
-            'arrete_mainlevee_date' => '01/01/2024',
-            'arrete_mainlevee_numero' => 'ML001',
-        ];
-        $intervention->setAdditionalInformation($existingAdditionalInfo);
-
-        $territory = $this->getTerritory();
-        $territory->setTimezone(TimezoneProvider::TIMEZONE_EUROPE_PARIS);
-        $signalement = $this->getSignalement();
-        $signalement->getAddress()->setTerritory($territory);
-
-        $affectation = new Affectation();
-        $affectation->setSignalement($signalement);
-
-        // Données entrantes avec arrete_numero passant de null à une valeur
-        $item = [
-            'keyDataList' => [null, 123],
-            'columnDataList' => [
-                'SISH',
-                'REF123',
-                'DOSS456',
-                '01/01/2024',
-                'AP45OL023',
-                'INSALUBRITE',
-                null,
-                null,
-            ],
-        ];
-        $dossierArrete = new DossierArreteSISH($item);
-
-        $esaboraManager = new EsaboraManager(
-            $this->affectationManager,
-            $this->suiviManager,
-            $this->suiviRepository,
-            $this->interventionRepository,
-            $this->interventionFactory,
-            $this->eventDispatcher,
-            $this->userManager,
-            $this->logger,
-            $this->entityManager,
-            $this->zipHelper,
-            $this->fileScanner,
-            $this->uploadHandler,
-            $this->imageManipulationHandler,
-            $this->fileFactory,
-            $this->signalementQualificationUpdater,
-            $this->htmlSanitizer,
-            $this->workflow,
-            $this->userSignalementSubscriptionManager,
-            true,
-            $this->suiviDescriptionHelper,
-        );
-
-        $reflector = new \ReflectionClass($esaboraManager);
-        $method = $reflector->getMethod('updateFromDossierArrete');
-        $result = $method->invoke($esaboraManager, $intervention, $dossierArrete, [
-            'arrete_numero' => $dossierArrete->getArreteNumero(),
-            'arrete_type' => $dossierArrete->getArreteType(),
-            'arrete_mainlevee_date' => $dossierArrete->getArreteMLDate(),
-            'arrete_mainlevee_numero' => $dossierArrete->getArreteMLNumero(),
-        ]);
-
-        $this->assertTrue($result);
-        $additionalInformation = $intervention->getAdditionalInformation();
-        $this->assertEquals('AP45OL023', $additionalInformation['arrete_numero']);
-        $this->assertEquals('01/01/2024', $additionalInformation['arrete_mainlevee_date']);
-        $this->assertEquals('ML001', $additionalInformation['arrete_mainlevee_numero']);
-    }
-
-    /**
-     * @throws \ReflectionException
-     */
-    public function testUpdateFromDossierArreteWithMainLeveeNumeroTransitionToNull(): void
-    {
-        $intervention = new Intervention();
-        $intervention->setScheduledAt(new \DateTimeImmutable('2024-01-01'));
-        $existingAdditionalInfo = [
-            'arrete_numero' => 'AP45OL023',
-            'arrete_type' => 'INSALUBRITE',
-            'arrete_mainlevee_date' => '01/01/2024',
-            'arrete_mainlevee_numero' => 'APML45K09O',
-        ];
-        $intervention->setAdditionalInformation($existingAdditionalInfo);
-
-        $territory = $this->getTerritory();
-        $territory->setTimezone(TimezoneProvider::TIMEZONE_EUROPE_PARIS);
-        $signalement = $this->getSignalement();
-        $signalement->getAddress()->setTerritory($territory);
-
-        $affectation = new Affectation();
-        $affectation->setSignalement($signalement);
-
-        // Données entrantes avec arrete_mainlevee_numero passant à null (avec une date de mainlevée présente)
-        $item = [
-            'keyDataList' => [null, 123],
-            'columnDataList' => [
-                'SISH',
-                'REF123',
-                'DOSS456',
-                '01/01/2024',
-                'AP45OL023',
-                'INSALUBRITE',
-                '01/01/2024',
-                null, // arrete_mainlevee_numero passe à null
-            ],
-        ];
-        $dossierArrete = new DossierArreteSISH($item);
-
-        $esaboraManager = new EsaboraManager(
-            $this->affectationManager,
-            $this->suiviManager,
-            $this->suiviRepository,
-            $this->interventionRepository,
-            $this->interventionFactory,
-            $this->eventDispatcher,
-            $this->userManager,
-            $this->logger,
-            $this->entityManager,
-            $this->zipHelper,
-            $this->fileScanner,
-            $this->uploadHandler,
-            $this->imageManipulationHandler,
-            $this->fileFactory,
-            $this->signalementQualificationUpdater,
-            $this->htmlSanitizer,
-            $this->workflow,
-            $this->userSignalementSubscriptionManager,
-            true,
-            $this->suiviDescriptionHelper,
-        );
-
-        $reflector = new \ReflectionClass($esaboraManager);
-        $method = $reflector->getMethod('updateFromDossierArrete');
-        $result = $method->invoke($esaboraManager, $intervention, $dossierArrete, [
-            'arrete_numero' => $dossierArrete->getArreteNumero(),
-            'arrete_type' => $dossierArrete->getArreteType(),
-            'arrete_mainlevee_date' => $dossierArrete->getArreteMLDate(),
-            'arrete_mainlevee_numero' => $dossierArrete->getArreteMLNumero(),
-        ]);
-
-        $this->assertTrue($result);
-        $additionalInformation = $intervention->getAdditionalInformation();
-        $this->assertEquals('AP45OL023', $additionalInformation['arrete_numero']);
-        $this->assertEquals('01/01/2024', $additionalInformation['arrete_mainlevee_date']);
-        $this->assertNull($additionalInformation['arrete_mainlevee_numero']);
-    }
-
-    /**
-     * @throws \ReflectionException
-     */
-    public function testUpdateFromDossierArreteWithMainLeveeNumeroTransitionFromNull(): void
-    {
-        $intervention = new Intervention();
-        $intervention->setScheduledAt(new \DateTimeImmutable('2024-01-01'));
-        $existingAdditionalInfo = [
-            'arrete_numero' => 'AP45OL023',
-            'arrete_type' => 'INSALUBRITE',
-            'arrete_mainlevee_date' => '01/01/2024',
-            'arrete_mainlevee_numero' => null,
-        ];
-        $intervention->setAdditionalInformation($existingAdditionalInfo);
-
-        $territory = $this->getTerritory();
-        $territory->setTimezone(TimezoneProvider::TIMEZONE_EUROPE_PARIS);
-        $signalement = $this->getSignalement();
-        $signalement->getAddress()->setTerritory($territory);
-
-        $affectation = new Affectation();
-        $affectation->setSignalement($signalement);
-
-        // Données entrantes avec arrete_mainlevee_numero passant de null à une valeur
-        $item = [
-            'keyDataList' => [null, 123],
-            'columnDataList' => [
-                'SISH',
-                'REF123',
-                'DOSS456',
-                '01/01/2024',
-                'AP45OL023',
-                'INSALUBRITE',
-                '01/01/2024',
-                'APML45K09O',
-            ],
-        ];
-        $dossierArrete = new DossierArreteSISH($item);
-
-        $esaboraManager = new EsaboraManager(
-            $this->affectationManager,
-            $this->suiviManager,
-            $this->suiviRepository,
-            $this->interventionRepository,
-            $this->interventionFactory,
-            $this->eventDispatcher,
-            $this->userManager,
-            $this->logger,
-            $this->entityManager,
-            $this->zipHelper,
-            $this->fileScanner,
-            $this->uploadHandler,
-            $this->imageManipulationHandler,
-            $this->fileFactory,
-            $this->signalementQualificationUpdater,
-            $this->htmlSanitizer,
-            $this->workflow,
-            $this->userSignalementSubscriptionManager,
-            true,
-            $this->suiviDescriptionHelper,
-        );
-
-        $reflector = new \ReflectionClass($esaboraManager);
-        $method = $reflector->getMethod('updateFromDossierArrete');
-        $result = $method->invoke($esaboraManager, $intervention, $dossierArrete, [
-            'arrete_numero' => $dossierArrete->getArreteNumero(),
-            'arrete_type' => $dossierArrete->getArreteType(),
-            'arrete_mainlevee_date' => $dossierArrete->getArreteMLDate(),
-            'arrete_mainlevee_numero' => $dossierArrete->getArreteMLNumero(),
-        ]);
-
-        $this->assertTrue($result);
-        $additionalInformation = $intervention->getAdditionalInformation();
-        $this->assertEquals('AP45OL023', $additionalInformation['arrete_numero']);
-        $this->assertEquals('01/01/2024', $additionalInformation['arrete_mainlevee_date']);
-        $this->assertEquals('APML45K09O', $additionalInformation['arrete_mainlevee_numero']);
-    }
-
-    /**
-     * @throws \ReflectionException
-     */
-    public function testUpdateFromDossierArreteDetectsNewArreteModificatif(): void
-    {
-        $intervention = new Intervention();
-        $intervention->setScheduledAt(new \DateTimeImmutable('2024-01-01'));
-        $existingAdditionalInfo = [
-            'arrete_numero' => 'AP45OL023',
-            'arrete_type' => 'INSALUBRITE',
-            'arrete_mainlevee_date' => null,
-            'arrete_mainlevee_numero' => null,
-            'arrete_modificatif_date' => null,
-            'arrete_modificatif_numero' => null,
-        ];
-        $intervention->setAdditionalInformation($existingAdditionalInfo);
-
-        $territory = $this->getTerritory();
-        $territory->setTimezone(TimezoneProvider::TIMEZONE_EUROPE_PARIS);
-        $signalement = $this->getSignalement();
-        $signalement->getAddress()->setTerritory($territory);
-        $intervention->setSignalement($signalement);
-
-        $affectation = new Affectation();
-        $affectation->setSignalement($signalement);
-
-        // Données entrantes avec apparition d'un nouvel arrêté modificatif
-        $item = [
-            'keyDataList' => [null, 123],
-            'columnDataList' => [
-                'SISH',
-                'REF123',
-                'DOSS456',
-                '01/01/2024',
-                'AP45OL023',
-                'INSALUBRITE',
-                null,
-                null,
-                '01/07/2024',
-                'AM001',
-            ],
-        ];
-        $dossierArrete = new DossierArreteSISH($item);
-
-        $esaboraManager = new EsaboraManager(
-            $this->affectationManager,
-            $this->suiviManager,
-            $this->suiviRepository,
-            $this->interventionRepository,
-            $this->interventionFactory,
-            $this->eventDispatcher,
-            $this->userManager,
-            $this->logger,
-            $this->entityManager,
-            $this->zipHelper,
-            $this->fileScanner,
-            $this->uploadHandler,
-            $this->imageManipulationHandler,
-            $this->fileFactory,
-            $this->signalementQualificationUpdater,
-            $this->htmlSanitizer,
-            $this->workflow,
-            $this->userSignalementSubscriptionManager,
-            true,
-            $this->suiviDescriptionHelper,
-        );
-
-        $reflector = new \ReflectionClass($esaboraManager);
-        $method = $reflector->getMethod('updateFromDossierArrete');
-        $result = $method->invoke($esaboraManager, $intervention, $dossierArrete, [
-            'arrete_numero' => $dossierArrete->getArreteNumero(),
-            'arrete_type' => $dossierArrete->getArreteType(),
-            'arrete_mainlevee_date' => $dossierArrete->getArreteMLDate(),
-            'arrete_mainlevee_numero' => $dossierArrete->getArreteMLNumero(),
-            'arrete_modificatif_date' => $dossierArrete->getArreteModificatifDate(),
-            'arrete_modificatif_numero' => $dossierArrete->getArreteModificatifNumero(),
-        ]);
-
-        $this->assertTrue($result);
-        $this->assertEquals(
-            'Un arrêté modificatif AM001 en date du 01/07/2024 a été pris concernant l&#039;arrêté AP45OL023 du 01/01/2024.',
-            $intervention->getDetails()
-        );
-        $additionalInformation = $intervention->getAdditionalInformation();
-        $this->assertEquals('AP45OL023', $additionalInformation['arrete_numero']);
-        $this->assertEquals('01/07/2024', $additionalInformation['arrete_modificatif_date']);
-        $this->assertEquals('AM001', $additionalInformation['arrete_modificatif_numero']);
-    }
-
-    /**
-     * @throws \ReflectionException
-     */
-    public function testUpdateFromDossierArreteWithModificatifDateAndNumeroUpdated(): void
-    {
-        $intervention = new Intervention();
-        $intervention->setScheduledAt(new \DateTimeImmutable('2024-01-01'));
-        $existingAdditionalInfo = [
-            'arrete_numero' => 'AP45OL023',
-            'arrete_type' => 'INSALUBRITE',
-            'arrete_mainlevee_date' => null,
-            'arrete_mainlevee_numero' => null,
-            'arrete_modificatif_date' => '01/07/2024',
-            'arrete_modificatif_numero' => 'AM001',
-        ];
-        $intervention->setAdditionalInformation($existingAdditionalInfo);
-
-        $territory = $this->getTerritory();
-        $territory->setTimezone(TimezoneProvider::TIMEZONE_EUROPE_PARIS);
-        $signalement = $this->getSignalement();
-        $signalement->getAddress()->setTerritory($territory);
-        $intervention->setSignalement($signalement);
-
-        $affectation = new Affectation();
-        $affectation->setSignalement($signalement);
-
-        // Données entrantes avec modification de la date et du numéro de l'arrêté modificatif
-        $item = [
-            'keyDataList' => [null, 123],
-            'columnDataList' => [
-                'SISH',
-                'REF123',
-                'DOSS456',
-                '01/01/2024',
-                'AP45OL023',
-                'INSALUBRITE',
-                null,
-                null,
-                '02/07/2024',
-                'AM002',
-            ],
-        ];
-        $dossierArrete = new DossierArreteSISH($item);
-
-        $esaboraManager = new EsaboraManager(
-            $this->affectationManager,
-            $this->suiviManager,
-            $this->suiviRepository,
-            $this->interventionRepository,
-            $this->interventionFactory,
-            $this->eventDispatcher,
-            $this->userManager,
-            $this->logger,
-            $this->entityManager,
-            $this->zipHelper,
-            $this->fileScanner,
-            $this->uploadHandler,
-            $this->imageManipulationHandler,
-            $this->fileFactory,
-            $this->signalementQualificationUpdater,
-            $this->htmlSanitizer,
-            $this->workflow,
-            $this->userSignalementSubscriptionManager,
-            true,
-            $this->suiviDescriptionHelper,
-        );
-
-        $reflector = new \ReflectionClass($esaboraManager);
-        $method = $reflector->getMethod('updateFromDossierArrete');
-        $result = $method->invoke($esaboraManager, $intervention, $dossierArrete, [
-            'arrete_numero' => $dossierArrete->getArreteNumero(),
-            'arrete_type' => $dossierArrete->getArreteType(),
-            'arrete_mainlevee_date' => $dossierArrete->getArreteMLDate(),
-            'arrete_mainlevee_numero' => $dossierArrete->getArreteMLNumero(),
-            'arrete_modificatif_date' => $dossierArrete->getArreteModificatifDate(),
-            'arrete_modificatif_numero' => $dossierArrete->getArreteModificatifNumero(),
-        ]);
-
-        $this->assertTrue($result);
-        $this->assertStringContainsString(
-            'La date de l&#039;arrêté modificatif dans SI-Santé Habitat (SI-SH) a été modifiée ; La nouvelle date est 02/07/2024.',
-            (string) $intervention->getDetails(),
-            (string) $intervention->getDetails(),
-        );
-        $this->assertStringContainsString(
-            'Le numéro de l&#039;arrêté modificatif dans SI-Santé Habitat (SI-SH) a été modifié ; Le nouveau numéro est AM002.',
-            (string) $intervention->getDetails(),
-            (string) $intervention->getDetails(),
-        );
-        $additionalInformation = $intervention->getAdditionalInformation();
-        $this->assertEquals('AP45OL023', $additionalInformation['arrete_numero']);
-        $this->assertEquals('02/07/2024', $additionalInformation['arrete_modificatif_date']);
-        $this->assertEquals('AM002', $additionalInformation['arrete_modificatif_numero']);
     }
 }

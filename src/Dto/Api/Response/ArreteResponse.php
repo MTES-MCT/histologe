@@ -2,19 +2,12 @@
 
 namespace App\Dto\Api\Response;
 
-use App\Entity\Intervention;
-use App\Entity\Suivi;
+use App\Entity\Arrete;
+use App\Service\Arrete\ArreteDescriptionGenerator;
 use OpenApi\Attributes as OA;
 
 class ArreteResponse
 {
-    #[OA\Property(
-        description: 'Identifiant technique de l\'arrêté',
-        format: 'uuid',
-        example: '123e4567-e89b-12d3-a456-426614174000'
-    )]
-    public ?string $uuid = null;
-
     #[OA\Property(
         description: 'Description de l\'arrête.',
         type: 'string',
@@ -22,9 +15,8 @@ class ArreteResponse
     )]
     public ?string $description = null;
 
-    public function __construct(Intervention $intervention, Suivi $suivi)
+    public function __construct(Arrete $arrete)
     {
-        $this->uuid = $intervention->getUuid();
-        $this->description = $suivi->getDescription();
+        $this->description = ArreteDescriptionGenerator::buildDescriptionArreteCreated($arrete);
     }
 }
