@@ -3,6 +3,7 @@
     "type": "SignalementFormScreen",
     "label": "Vos coordonnées",
     "slug": "vos_coordonnees_tiers",
+    "shouldAddFieldset": true,
     "screenCategory": "Adresse et coordonnées",
     "description": "Sauf mention contraire tous les champs sont obligatoires.",
     "components": {
@@ -107,6 +108,7 @@
     "type": "SignalementFormScreen",
     "label": "Les coordonnées des personnes occupant le logement",
     "slug": "coordonnees_occupant",
+    "shouldAddFieldset": true,
     "screenCategory": "Adresse et coordonnées",
     "description": "Sauf mention contraire tous les champs sont obligatoires.",
     "components": {
@@ -212,6 +214,7 @@
     "type": "SignalementFormScreen",
     "label": "Les coordonnées du bailleur (propriétaire)",
     "slug": "coordonnees_bailleur",
+    "shouldAddFieldset": true,
     "screenCategory": "Adresse et coordonnées",
     "description": "Sauf mention contraire tous les champs sont obligatoires.",
     "components": {
@@ -339,8 +342,9 @@
   },
   {
     "type": "SignalementFormScreen",
-    "label": "",
+    "label": "Démarches auprès du bailleur",
     "slug": "info_procedure_bail",
+    "shouldAddFieldset": true,
     "screenCategory": "Adresse et coordonnées",
     "description": "Sauf mention contraire tous les champs sont obligatoires.",
     "components": {
@@ -581,6 +585,7 @@
     "type": "SignalementFormScreen",
     "label": "Vous souhaitez signaler des problèmes sur",
     "slug": "zone_concernee",
+    "shouldAddFieldset": true,
     "screenCategory": "Adresse et coordonnées",
     "description": "Sauf mention contraire tous les champs sont obligatoires.",
     "components": {
@@ -799,6 +804,7 @@
     "type": "SignalementFormScreen",
     "label": "Précisions sur le logement",
     "slug": "type_logement",
+    "shouldAddFieldset": true,
     "screenCategory": "Type et composition",
     "description": "Sauf mention contraire tous les champs sont obligatoires.",
     "components": {
@@ -888,8 +894,9 @@
   },
   {
     "type": "SignalementFormScreen",
-    "label": "",
+    "label": "Composition du logement",
     "slug": "composition_logement",
+    "shouldAddFieldset": true,
     "screenCategory": "Type et composition",
     "description": "Sauf mention contraire tous les champs sont obligatoires.",
     "components": {
@@ -995,8 +1002,9 @@
   },
   {
     "type": "SignalementFormScreen",
-    "label": "",
+    "label": "Description du logement",
     "slug": "type_logement_commodites",
+    "shouldAddFieldset": true,
     "screenCategory": "Type et composition",
     "description": "Sauf mention contraire tous les champs sont obligatoires.",
     "components": {
@@ -1241,8 +1249,9 @@
   },
   {
     "type": "SignalementFormScreen",
-    "label": "",
+    "label": "Occupation du logement",
     "slug": "composition_logement_personnes",
+    "shouldAddFieldset": true,
     "screenCategory": "Type et composition",
     "description": "Sauf mention contraire tous les champs sont obligatoires.",
     "components": {
@@ -1338,8 +1347,9 @@
   },
   {
     "type": "SignalementFormScreen",
-    "label": "",
+    "label": "Formalités administratives",
     "slug": "bail_dpe",
+    "shouldAddFieldset": true,
     "screenCategory": "Type et composition",
     "description": "Sauf mention contraire tous les champs sont obligatoires.",
     "components": {
@@ -1637,8 +1647,9 @@
   },
   {
     "type": "SignalementFormScreen",
-    "label": "",
+    "label": "Allocations",
     "slug": "logement_social",
+    "shouldAddFieldset": true,
     "screenCategory": "Situation du foyer",
     "description": "Sauf mention contraire tous les champs sont obligatoires.",
     "components": {
@@ -1766,8 +1777,9 @@
   },
   {
     "type": "SignalementFormScreen",
-    "label": "",
+    "label": "Accompagnement",
     "slug": "travailleur_social",
+    "shouldAddFieldset": true,
     "screenCategory": "Situation du foyer",
     "description": "Sauf mention contraire tous les champs sont obligatoires.",
     "components": {
@@ -1983,8 +1995,9 @@
   },
   {
     "type": "SignalementFormScreen",
-    "label": "",
+    "label": "Démarches auprès de l'assurance",
     "slug": "info_procedure_assurance",
+    "shouldAddFieldset": true,
     "screenCategory": "Procédure",
     "description": "Sauf mention contraire tous les champs sont obligatoires.",
     "components": {
@@ -2090,6 +2103,7 @@
     "label": "Utilisation du service",
     "description": "Lisez attentivement les conditions ci-dessous.<br>Sauf mention contraire tous les champs sont obligatoires.",
     "slug": "utilisation_service",
+    "shouldAddFieldset": true,
     "screenCategory": "Procédure",
     "components": {
       "body": [
@@ -2176,6 +2190,7 @@
     "label": "Informations complémentaires",
     "description": "Toutes les questions sont facultatives",
     "slug": "informations_complementaires",
+    "shouldAddFieldset": true,
     "screenCategory": "Procédure",
     "components": {
       "body": [
@@ -2183,6 +2198,7 @@
           "type": "SignalementFormSubscreen",
           "label": "La situation du foyer",
           "slug": "informations_complementaires_situation_occupants",
+          "shouldAddFieldset": true,
           "customCss": "fr-mt-3v",
           "components": {
             "body": [
@@ -2272,6 +2288,7 @@
           "type": "SignalementFormSubscreen",
           "label": "Le logement",
           "slug": "informations_complementaires_logement",
+          "shouldAddFieldset": true,
           "customCss": "fr-mt-6v",
           "components": {
             "body": [

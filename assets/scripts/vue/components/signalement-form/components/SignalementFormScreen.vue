@@ -6,30 +6,27 @@
       >
       <img :src="icon.src" :alt="icon.alt">
     </div>
-    <h1 v-if="formStore.currentScreen?.slug === 'introduction'" >{{ variablesReplacer.replace(label) }}</h1>
-    <h2 v-else-if="label !== ''">{{ variablesReplacer.replace(label) }}</h2>
-    <SignalementFormWarning
-      v-if="formStore.data.errorMessage !== ''"
-      id="form-screen-warning"
-      :label="formStore.data.errorMessage"
-    ></SignalementFormWarning>
-    <div v-html="variablesReplacer.replace(description)" class="fr-mb-3v"></div>
-    <div v-if="components != undefined">
-      <template v-if="formStore.shouldAddFieldset(formStore.currentScreen?.components?.body)">
-        <fieldset :id="formStore.currentScreen?.slug+'_screen_fieldset'" class="fr-fieldset form-screen-fieldset">
-          <SignalementFormComponentGenerator
-            :componentList="components.body"
-            :handleClickComponent="handleClickComponent"
-          />
-        </fieldset>
-      </template>
-      <template v-else>
+    <component
+      :is="shouldAddFieldset ? 'fieldset' : 'div'"
+      :id="shouldAddFieldset ? formStore.currentScreen?.slug + '_screen_fieldset' : undefined"
+      :class="{ 'fr-fieldset form-screen-fieldset': shouldAddFieldset }"
+      >
+      <legend v-if="shouldAddFieldset && label"><h2>{{ variablesReplacer.replace(label) }}</h2></legend>
+      <h1 v-else-if="formStore.currentScreen?.slug === 'introduction'" >{{ variablesReplacer.replace(label) }}</h1>
+      <h2 v-else-if="label !== ''">{{ variablesReplacer.replace(label) }}</h2>
+      <SignalementFormWarning
+        v-if="formStore.data.errorMessage !== ''"
+        id="form-screen-warning"
+        :label="formStore.data.errorMessage"
+      ></SignalementFormWarning>
+      <div v-html="variablesReplacer.replace(description)" class="fr-mb-3v"></div>
+      <div v-if="components != undefined">
         <SignalementFormComponentGenerator
           :componentList="components.body"
           :handleClickComponent="handleClickComponent"
         />
-      </template>
-    </div>
+      </div>
+    </component>
   </div>
   <div
     v-if="components !== undefined && components.footer !== undefined && components.footer.length > 0"
@@ -68,7 +65,8 @@ export default defineComponent({
     icon: Object,
     components: Object,
     changeEvent: Function,
-    customCss: String
+    customCss: String,
+    shouldAddFieldset: { type: Boolean, default: false }
   },
   data () {
     return {
@@ -338,5 +336,8 @@ export default defineComponent({
     display: inherit;
     margin: 0 0rem 1rem;
     padding: 0 0rem;
+  }
+  .form-screen-fieldset > legend {
+    padding: 0;
   }
 </style>

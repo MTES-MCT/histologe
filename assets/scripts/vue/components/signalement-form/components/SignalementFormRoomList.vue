@@ -1,41 +1,43 @@
 <template>
   <div :class="[ customCss, 'signalement-form-roomlist', { 'signalement-form-roomlist-error': hasError } ]" :id="id">
-    <label class="fr-label" :for="idPieceAVivre+'_check'">{{ label }}</label>
-    <div class="signalement-form-roomlist-rooms">
-      <SignalementFormCheckbox
-        :key="idPieceAVivre"
-        :id="idPieceAVivre"
-        label="Une ou des pièces à vivre (salon, chambres)"
-        :validate="validate"
-        v-model="formStore.data[idPieceAVivre]"
-        :hasError="formStore.validationErrors[idPieceAVivre]  !== undefined"
-        :error="formStore.validationErrors[idPieceAVivre]"
-        @update:modelValue="handleCheckBox(idPieceAVivre)"
-        :access_focus="access_focus"
-      />
-      <SignalementFormCheckbox
-        v-if="formStore.data.type_logement_commodites_cuisine === 'oui'"
-        :key="idCuisine"
-        :id="idCuisine"
-        label="La cuisine / le coin cuisine"
-        :validate="validate"
-        v-model="formStore.data[idCuisine]"
-        :hasError="formStore.validationErrors[idCuisine]  !== undefined"
-        :error="formStore.validationErrors[idCuisine]"
-        @update:modelValue="handleCheckBox(idCuisine)"
-      />
-      <SignalementFormCheckbox
-        v-if="formStore.data.type_logement_commodites_salle_de_bain === 'oui' || formStore.data.type_logement_commodites_wc === 'oui'"
-        :key="idSalleDeBain"
-        :id="idSalleDeBain"
-        label="La salle de bain, salle d'eau et / ou les toilettes"
-        :validate="validate"
-        v-model="formStore.data[idSalleDeBain]"
-        :hasError="formStore.validationErrors[idSalleDeBain]  !== undefined"
-        :error="formStore.validationErrors[idSalleDeBain]"
-        @update:modelValue="handleCheckBox(idSalleDeBain)"
-      />
-    </div>
+    <fieldset class="signalement-form-roomlist-fieldset">
+      <legend v-if="label" class="fr-label">{{ label }}</legend>
+      <div class="signalement-form-roomlist-rooms">
+        <SignalementFormCheckbox
+          :key="idPieceAVivre"
+          :id="idPieceAVivre"
+          label="Une ou des pièces à vivre (salon, chambres)"
+          :validate="validate"
+          v-model="formStore.data[idPieceAVivre]"
+          :hasError="formStore.validationErrors[idPieceAVivre]  !== undefined"
+          :error="formStore.validationErrors[idPieceAVivre]"
+          @update:modelValue="handleCheckBox(idPieceAVivre)"
+          :access_focus="access_focus"
+        />
+        <SignalementFormCheckbox
+          v-if="formStore.data.type_logement_commodites_cuisine === 'oui'"
+          :key="idCuisine"
+          :id="idCuisine"
+          label="La cuisine / le coin cuisine"
+          :validate="validate"
+          v-model="formStore.data[idCuisine]"
+          :hasError="formStore.validationErrors[idCuisine]  !== undefined"
+          :error="formStore.validationErrors[idCuisine]"
+          @update:modelValue="handleCheckBox(idCuisine)"
+        />
+        <SignalementFormCheckbox
+          v-if="formStore.data.type_logement_commodites_salle_de_bain === 'oui' || formStore.data.type_logement_commodites_wc === 'oui'"
+          :key="idSalleDeBain"
+          :id="idSalleDeBain"
+          label="La salle de bain, salle d'eau et / ou les toilettes"
+          :validate="validate"
+          v-model="formStore.data[idSalleDeBain]"
+          :hasError="formStore.validationErrors[idSalleDeBain]  !== undefined"
+          :error="formStore.validationErrors[idSalleDeBain]"
+          @update:modelValue="handleCheckBox(idSalleDeBain)"
+        />
+      </div>
+    </fieldset>
     <div
       id="text-input-error-desc-error"
       class="fr-error-text"
@@ -116,5 +118,14 @@ export default defineComponent({
 }
 .signalement-form-roomlist-rooms {
   margin-left: 20px;
+}
+.signalement-form-roomlist-fieldset {
+  border: 0;
+  margin: 0;
+  min-width: 0;
+  padding: 0;
+}
+.signalement-form-roomlist-fieldset > legend {
+  padding: 0;
 }
 </style>

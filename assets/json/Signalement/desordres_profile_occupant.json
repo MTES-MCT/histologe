@@ -252,6 +252,7 @@
       "alt": ""
     },
     "slug": "desordres_batiment_proprete",
+    "shouldAddFieldset": true,
     "screenCategory": "Désordres",
     "components": {
       "body": [
@@ -342,6 +343,7 @@
       "alt": ""
     },
     "slug": "desordres_batiment_eau",
+    "shouldAddFieldset": true,
     "screenCategory": "Désordres",
     "components": {
       "body": [
@@ -424,6 +426,7 @@
       "alt": ""
     },
     "slug": "desordres_batiment_isolation",
+    "shouldAddFieldset": true,
     "screenCategory": "Désordres",
     "components": {
       "body": [
@@ -517,6 +520,7 @@
       "alt": ""
     },
     "slug": "desordres_batiment_maintenance",
+    "shouldAddFieldset": true,
     "screenCategory": "Désordres",
     "components": {
       "body": [
@@ -594,6 +598,7 @@
       "alt": ""
     },
     "slug": "desordres_batiment_nuisibles",
+    "shouldAddFieldset": true,
     "screenCategory": "Désordres",
     "components": {
       "body": [
@@ -725,6 +730,7 @@
       "alt": ""
     },
     "slug": "desordres_batiment_securite",
+    "shouldAddFieldset": true,
     "screenCategory": "Désordres",
     "components": {
       "body": [
@@ -970,6 +976,7 @@
       "alt": ""
     },
     "slug": "desordres_batiment_incendie",
+    "shouldAddFieldset": true,
     "screenCategory": "Désordres",
     "components": {
       "body": [
@@ -1036,6 +1043,7 @@
       "alt": ""
     },
     "slug": "desordres_batiment_accessibilite",
+    "shouldAddFieldset": true,
     "screenCategory": "Désordres",
     "components": {
       "body": [
@@ -1152,6 +1160,7 @@
       "alt": ""
     },
     "slug": "desordres_batiment_bruit",
+    "shouldAddFieldset": true,
     "screenCategory": "Désordres",
     "components": {
       "body": [
@@ -1448,6 +1457,7 @@
       "alt": ""
     },
     "slug": "desordres_logement_eau",
+    "shouldAddFieldset": true,
     "screenCategory": "Désordres",
     "components": {
       "body": [
@@ -1522,6 +1532,7 @@
       "alt": ""
     },
     "slug": "desordres_logement_aeration",
+    "shouldAddFieldset": true,
     "screenCategory": "Désordres",
     "components": {
       "body": [
@@ -1645,18 +1656,19 @@
   {
     "type": "SignalementFormScreen",
     "label": "Chauffage et isolation dans le logement",
-    "description": "Quel est le type de chauffage du logement ?<br>Sauf mention contraire tous les champs sont obligatoires.",
+    "description": "Sauf mention contraire tous les champs sont obligatoires.",
     "icon": {
       "src": "/img/form/LOGEMENT/Picto-chauffage_isolation.svg",
       "alt": ""
     },
     "slug": "desordres_logement_chauffage",
+    "shouldAddFieldset": true,
     "screenCategory": "Désordres",
     "components": {
       "body": [
         {
           "type": "SignalementFormOnlyChoice",
-          "label": "",
+          "label": "Quel est le type de chauffage du logement ?",
           "slug": "desordres_logement_chauffage_type",
           "values": [
             {
@@ -1699,6 +1711,7 @@
           "type": "SignalementFormSubscreen",
           "label": "Le type de chauffage est : {{dictionaryStore::formStore.data.desordres_logement_chauffage_type}}",
           "slug": "desordres_logement_chauffage_details",
+          "shouldAddFieldset": true,
           "description": "Sélectionnez le ou les problèmes rencontrés",
           "conditional": {
             "show": "formStore.data.desordres_logement_chauffage_type !== 'aucun' && formStore.data.desordres_logement_chauffage_type !== undefined" 
@@ -1834,6 +1847,7 @@
       "alt": ""
     },
     "slug": "desordres_logement_humidite",
+    "shouldAddFieldset": true,
     "screenCategory": "Désordres",
     "components": {
       "body": [
@@ -2316,6 +2330,7 @@
       "alt": ""
     },
     "slug": "desordres_logement_securite",
+    "shouldAddFieldset": true,
     "screenCategory": "Désordres",
     "components": {
       "body": [
@@ -2512,6 +2527,7 @@
       "alt": ""
     },
     "slug": "desordres_logement_electricite",
+    "shouldAddFieldset": true,
     "screenCategory": "Désordres",
     "components": {
       "body": [
@@ -2646,6 +2662,7 @@
       "alt": ""
     },
     "slug": "desordres_logement_nuisibles",
+    "shouldAddFieldset": true,
     "screenCategory": "Désordres",
     "components": {
       "body": [
@@ -2875,6 +2892,7 @@
       "alt": ""
     },
     "slug": "desordres_logement_bruit",
+    "shouldAddFieldset": true,
     "screenCategory": "Désordres",
     "components": {
       "body": [
@@ -2959,6 +2977,7 @@
       "alt": ""
     },
     "slug": "desordres_logement_lumiere",
+    "shouldAddFieldset": true,
     "screenCategory": "Désordres",
     "components": {
       "body": [
@@ -3017,6 +3036,7 @@
           "type": "SignalementFormSubscreen",
           "label": "Dans quelle(s) pièce(s) ?",
           "slug": "desordres_logement_lumiere_plafond_trop_bas_pieces",
+          "shouldAddFieldset": true,
           "customCss": "signalement-form-subscreen-under-checkbox",
           "conditional": {
             "show": "formStore.data.desordres_logement_lumiere_plafond_trop_bas === 1 && formStore.data.composition_logement_piece_unique === 'plusieurs_pieces'"
