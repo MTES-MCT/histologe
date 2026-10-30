@@ -259,7 +259,7 @@
   {
     "type": "SignalementFormScreen",
     "label": "Propreté et entretien dans le bâtiment",
-    "description": "Sélectionnez le ou les problèmes rencontrés.<br>Les précisions demandées pour chaque problème sélectionné sont obligatoires, sauf mention contraire.",
+    "description": "",
     "icon": {
       "src": "/img/form/BATIMENT/Picto-proprete_entretien.svg",
       "alt": ""
@@ -349,7 +349,7 @@
   {
     "type": "SignalementFormScreen",
     "label": "Eau et évacuation dans le bâtiment",
-    "description": "Sélectionnez le ou les problèmes rencontrés.<br>Les précisions demandées pour chaque problème sélectionné sont obligatoires, sauf mention contraire.",
+    "description": "",
     "icon": {
       "src": "/img/form/BATIMENT/Picto-eau_evacuation.svg",
       "alt": ""
@@ -431,7 +431,7 @@
   {
     "type": "SignalementFormScreen",
     "label": "Isolation du bâtiment",
-    "description": "Sélectionnez le ou les problèmes rencontrés.<br>Les précisions demandées pour chaque problème sélectionné sont obligatoires, sauf mention contraire.",
+    "description": "",
     "icon": {
       "src": "/img/form/BATIMENT/Picto-isolation_batiment.svg",
       "alt": ""
@@ -524,7 +524,7 @@
   {
     "type": "SignalementFormScreen",
     "label": "Maintenance et équipement dans le bâtiment",
-    "description": "Sélectionnez le ou les problèmes rencontrés.<br>Les précisions demandées pour chaque problème sélectionné sont obligatoires, sauf mention contraire.",
+    "description": "",
     "icon": {
       "src": "/img/form/BATIMENT/Picto-maintenance_equipement.svg",
       "alt": ""
@@ -977,7 +977,7 @@
   {
     "type": "SignalementFormScreen",
     "label": "Risque d'incendie dans le bâtiment",
-    "description": "Sélectionnez le ou les problèmes rencontrés.<br>Les précisions demandées pour chaque problème sélectionné sont obligatoires, sauf mention contraire.",
+    "description": "",
     "icon": {
       "src": "/img/form/BATIMENT/Picto-protection_incendie.svg",
       "alt": ""
@@ -1043,7 +1043,7 @@
   {
     "type": "SignalementFormScreen",
     "label": "Accessibilité et alentours du bâtiment",
-    "description": "Sélectionnez le ou les problèmes rencontrés.<br>Les précisions demandées pour chaque problème sélectionné sont obligatoires, sauf mention contraire.",
+    "description": "",
     "icon": {
       "src": "/img/form/BATIMENT/Picto-accessibilite_et_alentours.svg",
       "alt": ""
@@ -1159,7 +1159,7 @@
   {
     "type": "SignalementFormScreen",
     "label": "Bruit, pollution sonore dans le bâtiment",
-    "description": "Sélectionnez le ou les problèmes rencontrés.<br>Les précisions demandées pour chaque problème sélectionné sont obligatoires, sauf mention contraire.",
+    "description": "",
     "icon": {
       "src": "/img/form/BATIMENT/Picto-bruit_pollution_sonore.svg",
       "alt": ""
@@ -1464,7 +1464,7 @@
   {
     "type": "SignalementFormScreen",
     "label": "Eau et évacuation dans le logement",
-    "description": "Sélectionnez le ou les problèmes rencontrés.<br>Les précisions demandées pour chaque problème sélectionné sont obligatoires, sauf mention contraire.",
+    "description": "",
     "icon": {
       "src": "/img/form/LOGEMENT/Picto-eau_evacuation.svg",
       "alt": ""
@@ -2811,7 +2811,7 @@
   {
     "type": "SignalementFormScreen",
     "label": "Bruit, pollution sonore dans le logement",
-    "description": "Sélectionnez le ou les problèmes rencontrés.<br>Les précisions demandées pour chaque problème sélectionné sont obligatoires, sauf mention contraire.",
+    "description": "",
     "icon": {
       "src": "/img/form/LOGEMENT/Picto-bruit_pollution_sonore.svg",
       "alt": ""
