@@ -40,12 +40,12 @@ class ArreteVoter extends Voter
         }
 
         return match ($attribute) {
-            self::ARRETE_DELETE => $this->canDelete($subject, $user, $vote),
+            self::ARRETE_DELETE => $this->canDelete($subject, $user),
             default => false,
         };
     }
 
-    private function canDelete(Arrete $arrete, User $user, ?Vote $vote): bool
+    private function canDelete(Arrete $arrete, User $user): bool
     {
         if (ArreteCreationSource::ESABORA === $arrete->getArreteCreationSource()) {
             return false;

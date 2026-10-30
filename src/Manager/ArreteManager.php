@@ -182,11 +182,12 @@ class ArreteManager
         $signalement = $arrete->getSignalement();
         $userSystem = $this->userManager->getSystemUser();
 
-        $description = ArreteDescriptionGenerator::buildDescriptionArreteCreated($arrete);
-        $suiviCategory = SuiviCategory::INTERVENTION_ARRETE_IS_CREATED;
         if (!empty($changedInformations)) {
             $description = ArreteDescriptionGenerator::buildDescriptionArreteUpdated($arrete, $changedInformations);
             $suiviCategory = SuiviCategory::INTERVENTION_ARRETE_IS_RESCHEDULED;
+        } else {
+            $description = ArreteDescriptionGenerator::buildDescriptionArreteCreated($arrete);
+            $suiviCategory = SuiviCategory::INTERVENTION_ARRETE_IS_CREATED;
         }
 
         $suivi = $this->suiviManager->createSuivi(
