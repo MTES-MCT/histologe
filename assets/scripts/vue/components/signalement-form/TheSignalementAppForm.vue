@@ -31,6 +31,7 @@
                 :icon="formStore.currentScreen.icon"
                 :components="formStore.currentScreen.components"
                 :customCss="formStore.currentScreen.customCss"
+                :shouldAddFieldset="formStore.currentScreen.shouldAddFieldset"
                 :changeEvent="saveAndChangeScreenBySlug"
                 />
               <button type="submit" class="fr-hidden" hidden aria-hidden="true">Submit</button>
