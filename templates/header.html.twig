@@ -32,13 +32,17 @@
                             <li>
                                 {% if app.user %}
                                     {% if 'ROLE_SUIVI_SIGNALEMENT' in app.user.roles %}
-                                        <a class="fr-btn fr-fi-logout-box-r-line" href="{{ path('app_logout_signalement_user') }}">
-                                            Quitter
-                                        </a>
+                                        <form action="{{ path('app_logout_signalement_user') }}" method="get">
+                                            <button class="fr-btn fr-fi-logout-box-r-line" type="submit">
+                                                Quitter
+                                            </button>
+                                        </form>
                                     {% elseif 'ROLE_BAILLEUR_SIGNALEMENT' in app.user.roles %}
-                                        <a class="fr-btn fr-fi-logout-box-r-line" href="{{ path('app_logout_signalement_bailleur') }}">
-                                            Quitter
-                                        </a>
+                                        <form action="{{ path('app_logout_signalement_bailleur') }}" method="get">
+                                            <button class="fr-btn fr-fi-logout-box-r-line" type="submit">
+                                                Quitter
+                                            </button>
+                                        </form>
                                     {% else %}
                                         <a class="fr-btn" target="_self" href="{{ path('back_dashboard') }}">
                                             Tableau de bord
