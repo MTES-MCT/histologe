@@ -291,7 +291,7 @@ export default defineComponent({
     }
 
     .form-screen-body {
-      margin-bottom: 11rem !important;
+      margin-bottom: 4rem !important;
     }
 
     .form-screen-body-margin {
@@ -300,20 +300,6 @@ export default defineComponent({
 
     .form-screen-body .icon {
       text-align: center;
-    }
-
-    .form-screen-footer {
-      position: fixed;
-      left: 0px;
-      bottom: 0px;
-      width: 100%;
-      z-index: 100;
-
-      background-position: 0 0;
-      background-repeat: no-repeat;
-      background-size: 100% 1px;
-      background-image: linear-gradient(0deg, var(--border-default-grey), var(--border-default-grey));
-      background-color: white;
     }
   }
 
