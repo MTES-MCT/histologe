@@ -1372,12 +1372,12 @@ class SignalementEditController extends AbstractController
     }
 
     #[Route('/{uuid:signalement}/edit-invariant-fiscal', name: 'back_signalement_edit_invariant_fiscal', methods: 'POST')]
+    #[IsGranted('ROLE_ADMIN')]
     public function editInvariantFiscal(
         Signalement $signalement,
         Request $request,
         EntityManagerInterface $entityManager,
     ): JsonResponse {
-        $this->denyAccessUnlessGranted(SignalementVoter::SIGN_VIEW, $signalement);
         /** @var array<string, mixed> $payload */
         $payload = $request->getPayload()->all();
         $token = is_scalar($payload['_token'] ?? null) ? (string) $payload['_token'] : '';

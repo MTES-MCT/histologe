@@ -62,6 +62,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 #[Route('/bo/signalements')]
 class SignalementController extends AbstractController
@@ -441,11 +442,11 @@ class SignalementController extends AbstractController
     }
 
     #[Route('/{uuid:signalement}/get-invariant-list', name: 'back_signalement_get_invariant_list')]
+    #[IsGranted('ROLE_ADMIN')]
     public function getInvariantList(
         Signalement $signalement,
         RialService $rialService,
     ): JsonResponse {
-        $this->denyAccessUnlessGranted(SignalementVoter::SIGN_VIEW, $signalement);
         if (!$signalement->getAddress()->getBanId()) {
             $invariants = null;
         } else {
