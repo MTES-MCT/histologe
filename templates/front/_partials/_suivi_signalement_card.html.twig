@@ -1,7 +1,7 @@
 
 <div class="signalement-card fr-mb-3w">
-	<div class="fr-grid-row fr-grid-row--gutters">
-		<div class="fr-col-12 fr-col-md-6">
+	<ul class="fr-grid-row fr-grid-row--gutters">
+		<li class="fr-col-12 fr-col-md-6">
 			{% if signalement.isNotOccupant %}
 				Déclarant
 			{% elseif signalement.mailDeclarant %}
@@ -17,8 +17,8 @@
 					{{ signalement.prenomOccupant }} {{ signalement.nomOccupant }}
 				{% endif %}
 			</span>
-		</div>
-		<div class="fr-col-12 fr-col-md-6">
+		</li>
+		<li class="fr-col-12 fr-col-md-6">
 			Référence du dossier
 			<br>
 			<span class="info">
@@ -27,25 +27,25 @@
 					<small>(#{{ signalement.referenceInjonction }})</small>
 				{% endif %}
 			</span>
-		</div>
-		<div class="fr-col-12 fr-col-md-6">
+		</li>
+		<li class="fr-col-12 fr-col-md-6">
 			{% if signalement.isNotOccupant or signalement.mailDeclarant %}
 				Personne occupant le logement
 				<br>
 				<span class="info">{{ signalement.prenomOccupant }} {{ signalement.nomOccupant }}</span>
 			{% endif %}
-		</div>
-		<div class="fr-col-12 fr-col-md-6">
+		</li>
+		<li class="fr-col-12 fr-col-md-6">
 			Statut du dossier
 			<br>
 			<span class="info">
 				{{ include('front/_partials/_suivi_signalement_card_status.html.twig') }}
 			</span>
+		</li>
+	</ul>
+	{% if link is not defined or link is same as true %}
+		<div class="fr-mt-3w fr-text--right">
+			<a class="fr-link fr-icon-arrow-right-line fr-link--icon-right" href="{{ path('front_suivi_signalement',{code:signalement.codeSuivi}) }}">Retour à l'accueil du dossier</a>
 		</div>
-		{% if link is not defined or link is same as true %}
-			<div class="fr-col-12 fr-text--right">
-				<a class="fr-link fr-icon-arrow-right-line fr-link--icon-right" href="{{ path('front_suivi_signalement',{code:signalement.codeSuivi}) }}">Retour à l'accueil du dossier</a>
-			</div>
-		{% endif %}
-	</div>	
+	{% endif %}
 </div>

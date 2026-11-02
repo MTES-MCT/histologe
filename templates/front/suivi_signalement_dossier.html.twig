@@ -56,11 +56,15 @@
 							>Compléter les informations</a>
 					{% endif %}
 				</div>
-				{{ signalement.address.housenumberAndStreet }} {{ signalement.address.postCode }} {{ signalement.address.city }}
-				{% if signalement.complementAdresseOccupant %}
-					<div class="title-separator">Détails</div>
-					{{signalement.complementAdresseOccupant}}
-				{% endif %}
+				<ul class="fr-grid-row">
+					<li class="fr-col-12">{{ signalement.address.housenumberAndStreet }} {{ signalement.address.postCode }} {{ signalement.address.city }}</li>
+					{% if signalement.complementAdresseOccupant %}
+						<li class="fr-col-12">
+							<div class="title-separator">Détails</div>
+							{{signalement.complementAdresseOccupant}}
+						</li>
+					{% endif %}
+				</ul>
 
 				{% if (is_granted('SIGN_USAGER_COMPLETE', signalement)) %}
 					<div class="fr-mt-2v">
@@ -116,22 +120,29 @@
 							>Modifier les coordonnées</a>
 					{% endif %}
 				</div>
-				{{signalement.civiliteOccupant(false)}} {{ signalement.nomOccupant|capitalize }} {{ signalement.prenomOccupant|capitalize }}
-				{% if signalement.mailOccupant %}
-					<br>
-					{{ signalement.mailOccupant }}
-					{% if show_email_alert(signalement.mailOccupant) %}
-						<p class="fr-badge fr-badge--error">Format non valide, merci de nous le signaler.</p>
+				<ul class="fr-grid-row">
+					<li class="fr-col-12">
+						{{signalement.civiliteOccupant(false)}} {{ signalement.nomOccupant|capitalize }} {{ signalement.prenomOccupant|capitalize }}
+					</li>
+					{% if signalement.mailOccupant %}
+						<li class="fr-col-12">
+							{{ signalement.mailOccupant }}
+							{% if show_email_alert(signalement.mailOccupant) %}
+								<p class="fr-badge fr-badge--error">Format non valide, merci de nous le signaler.</p>
+							{% endif %}
+						</li>
 					{% endif %}
-				{% endif %}
-				{% if signalement.telOccupant %}
-					<br>
-					{{ signalement.telOccupantDecoded|phone }}
-				{% endif %}
-				{% if signalement.telOccupantBis %}
-					<br>
-					{{ signalement.telOccupantBisDecoded|phone }}
-				{% endif %}
+					{% if signalement.telOccupant %}
+						<li class="fr-col-12">
+							{{ signalement.telOccupantDecoded|phone }}
+						</li>
+					{% endif %}
+					{% if signalement.telOccupantBis %}
+						<li class="fr-col-12">
+							{{ signalement.telOccupantBisDecoded|phone }}
+						</li>
+					{% endif %}
+				</ul>
 				{% if (is_granted('SIGN_USAGER_COMPLETE', signalement)) %}
 					<div class="fr-mt-3v">
 						<a href="{{ path('front_suivi_signalement_complete_occupant', {'code': signalement.codeSuivi}) }}" 
@@ -145,16 +156,22 @@
 				{% if signalement.mailDeclarant %}
 					<div class="signalement-group-data-card">
 						<h3 class="title-blue-france fr-h5">Coordonnées du tiers aidant</h3>
-						{{ signalement.nomDeclarant|capitalize }} {{ signalement.prenomDeclarant|capitalize }}
-						<br>
-						{{ signalement.mailDeclarant }}
-						{% if show_email_alert(signalement.mailDeclarant) %}
-							<p class="fr-badge fr-badge--error">Format non valide, merci de nous le signaler.</p>
-						{% endif %}
-						{% if signalement.telDeclarant %}
-							<br>
-							{{ signalement.telDeclarantDecoded|phone }}
-						{% endif %}
+						<ul class="fr-grid-row">
+							<li class="fr-col-12">
+								{{ signalement.nomDeclarant|capitalize }} {{ signalement.prenomDeclarant|capitalize }}
+							</li>
+							<li class="fr-col-12">
+								{{ signalement.mailDeclarant }}
+								{% if show_email_alert(signalement.mailDeclarant) %}
+									<p class="fr-badge fr-badge--error">Format non valide, merci de nous le signaler.</p>
+								{% endif %}
+							</li>
+							{% if signalement.telDeclarant %}
+								<li class="fr-col-12">
+									{{ signalement.telDeclarantDecoded|phone }}
+								</li>
+							{% endif %}
+						</ul>
 					</div>
 				{% elseif is_granted('SIGN_USAGER_EDIT', signalement) %}
 					{% include 'front/_partials/_suivi_signalement_inviter_tiers.html.twig' with {'cssDiv': 'fr-icon-information-line fr-callout--blue-cumulus fr-mt-3w', 'heading': 3} %}
@@ -162,30 +179,39 @@
 			{% elseif signalement.isTiersDeclarant %}
 				<div class="signalement-group-data-card">
 					<h3 class="title-blue-france fr-h5">Coordonnées du tiers déclarant</h3>
-					{{ signalement.nomDeclarant|capitalize }} {{ signalement.prenomDeclarant|capitalize }}
-					{% if signalement.matriculeDeclarant %}
-						<br>
-						Matricule : {{ signalement.matriculeDeclarant }}
-					{% endif %}
-					{% if signalement.mailDeclarant %}
-						<br>
-						{{ signalement.mailDeclarant }}
-						{% if show_email_alert(signalement.mailDeclarant) %}
-							<p class="fr-badge fr-badge--error">Format non valide, merci de nous le signaler.</p>
+					<ul class="fr-grid-row">
+						<li class="fr-col-12">
+							{{ signalement.nomDeclarant|capitalize }} {{ signalement.prenomDeclarant|capitalize }}
+						</li>
+						{% if signalement.matriculeDeclarant %}
+							<li class="fr-col-12">
+								Matricule : {{ signalement.matriculeDeclarant }}
+							</li>
 						{% endif %}
-					{% endif %}
-					{% if signalement.telDeclarant %}
-						<br>
-						{{ signalement.telDeclarantDecoded|phone }}
-					{% endif %}
-					{% if signalement.telDeclarantSecondaire %}
-						<br>
-						{{ signalement.telDeclarantSecondaire|phone }}
-					{% endif %}
-					{% if signalement.structureDeclarant %}
-						<br>
-						{{ signalement.structureDeclarant }}
-					{% endif %}
+						{% if signalement.mailDeclarant %}
+							<li class="fr-col-12">
+								{{ signalement.mailDeclarant }}
+								{% if show_email_alert(signalement.mailDeclarant) %}
+									<p class="fr-badge fr-badge--error">Format non valide, merci de nous le signaler.</p>
+								{% endif %}
+							</li>
+						{% endif %}
+						{% if signalement.telDeclarant %}
+							<li class="fr-col-12">
+								{{ signalement.telDeclarantDecoded|phone }}
+							</li>
+						{% endif %}
+						{% if signalement.telDeclarantSecondaire %}
+							<li class="fr-col-12">
+								{{ signalement.telDeclarantSecondaire|phone }}
+							</li>
+						{% endif %}
+						{% if signalement.structureDeclarant %}
+							<li class="fr-col-12">
+								{{ signalement.structureDeclarant }}
+							</li>
+						{% endif %}
+					</ul>
 				</div>
 			{% endif %}
 
@@ -199,39 +225,51 @@
 					{% endif %}
 				</div>
 				<div class="title-separator">Coordonnées du bailleur</div>
-				{% if signalement.denominationProprio %}
-					{{ signalement.denominationProprio }}
-					<br>
-				{% endif %}
-				{{signalement.nomProprio}}
-				{% if signalement.prenomProprio %}
-					{{ signalement.prenomProprio }}
-				{% endif %}
-				{% if signalement.adresseProprio %}
-					<br>
-					{{ signalement.adresseProprio }}
-				{% endif %}
-				{% if signalement.codePostalProprio %}
-					{{ signalement.codePostalProprio }}
-				{% endif %}
-				{% if signalement.villeProprio %}
-					{{ signalement.villeProprio }}
-				{% endif %}
-				{% if signalement.mailProprio %}
-					<br>
-					{{ signalement.mailProprio }}
-					{% if show_email_alert(signalement.mailProprio) %}
-						<p class="fr-badge fr-badge--error">Format non valide, merci de nous le signaler.</p>
+				
+				<ul class="fr-grid-row">
+					{% if signalement.denominationProprio %}
+						<li class="fr-col-12">
+						{{ signalement.denominationProprio }}
+						</li>
 					{% endif %}
-				{% endif %}
-				{% if signalement.telProprio %}
-					<br>
-					{{ signalement.telProprioDecoded|phone }}
-				{% endif %}
-				{% if signalement.telProprioSecondaire %}
-					<br>
-					{{ signalement.telProprioSecondaireDecoded|phone }}
-				{% endif %}
+					<li class="fr-col-12">
+						{{signalement.nomProprio}}
+						{% if signalement.prenomProprio %}
+							{{ signalement.prenomProprio }}
+						{% endif %}
+					</li>
+					{% if signalement.adresseProprio or signalement.codePostalProprio or signalement.villeProprio %}
+						<li class="fr-col-12">
+							{% if signalement.adresseProprio %}
+								{{ signalement.adresseProprio }}
+							{% endif %}
+							{% if signalement.codePostalProprio %}
+								{{ signalement.codePostalProprio }}
+							{% endif %}
+							{% if signalement.villeProprio %}
+								{{ signalement.villeProprio }}
+							{% endif %}
+						</li>
+					{% endif %}
+					{% if signalement.mailProprio %}
+						<li class="fr-col-12">
+							{{ signalement.mailProprio }}
+							{% if show_email_alert(signalement.mailProprio) %}
+								<p class="fr-badge fr-badge--error">Format non valide, merci de nous le signaler.</p>
+							{% endif %}
+						</li>
+					{% endif %}
+					{% if signalement.telProprio %}
+						<li class="fr-col-12">
+							{{ signalement.telProprioDecoded|phone }}
+						</li>
+					{% endif %}
+					{% if signalement.telProprioSecondaire %}
+						<li class="fr-col-12">
+							{{ signalement.telProprioSecondaireDecoded|phone }}
+						</li>
+					{% endif %}
+				</ul>
 				<div class="title-separator">Démarches auprès du bailleur</div>
 				<ul>
 					<li>
@@ -291,42 +329,51 @@
 								>Compléter les informations</a>
 						{% endif %}
 					</div>
-					{% if signalement.denominationAgence %}
-						{{ signalement.denominationAgence }}
-						<br>
-					{% endif %}
-					{% if signalement.nomAgence or signalement.prenomAgence %}
-						{% if signalement.nomAgence %}
-							{{ signalement.nomAgence }}
+					<ul class="fr-grid-row">
+						{% if signalement.denominationAgence %}
+							<li class="fr-col-12">
+								{{ signalement.denominationAgence }}
+							</li>
 						{% endif %}
-						{% if signalement.prenomAgence %}
-							{{ signalement.prenomAgence }}
+						{% if signalement.nomAgence or signalement.prenomAgence %}
+							<li class="fr-col-12">
+								{% if signalement.nomAgence %}
+									{{ signalement.nomAgence }}
+								{% endif %}
+								{% if signalement.prenomAgence %}
+									{{ signalement.prenomAgence }}
+								{% endif %}
+							</li>
 						{% endif %}
-						<br>
-					{% endif %}
-					{% if signalement.adresseAgence or signalement.codePostalAgence or signalement.villeAgence %}
-						{% if signalement.adresseAgence %}
-							{{ signalement.adresseAgence }}
+						{% if signalement.adresseAgence or signalement.codePostalAgence or signalement.villeAgence %}
+							<li class="fr-col-12">
+								{% if signalement.adresseAgence %}
+									{{ signalement.adresseAgence }}
+								{% endif %}
+								{% if signalement.codePostalAgence %}
+									{{ signalement.codePostalAgence }}
+								{% endif %}
+								{% if signalement.villeAgence %}
+									{{ signalement.villeAgence }}
+								{% endif %}
+							</li>
 						{% endif %}
-						{% if signalement.codePostalAgence %}
-							{{ signalement.codePostalAgence }}
+						{% if signalement.mailAgence %}
+							<li class="fr-col-12">
+								{{ signalement.mailAgence }}
+							</li>
 						{% endif %}
-						{% if signalement.villeAgence %}
-							{{ signalement.villeAgence }}
+						{% if signalement.telAgence %}
+							<li class="fr-col-12">
+								{{ signalement.telAgenceDecoded|phone }}
+							</li>
 						{% endif %}
-						<br>
-					{% endif %}
-					{% if signalement.mailAgence %}
-						{{ signalement.mailAgence }}
-						<br>
-					{% endif %}
-					{% if signalement.telAgence %}
-						{{ signalement.telAgenceDecoded|phone }}
-						<br>
-					{% endif %}
-					{% if signalement.telAgenceSecondaire %}
-						{{ signalement.telAgenceSecondaireDecoded|phone }}
-					{% endif %}
+						{% if signalement.telAgenceSecondaire %}
+							<li class="fr-col-12">
+								{{ signalement.telAgenceSecondaireDecoded|phone }}
+							</li>
+						{% endif %}
+					</ul>
 					{% if (is_granted('SIGN_USAGER_COMPLETE', signalement)) %}
 						<a href="{{ path('front_suivi_signalement_complete_agence', {'code': signalement.codeSuivi}) }}" 
 							class="fr-btn fr-btn--sm fr-icon-edit-line fr-btn--icon-left fr-btn--tertiary fr-hidden-md"
@@ -357,25 +404,33 @@
 								>Compléter les informations</a>
 						{% endif %}
 					</div>
-					{% if signalement.denominationSyndic %}
-						{{ signalement.denominationSyndic }}
-						<br>
-					{% endif %}
-					{% if signalement.nomSyndic %}
-						{{ signalement.nomSyndic }}
-						<br>
-					{% endif %}
-					{% if signalement.mailSyndic %}
-						{{ signalement.mailSyndic }}
-						<br>
-					{% endif %}
-					{% if signalement.telSyndic %}
-						{{ signalement.telSyndicDecoded|phone }}
-						<br>
-					{% endif %}
-					{% if signalement.telSyndicSecondaire %}
-						{{ signalement.telSyndicSecondaireDecoded|phone }}
-					{% endif %}
+					<ul class="fr-grid-row">
+						{% if signalement.denominationSyndic %}
+							<li class="fr-col-12">
+								{{ signalement.denominationSyndic }}
+							</li>
+						{% endif %}
+						{% if signalement.nomSyndic %}
+							<li class="fr-col-12">
+								{{ signalement.nomSyndic }}
+							</li>
+						{% endif %}
+						{% if signalement.mailSyndic %}
+							<li class="fr-col-12">
+								{{ signalement.mailSyndic }}
+							</li>
+						{% endif %}
+						{% if signalement.telSyndic %}
+							<li class="fr-col-12">
+								{{ signalement.telSyndicDecoded|phone }}
+							</li>
+						{% endif %}
+						{% if signalement.telSyndicSecondaire %}
+							<li class="fr-col-12">
+								{{ signalement.telSyndicSecondaireDecoded|phone }}
+							</li>
+						{% endif %}
+					</ul>
 					{% if (is_granted('SIGN_USAGER_COMPLETE', signalement)) %}
 						<a href="{{ path('front_suivi_signalement_complete_syndic', {'code': signalement.codeSuivi}) }}"
 							class="fr-btn fr-btn--sm fr-icon-edit-line fr-btn--icon-left fr-btn--tertiary fr-hidden-md"

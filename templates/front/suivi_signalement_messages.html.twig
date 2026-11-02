@@ -96,7 +96,7 @@
 
 		<div class="fr-col-12 fr-col-md-6">
 			<h2 class="title-blue-france fr-mb-1w">Suivre vos échanges</h2>
-			<div>Votre dossier a bien été enregistré le {{ signalement.createdAt|date('d/m/Y') }}.</div>
+			<p>Votre dossier a bien été enregistré le {{ signalement.createdAt|date('d/m/Y') }}.</p>
 			{% for suivi in signalement.suivis|reverse %}
 				{% set isUnreadMessage = false %}
 				{% set messageBoxClass = 'message-box--usager' %}
