@@ -23,7 +23,7 @@ test('login for usager', async ({page, context}) => {
   await page.getByRole('button', { name: 'Accéder au signalement' }).click();
   await page.getByText('Noëlle Mamère').click();
   await page.getByText('nouveau').click();
-  await page.getByRole('link', { name: 'Quitter' }).click();
+  await page.getByRole('button', { name: 'Quitter' }).click();
 });
 
 test('login for bailleur', async ({page, context}) => {
@@ -45,7 +45,7 @@ test('login for bailleur', async ({page, context}) => {
   await page.getByRole('heading', { name: 'Détails du dossier' }).click();
   await page.getByText('Monsieur Mulder Fox').click();
   await page.getByText('La procédure en cours').click();
-  await page.getByRole('link', { name: 'Quitter' }).click();
+  await page.getByRole('button', { name: 'Quitter' }).click();
 });
 
 test('login for admin', async ({page, context}) => {
