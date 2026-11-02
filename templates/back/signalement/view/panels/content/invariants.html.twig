@@ -1,0 +1,270 @@
+{# Libellés issus de la documentation fonctionnelle de l'API RIAL (DGFiP, v2026_05) #}
+{% set naturesLocal = {
+    'AP': 'Appartement',
+    'DA': 'Dépendance d\'appartement',
+    'DE': 'Dépendance bâtie isolée',
+    'DM': 'Dépendance de maison',
+    'LC': 'Locaux communs',
+    'MA': 'Maison',
+    'MP': 'Maison partagée (à cheval sur 2 communes)',
+    'ME': 'Maison exceptionnelle d\'habitation',
+    'SM': 'Sol de maison',
+    'CB': 'Local professionnel',
+    'AT': 'Antenne téléphonique',
+    'AU': 'Autoroute',
+    'CF': 'Local SNCF évalué par barème',
+    'PP': 'Port de plaisance',
+    'SH': 'Shelter',
+    'U': 'Établissement industriel',
+    'UE': 'Local évalué au barème',
+    'UG': 'Appareil à gaz',
+    'UN': 'Usine nucléaire',
+    'NB': 'Local non bâti',
+} %}
+{% set naturesHabitation = ['AP', 'MA', 'MP', 'ME'] %}
+{% set typesLocal = {
+    '1': 'Maison',
+    '2': 'Appartement',
+    '3': 'Dépendance d\'habitation',
+    '4': 'Local professionnel, commercial ou biens divers',
+} %}
+{% set motifsSuppression = {
+    'CA': 'changement d\'affectation',
+    'CX': 'contentieux',
+    'DL': 'division de locaux',
+    'DT': 'démolition physique totale',
+    'RL': 'regroupement de locaux',
+    'CU': 'changement d\'utilisation',
+} %}
+{% set changementsLocal = {
+    'CN': 'Construction neuve',
+    'AC': 'Addition de construction',
+    'DP': 'Démolition partielle',
+    'CA': 'Changement d\'affectation',
+    'CC': 'Changement de consistance',
+    'DT': 'Démolition totale',
+    'ME': 'Modification des critères d\'évaluation',
+    'CX': 'Modification suite à contentieux',
+    'CU': 'Changement d\'utilisation',
+    'CI': 'Changement d\'identification (bâtiment, entrée, niveau, porte, adresse)',
+    'RL': 'Réunion de locaux',
+    'DL': 'Division de locaux',
+    'CE': 'Changement de méthode d\'évaluation',
+} %}
+{% set descriptifsHabitation = {
+    'PP': 'Partie principale',
+    'GA': 'Garage',
+    'BX': 'Box',
+    'PK': 'Parking',
+    'CV': 'Cave',
+    'DC': 'Dépendance de locaux communs',
+    'CL': 'Cellier',
+    'BD': 'Buanderie',
+    'BC': 'Bûcher',
+    'RS': 'Remise',
+    'GR': 'Grenier',
+    'TR': 'Terrasse',
+    'PI': 'Pièce indépendante',
+    'PA': 'Pur agrément',
+    'JH': 'Jardin d\'hiver',
+    'PS': 'Piscine',
+    'SR': 'Serre',
+} %}
+{# Familles de catégories du formulaire 6660-REV #}
+{% set categoriesProfessionnel = {
+    'MAG': 'Magasin, lieu de vente',
+    'BUR': 'Bureau',
+    'DEP': 'Dépôt, stockage, stationnement',
+    'ATE': 'Atelier',
+    'HOT': 'Hôtel',
+    'SPE': 'Spectacle, sport, loisirs',
+    'ENS': 'Enseignement, formation, recherche',
+    'CLI': 'Établissement de santé',
+    'IND': 'Établissement industriel',
+    'EXC': 'Local exceptionnel',
+} %}
+{% set surfacesProfessionnel = {
+    'surfacePrincipaleLocalProfessionnel': 'Surface principale',
+    'surfaceInterieureAnnexeLocalProfessionnel': 'Surface intérieure annexe',
+    'surfaceExterieureAnnexeLocalProfessionnel': 'Surface extérieure annexe',
+    'surfaceStationnementCouvertLocalProfessionnel': 'Stationnement couvert',
+    'surfaceStationnementExterieurLocalProfessionnel': 'Stationnement extérieur',
+} %}
+
+{% macro libelle(map, code) %}{% if code is not empty %}{{ map[code] ?? code }}{% endif %}{% endmacro %}
+
+{% macro date(value) %}{% if value is not empty %}{{ value|date('d/m/Y') }}{% endif %}{% endmacro %}
+
+{% macro etage(value) %}
+    {%- set etage = value|default('')|trim -%}
+    {%- if etage matches '/^[0-9]+$/' -%}
+        {%- set niveau = etage + 0 -%}
+        {%- if niveau == 0 -%}Rez-de-chaussée
+        {%- elseif niveau > 80 -%}{{ niveau - 80 }}{{ niveau - 80 == 1 ? 'er' : 'e' }} sous-sol
+        {%- else -%}{{ niveau }}{{ niveau == 1 ? 'er' : 'e' }} étage
+        {%- endif -%}
+    {%- else -%}{{ etage }}
+    {%- endif -%}
+{% endmacro %}
+
+{% if invariants is null %}
+    <div class="fr-notice fr-notice--alert">
+        <div class="fr-container">
+            <div class="fr-notice__body">
+                <p>
+                    <span class="fr-notice__title">Erreur</span>
+                    <span class="fr-notice__desc">Ce signalement n'a pas d'adresse associée ou l'adresse n'a pas de ID BAN.</span>
+                </p>
+            </div>
+        </div>
+    </div>
+{% elseif invariants %}
+    <fieldset class="fr-fieldset" id="invariants-fieldset" aria-labelledby="invariants-fieldset-legend">
+        <legend class="fr-fieldset__legend fr-text--regular" id="invariants-fieldset-legend">
+            {{ invariants|length }} {{ invariants|length > 1 ? 'locaux trouvés' : 'local trouvé' }} à cette adresse.
+            Sélectionnez celui qui correspond au logement du signalement.
+        </legend>
+        {% for invariant in invariants %}
+            {% set general = invariant.descriptifGeneralLocal ?? {} %}
+            {% set etat = invariant.etatLocal ?? {} %}
+            {% set adresse = invariant.adresseLocal ?? {} %}
+            {% set cadastre = invariant.identifiantCadastral ?? {} %}
+            {% set identifiant = general.identifiantFiscalLocal ?? '' %}
+            {% set inputId = 'invariant-' ~ loop.index %}
+            {# Le nom exact de la clé du descriptif d'habitation n'est pas documenté : on la détecte #}
+            {% set habitationKey = invariant|keys|filter(k => k matches '/habitation/i')|first %}
+            {% set descriptifsHab = habitationKey ? invariant[habitationKey] : [] %}
+            {% set descriptifsPro = invariant.descriptifLocalProfessionnel ?? [] %}
+            {% set lots = (invariant.lotCopropriete ?? [])|map(l => l.numeroLotCopropriete ?? '')|filter(n => n is not empty) %}
+
+            <div class="fr-fieldset__element fr-mb-3w">
+                <div class="fr-radio-group">
+                    <input type="radio" id="{{ inputId }}" name="invariant" value="{{ identifiant }}" aria-describedby="{{ inputId }}-details">
+                    <label class="fr-label" for="{{ inputId }}">
+                        <strong>{{ identifiant }}</strong>&nbsp;–&nbsp;{{ _self.libelle(naturesLocal, general.codeNatureLocal ?? null) }}
+                        <span class="fr-hint-text">
+                            {% if general.codeNatureLocal is defined and general.codeNatureLocal in naturesHabitation %}
+                                <span class="fr-badge fr-badge--sm fr-badge--info fr-badge--no-icon">Habitation</span>
+                            {% endif %}
+                            {% if etat.codeEtatLocal is defined and etat.codeEtatLocal == 'D' %}
+                                <span class="fr-badge fr-badge--sm fr-badge--error">Démoli</span>
+                            {% elseif etat.codeEtatLocal is defined and etat.codeEtatLocal == 'A' %}
+                                <span class="fr-badge fr-badge--sm fr-badge--success">Actif</span>
+                            {% endif %}
+                        </span>
+                    </label>
+                </div>
+
+                <ul class="fr-text--sm fr-mb-0 fr-mt-1w fr-ml-4w" id="{{ inputId }}-details">
+                    {% if adresse is not empty %}
+                        {% set numeroVoirie = adresse.numeroVoirie ?? '' %}
+                        <li>
+                            <span class="fr-text--bold">Adresse :</span>
+                            {{ numeroVoirie matches '/^[0-9]+$/' ? numeroVoirie + 0 : numeroVoirie }}{{ adresse.indiceRepetitionNumeroVoirie ?? '' }}
+                            {{ adresse.libelleVoie ?? '' }},
+                            {{ adresse.libelleCommune ?? '' }} ({{ adresse.libelleDepartement ?? '' }})
+                        </li>
+                    {% endif %}
+                    {% if cadastre.etage is defined or cadastre.numeroBatiment is defined %}
+                        <li>
+                            <span class="fr-text--bold">Situation :</span>
+                            {% set situation = [] %}
+                            {% if cadastre.etage is not empty %}{% set situation = situation|merge([_self.etage(cadastre.etage)]) %}{% endif %}
+                            {% if cadastre.numeroBatiment is not empty %}{% set situation = situation|merge(['bâtiment ' ~ cadastre.numeroBatiment]) %}{% endif %}
+                            {% if cadastre.numeroEntree is not empty %}{% set situation = situation|merge(['entrée ' ~ cadastre.numeroEntree]) %}{% endif %}
+                            {% if cadastre.numeroPorte is not empty %}{% set situation = situation|merge(['porte ' ~ cadastre.numeroPorte]) %}{% endif %}
+                            {{ situation|join(', ') }}
+                            {% if cadastre.nombreNiveaux is not empty %}
+                                (immeuble de {{ cadastre.nombreNiveaux }} niveau{{ cadastre.nombreNiveaux > 1 ? 'x' }})
+                            {% endif %}
+                        </li>
+                    {% endif %}
+                    {% if general.codeTypeLocal is not empty %}
+                        <li>
+                            <span class="fr-text--bold">Type de local :</span>
+                            {{ _self.libelle(typesLocal, general.codeTypeLocal) }}
+                        </li>
+                    {% endif %}
+                    {% for descriptif in descriptifsHab %}
+                        {% set code = descriptif|filter((v, k) => k matches '/^code/i')|first %}
+                        {% set surface = descriptif|filter((v, k) => k matches '/^surface/i')|first %}
+                        {% set pieces = descriptif|filter((v, k) => k matches '/piece/i')|first %}
+                        <li>
+                            <span class="fr-text--bold">{{ code ? _self.libelle(descriptifsHabitation, code) : 'Descriptif' }} :</span>
+                            {% set infos = [] %}
+                            {% if surface is not empty %}{% set infos = infos|merge([surface ~ ' m²']) %}{% endif %}
+                            {% if pieces is not empty %}{% set infos = infos|merge([pieces ~ ' pièce' ~ (pieces > 1 ? 's' : '') ~ ' principale' ~ (pieces > 1 ? 's' : '')]) %}{% endif %}
+                            {{ infos ? infos|join(', ') : 'non renseigné' }}
+                        </li>
+                    {% endfor %}
+                    {% for descriptif in descriptifsPro %}
+                        {% set categorie = descriptif.categorieLocalProfessionnel ?? '' %}
+                        {% if categorie is not empty %}
+                            <li>
+                                <span class="fr-text--bold">Catégorie professionnelle :</span>
+                                {{ categoriesProfessionnel[categorie|slice(0, 3)] ?? '' }} ({{ categorie }})
+                            </li>
+                        {% endif %}
+                        {% set surfaces = [] %}
+                        {% for key, label in surfacesProfessionnel %}
+                            {% if descriptif[key] is defined and descriptif[key] is not empty %}
+                                {% set surfaces = surfaces|merge([label|lower ~ ' ' ~ descriptif[key] ~ ' m²']) %}
+                            {% endif %}
+                        {% endfor %}
+                        {% if surfaces %}
+                            <li>
+                                <span class="fr-text--bold">Surfaces :</span>
+                                {{ surfaces|join(', ')|capitalize }}
+                            </li>
+                        {% endif %}
+                    {% endfor %}
+                    {% if lots is not empty %}
+                        <li>
+                            <span class="fr-text--bold">Lot{{ lots|length > 1 ? 's' }} de copropriété :</span>
+                            {{ lots|join(', ') }}
+                        </li>
+                    {% endif %}
+                    {% if cadastre.codeSectionParcelle is not empty %}
+                        <li>
+                            <span class="fr-text--bold">Parcelle cadastrale :</span>
+                            section {{ cadastre.codeSectionParcelle }}, n° {{ cadastre.numeroPlanParcelle ?? '' }}
+                            {% if cadastre.codeCommuneAbsorbee is not empty %}(préfixe {{ cadastre.codeCommuneAbsorbee }}){% endif %}
+                        </li>
+                    {% endif %}
+                    {% if etat.codeEtatLocal is defined and etat.codeEtatLocal == 'D' %}
+                        <li>
+                            <span class="fr-text--bold">Démoli le</span>
+                            {{ _self.date(etat.dateEffetEtatLocal ?? null) }}
+                            {% if etat.codeMotifSuppressionLocal is not empty %}
+                                suite à : {{ _self.libelle(motifsSuppression, etat.codeMotifSuppressionLocal) }}
+                            {% endif %}
+                        </li>
+                    {% elseif etat.dateEffetEtatLocal is not empty %}
+                        <li>
+                            <span class="fr-text--bold">Achevé le :</span>
+                            {{ _self.date(etat.dateEffetEtatLocal) }}
+                        </li>
+                    {% endif %}
+                    {% if general.codeChangementLocal is not empty %}
+                        <li>
+                            <span class="fr-text--bold">Dernière modification :</span>
+                            {{ _self.libelle(changementsLocal, general.codeChangementLocal) }}
+                            {% if general.dateEffetLocal is not empty %}(le {{ _self.date(general.dateEffetLocal) }}){% endif %}
+                        </li>
+                    {% endif %}
+                </ul>
+            </div>
+        {% endfor %}
+    </fieldset>
+{% else %}
+    <div class="fr-notice fr-notice--warning">
+        <div class="fr-container">
+            <div class="fr-notice__body">
+                <p>
+                    <span class="fr-notice__title">Erreur</span>
+                    <span class="fr-notice__desc">Rial ne retourne aucun invariant fiscal pour cette adresse.</span>
+                </p>
+            </div>
+        </div>
+    </div>
+{% endif %}
