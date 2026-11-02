@@ -82,7 +82,7 @@ class SignalementEditControllerTest extends WebTestCase
         } elseif (in_array($status, [SignalementStatus::ACTIVE->value, SignalementStatus::NEED_VALIDATION->value, SignalementStatus::INJONCTION_BAILLEUR->value])) {
             $this->assertResponseIsSuccessful();
             $this->assertSelectorExists('form#form-usager-complete-dossier');
-            $this->assertSelectorTextContains('button[type=submit]', 'Enregistrer');
+            $this->assertSelectorTextContains('form#form-usager-complete-dossier button[type=submit]', 'Enregistrer');
             $this->assertSelectorExists('h1');
             $this->assertSelectorTextContains('h1', 'Compléter les informations');
         } else {
@@ -124,7 +124,7 @@ class SignalementEditControllerTest extends WebTestCase
         $client->request('GET', $url);
         $this->assertResponseIsSuccessful();
         $this->assertSelectorExists('form#form-usager-complete-dossier');
-        $this->assertSelectorTextContains('button[type=submit]', 'Enregistrer');
+        $this->assertSelectorTextContains('form#form-usager-complete-dossier button[type=submit]', 'Enregistrer');
         $this->assertSelectorExists('h1');
         $this->assertSelectorTextContains('h1', 'Compléter les informations');
     }
