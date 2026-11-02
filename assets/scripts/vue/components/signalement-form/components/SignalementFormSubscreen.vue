@@ -1,5 +1,5 @@
 <template>
-  <div :class="[ customCss ]" :id="id">
+  <div :class="[ customCss, { 'signalement-form-subscreen-error': hasError && error } ]" :id="id">
     <h3 v-if="label">{{ variablesReplacer.replace(label) }}</h3>
     <div v-if="description" v-html="variablesReplacer.replace(description)"></div>
     <div
@@ -78,6 +78,14 @@
         />
       </template>
     </div>
+    <div
+      :id="id + '-error'"
+      class="fr-error-text"
+      role="alert"
+      v-if="hasError && error"
+      >
+      {{ error }}
+    </div>
   </div>
 </template>
 
@@ -145,6 +153,7 @@ export default defineComponent({
     components: Object,
     customCss: { type: String, default: '' },
     handleClickComponent: Function,
+    error: { type: String, default: undefined },
     // les propriétés suivantes ne sont pas utilisées,
     // mais si on ne les met pas, elles apparaissent dans le DOM
     // et ça soulève des erreurs W3C
@@ -152,7 +161,8 @@ export default defineComponent({
     access_name: { type: String, default: undefined },
     access_autocomplete: { type: String, default: undefined },
     access_focus: { type: Boolean, default: false },
-    clickEvent: Function
+    clickEvent: Function,
+    validate: { type: Object, default: undefined }
   },
   data () {
     return {
@@ -173,6 +183,9 @@ export default defineComponent({
   border-left: 3px solid var(--border-action-high-blue-france);
   margin-left: 10px;
   padding-left: 18px;
+}
+.signalement-form-subscreen-error {
+  border-left: 3px solid var(--text-default-error);
 }
 .form-subscreen-fieldset {
   display: inherit ;
