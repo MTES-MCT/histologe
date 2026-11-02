@@ -6,7 +6,7 @@
       :chart-data="chartData"
       :chart-id="chartId"
       :dataset-id-key="datasetIdKey"
-      :plugins="plugins"
+      :plugins="showValues ? [...plugins, valueLabelsPlugin] : plugins"
       :css-classes="cssClasses"
       :styles="styles"
       :width="width"
@@ -19,6 +19,30 @@
 import { defineComponent } from 'vue'
 import { Bar } from 'vue-chartjs'
 import { Chart as ChartJS, Title, Tooltip, Legend, BarElement, CategoryScale, LinearScale } from 'chart.js'
+import type { Plugin } from 'chart.js'
+
+const valueLabelsPlugin: Plugin<'bar'> = {
+  id: 'barValueLabels',
+  afterDatasetsDraw (chart) {
+    const { ctx } = chart
+    ctx.save()
+    ctx.font = '12px Marianne, Arial, sans-serif'
+    ctx.fillStyle = '#3A3A3A'
+    ctx.textBaseline = 'middle'
+    chart.data.datasets.forEach((dataset, datasetIndex) => {
+      if (!chart.isDatasetVisible(datasetIndex)) {
+        return
+      }
+      chart.getDatasetMeta(datasetIndex).data.forEach((bar, index) => {
+        const value = dataset.data[index]
+        if (typeof value === 'number') {
+          ctx.fillText(value.toLocaleString('fr-FR'), bar.x + 8, bar.y)
+        }
+      })
+    })
+    ctx.restore()
+  }
+}
 
 ChartJS.register(Title, Tooltip, Legend, BarElement, CategoryScale, LinearScale)
 
@@ -45,6 +69,18 @@ export default defineComponent({
       type: Number,
       default: 250
     },
+    maintainAspectRatio: {
+      type: Boolean,
+      default: true
+    },
+    labelCharMax: {
+      type: Number,
+      default: 50
+    },
+    showValues: {
+      type: Boolean,
+      default: false
+    },
     cssClasses: {
       type: String,
       default: ''
@@ -58,8 +94,8 @@ export default defineComponent({
       default: () => {}
     },
     plugins: {
-      type: Object,
-      default: () => {}
+      type: Array,
+      default: () => []
     }
   },
   data () {
@@ -73,7 +109,7 @@ export default defineComponent({
         if (labelBuffer !== '') {
           labelBuffer += ' '
         }
-        if (labelBuffer.length + words[j].length < 50) {
+        if (labelBuffer.length + words[j].length < this.labelCharMax) {
           labelBuffer += words[j]
         } else {
           wordsBuffer.push(labelBuffer)
@@ -87,13 +123,20 @@ export default defineComponent({
       inData.push(this.items[i])
     }
     return {
+      valueLabelsPlugin,
       chartData: {
         labels: inLabels,
         datasets: [{ data: inData }]
       },
       chartOptions: {
         responsive: true,
+        maintainAspectRatio: this.maintainAspectRatio,
         indexAxis: this.indexAxis,
+        layout: {
+          padding: {
+            right: this.showValues ? 70 : 0
+          }
+        },
         backgroundColor: '#000091',
         hoverBorderColor: '#A558A0',
         hoverBorderWidth: 3,

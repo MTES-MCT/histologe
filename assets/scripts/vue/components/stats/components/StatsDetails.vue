@@ -39,28 +39,36 @@
 
         <div class="fr-col-12 fr-col-lg-4">
           <div class="fr-mb-3w">
-            <HistoChartPie :items="stats.countSignalementPerStatut">
+            <HistoChartPie :items="stats.countSignalementPerStatut" use-patterns>
               <template #title>Répartition par statut</template>
             </HistoChartPie>
           </div>
 
           <div class="fr-mb-3w">
-            <HistoChartDoughnut :items="stats.countSignalementPerCriticitePercent">
+            <HistoChartDoughnut :items="stats.countSignalementPerCriticitePercent" use-patterns>
               <template #title>Répartition par criticité</template>
             </HistoChartDoughnut>
           </div>
 
           <div class="fr-mb-3w">
-            <HistoChartDoughnut :items="stats.countSignalementPerVisite">
+            <HistoChartDoughnut :items="stats.countSignalementPerVisite" use-patterns>
               <template #title>Visite effectuée</template>
             </HistoChartDoughnut>
           </div>
 
-          <div>
-            <HistoChartDoughnut :items="stats.countSignalementPerMotifCloture" :height="800">
-              <template #title>Motif de clôture</template>
-            </HistoChartDoughnut>
-          </div>
+        </div>
+
+        <div class="fr-col-12">
+          <HistoChartBar
+            :items="motifsCloture"
+            :height="700"
+            :maintain-aspect-ratio="false"
+            :label-char-max="60"
+            index-axis="y"
+            show-values
+          >
+            <template #title>Motif de clôture</template>
+          </HistoChartBar>
         </div>
       </div>
     </div>
@@ -89,6 +97,9 @@ const PARTENAIRE_HEADERS = [
 // State
 const sharedState = store.state
 const stats = computed(() => sharedState.stats)
+const motifsCloture = computed(() => Object.fromEntries(
+  Object.values(stats.value.countSignalementPerMotifCloture).map(({ label, count }) => [label, count])
+))
 
 const countSignalement = computed(() => formatStatValue(stats.value.countSignalementFiltered, '0'))
 const averageCriticite = computed(() => formatStatValue(stats.value.averageCriticiteFiltered, '-', ' %'))

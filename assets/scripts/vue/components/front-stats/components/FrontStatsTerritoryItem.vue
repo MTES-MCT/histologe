@@ -1,7 +1,7 @@
 <template>
   <div :class="[ 'front-stats-territory-item fr-col-12 fr-mb-5w', 'fr-col-md-' + sizeClass ]">
     <div class="fr-p-2w">
-      <div class="title"><slot name="title"></slot></div>
+      <h3 class="title fr-h6 title-blue-france"><slot name="title"></slot></h3>
       <FrontStatsYearToggle
         :model-value="modelValue"
         @update:model-value="emit('update:modelValue', $event)"
@@ -37,12 +37,8 @@ const emit = defineEmits<{
     padding: 8px;
     background-color: #FFF;
   }
-  .front-stats-territory-item > div div.title {
-    float: left;
+  .front-stats-territory-item > div > .title {
     text-transform: uppercase;
-    color: var(--blue-france-sun-113-625);
-    font-weight: bold;
-    font-size: 18px;
   }
   .front-stats-territory-item > div div.front-stats-year-toggle {
     float: right;

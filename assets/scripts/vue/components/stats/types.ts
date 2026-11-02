@@ -2,6 +2,12 @@ import type HistoInterfaceSelectOption from '../common/HistoInterfaceSelectOptio
 
 export type StatsChartData = Record<string, unknown>
 
+export interface StatsChartItem {
+  label: string
+  count: number
+  color: string
+}
+
 /**
  * Ligne du tableau de répartition par partenaire :
  * [nom, total, en attente, en cours, fermés]
@@ -56,7 +62,7 @@ export interface StatsData {
   countSignalementPerStatut: StatsChartData
   countSignalementPerCriticitePercent: StatsChartData
   countSignalementPerVisite: StatsChartData
-  countSignalementPerMotifCloture: StatsChartData
+  countSignalementPerMotifCloture: Record<string, StatsChartItem>
 }
 
 export interface StoreState {
@@ -95,5 +101,5 @@ export interface StatsResponse {
   countSignalementPerStatut?: StatsChartData
   countSignalementPerCriticitePercent?: StatsChartData
   countSignalementPerVisite?: StatsChartData
-  countSignalementPerMotifCloture?: StatsChartData
+  countSignalementPerMotifCloture?: Record<string, StatsChartItem>
 }

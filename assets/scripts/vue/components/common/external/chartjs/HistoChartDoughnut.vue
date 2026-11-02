@@ -18,6 +18,7 @@
 <script lang="ts">
 import { defineComponent } from 'vue'
 import { Doughnut } from 'vue-chartjs'
+import { createChartPattern } from './chartPatterns'
 
 import {
   Chart as ChartJS,
@@ -71,18 +72,24 @@ export default defineComponent({
     labelCharMax: {
       type: Number,
       default: 50
+    },
+    usePatterns: {
+      type: Boolean,
+      default: false
     }
   },
   data () {
     const inLabels = []
     const inData = []
     const inColors = []
+    const inBackgrounds = []
     for (const i in this.items) {
       const { label, count, color } = this.items[i]
       const labelChunks = this.splitLabelIntoChunks(label, this.labelCharMax)
       inLabels.push(labelChunks)
       inData.push(count)
       inColors.push(color)
+      inBackgrounds.push(this.usePatterns ? createChartPattern(color, inColors.length - 1) : color)
     }
     return {
       chartData: {
@@ -90,7 +97,7 @@ export default defineComponent({
         datasets: [
           {
             data: inData,
-            backgroundColor: inColors,
+            backgroundColor: inBackgrounds,
             hoverBorderWidth: 10,
             hoverBorderColor: inColors,
             hoverOffset: 5
@@ -105,6 +112,8 @@ export default defineComponent({
             position: 'bottom',
             align: 'start',
             labels: {
+              boxWidth: 40,
+              boxHeight: 24,
               padding: 20,
               font: {
                 lineHeight: 0.9

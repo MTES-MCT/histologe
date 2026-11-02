@@ -18,6 +18,7 @@
 <script lang="ts">
 import { defineComponent } from 'vue'
 import { Pie } from 'vue-chartjs'
+import { createChartPattern } from './chartPatterns'
 
 import {
   Chart as ChartJS,
@@ -67,16 +68,22 @@ export default defineComponent({
     plugins: {
       type: Array,
       default: () => []
+    },
+    usePatterns: {
+      type: Boolean,
+      default: false
     }
   },
   data () {
     const inLabels = []
     const inData = []
     const inColors = []
+    const inBackgrounds = []
     for (const i in this.items) {
       inLabels.push(this.items[i].label)
       inData.push(this.items[i].count)
       inColors.push(this.items[i].color)
+      inBackgrounds.push(this.usePatterns ? createChartPattern(this.items[i].color, inColors.length - 1) : this.items[i].color)
     }
     return {
       chartData: {
@@ -84,7 +91,7 @@ export default defineComponent({
         datasets: [
           {
             data: inData,
-            backgroundColor: inColors,
+            backgroundColor: inBackgrounds,
             hoverBorderWidth: 10,
             hoverBorderColor: inColors,
             hoverOffset: 5
@@ -96,7 +103,11 @@ export default defineComponent({
         maintainAspectRatio: false,
         plugins: {
           legend: {
-            position: 'bottom'
+            position: 'bottom',
+            labels: {
+              boxWidth: 40,
+              boxHeight: 24
+            }
           }
         }
       }

@@ -23,7 +23,7 @@
           <FrontStatsTerritoryItem size-class="5" v-model="filters.yearTypes.perStatut">
             <template #title>Répartition des signalements par statut</template>
             <template #graph>
-              <HistoChartPie :items="chartItems('perStatut')" />
+              <HistoChartPie :items="chartItems('perStatut')" use-patterns />
             </template>
           </FrontStatsTerritoryItem>
 
@@ -37,21 +37,21 @@
           <FrontStatsTerritoryItem size-class="4" v-model="filters.yearTypes.perDesordresCategories">
             <template #title>Désordres par catégorie</template>
             <template #graph>
-              <HistoChartPie :items="chartItems('perDesordresCategories')" />
+              <HistoChartPie :items="chartItems('perDesordresCategories')" use-patterns />
             </template>
           </FrontStatsTerritoryItem>
 
           <FrontStatsTerritoryItem size-class="4" :is-total-active="false" v-model="filters.yearTypes.perLogementDesordres">
             <template #title>Logement : désordres les plus courants*</template>
             <template #graph>
-              <HistoChartDoughnut :items="chartItems('perLogementDesordres')" />
+              <HistoChartDoughnut :items="chartItems('perLogementDesordres')" use-patterns />
             </template>
           </FrontStatsTerritoryItem>
 
           <FrontStatsTerritoryItem size-class="4" :is-total-active="false" v-model="filters.yearTypes.perBatimentDesordres">
             <template #title>Bâtiment : désordres les plus courants*</template>
             <template #graph>
-              <HistoChartDoughnut :items="chartItems('perBatimentDesordres')" />
+              <HistoChartDoughnut :items="chartItems('perBatimentDesordres')" use-patterns />
             </template>
           </FrontStatsTerritoryItem>
         </div>
