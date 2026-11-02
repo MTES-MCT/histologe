@@ -1,10 +1,10 @@
 <template>
   <div
-    :class="['signalement-form-disorder-category-item fr-container--fluid fr-p-3v', isSelected || isAlreadySelected ? categoryZoneCss : '']"
+    :class="['fr-checkbox-group fr-radio-rich signalement-form-disorder-category-item', isSelected ? categoryZoneCss : '']"
     @click="handleClick"
     :ref="id"
     >
-      <input
+    <input
       type="checkbox"
       :id="id + '_input'"
       :ref="idRef"
@@ -13,14 +13,10 @@
       @change="handleChange"
       @click.stop
       >
-      <div class="fr-grid-row fr-grid-row--gutters fr-grid-row--middle">
-        <div class="fr-col-12 fr-col-md-4">
-          <img :src="iconSrc" alt="">
-        </div>
-        <div class="fr-col-12 fr-col-md-8">
-          <label :for="id + '_input'" class="fr-label" @click.stop>{{ label }}</label>
-        </div>
-      </div>
+    <label :for="id + '_input'" class="fr-label" @click.stop>{{ label }}</label>
+    <div class="fr-radio-rich__pictogram">
+      <img :src="iconSrc" alt="">
+    </div>
   </div>
 </template>
 
@@ -44,6 +40,9 @@ export default defineComponent({
       formStore,
       idRef: this.id + '_ref'
     }
+  },
+  created () {
+    this.isSelected = this.modelValue || this.isAlreadySelected
   },
   mounted () {
     const element = this.$refs[this.id] as HTMLElement
@@ -91,45 +90,48 @@ export default defineComponent({
 </script>
 
 <style>
-.signalement-form-disorder-category-item {
+.signalement-form-disorder-category-item input[type=checkbox],
+.signalement-form-disorder-category-item input[type=checkbox] ~ label::before {
+  left: 1rem;
+  top: calc(50% - 0.75rem);
+}
+.signalement-form-disorder-category-item input[type=checkbox] ~ label {
+  align-self: stretch;
+  width: 100%;
+  margin-left: 0;
+  padding: 0.75rem 1rem 0.75rem 3rem;
   border: 1px solid var(--border-default-grey);
 }
-.signalement-form-disorder-category-item:has(:focus){
-  outline-color: #0a76f6;
-  outline-offset: -4px;
-  outline-style: solid;
-  outline-width: 2px;
+.signalement-form-disorder-category-item.is-selected-logement input[type=checkbox] ~ label {
+  border-color: var(--border-default-blue-france);
 }
-.signalement-form-disorder-category-item.is-selected-batiment {
-  border: 1px solid var(--border-default-orange-terre-battue);
-  background-color: rgb(228, 121, 74, 0.25);
+.signalement-form-disorder-category-item.is-selected-batiment input[type=checkbox] ~ label {
+  border-color: var(--border-default-orange-terre-battue);
 }
-.signalement-form-disorder-category-item.is-selected-logement {
-  border: 1px solid var(--border-default-blue-france);
+.signalement-form-disorder-category-item.is-selected-logement .fr-radio-rich__pictogram {
+  background-image:
+    linear-gradient(0deg, var(--border-default-blue-france), var(--border-default-blue-france)),
+    linear-gradient(0deg, var(--border-default-blue-france), var(--border-default-blue-france)),
+    linear-gradient(0deg, var(--border-default-blue-france), var(--border-default-blue-france)),
+    linear-gradient(0deg, var(--border-default-grey), var(--border-default-grey));
+}
+.signalement-form-disorder-category-item.is-selected-batiment .fr-radio-rich__pictogram {
+  background-image:
+    linear-gradient(0deg, var(--border-default-orange-terre-battue), var(--border-default-orange-terre-battue)),
+    linear-gradient(0deg, var(--border-default-orange-terre-battue), var(--border-default-orange-terre-battue)),
+    linear-gradient(0deg, var(--border-default-orange-terre-battue), var(--border-default-orange-terre-battue)),
+    linear-gradient(0deg, var(--border-default-grey), var(--border-default-grey));
+}
+.signalement-form-disorder-category-item.is-selected-logement input[type=checkbox] ~ label,
+.signalement-form-disorder-category-item.is-selected-logement .fr-radio-rich__pictogram {
   background-color: var(--blue-france-850-200);
 }
-.signalement-form-disorder-category-item input[type=checkbox] {
-  position: absolute;
-  width: 1.5rem;
-  height: 1.5rem;
-  opacity: 0;
-}
-.signalement-form-disorder-category-item label::before {
-  position: absolute;
-  content: "";
-  height: 1.5rem;
-  width: 1.5rem;
-  margin-left: -2rem;
-  outline-color: #0a76f6;
-  outline-offset: 2px;
-  outline-width: 2px;
-}
-.signalement-form-disorder-category-item .fr-col-md-8 {
+.signalement-form-disorder-category-item.is-selected-logement input[type=checkbox] ~ label,
+.signalement-form-disorder-category-item.is-selected-batiment input[type=checkbox] ~ label {
   font-weight: bold;
 }
-@media (max-width: 48em) {
-  .signalement-form-disorder-category-item .fr-col-12 {
-    text-align: center;
-  }
+.signalement-form-disorder-category-item.is-selected-batiment input[type=checkbox] ~ label,
+.signalement-form-disorder-category-item.is-selected-batiment .fr-radio-rich__pictogram {
+  background-color: rgb(228, 121, 74, 0.25);
 }
 </style>
