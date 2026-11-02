@@ -64,29 +64,6 @@
         <div class="fr-container">
             <button type="button" class="fr-btn--close fr-btn" id="bt-fermer-menu-mobile"  aria-controls="fr-menu-mobile" data-fr-js-modal-button="true">Fermer</button>
             <div class="fr-header__menu-links">
-                <ul class="fr-btns-group">
-                    <li>
-                        {% if app.user %}
-                            {% if 'ROLE_SUIVI_SIGNALEMENT' in app.user.roles %}
-                                <a class="fr-btn fr-fi-logout-box-r-line" href="{{ path('app_logout_signalement_user') }}">
-                                    Quitter
-                                </a>
-                            {% elseif 'ROLE_BAILLEUR_SIGNALEMENT' in app.user.roles %}
-                                <a class="fr-btn fr-fi-logout-box-r-line" href="{{ path('app_logout_signalement_bailleur') }}">
-                                    Quitter
-                                </a>
-                            {% else %}
-                                <a class="fr-btn" target="_self" href="{{ path('back_dashboard') }}">
-                                    Tableau de bord
-                                </a>
-                            {% endif %}
-                        {% else %}
-                            <a class="fr-btn" target="_self" href="{{ path('app_login') }}">
-                                Espace pro
-                            </a>
-                        {% endif %}
-                    </li>
-                </ul>
             </div>
         </div>
     </div>
