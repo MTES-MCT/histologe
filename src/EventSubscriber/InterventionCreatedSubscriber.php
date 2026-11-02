@@ -36,8 +36,6 @@ readonly class InterventionCreatedSubscriber implements EventSubscriberInterface
         $isVisibleForUsager = true;
         if (EsaboraSISHService::NAME_SI === $event->getSource() && $signalement->isTiersDeclarant()) {
             $isVisibleForUsager = false;
-        } elseif (InterventionType::ARRETE_PREFECTORAL === $intervention->getType()) { // TODO migration arretes : condition a supprimer
-            $isVisibleForUsager = true;
         } elseif ($intervention->getScheduledAt()->format('Y-m-d') >= (new \DateTimeImmutable())->format('Y-m-d')) {
             $isVisibleForUsager = true;
         } else {
