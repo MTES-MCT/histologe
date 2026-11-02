@@ -9,6 +9,7 @@ export function createChartPattern (color: string, index: number): CanvasPattern
 
   context.fillStyle = color
   context.fillRect(0, 0, canvas.width, canvas.height)
+  context.globalAlpha = 0.6
   context.strokeStyle = '#FFFFFF'
   context.fillStyle = '#FFFFFF'
   context.lineWidth = 1.5
