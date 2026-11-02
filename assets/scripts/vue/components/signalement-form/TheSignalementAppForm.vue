@@ -60,6 +60,7 @@ import { requests } from './requests'
 import * as Sentry from '@sentry/browser'
 import { profileUpdater } from './services/profileUpdater'
 import { buildAddressCorrectionMessage } from './services/addressCorrection'
+import { variablesReplacer } from './services/variableReplacer'
 import SignalementFormScreen from './components/SignalementFormScreen.vue'
 import SignalementFormBreadCrumbs from './components/SignalementFormBreadCrumbs.vue'
 import SignalementFormModal from './components/SignalementFormModal.vue'
@@ -88,7 +89,37 @@ export default defineComponent({
       sharedProps: formStore.props,
       isTerritoryModalOpen: false,
       territoryModalLabel: '',
-      territoryModalDescription: ''
+      territoryModalDescription: '',
+      baseTitle: document.title
+    }
+  },
+  computed: {
+    pageTitle (): string {
+      const screen = formStore.currentScreen
+      if (!screen || screen.slug === 'introduction') {
+        return this.baseTitle
+      }
+      const parts: string[] = []
+      if (formStore.data.errorMessage !== '' || Object.keys(formStore.validationErrors).length > 0) {
+        parts.push('Erreur')
+      }
+      const label = screen.label ? variablesReplacer.replace(screen.label) : ''
+      if (label !== '') {
+        parts.push(label)
+      }
+      if (screen.screenCategory && screen.screenCategory !== label) {
+        parts.push(screen.screenCategory)
+      }
+      parts.push(this.baseTitle)
+      return parts.join(' - ')
+    }
+  },
+  watch: {
+    pageTitle: {
+      handler (title: string) {
+        document.title = title
+      },
+      immediate: true
     }
   },
   created () {

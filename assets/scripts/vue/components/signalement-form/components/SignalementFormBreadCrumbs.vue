@@ -83,7 +83,7 @@ export default defineComponent({
   data () {
     return {
       formStore,
-      desktopMenuLabels: [
+      allMenuLabels: [
         { slug: 'adresse_logement_intro', label: 'Adresse et coordonnées' },
         { slug: 'ecran_intermediaire_type_composition', label: 'Type et composition' },
         { slug: 'ecran_intermediaire_situation_occupant', label: 'Situation du foyer' },
@@ -94,6 +94,13 @@ export default defineComponent({
     }
   },
   computed: {
+    desktopMenuLabels (): Array<{ slug: string, label: string }> {
+      // Le profil service de secours n'a pas d'étape « Situation du foyer »
+      if (formStore.data.profil === 'service_secours') {
+        return this.allMenuLabels.filter(menuLabel => menuLabel.slug !== 'ecran_intermediaire_situation_occupant')
+      }
+      return this.allMenuLabels
+    },
     desktopMenuItems () {
       const menuItems:Array<MenuItem> = []
       const currentCategoryIndex:number = this.currentCategoryIndex
@@ -113,6 +120,8 @@ export default defineComponent({
   },
   methods: {
     handleClick (slug: string) {
+      formStore.data.errorMessage = ''
+      formStore.validationErrors = {}
       if (this.clickEvent !== undefined) {
         this.clickEvent(slug, false)
       }
