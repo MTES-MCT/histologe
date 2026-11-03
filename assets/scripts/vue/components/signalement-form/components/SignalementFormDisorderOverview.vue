@@ -35,15 +35,15 @@
                 {{ dictionaryStore[disorder].default }}
               </button>
             </h4>
-            <div class="fr-collapse" :id="'accordion-disorder-batiment-' + index">
-              <div
+            <ul class="fr-collapse disorder-list" :id="'accordion-disorder-batiment-' + index">
+              <li
                 v-for="field in categoryFields(disorder)"
                 v-bind:key="field.slug"
                 :class="field.css"
                 >
                 {{field.label}}
-              </div>
-            </div>
+              </li>
+            </ul>
           </div>
         </section>
       </div>
@@ -83,15 +83,15 @@
                 {{ dictionaryStore[disorder].default }}
               </button>
             </h4>
-            <div class="fr-collapse" :id="'accordion-disorder-logement-' + index">
-              <div
+            <ul class="fr-collapse disorder-list" :id="'accordion-disorder-logement-' + index">
+              <li
                 v-for="field in categoryFields(disorder)"
                 v-bind:key="field.slug"
                 :class="field.css"
                 >
                 {{field.label}}
-              </div>
-            </div>
+              </li>
+            </ul>
           </div>
         </section>
       </div>
@@ -264,5 +264,8 @@ export default defineComponent({
 }
 .fr-disorder-overview-image {
   width: 60px;
+}
+ul.disorder-list {
+  list-style-type: none;
 }
 </style>

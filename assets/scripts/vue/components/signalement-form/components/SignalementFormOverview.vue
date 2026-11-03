@@ -19,11 +19,11 @@
               >Editer</button>
           </div>
         </div>
-        <p>
+        <ul>
           <template v-for="(line, index) in getFormDataAdresse()" :key="index">
-            {{ line }}<br>
+            <li>{{ line }}</li>
           </template>
-        </p>
+        </ul>
       </div>
 
       <!-- VOS COORDONNES SI OCCUPANT -->
@@ -40,11 +40,11 @@
               >Editer</button>
           </div>
         </div>
-        <p>
+        <ul>
           <template v-for="(line, index) in getFormDataCoordonneesOccupant()" :key="index">
-            {{ line }}<br>
+            <li>{{ line }}</li>
           </template>
-        </p>
+        </ul>
       </div>
 
       <!-- VOS COORDONNEES SI TIERS -->
@@ -61,11 +61,11 @@
               >Editer</button>
           </div>
         </div>
-        <p>
+        <ul>
           <template v-for="(line, index) in getFormDataCoordonneesDeclarant()" :key="index">
-            {{ line }}<br>
+            <li>{{ line }}</li>
           </template>
-        </p>
+        </ul>
       </div>
 
       <!-- LES COORDONNEES DU BAILLEUR -->
@@ -82,11 +82,11 @@
               >Editer</button>
           </div>
         </div>
-        <p>
+        <ul>
           <template v-for="(line, index) in getFormDataCoordonneesBailleur()" :key="index">
-            {{ line }}<br>
+            <li>{{ line }}</li>
           </template>
-        </p>
+        </ul>
       </div>
 
       <!-- LES COORDONNEES DU FOYER -->
@@ -102,11 +102,11 @@
               aria-label="Editer les coordonnées du foyer">Editer</button>
           </div>
         </div>
-        <p>
+        <ul>
           <template v-for="(line, index) in getFormDataCoordonneesOccupantSiTiers()" :key="index">
-            {{ line }}<br>
+            <li>{{ line }}</li>
           </template>
-        </p>
+        </ul>
       </div>
 
       <!-- TYPE ET COMPOSITION DU LOGEMENT -->
@@ -132,11 +132,11 @@
               >Afficher les informations</button>
           </h5>
           <div class="fr-collapse" id="accordion-type-composition">
-            <p>
+            <ul>
               <template v-for="(line, index) in getFormDataTypeComposition()" :key="index">
-                {{ line }}<br>
+                <li>{{ line }}</li>
               </template>
-            </p>
+            </ul>
           </div>
         </section>
       </div>
@@ -165,11 +165,11 @@
               >Afficher les informations</button>
           </h5>
           <div class="fr-collapse" id="accordion-situation-occupant">
-            <p>
+            <ul>
               <template v-for="(line, index) in getFormDataSituationOccupant()" :key="index">
-                {{ line }}<br>
+                <li>{{ line }}</li>
               </template>
-            </p>
+            </ul>
           </div>
         </section>
       </div>
@@ -197,11 +197,11 @@
           :icons="disorderIcons"
           :isValidationScreen="true"
           />
-        <p>
+        <ul>
           <template v-for="(line, index) in getFormDataInfosDesordres()" :key="index">
-            {{ line }}<br>
+            <li>{{ line }}</li>
           </template>
-        </p>
+        </ul>
       </div>
 
       <!-- LA PROCEDURE  -->
@@ -222,11 +222,11 @@
             <button class="fr-accordion__btn" aria-expanded="false" aria-controls="accordion-procedure">Afficher les informations</button>
           </h5>
           <div class="fr-collapse" id="accordion-procedure">
-            <p>
+            <ul>
               <template v-for="(line, index) in getFormDataProcedure()" :key="index">
-                {{ line }}<br>
+                <li>{{ line }}</li>
               </template>
-            </p>
+            </ul>
           </div>
         </section>
       </div>
@@ -246,11 +246,11 @@
                 >Editer</button>
             </div>
           </div>
-          <p>
+          <ul>
             <template v-for="(line, index) in getFormDataInformationsComplementaires()" :key="index">
-              {{ line }}<br>
+              <li>{{ line }}</li>
             </template>
-          </p>
+          </ul>
         </div>
         <div v-else>
           <h3 class="fr-h4 title-blue-france">Informations complémentaires</h3>
@@ -595,7 +595,7 @@ export default defineComponent({
 })
 </script>
 
-<style>
+<style scoped>
 #validation_signalement_overview_disorder_overview .fr-disorder-overview-title {
   font-size: 20px !important;
   line-height: 28px !important;
@@ -603,5 +603,9 @@ export default defineComponent({
 }
 #validation_signalement_overview_disorder_overview .fr-disorder-overview-image {
   width: 40px;
+}
+.signalement-group-data-card ul {
+  list-style-type: none;
+  padding-left: 0px;
 }
 </style>
