@@ -4,7 +4,7 @@ on:
   schedule:
     # Une fois par jour, en évitant le début d'heure
     # Cron GitHub Actions en UTC
-    - cron: '23 7 * * *'
+    - cron: '23 1 * * *'
 
   # Permet un lancement manuel
   workflow_dispatch:
@@ -144,11 +144,14 @@ jobs:
           {
             echo "From: Metabase Watch <${SMTP_USERNAME}>"
             echo "To: support@signal-logement.beta.gouv.fr"
-            echo "Subject: [Metabase Watch] Bulletin de veille quotidien"
+            echo "Subject: [Metabase Watch] Bulletin de veille quotidien - $(date -u +%Y-%m-%d)"
             echo "Content-Type: text/plain; charset=UTF-8"
             echo ""
 
             echo "METABASE WATCH"
+            echo "========="
+            echo ""
+            echo "Rapport du $(date -u +%d/%m/%Y)"
             echo ""
 
             echo "Dernières releases publiées"
