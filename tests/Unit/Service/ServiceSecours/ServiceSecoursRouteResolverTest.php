@@ -5,6 +5,7 @@ namespace App\Tests\Unit\Service\ServiceSecours;
 use App\Entity\Enum\ServiceSecoursCategory;
 use App\Entity\ServiceSecoursRoute;
 use App\Entity\Territory;
+use App\Exception\ServiceSecours\ServiceSecoursRouteNotFoundException;
 use App\Exception\ServiceSecours\ServiceSecoursRouteResolutionException;
 use App\Repository\ServiceSecoursRouteRepository;
 use App\Service\Gouv\Insee\Exception\SireneRateLimitExceededException;
@@ -53,6 +54,7 @@ class ServiceSecoursRouteResolverTest extends TestCase
         ]);
 
         $territory = new Territory();
+        $territory->setIsActive(true);
         $expectedRoute = new ServiceSecoursRoute();
 
         $this->sireneService
@@ -75,8 +77,11 @@ class ServiceSecoursRouteResolverTest extends TestCase
 
         $this->serviceSecoursRouteRepository
             ->expects($this->once())
-            ->method('findOneByTerritoryAndCategory')
-            ->with($territory, ServiceSecoursCategory::SDIS)
+            ->method('findOneBy')
+            ->with([
+                'territory' => $territory,
+                'category' => ServiceSecoursCategory::SDIS,
+            ])
             ->willReturn($expectedRoute);
 
         $result = $this->resolver->resolve($proConnectUser);
@@ -95,6 +100,7 @@ class ServiceSecoursRouteResolverTest extends TestCase
         ]);
 
         $territory = new Territory();
+        $territory->setIsActive(true);
         $expectedRoute = new ServiceSecoursRoute();
 
         $this->sireneService
@@ -112,7 +118,7 @@ class ServiceSecoursRouteResolverTest extends TestCase
             ->willReturn(ServiceSecoursCategory::POLICE);
 
         $this->serviceSecoursRouteRepository
-            ->method('findOneByTerritoryAndCategory')
+            ->method('findOneBy')
             ->willReturn($expectedRoute);
 
         $result = $this->resolver->resolve($proConnectUser);
@@ -130,6 +136,7 @@ class ServiceSecoursRouteResolverTest extends TestCase
         ]);
 
         $territory = new Territory();
+        $territory->setIsActive(true);
         $expectedRoute = new ServiceSecoursRoute();
 
         $this->sireneService
@@ -147,7 +154,7 @@ class ServiceSecoursRouteResolverTest extends TestCase
             ->willReturn(ServiceSecoursCategory::GENDARMERIE);
 
         $this->serviceSecoursRouteRepository
-            ->method('findOneByTerritoryAndCategory')
+            ->method('findOneBy')
             ->willReturn($expectedRoute);
 
         $result = $this->resolver->resolve($proConnectUser);
@@ -231,6 +238,7 @@ class ServiceSecoursRouteResolverTest extends TestCase
         ]);
 
         $territory = new Territory();
+        $territory->setIsActive(true);
         $territory->setName('Bouches-du-Rhône');
 
         $this->sireneService
@@ -246,11 +254,14 @@ class ServiceSecoursRouteResolverTest extends TestCase
             ->willReturn(ServiceSecoursCategory::SDIS);
 
         $this->serviceSecoursRouteRepository
-            ->method('findOneByTerritoryAndCategory')
-            ->with($territory, ServiceSecoursCategory::SDIS)
+            ->method('findOneBy')
+            ->with([
+                'territory' => $territory,
+                'category' => ServiceSecoursCategory::SDIS,
+            ])
             ->willReturn(null);
 
-        $this->expectException(ServiceSecoursRouteResolutionException::class);
+        $this->expectException(ServiceSecoursRouteNotFoundException::class);
         $this->expectExceptionMessage('Aucune route Service Secours configurée pour le territoire "Bouches-du-Rhône" et la catégorie "SDIS".');
 
         $this->resolver->resolve($proConnectUser);

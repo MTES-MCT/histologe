@@ -4,6 +4,7 @@ namespace App\Tests\Unit\Security\Authenticator;
 
 use App\Entity\ServiceSecoursRoute;
 use App\Exception\ProConnect\ProConnectException;
+use App\Exception\ServiceSecours\ServiceSecoursRouteNotFoundException;
 use App\Exception\ServiceSecours\ServiceSecoursRouteResolutionException;
 use App\Repository\ServiceSecoursRouteRepository;
 use App\Security\Authenticator\ServiceSecoursAuthenticator;
@@ -117,6 +118,21 @@ class ServiceSecoursAuthenticatorTest extends TestCase
 
         $this->expectException(CustomUserMessageAuthenticationException::class);
         $this->expectExceptionMessage(ServiceSecoursAuthenticator::MESSAGE_SERVICE_INDISPONIBLE);
+
+        $this->authenticator->authenticate($request);
+    }
+
+    public function testAuthenticateThrowsOnRouteNotFoundError(): void
+    {
+        $request = Request::create('http://service-secours.localhost/proconnect/login-callback?code=fake_code&state=fake_state');
+
+        $this->proConnectAuthentication
+            ->expects($this->once())
+            ->method('authenticateFromCallback')
+            ->willThrowException(new ServiceSecoursRouteNotFoundException('Route not found'));
+
+        $this->expectException(CustomUserMessageAuthenticationException::class);
+        $this->expectExceptionMessage(ServiceSecoursAuthenticator::MESSAGE_ROUTE_NOT_CONFIGURED);
 
         $this->authenticator->authenticate($request);
     }
