@@ -258,7 +258,7 @@ class File implements EntityHistoryInterface
         return basename($this->filename);
     }
 
-    public function getFilename(?string $variantName = null): ?string
+    public function getFilename(?string $variantName = null): string
     {
         if ($this->isVariantsGenerated && $variantName) {
             $variantNames = ImageManipulationHandler::getVariantNames($this->filename);

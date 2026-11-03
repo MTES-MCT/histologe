@@ -72,8 +72,14 @@ class UpdateCommunesCommand extends Command
                 continue;
             }
 
+            $territory = $this->zipcodeProvider->getTerritoryByInseeCode($itemCodeCommune);
+            if (null === $territory) {
+                $this->io->error(\sprintf('Territory not found for INSEE code %s in commune %s', $itemCodeCommune, $itemNomCommune));
+                continue;
+            }
+
             $new = $this->communeFactory->createInstanceFrom(
-                territory: $this->zipcodeProvider->getTerritoryByInseeCode($itemCodeCommune),
+                territory: $territory,
                 nom: $itemNomCommune,
                 codePostal: $itemCodePostal,
                 codeInsee: $itemCodeCommune

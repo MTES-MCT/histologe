@@ -294,10 +294,10 @@ class NotificationAndMailSender
     }
 
     /**
-     * @param ArrayCollection<int, User> $recipients
+     * @param iterable<User|Partner> $recipients
      */
     private function createInAppNotifications(
-        ArrayCollection $recipients,
+        iterable $recipients,
         NotificationType $type,
         ?Suivi $suivi = null,
         ?Affectation $affectation = null,
@@ -451,7 +451,7 @@ class NotificationAndMailSender
     }
 
     /**
-     * @return ArrayCollection<int, mixed>
+     * @return ArrayCollection<int, User|Partner>
      */
     private function getRecipientsPartner(Partner $partner): ArrayCollection
     {

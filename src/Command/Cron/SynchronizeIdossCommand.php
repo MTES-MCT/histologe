@@ -125,7 +125,7 @@ class SynchronizeIdossCommand extends AbstractCronCommand
                     $this->errors[] = \sprintf('Signalement "%s" has not the expected idoss id "%s"', $item['uuid'], $item['id']);
                     continue;
                 }
-                $idossData['updated_at'] = $jobEvent->getCreatedAt()->format('Y-m-d H:i:s');
+                $idossData['updated_at'] = $jobEvent->getCreatedAt()?->format('Y-m-d H:i:s');
                 $idossData['updated_job_event_id'] = $jobEvent->getId();
                 $idossData['updated_status'] = $item['statut'];
                 if ($item['motif']) {

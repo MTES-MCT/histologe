@@ -80,11 +80,11 @@ class UpdateSignalementDocumentFieldsCommand extends Command
         foreach ($rows as $key => $row) {
             try {
                 $filename = $row[SignalementImportImageHeader::COLUMN_FILENAME] ?? null;
-                $fileInfo = pathinfo($filename);
-                if (4 !== \count($fileInfo)) {
-                    continue;
-                }
                 if (null !== $filename) {
+                    $fileInfo = pathinfo($filename);
+                    if (4 !== \count($fileInfo)) {
+                        continue;
+                    }
                     $currentReference = $row[SignalementImportImageHeader::COLUMN_ID_ENREGISTREMENT];
 
                     $signalement = $this->signalementRepository->findByReferenceChunk($territory, $currentReference);

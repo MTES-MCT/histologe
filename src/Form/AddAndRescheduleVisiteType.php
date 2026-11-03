@@ -62,7 +62,7 @@ class AddAndRescheduleVisiteType extends AbstractType
             'required' => false,
             'mapped' => false,
             'input' => 'datetime_immutable',
-            'data' => $intervention->getScheduledAt(),
+            'data' => $intervention->getId() ? $intervention->getScheduledAt() : null,
         ]);
         if ($this->security->isGranted('ROLE_ADMIN_TERRITORY')) {
             $partners = $this->partnerRepository->findPartnersWithQualificationAffectedOnSignalement(Qualification::VISITES, $intervention->getSignalement());

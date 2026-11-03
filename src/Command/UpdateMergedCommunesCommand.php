@@ -165,6 +165,6 @@ class UpdateMergedCommunesCommand extends Command
         $communeName = str_replace('*', '', $communeName);
 
         // On nettoie les noms de communes en supprimant les éventuels espaces en début et fin de chaîne, et en remplaçant les espaces multiples par un espace simple
-        return preg_replace('/\s+/', ' ', trim($communeName));
+        return (string) preg_replace('/\s+/', ' ', trim($communeName));
     }
 }

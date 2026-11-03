@@ -31,8 +31,8 @@ class FailedEmail
     #[ORM\Column(type: 'string', length: 255)]
     private string $replyTo;
 
-    #[ORM\Column(type: 'text', nullable: true)]
-    private ?string $subject;
+    #[ORM\Column(type: 'text')]
+    private string $subject;
 
     /** @var array<mixed> $context */
     #[ORM\Column(type: 'json')]
@@ -102,12 +102,12 @@ class FailedEmail
         return $this;
     }
 
-    public function getFromEmail(): ?string
+    public function getFromEmail(): string
     {
         return $this->fromEmail;
     }
 
-    public function setFromEmail(?string $fromEmail): static
+    public function setFromEmail(string $fromEmail): static
     {
         $this->fromEmail = $fromEmail;
 
@@ -126,19 +126,19 @@ class FailedEmail
         return $this;
     }
 
-    public function getReplyTo(): ?string
+    public function getReplyTo(): string
     {
         return $this->replyTo;
     }
 
-    public function setReplyTo(?string $replyTo): static
+    public function setReplyTo(string $replyTo): static
     {
         $this->replyTo = $replyTo;
 
         return $this;
     }
 
-    public function getSubject(): ?string
+    public function getSubject(): string
     {
         return $this->subject;
     }

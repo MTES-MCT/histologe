@@ -68,7 +68,6 @@ class InterventionManager
         $user = $this->security->getUser();
         $createdByPartner = $createdByPartnerFromAPI ?: $user->getPartnerInTerritoryOrFirstOne($intervention->getSignalement()->getAddress()->getTerritory());
 
-        $previousDate = $intervention->getScheduledAt();
         $scheduledAtUtc = DateHelper::getDateUTCFromLocalDateAndTime(
             $scheduledAt,
             $scheduledAtTime,
@@ -87,7 +86,7 @@ class InterventionManager
             if ('create' === $eventType) {
                 $this->eventDispatcher->dispatch(new InterventionCreatedEvent($intervention, $user, $createdByPartner), InterventionCreatedEvent::NAME);
             } elseif ('reschedule' === $eventType) {
-                $this->eventDispatcher->dispatch(new InterventionRescheduledEvent($intervention, $user, $previousDate, $createdByPartner), InterventionRescheduledEvent::NAME);
+                $this->eventDispatcher->dispatch(new InterventionRescheduledEvent($intervention, $user, $intervention->getScheduledAt(), $createdByPartner), InterventionRescheduledEvent::NAME);
             }
         }
     }

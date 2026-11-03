@@ -38,8 +38,8 @@ class Intervention implements EntityHistoryInterface, EntitySanitizerInterface
     #[ORM\Column(type: 'string', length: 255, unique: true)]
     private string $uuid;
 
-    #[ORM\Column(nullable: true)]
-    private ?\DateTimeImmutable $scheduledAt = null;
+    #[ORM\Column]
+    private \DateTimeImmutable $scheduledAt;
     private ?\DateTimeImmutable $previousScheduledAt = null;
 
     #[ORM\Column(nullable: true)]
@@ -135,12 +135,12 @@ class Intervention implements EntityHistoryInterface, EntitySanitizerInterface
         return $this->uuid;
     }
 
-    public function getScheduledAt(): ?\DateTimeImmutable
+    public function getScheduledAt(): \DateTimeImmutable
     {
         return $this->scheduledAt;
     }
 
-    public function setScheduledAt(?\DateTimeImmutable $scheduledAt): static
+    public function setScheduledAt(\DateTimeImmutable $scheduledAt): static
     {
         $this->scheduledAt = $scheduledAt;
 

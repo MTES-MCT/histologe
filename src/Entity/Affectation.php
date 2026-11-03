@@ -133,12 +133,12 @@ class Affectation implements EntityHistoryInterface
         return $this;
     }
 
-    public function getPartner(): ?Partner
+    public function getPartner(): Partner
     {
         return $this->partner;
     }
 
-    public function setPartner(?Partner $partner): static
+    public function setPartner(Partner $partner): static
     {
         $this->partner = $partner;
 
