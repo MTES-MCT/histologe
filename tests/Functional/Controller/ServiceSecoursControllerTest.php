@@ -45,6 +45,8 @@ class ServiceSecoursControllerTest extends WebTestCase
         $this->assertSelectorTextContains('h1', 'Vous êtes un service de secours ?');
         $this->assertSelectorExists('button.fr-connect');
         $this->assertSelectorTextContains('button.fr-connect', 'ProConnect');
+        $this->assertSelectorExists('a.fr-btn.fr-btn--secondary[href="http://localhost:8080/signalement?profil=service_secours"]');
+        $this->assertSelectorTextContains('a.fr-btn.fr-btn--secondary', "Je n'ai pas de compte ProConnect");
 
         $expectedLoginUrl = $router->generate('service_secours_proconnect_login', [
             'domain' => 'localhost',
@@ -108,7 +110,7 @@ class ServiceSecoursControllerTest extends WebTestCase
         $this->assertResponseRedirects($expectedRedirectUrl);
         $client->followRedirect();
         $this->assertSelectorExists('.fr-notice--alert');
-        $this->assertSelectorExists('.fr-notice--alert a[href$="/signalement"]');
+        $this->assertSelectorExists('.fr-notice--alert a[href*="/signalement"]');
     }
 
     public function testProConnectCallbackSuccess(): void
@@ -268,7 +270,59 @@ class ServiceSecoursControllerTest extends WebTestCase
         $client->followRedirect();
         $this->assertSelectorExists('.fr-notice--alert');
         $this->assertSelectorTextContains('.fr-notice--alert', 'Nous n\'avons pas pu identifier le service de secours');
-        $this->assertSelectorExists('.fr-notice--alert a[href$="/signalement"]');
+        $this->assertSelectorExists('.fr-notice--alert a[href*="/signalement"]');
+    }
+
+    public function testProConnectCallbackFailsOnRouteNotConfigured(): void
+    {
+        self::ensureKernelShutdown();
+        $client = static::createClient();
+        $container = static::getContainer();
+
+        $session = $this->getSession($client);
+        $session->set('test_key', 'test_val');
+        $session->save();
+
+        // Use valid insee code with active territory (13001) but organizational unit for which no route exists in fixtures (e.g. Douane / Gendarmerie in Bouches-du-Rhône)
+        $proConnectUser = new ProConnectUser([
+            'uid' => '123',
+            'sub' => 'sub_123',
+            'email' => self::EMAIL_AGENT,
+            'siret' => '13000000000013',
+            'organizational_unit' => 'Gendarmerie 13',
+        ]);
+
+        $mockAuth = $this->createMock(ProConnectAuthentication::class);
+        $mockAuth
+            ->method('authenticateFromCallback')
+            ->willReturn($proConnectUser);
+        $container->set(ProConnectAuthentication::class, $mockAuth);
+
+        $mockSirene = $this->createMock(SireneService::class);
+        $mockSirene
+            ->method('getSiret')
+            ->willReturn(new SiretInformation('13000000000013', '13001'));
+        $container->set(SireneService::class, $mockSirene);
+
+        /** @var RouterInterface $router */
+        $router = $container->get(RouterInterface::class);
+        $callbackUrl = $router->generate('service_secours_proconnect_login_callback', [
+            'domain' => 'localhost',
+            'code' => 'fake_code',
+            'state' => 'fake_state',
+        ]);
+
+        $client->request('GET', $callbackUrl);
+
+        $expectedRedirectUrl = $router->generate('service_secours_home', [
+            'domain' => 'localhost',
+        ]);
+
+        $this->assertResponseRedirects($expectedRedirectUrl);
+        $client->followRedirect();
+        $this->assertSelectorExists('.fr-notice--alert');
+        $this->assertSelectorTextContains('.fr-notice--alert', 'Votre service de secours a bien été identifié, mais l’accès à votre territoire n’est pas encore configuré. Veuillez contacter le support.');
+        $this->assertSelectorExists('.fr-notice--alert a[href*="/signalement"]');
     }
 
     public function testProConnectCallbackFailsOnAuthenticationError(): void
@@ -305,7 +359,7 @@ class ServiceSecoursControllerTest extends WebTestCase
         $client->followRedirect();
         $this->assertSelectorExists('.fr-notice--alert');
         $this->assertSelectorTextContains('.fr-notice--alert', 'Erreur lors du traitement de l\'authentification ProConnect.');
-        $this->assertSelectorExists('.fr-notice--alert a[href$="/signalement"]');
+        $this->assertSelectorExists('.fr-notice--alert a[href*="/signalement"]');
     }
 
     public function testUnknownRouteReturns404(): void

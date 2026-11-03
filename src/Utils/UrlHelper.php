@@ -2,8 +2,13 @@
 
 namespace App\Utils;
 
+use Symfony\Component\HttpFoundation\Request;
+
 class UrlHelper
 {
+    private const int HTTP_PORT = 80;
+    private const int HTTPS_PORT = 443;
+
     /**
      * @param array<mixed> $params
      */
@@ -33,5 +38,17 @@ class UrlHelper
         }
 
         return $host;
+    }
+
+    public static function buildRootUrl(string $path, ?Request $request = null): string
+    {
+        if (null === $request) {
+            return $path;
+        }
+
+        $rootDomain = self::extractRootDomain($request->getHost());
+        $port = \in_array($request->getPort(), [self::HTTP_PORT, self::HTTPS_PORT], true) ? '' : ':'.$request->getPort();
+
+        return sprintf('%s://%s%s%s', $request->getScheme(), $rootDomain, $port, $path);
     }
 }

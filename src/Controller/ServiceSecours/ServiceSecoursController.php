@@ -63,9 +63,7 @@ class ServiceSecoursController extends AbstractController
                 'exception' => $exception,
             ]);
 
-            $rootDomain = UrlHelper::extractRootDomain($request->getHost());
-            $port = \in_array($request->getPort(), [80, 443], true) ? '' : ':'.$request->getPort();
-            $signalementUrl = sprintf('%s://%s%s/signalement', $request->getScheme(), $rootDomain, $port);
+            $signalementUrl = UrlHelper::buildRootUrl('/signalement?profil=service_secours', $request);
 
             $errorMessage = sprintf(
                 'Une erreur est survenue lors de la connexion à ProConnect. Si le problème persiste, vous pouvez déposer votre signalement directement via le formulaire général en tant que service de secours : <a href="%s" class="fr-link">déposer un signalement</a>.',

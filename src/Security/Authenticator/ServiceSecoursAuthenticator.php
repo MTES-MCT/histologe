@@ -3,6 +3,7 @@
 namespace App\Security\Authenticator;
 
 use App\Exception\ProConnect\ProConnectException;
+use App\Exception\ServiceSecours\ServiceSecoursRouteNotFoundException;
 use App\Exception\ServiceSecours\ServiceSecoursRouteResolutionException;
 use App\Repository\ServiceSecoursRouteRepository;
 use App\Security\User\ServiceSecoursUser;
@@ -29,6 +30,7 @@ class ServiceSecoursAuthenticator extends AbstractAuthenticator implements Inter
 {
     public const string MESSAGE_SERVICE_INDISPONIBLE = 'Le service est temporairement indisponible. Veuillez réessayer de vous connecter plus tard.';
     public const string MESSAGE_ROUTE_RESOLUTION_ERROR = 'Nous n\'avons pas pu identifier le service de secours correspondant à votre organisation. Veuillez réessayer ou contacter le support.';
+    public const string MESSAGE_ROUTE_NOT_CONFIGURED = 'Votre service de secours a bien été identifié, mais l’accès à votre territoire n’est pas encore configuré. Veuillez contacter le support.';
     public const string MESSAGE_PROCONNECT_ERROR = 'Erreur lors du traitement de l\'authentification ProConnect.';
     public const string MESSAGE_GENERIC_ERROR = 'Une erreur inattendue est survenue lors de la connexion, veuillez réessayer.';
 
@@ -80,6 +82,12 @@ class ServiceSecoursAuthenticator extends AbstractAuthenticator implements Inter
             ]);
 
             throw new CustomUserMessageAuthenticationException(self::MESSAGE_SERVICE_INDISPONIBLE);
+        } catch (ServiceSecoursRouteNotFoundException $exception) {
+            $this->logger->warning('Route du service de secours non configurée callback', [
+                'error_message' => $exception->getMessage(),
+            ]);
+
+            throw new CustomUserMessageAuthenticationException(self::MESSAGE_ROUTE_NOT_CONFIGURED);
         } catch (ServiceSecoursRouteResolutionException $exception) {
             $this->logger->warning('Erreur de résolution du service de secours callback', [
                 'error_message' => $exception->getMessage(),
@@ -144,8 +152,7 @@ class ServiceSecoursAuthenticator extends AbstractAuthenticator implements Inter
         $flashType = $isIndisponible ? 'info' : 'error error-raw';
 
         if (!$isIndisponible) {
-            $port = \in_array($request->getPort(), [80, 443], true) ? '' : ':'.$request->getPort();
-            $signalementUrl = sprintf('%s://%s%s/signalement', $request->getScheme(), $domain, $port);
+            $signalementUrl = UrlHelper::buildRootUrl('/signalement?profil=service_secours', $request);
             $message = sprintf(
                 '%s Si le problème persiste, vous pouvez déposer votre signalement directement via le formulaire général en tant que service de secours : <a href="%s" class="fr-link">déposer un signalement</a>.',
                 $message,
