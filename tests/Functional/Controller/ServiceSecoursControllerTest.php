@@ -721,8 +721,8 @@ class ServiceSecoursControllerTest extends WebTestCase
 
         $client->request('GET', $url);
         $this->assertResponseIsSuccessful();
-        $this->assertSelectorExists('a.fr-fi-logout-box-r-line[href*="/logout"]');
-        $this->assertSelectorTextContains('a.fr-fi-logout-box-r-line[href*="/logout"]', 'Quitter');
+        $this->assertSelectorExists('.fr-btn.fr-fi-logout-box-r-line');
+        $this->assertSelectorTextContains('.fr-btn.fr-fi-logout-box-r-line', 'Quitter');
     }
 
     public function testAccessFormAfterCallbackDoesNotCallSireneAgain(): void
