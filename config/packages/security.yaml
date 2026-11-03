@@ -44,7 +44,6 @@ security:
                 interval: '%env(FORMS_SUBMIT_LIMITER_INTERVAL)%'
         service_secours:
             host: ^service-secours\.
-            pattern: ^/(proconnect|logout-service-secours|services-secours)
             lazy: true
             stateless: false
             provider: app_service_secours_user_provider
