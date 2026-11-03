@@ -34,9 +34,11 @@
                         <div class="fr-header__tools-links" data-fr-js-header-links="true">
                             <ul class="fr-btns-group">
                                 <li>
-                                    <a class="fr-btn fr-fi-logout-box-r-line" href="{{ path('service_secours_logout', {'domain': root_domain(app.request.host)}) }}">
-                                        Quitter
-                                    </a>
+                                    <form action="{{ path('service_secours_logout', {'domain': root_domain(app.request.host)}) }}" method="get">
+                                        <button class="fr-btn fr-fi-logout-box-r-line" type="submit">
+                                            Quitter
+                                        </button>
+                                    </form>
                                 </li>
                             </ul>
                         </div>
@@ -50,13 +52,6 @@
             <div class="fr-container">
                 <button type="button" class="fr-btn--close fr-btn" id="bt-fermer-menu-mobile" aria-controls="fr-menu-mobile" data-fr-js-modal-button="true">Fermer</button>
                 <div class="fr-header__menu-links">
-                    <ul class="fr-btns-group">
-                        <li>
-                            <a class="fr-btn fr-fi-logout-box-r-line" href="{{ path('service_secours_logout', {'domain': root_domain(app.request.host)}) }}">
-                                Quitter
-                            </a>
-                        </li>
-                    </ul>
                 </div>
             </div>
         </div>
