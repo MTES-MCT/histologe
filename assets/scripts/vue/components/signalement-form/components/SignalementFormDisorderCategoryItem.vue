@@ -90,6 +90,9 @@ export default defineComponent({
 </script>
 
 <style>
+.signalement-form-disorder-category-item {
+  cursor: pointer;
+}
 .signalement-form-disorder-category-item input[type=checkbox],
 .signalement-form-disorder-category-item input[type=checkbox] ~ label::before {
   left: 1rem;
