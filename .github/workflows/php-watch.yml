@@ -306,7 +306,8 @@ jobs:
             .[]
             | select(
                 (.severity == "critical"
-                  or .severity == "high")
+                  or .severity == "high"
+                  or .severity == "moderate")
                 and .published_at >= $limit
               )
             |
@@ -356,13 +357,13 @@ jobs:
             cat /tmp/comparison.txt
 
             echo ""
-            echo "## 🔐 Failles High / Critical des 30 derniers jours"
+            echo "## 🔐 Failles Moderate / High / Critical des 30 derniers jours"
             echo ""
 
             if [ -s /tmp/advisories.txt ]; then
               cat /tmp/advisories.txt
             else
-              echo "✅ Aucune faille High ou Critical récente."
+              echo "✅ Aucune faille Moderate ou High ou Critical récente."
             fi
 
           } >> "$GITHUB_STEP_SUMMARY"
