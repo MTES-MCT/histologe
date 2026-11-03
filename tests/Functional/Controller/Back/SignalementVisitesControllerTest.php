@@ -8,8 +8,10 @@ use App\Repository\PartnerRepository;
 use App\Repository\SignalementRepository;
 use App\Repository\UserRepository;
 use App\Tests\SessionHelper;
+use PHPUnit\Framework\Attributes\DataProvider;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
+use Symfony\Component\DomCrawler\Crawler;
 use Symfony\Component\Routing\RouterInterface;
 
 class SignalementVisitesControllerTest extends WebTestCase
@@ -315,6 +317,34 @@ class SignalementVisitesControllerTest extends WebTestCase
         $this->assertEquals($msgFlash, $response['flashMessages'][0]['message']);
         $this->assertEmailCount(2);
         $this->assertEquals('2023-01-01 09:00', $intervention->getScheduledAt()->format('Y-m-d H:i'));
+    }
+
+    #[DataProvider('provideScheduledAtUtcAndExpectedLocalTime')]
+    public function testRescheduleVisiteFormDisplaysLocalTime(string $scheduledAtUtc, string $expectedLocalTime): void
+    {
+        $signalement = $this->signalementRepository->findOneBy(['uuid' => '00000000-0000-0000-2022-000000000001']);
+        $intervention = $signalement->getInterventions()->first();
+        if (!$intervention) {
+            $this->fail('No intervention found for the signalement');
+        }
+        $intervention->setScheduledAt(new \DateTimeImmutable($scheduledAtUtc, new \DateTimeZone('UTC')));
+        static::getContainer()->get('doctrine')->getManager()->flush();
+
+        $route = $this->router->generate('back_signalement_visite_reschedule', ['id' => $intervention->getId()]);
+        $this->client->request('GET', $route);
+
+        $response = json_decode((string) $this->client->getResponse()->getContent(), true);
+        $crawler = new Crawler($response['content']);
+        $this->assertSame($expectedLocalTime, $crawler->filter('input[name$="[scheduledAtTime]"]')->attr('value'));
+    }
+
+    /**
+     * @return iterable<string, array{string, string}>
+     */
+    public static function provideScheduledAtUtcAndExpectedLocalTime(): iterable
+    {
+        yield 'heure d\'hiver' => ['2123-01-15 09:00', '10:00'];
+        yield 'heure d\'été' => ['2123-07-15 08:00', '10:00'];
     }
 
     public function testcancelVisiteFromSignalement(): void
