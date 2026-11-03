@@ -401,7 +401,7 @@ class EsaboraManager
             $dossierVisiteSISH->getVisiteDate(),
             $affectation->getSignalement()->getTimezone()
         );
-        if ($intervention->getScheduledAt()?->getTimestamp() !== $scheduledAt->getTimestamp()) {
+        if ($intervention->getScheduledAt()->getTimestamp() !== $scheduledAt->getTimestamp()) {
             $intervention->setPreviousScheduledAt($intervention->getScheduledAt());
             $intervention->setScheduledAt($scheduledAt);
             $hasChanged = true;
@@ -446,7 +446,7 @@ class EsaboraManager
     ): bool {
         $hasChanged = false;
         $currentAdditionalInformationSorted = $intervention->getAdditionalInformation() ?? [];
-        $currentAdditionalInformationSorted['arrete_date'] = $intervention->getScheduledAt()?->format(AbstractEsaboraService::FORMAT_DATE);
+        $currentAdditionalInformationSorted['arrete_date'] = $intervention->getScheduledAt()->format(AbstractEsaboraService::FORMAT_DATE);
 
         // Pour rappel, une seule intervention regroupe les arrêtés successifs.
         // Un arrêté seul produit un tableau `$additionalInformation` avec des champs de main-levée et modificatif à null,

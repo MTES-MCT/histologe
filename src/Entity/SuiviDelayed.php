@@ -55,7 +55,7 @@ class SuiviDelayed
         return $this->id;
     }
 
-    public function getSuiviCategory(): ?SuiviCategory
+    public function getSuiviCategory(): SuiviCategory
     {
         return $this->suiviCategory;
     }
@@ -105,24 +105,24 @@ class SuiviDelayed
         return $this;
     }
 
-    public function getUser(): ?User
+    public function getUser(): User
     {
         return $this->user;
     }
 
-    public function setUser(?User $user): static
+    public function setUser(User $user): static
     {
         $this->user = $user;
 
         return $this;
     }
 
-    public function getSignalement(): ?Signalement
+    public function getSignalement(): Signalement
     {
         return $this->signalement;
     }
 
-    public function setSignalement(?Signalement $signalement): static
+    public function setSignalement(Signalement $signalement): static
     {
         $this->signalement = $signalement;
 

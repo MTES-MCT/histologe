@@ -9,6 +9,7 @@ use App\Service\Mailer\NotificationMailerRegistry;
 use App\Service\Mailer\NotificationMailerType;
 use League\Flysystem\FilesystemException;
 use League\Flysystem\FilesystemOperator;
+use Psr\Log\LoggerInterface;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Helper\ProgressBar;
@@ -33,6 +34,7 @@ class ClearStorageOriginalFileCommand extends AbstractCronCommand
         #[Target('file.storage')] private readonly FilesystemOperator $fileStorage,
         private readonly NotificationMailerRegistry $notificationMailerRegistry,
         private readonly FileUpdater $fileUpdater,
+        private readonly LoggerInterface $logger,
     ) {
         parent::__construct($this->parameterBag);
     }
@@ -57,6 +59,11 @@ class ClearStorageOriginalFileCommand extends AbstractCronCommand
         $nbErrors = 0;
         $ids = [];
         foreach ($files as $file) {
+            if (null === $file->getId()) {
+                $this->logger->error('File with null ID found: '.$file->getFilename());
+                ++$nbErrors;
+                continue;
+            }
             $ids[] = $file->getId();
             $filename = $file->getFilename();
             if ($this->fileStorage->fileExists($filename)) {

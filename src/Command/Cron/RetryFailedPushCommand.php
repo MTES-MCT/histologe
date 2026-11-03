@@ -111,7 +111,7 @@ class RetryFailedPushCommand extends AbstractCronCommand
             $this->interconnectionBus->dispatch($affectation);
             $io->success(\sprintf(
                 '[%s] Dossier %s pushed to %s',
-                $affectation->getPartner()->getType()->value,
+                $affectation->getPartner()->getType()?->value,
                 $affectation->getSignalement()->getUuid(),
                 $config['label']
             ));

@@ -9,6 +9,7 @@ use App\Service\Mailer\NotificationMailerRegistry;
 use Doctrine\ORM\EntityManagerInterface;
 use League\Flysystem\FilesystemOperator;
 use PHPUnit\Framework\MockObject\MockObject;
+use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Tester\CommandTester;
@@ -41,6 +42,7 @@ class ClearStorageOriginalFileCommandTest extends KernelTestCase
             $this->fileStorage,
             $this->mailerRegistry,
             $this->fileUpdater,
+            static::getContainer()->get(LoggerInterface::class),
         );
         $commandTester = new CommandTester($command);
         $commandTester->execute([]);

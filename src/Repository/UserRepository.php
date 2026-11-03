@@ -60,9 +60,9 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
     }
 
     /**
-     * @return array<int, User>|null
+     * @return array<int, User>
      */
-    public function findActiveAdmins(): ?array
+    public function findActiveAdmins(): array
     {
         $queryBuilder = $this->createQueryBuilder('u');
 

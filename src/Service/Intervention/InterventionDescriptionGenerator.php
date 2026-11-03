@@ -61,7 +61,7 @@ class InterventionDescriptionGenerator
         $messages = [];
         $oldAdditionalInformation = $intervention->getAdditionalInformation() ?? [];
 
-        $oldDate = $intervention->getScheduledAt()?->format('d/m/Y');
+        $oldDate = $intervention->getScheduledAt()->format('d/m/Y');
         $newDate = $dossierArreteSISH->getArreteDate();
         $oldNumero = $oldAdditionalInformation['arrete_numero'] ?? null;
         $newNumero = $dossierArreteSISH->getArreteNumero();

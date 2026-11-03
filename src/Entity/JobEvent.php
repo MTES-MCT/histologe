@@ -66,8 +66,8 @@ class JobEvent
     #[ORM\Column(type: Types::TEXT, nullable: true)]
     private ?string $message = null;
 
-    #[ORM\Column(type: Types::TEXT, nullable: true)]
-    private ?string $response = null;
+    #[ORM\Column(type: Types::TEXT)]
+    private string $response;
 
     #[ORM\Column(options: ['default' => false])]
     private bool $isOperationalError = false;
@@ -125,12 +125,12 @@ class JobEvent
         return $this;
     }
 
-    public function getResponse(): ?string
+    public function getResponse(): string
     {
         return $this->response;
     }
 
-    public function setResponse(?string $response): static
+    public function setResponse(string $response): static
     {
         $this->response = $response;
 

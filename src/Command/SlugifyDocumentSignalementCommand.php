@@ -85,6 +85,12 @@ class SlugifyDocumentSignalementCommand extends Command
             return Command::FAILURE;
         }
 
+        if (null === $this->sourceFile || null === $this->destinationFile || null === $this->territory) {
+            $this->io->error('sourceFile or destinationFile or territory is not set');
+
+            return Command::FAILURE;
+        }
+
         $tmpDirectory = $this->parameterBag->get('uploads_tmp_dir');
         $this->uploadHandlerService->createTmpFileFromBucket($this->sourceFile, $this->destinationFile);
 
@@ -185,7 +191,7 @@ class SlugifyDocumentSignalementCommand extends Command
     /**
      * @param array<mixed> $row
      */
-    private function makeSlugsForSignalementFile(string $colName, int $index, $row): ?string
+    private function makeSlugsForSignalementFile(string $colName, int $index, $row): string
     {
         $fileListSlugged = [];
         $fileList = explode('|', $row[$colName]);
@@ -202,7 +208,7 @@ class SlugifyDocumentSignalementCommand extends Command
             $message = \sprintf('Different count - row %s col %s - %s // %s', $index, $colName, $countFileSlugged, $countFileList);
             $this->io->error($message);
 
-            return null;
+            return '';
         }
 
         return implode('|', $fileListSlugged);
@@ -300,6 +306,11 @@ class SlugifyDocumentSignalementCommand extends Command
     private function hasMissingColumnLabel(SymfonyStyle $io): bool
     {
         $errors = [];
+        if (!$this->destinationFile) {
+            $io->error('Destination file is not set.');
+
+            return true;
+        }
         $header = $this->csvParser->getHeaders($this->destinationFile);
         foreach (SignalementImportImageHeader::COLUMNS_LIST as $column) {
             if (!\in_array($column, $header)) {
