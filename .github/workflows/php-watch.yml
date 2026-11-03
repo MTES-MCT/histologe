@@ -3,7 +3,8 @@ name: PHP Watch
 
 on:
   schedule:
-    # Tous les jours à 07:37 UTC
+    # Une fois par jour, en évitant le début d'heure
+    # Cron GitHub Actions en UTC
     - cron: '37 2 * * *'
 
   workflow_dispatch:
