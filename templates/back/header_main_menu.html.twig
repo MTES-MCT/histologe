@@ -1,4 +1,4 @@
-<nav class="fr-nav" id="navigation-main" aria-label="Menu principal">
+<nav role="navigation" class="fr-nav" id="navigation-main" aria-label="Menu principal">
     <ul class="fr-nav__list">
         {% for item in main_menu.getChildren %}
             {% if item.getChildren is empty and is_granted(item.roleGranted) %}

@@ -6,7 +6,7 @@
     {{ render(controller('App\\Controller\\Back\\InAppCommunicationController::show')) }}
     {% include 'back/nav_bo.html.twig' %}
     {% block notice %}{% endblock %}
-    <main id="container-horizontal" class="{{ app.request.attributes.get('_route') in ['back_cartographie', 'back_addresses_history_index'] ? '' : 'fr-mb-5v'}}">
+    <main role="main" id="container-horizontal" class="{{ app.request.attributes.get('_route') in ['back_cartographie', 'back_addresses_history_index'] ? '' : 'fr-mb-5v'}}">
         {% include "flash-messages.html.twig" %}
         <div id="flash-messages-live-container"></div>
 

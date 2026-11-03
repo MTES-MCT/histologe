@@ -28,7 +28,7 @@
       </div>
     </div>
     <div class="fr-col-12 fr-col-lg-6 fr-col-xl-4 fr-mb-2v fr-mb-md-0 fr-text--right">
-        <nav class="fr-translate menu-actions-signalement align-right fr-nav">
+        <nav role="navigation" class="fr-translate menu-actions-signalement align-right fr-nav" aria-label="Actions">
             <div class="fr-nav__item">
                 <button
                   type="button"

@@ -592,7 +592,7 @@ public function suiviSignalementCompleteSyndic(
 
 {% block body %}
 
-<main class="fr-container fr-pb-5w" id="content">
+<main role="main" class="fr-container fr-pb-5w" id="content">
     <nav role="navigation" class="fr-breadcrumb fr-mb-1w fr-mt-2w" aria-label="Voir le fil d'Ariane">
         <button class="fr-breadcrumb__button" aria-expanded="false" aria-controls="breadcrumb-1">Voir le fil d'Ariane</button>
         <div class="fr-collapse" id="breadcrumb-1">
