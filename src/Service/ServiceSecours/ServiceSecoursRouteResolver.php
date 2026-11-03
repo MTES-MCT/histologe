@@ -3,6 +3,7 @@
 namespace App\Service\ServiceSecours;
 
 use App\Entity\ServiceSecoursRoute;
+use App\Exception\ServiceSecours\ServiceSecoursRouteNotFoundException;
 use App\Exception\ServiceSecours\ServiceSecoursRouteResolutionException;
 use App\Repository\ServiceSecoursRouteRepository;
 use App\Service\Gouv\Insee\Exception\SireneRateLimitExceededException;
@@ -57,11 +58,19 @@ class ServiceSecoursRouteResolver
             throw new ServiceSecoursRouteResolutionException(sprintf('Aucun territoire trouvé pour le code commune INSEE "%s" (SIRET "%s").', $siretInformation->codeCommune, $siret));
         }
 
+        if (!$territory->isIsActive()) {
+            throw new ServiceSecoursRouteResolutionException('Le territoire correspondant à votre établissement n’est pas encore actif sur Signal Logement.');
+        }
+
         $category = $this->serviceSecoursCategoryResolver->resolve($organizationalUnit);
 
-        $serviceSecoursRoute = $this->serviceSecoursRouteRepository->findOneByTerritoryAndCategory($territory, $category);
+        $serviceSecoursRoute = $this->serviceSecoursRouteRepository->findOneBy([
+            'territory' => $territory,
+            'category' => $category,
+        ]);
+
         if (null === $serviceSecoursRoute) {
-            throw new ServiceSecoursRouteResolutionException(sprintf('Aucune route Service Secours configurée pour le territoire "%s" et la catégorie "%s".', $territory->getName(), $category->value));
+            throw new ServiceSecoursRouteNotFoundException(sprintf('Aucune route Service Secours configurée pour le territoire "%s" et la catégorie "%s".', $territory->getName(), $category->value));
         }
 
         return $serviceSecoursRoute;
