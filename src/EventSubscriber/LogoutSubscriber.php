@@ -12,6 +12,7 @@ use App\Utils\UrlHelper;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
+use Symfony\Component\HttpFoundation\Session\Session;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Security\Http\Event\LogoutEvent;
@@ -40,7 +41,6 @@ readonly class LogoutSubscriber implements EventSubscriberInterface
         $user = $token?->getUser();
         $request = $event->getRequest();
         $session = $request->getSession();
-        $logoutUrl = null;
 
         if ($user instanceof SignalementUser) {
             $this->clearSession($session);
@@ -62,40 +62,44 @@ readonly class LogoutSubscriber implements EventSubscriberInterface
         }
 
         if ($user instanceof ServiceSecoursUser) {
-            try {
-                if ($session->has(ProConnectContext::SESSION_KEY_ID_TOKEN)) {
-                    $logoutUrl = $this->proConnectAuthentication->getLogoutUrl();
-                    $this->clearSession($session);
-                    if ($logoutUrl) {
-                        $event->setResponse(new RedirectResponse($logoutUrl));
-
-                        return;
-                    }
-                }
-            } catch (\Throwable $exception) {
-                $this->logger->error('Erreur ProConnect getLogoutUrl Service Secours', [
-                    'exception' => $exception,
-                ]);
-                if ($session->has(ProConnectContext::SESSION_KEY_ID_TOKEN)) {
-                    $flashBag = $event->getRequest()->getSession()->getFlashBag(); // @phpstan-ignore-line
-                    $flashBag->add('warning',
-                        'Vous êtes bien déconnecté de l\'application, mais la déconnexion de votre compte ProConnect '
-                        .'n\'a pas pu être effectuée automatiquement. '
-                        .'Veuillez penser à fermer manuellement votre session sur ProConnect.'
-                    );
-                }
-            }
-            $this->clearSession($session);
             $domain = UrlHelper::extractRootDomain($request->getHost());
-            $event->setResponse(new RedirectResponse($this->urlGenerator->generate('service_secours_home', [
-                'domain' => $domain,
-            ])));
+            $this->handleProConnectLogout(
+                $event,
+                $session,
+                'Erreur ProConnect getLogoutUrl Service Secours',
+                'service_secours_home',
+                ['domain' => $domain],
+            );
 
             return;
         }
 
-        try {
-            if ($user?->getProConnectUserId() && $session->has(ProConnectContext::SESSION_KEY_ID_TOKEN)) {
+        if ($user?->getProConnectUserId()) {
+            $this->handleProConnectLogout(
+                $event,
+                $session,
+                'Erreur ProConnect getLogoutUrl',
+                'app_login',
+            );
+
+            return;
+        }
+
+        $this->clearSession($session);
+    }
+
+    /**
+     * @param array<string, mixed> $fallbackRouteParams
+     */
+    private function handleProConnectLogout(
+        LogoutEvent $event,
+        SessionInterface $session,
+        string $errorMessage,
+        ?string $fallbackRoute = null,
+        array $fallbackRouteParams = [],
+    ): void {
+        if ($session->has(ProConnectContext::SESSION_KEY_ID_TOKEN)) {
+            try {
                 $logoutUrl = $this->proConnectAuthentication->getLogoutUrl();
                 $this->clearSession($session);
                 if ($logoutUrl) {
@@ -103,29 +107,29 @@ readonly class LogoutSubscriber implements EventSubscriberInterface
 
                     return;
                 }
-            }
-        } catch (\Throwable $exception) {
-            $this->logger->error('Erreur ProConnect getLogoutUrl', [
-                'exception' => $exception,
-            ]);
-            if ($logoutUrl) {
-                $event->setResponse(new RedirectResponse($logoutUrl));
-            }
-
-            if ($session->has(ProConnectContext::SESSION_KEY_ID_TOKEN)) {
-                $flashBag = $event->getRequest()->getSession()->getFlashBag(); // @phpstan-ignore-line
-                $flashBag->add('warning',
+            } catch (\Throwable $exception) {
+                $this->logger->error($errorMessage, [
+                    'exception' => $exception,
+                ]);
+                /** @var Session $session */
+                $session = $event->getRequest()->getSession();
+                $flashBag = $session->getFlashBag();
+                $flashBag->add(
+                    'warning',
                     'Vous êtes bien déconnecté de l\'application, mais la déconnexion de votre compte ProConnect '
                     .'n\'a pas pu être effectuée automatiquement. '
                     .'Veuillez penser à fermer manuellement votre session sur ProConnect.'
                 );
             }
-            $this->clearSession($session);
-            $event->setResponse(new RedirectResponse($this->urlGenerator->generate('app_login')));
-
-            return;
         }
+
         $this->clearSession($session);
+
+        if ($fallbackRoute) {
+            $event->setResponse(new RedirectResponse(
+                $this->urlGenerator->generate($fallbackRoute, $fallbackRouteParams)
+            ));
+        }
     }
 
     private function clearSession(SessionInterface $session): void
