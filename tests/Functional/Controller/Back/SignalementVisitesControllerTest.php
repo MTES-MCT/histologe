@@ -316,7 +316,7 @@ class SignalementVisitesControllerTest extends WebTestCase
         $msgFlash = 'Les informations de la visite ont bien été enregistrées.';
         $this->assertEquals($msgFlash, $response['flashMessages'][0]['message']);
         $this->assertEmailCount(2);
-        $this->assertEquals('2023-01-01 09:00', $intervention->getScheduledAt()->format('Y-m-d H:i'));
+        $this->assertEquals('2023-01-01 10:00', $intervention->getScheduledAt()->format('Y-m-d H:i'));
     }
 
     #[DataProvider('provideScheduledAtUtcAndExpectedLocalTime')]

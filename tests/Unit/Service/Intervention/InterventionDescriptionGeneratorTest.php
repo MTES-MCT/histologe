@@ -158,6 +158,7 @@ class InterventionDescriptionGeneratorTest extends TestCase
             'arrete_mainlevee_numero' => '2023-DD13-00172',
         ];
         $intervention = new Intervention()
+            ->setSignalement($this->getSignalement())
             ->setScheduledAt(new \DateTimeImmutable('2023-06-14'))
             ->setAdditionalInformation($oldAdditionalInformation);
 
@@ -233,6 +234,7 @@ class InterventionDescriptionGeneratorTest extends TestCase
 
         // Test modification numéro arrêté depuis null vers une valeur
         $interventionWithNullNumero = new Intervention()
+            ->setSignalement($this->getSignalement())
             ->setScheduledAt(new \DateTimeImmutable('2023-06-14'))
             ->setAdditionalInformation([
                 'arrete_numero' => null,
@@ -262,6 +264,7 @@ class InterventionDescriptionGeneratorTest extends TestCase
 
         // Test modification numéro mainlevée depuis null vers une valeur
         $interventionWithNullMLNumero = new Intervention()
+            ->setSignalement($this->getSignalement())
             ->setScheduledAt(new \DateTimeImmutable('2023-06-14'))
             ->setAdditionalInformation([
                 'arrete_numero' => '2023/DD13/00664',
@@ -281,6 +284,7 @@ class InterventionDescriptionGeneratorTest extends TestCase
 
         // Test modification date et numéro arrêté modificatif
         $interventionWithModif = new Intervention()
+            ->setSignalement($this->getSignalement())
             ->setScheduledAt(new \DateTimeImmutable('2023-06-14'))
             ->setAdditionalInformation([
                 'arrete_numero' => '2023/DD13/00664',
@@ -330,6 +334,7 @@ class InterventionDescriptionGeneratorTest extends TestCase
 
         // Test modification numéro arrêté modificatif depuis null vers une valeur
         $interventionWithNullModifNumero = new Intervention()
+            ->setSignalement($this->getSignalement())
             ->setScheduledAt(new \DateTimeImmutable('2023-06-14'))
             ->setAdditionalInformation([
                 'arrete_numero' => '2023/DD13/00664',
@@ -349,6 +354,7 @@ class InterventionDescriptionGeneratorTest extends TestCase
 
         // Test modificatif avec numéro mais sans date : ignoré, ne génère aucune modification
         $interventionWithoutModif = new Intervention()
+            ->setSignalement($this->getSignalement())
             ->setScheduledAt(new \DateTimeImmutable('2023-06-14'))
             ->setAdditionalInformation([
                 'arrete_numero' => '2023/DD13/00664',

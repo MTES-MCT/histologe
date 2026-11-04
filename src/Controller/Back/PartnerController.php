@@ -704,6 +704,6 @@ class PartnerController extends AbstractController
 
     private function shouldCancelFutureVisite(Intervention $intervention): bool
     {
-        return $intervention->getScheduledAt() > new \DateTimeImmutable();
+        return $intervention->getScheduledAt() > new \DateTimeImmutable('now', $intervention->getScheduledAt()->getTimezone());
     }
 }

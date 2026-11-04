@@ -135,12 +135,15 @@ class Intervention implements EntityHistoryInterface, EntitySanitizerInterface
         return $this->uuid;
     }
 
-    public function getScheduledAt(): ?\DateTimeImmutable
+    public function getScheduledAt(): \DateTimeImmutable
     {
-        return $this->scheduledAt;
+        $timezone = $this->getPartner()?->getTerritory()?->getTimezone() ?? $this->getSignalement()->getTimezone() ?? TimezoneProvider::TIMEZONE_EUROPE_PARIS;
+        $scheduledDateConverted = $this->scheduledAt->setTimezone(new \DateTimeZone($timezone));
+
+        return $scheduledDateConverted;
     }
 
-    public function setScheduledAt(?\DateTimeImmutable $scheduledAt): static
+    public function setScheduledAt(\DateTimeImmutable $scheduledAt): static
     {
         $this->scheduledAt = $scheduledAt;
 
@@ -149,17 +152,13 @@ class Intervention implements EntityHistoryInterface, EntitySanitizerInterface
 
     public function getScheduledAtFormated(): string
     {
-        if ($this->getScheduledAt()->format('His') > 0) {
-            $timezone = $this->getPartner()?->getTerritory()?->getTimezone()
-                ?? $this->getSignalement()->getTimezone()
-                ?? TimezoneProvider::TIMEZONE_EUROPE_PARIS;
+        $scheduledDateConverted = $this->getScheduledAt();
 
-            return $this->getScheduledAt()
-                        ->setTimezone(new \DateTimeZone($timezone))
-                        ->format('d/m/Y à H:i');
+        if ($scheduledDateConverted->format('His') > 0) {
+            return $scheduledDateConverted->format('d/m/Y à H:i');
         }
 
-        return $this->getScheduledAt()->format('d/m/Y');
+        return $scheduledDateConverted->format('d/m/Y');
     }
 
     public function getRegisteredAt(): ?\DateTimeImmutable
