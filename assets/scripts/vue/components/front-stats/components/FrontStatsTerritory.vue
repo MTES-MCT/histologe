@@ -1,7 +1,7 @@
 <template>
   <div class="front-stats-territory fr-px-5w fr-pt-5w">
     <div class="fr-container">
-      <h2>Evolution territoriale du mal-logement</h2>
+      <h2>Évolution territoriale du mal-logement</h2>
       <label for="filter-territoires">Sélectionnez un territoire pour afficher ses statistiques</label>
       <HistoSelect
         id="filter-territoires"
@@ -15,43 +15,43 @@
         <div class="fr-grid-row fr-grid-row--gutters">
           <FrontStatsTerritoryItem size-class="7" v-model="filters.yearTypes.perMonth">
             <template #title>Nombre de signalements déposés</template>
-            <template #graph>
-              <HistoChartLine :items="chartItems('perMonth')" />
+            <template #graph="{ titleId }">
+              <HistoChartLine :labelled-by="titleId" :items="chartItems('perMonth')" />
             </template>
           </FrontStatsTerritoryItem>
 
           <FrontStatsTerritoryItem size-class="5" v-model="filters.yearTypes.perStatut">
             <template #title>Répartition des signalements par statut</template>
-            <template #graph>
-              <HistoChartPie :items="chartItems('perStatut')" use-patterns />
+            <template #graph="{ titleId }">
+              <HistoChartPie :labelled-by="titleId" :items="chartItems('perStatut')" use-patterns />
             </template>
           </FrontStatsTerritoryItem>
 
           <FrontStatsTerritoryItem size-class="12" v-model="filters.yearTypes.perMotifCloture">
             <template #title>Répartition des signalements fermés par motif de clôture</template>
-            <template #graph>
-              <HistoChartBar :items="chartItems('perMotifCloture')" index-axis="x" />
+            <template #graph="{ titleId }">
+              <HistoChartBar :labelled-by="titleId" :items="chartItems('perMotifCloture')" index-axis="x" />
             </template>
           </FrontStatsTerritoryItem>
 
           <FrontStatsTerritoryItem size-class="4" v-model="filters.yearTypes.perDesordresCategories">
             <template #title>Désordres par catégorie</template>
-            <template #graph>
-              <HistoChartPie :items="chartItems('perDesordresCategories')" use-patterns />
+            <template #graph="{ titleId }">
+              <HistoChartPie :labelled-by="titleId" :items="chartItems('perDesordresCategories')" use-patterns />
             </template>
           </FrontStatsTerritoryItem>
 
           <FrontStatsTerritoryItem size-class="4" :is-total-active="false" v-model="filters.yearTypes.perLogementDesordres">
             <template #title>Logement : désordres les plus courants*</template>
-            <template #graph>
-              <HistoChartDoughnut :items="chartItems('perLogementDesordres')" use-patterns />
+            <template #graph="{ titleId }">
+              <HistoChartDoughnut :labelled-by="titleId" :items="chartItems('perLogementDesordres')" use-patterns />
             </template>
           </FrontStatsTerritoryItem>
 
           <FrontStatsTerritoryItem size-class="4" :is-total-active="false" v-model="filters.yearTypes.perBatimentDesordres">
             <template #title>Bâtiment : désordres les plus courants*</template>
-            <template #graph>
-              <HistoChartDoughnut :items="chartItems('perBatimentDesordres')" use-patterns />
+            <template #graph="{ titleId }">
+              <HistoChartDoughnut :labelled-by="titleId" :items="chartItems('perBatimentDesordres')" use-patterns />
             </template>
           </FrontStatsTerritoryItem>
         </div>

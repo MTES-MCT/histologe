@@ -10,7 +10,7 @@ async function gotoFrontStatistiques(page: Page) {
   await expect(page.getByText('taux de signalements refusés')).toBeVisible();
   await expect(page.getByRole('heading', { name: 'Répartition des signalements par département' })).toBeVisible();
   await expect(page.getByRole('heading', { name: 'Données historiques' })).toBeVisible();
-  await expect(page.getByRole('heading', { name: 'Evolution territoriale du mal-logement' })).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'Évolution territoriale du mal-logement' })).toBeVisible();
 }
 
 function territoryItem(page: Page, title: string) {

@@ -20,7 +20,7 @@
     <hr>
 
     <div class="fr-mt-5w fr-mb-7w imported-data">
-      <h2>Données historiques</h2>
+      <h2 id="donnees-historiques">Données historiques</h2>
       <p>
         <span>{{ stats.countImported }}</span> signalements importés
         <br>
