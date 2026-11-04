@@ -379,8 +379,8 @@ jobs:
         run: |
           {
             echo "From: PHP Watch <${SMTP_USERNAME}>"
-            echo "To: ${MAIL_RECIPIENT}"
-            echo "Subject: [PHP Watch] Bulletin de veille quotidien - $(date -u +%Y-%m-%d)"
+            echo "To: support@signal-logement.beta.gouv.fr"
+            echo "Subject: [PHP Watch] Bulletin de veille quotidien - $(date -u +%d-%m-%Y)"
             echo "MIME-Version: 1.0"
             echo "Content-Type: text/plain; charset=UTF-8"
             echo ""
@@ -415,13 +415,13 @@ jobs:
             echo "https://doc.scalingo.com/languages/php/start"
 
             echo ""
-            echo "FAILLES HIGH / CRITICAL - 30 DERNIERS JOURS"
+            echo "FAILLES MODERATE / HIGH / CRITICAL - 30 DERNIERS JOURS"
             echo "-------------------------------------------"
 
             if [ -s /tmp/advisories.txt ]; then
               cat /tmp/advisories.txt
             else
-              echo "Aucune faille High ou Critical publiée au cours des 30 derniers jours."
+              echo "Aucune faille Moderate ou High ou Critical publiée au cours des 30 derniers jours."
             fi
 
             echo ""
