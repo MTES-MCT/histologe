@@ -6,7 +6,7 @@ import {
 const searchTerritoryForm = document.getElementById('search-bailleur-form');
 
 if (searchTerritoryForm) {
-  document.addEventListener('click', (e) => {
+  document.getElementById('table-list-results')?.addEventListener('click', (e) => {
     const button = e.target.closest('.open-modal-bailleur-delete');
     if (!button) return;
 

@@ -5,7 +5,7 @@ import {
   updateLocalStorageOnEvent,
 } from '../../services/ui/list_filter_helper.js';
 
-document.addEventListener('click', (evt) => {
+document.getElementById('title-and-table-list-results')?.addEventListener('click', (evt) => {
   const target = evt.target.closest('.btn-delete-autoaffectationrule');
   if (target) {
     document.querySelector('.fr-modal-autoaffectationrule-delete-description').textContent =

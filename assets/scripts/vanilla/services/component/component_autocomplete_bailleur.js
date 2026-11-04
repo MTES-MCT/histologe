@@ -1,23 +1,31 @@
 import * as Sentry from '@sentry/browser';
 
 const inputElement = document.querySelector('[data-autocomplete-bailleur-url]');
+// liste de suggestions la plus proche du champ (sœur directe ou dans un ancêtre selon les formulaires)
+const listElement = findSuggestionsList(inputElement);
 let selectedSuggestionIndex = -1;
 let isAutocompleteOpen = false;
 
-document.addEventListener('click', function (event) {
-  if (!event.target.closest('.fr-autocomplete-list') && isAutocompleteOpen) {
-    closeSuggestions();
-  }
-});
+if (inputElement && listElement) {
+  document.addEventListener('click', function (event) {
+    if (
+      isAutocompleteOpen &&
+      !listElement.contains(event.target) &&
+      !inputElement.contains(event.target)
+    ) {
+      closeSuggestions();
+    }
+  });
 
-if (inputElement) {
   inputElement.addEventListener('keyup', function (event) {
     event.preventDefault();
-    const isNavigationKey = ['ArrowDown', 'ArrowUp', 'Enter', ' '].includes(event.key);
+    const isNavigationKey = ['ArrowDown', 'ArrowUp', 'Enter', 'Escape', 'Tab', ' '].includes(
+      event.key
+    );
     const name = event.target.value.trim();
     if (!isNavigationKey && name.length > 1) {
       selectedSuggestionIndex = -1;
-      const url = `${inputElement.dataset.autocompleteBailleurUrl}&name=${name}`;
+      const url = `${inputElement.dataset.autocompleteBailleurUrl}&name=${encodeURIComponent(name)}`;
       fetchBailleur(url);
     } else if (name.length <= 1) {
       closeSuggestions();
@@ -34,8 +42,18 @@ if (inputElement) {
     } else if (event.key === 'Enter') {
       event.preventDefault();
       handleEnter();
+    } else if (event.key === 'Escape' || event.key === 'Tab') {
+      closeSuggestions();
     }
   });
+}
+
+function findSuggestionsList(input) {
+  let ancestor = input?.parentElement;
+  while (ancestor && !ancestor.querySelector('.fr-autocomplete-list')) {
+    ancestor = ancestor.parentElement;
+  }
+  return ancestor?.querySelector('.fr-autocomplete-list') ?? null;
 }
 
 async function fetchBailleur(url) {
@@ -43,8 +61,7 @@ async function fetchBailleur(url) {
     const response = await fetch(url);
     const resultList = await response.json();
     if (response.ok) {
-      const ulElement = document.querySelector('.fr-autocomplete-list');
-      ulElement.innerHTML = '';
+      listElement.innerHTML = '';
       resultList.forEach((resultItem, index) => {
         const suggestion = document.createElement('li');
         suggestion.classList.add(
@@ -56,13 +73,13 @@ async function fetchBailleur(url) {
         suggestion.textContent = resultItem.name;
         suggestion.addEventListener('click', (event) => {
           inputElement.value = event.target.textContent;
-          ulElement.innerHTML = '';
+          closeSuggestions();
         });
 
         if (index === selectedSuggestionIndex) {
           suggestion.classList.add('fr-autocomplete-suggestion-highlighted');
         }
-        ulElement.append(suggestion);
+        listElement.append(suggestion);
       });
       isAutocompleteOpen = true;
     }
@@ -73,7 +90,7 @@ async function fetchBailleur(url) {
 }
 
 function handleDown() {
-  const suggestions = document.querySelectorAll('.fr-autocomplete-suggestion');
+  const suggestions = listElement.querySelectorAll('.fr-autocomplete-suggestion');
   if (selectedSuggestionIndex < suggestions.length - 1) {
     selectedSuggestionIndex++;
     updateSelectedSuggestion();
@@ -88,7 +105,7 @@ function handleUp() {
 }
 
 function updateSelectedSuggestion() {
-  const suggestions = document.querySelectorAll('.fr-autocomplete-suggestion');
+  const suggestions = listElement.querySelectorAll('.fr-autocomplete-suggestion');
   suggestions.forEach((suggestion, index) => {
     if (index === selectedSuggestionIndex) {
       suggestion.classList.add('fr-autocomplete-suggestion-highlighted');
@@ -99,7 +116,7 @@ function updateSelectedSuggestion() {
 }
 
 function handleEnter() {
-  const suggestions = document.querySelectorAll('.fr-autocomplete-suggestion');
+  const suggestions = listElement.querySelectorAll('.fr-autocomplete-suggestion');
   if (selectedSuggestionIndex !== -1) {
     inputElement.value = suggestions[selectedSuggestionIndex].textContent;
     closeSuggestions();
@@ -107,7 +124,7 @@ function handleEnter() {
 }
 
 function closeSuggestions() {
-  document.querySelector('.fr-autocomplete-list').innerHTML = '';
+  listElement.innerHTML = '';
   selectedSuggestionIndex = -1;
   isAutocompleteOpen = false;
 }

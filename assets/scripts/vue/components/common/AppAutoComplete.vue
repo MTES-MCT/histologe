@@ -93,6 +93,24 @@ export default defineComponent({
       if (!this.multiple) {
         this.searchText = typeof newValue === 'string' ? newValue : ''
       }
+    },
+    // écouteurs globaux branchés uniquement quand ils ont un effet
+    needsOutsideClick (needed: boolean) {
+      if (needed) {
+        document.addEventListener('click', this.closeAutocomplete)
+      } else {
+        document.removeEventListener('click', this.closeAutocomplete)
+      }
+    },
+    isDropdownOpen (open: boolean) {
+      if (open) {
+        // capture: true pour capter aussi les scrolls des conteneurs internes
+        window.addEventListener('scroll', this.onWindowScroll, true)
+        window.addEventListener('resize', this.onWindowResize)
+      } else {
+        window.removeEventListener('scroll', this.onWindowScroll, true)
+        window.removeEventListener('resize', this.onWindowResize)
+      }
     }
   },
   data () {
@@ -109,15 +127,11 @@ export default defineComponent({
   computed: {
     isDropdownOpen (): boolean {
       return this.suggestionFilteredList.length > 0 || this.showNoResultsMessage
+    },
+    // en mode multiple, un clic en dehors vide aussi le texte saisi, même liste fermée
+    needsOutsideClick (): boolean {
+      return this.isDropdownOpen || (this.multiple && this.searchText !== '')
     }
-  },
-  created () {
-    document.addEventListener('click', this.closeAutocomplete)
-  },
-  mounted () {
-    // capture: true pour capter aussi les scrolls des conteneurs internes
-    window.addEventListener('scroll', this.onWindowScroll, true)
-    window.addEventListener('resize', this.onWindowResize)
   },
   beforeUnmount () {
     document.removeEventListener('click', this.closeAutocomplete)

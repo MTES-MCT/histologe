@@ -54,7 +54,7 @@ toggle?.addEventListener('change', () => {
   applyFilter();
 });
 
-document.addEventListener('click', (e) => {
+document.getElementById('signalement-view')?.addEventListener('click', (e) => {
   const target = e.target;
   const btn = target.closest('#btn-display-all-suivis');
   if (!btn) return;
