@@ -18,7 +18,6 @@ use App\Factory\InterventionFactory;
 use App\Repository\InterventionRepository;
 use App\Service\Intervention\InterventionDescriptionGenerator;
 use App\Service\Signalement\Qualification\SignalementQualificationUpdater;
-use App\Service\TimezoneProvider;
 use App\Utils\DateHelper;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\SecurityBundle\Security;
@@ -41,7 +40,6 @@ class InterventionManager
         private readonly EntityManagerInterface $entityManager,
         #[Autowire(service: 'html_sanitizer.sanitizer.app.message_sanitizer')]
         private readonly HtmlSanitizerInterface $htmlSanitizer,
-        private readonly TimezoneProvider $timezoneProvider,
         private readonly EventDispatcherInterface $eventDispatcher,
     ) {
     }
@@ -71,7 +69,7 @@ class InterventionManager
         $scheduledAtUtc = DateHelper::getDateUTCFromLocalDateAndTime(
             $scheduledAt,
             $scheduledAtTime,
-            $this->timezoneProvider->getDateTimezone()
+            new \DateTimeZone($intervention->getSignalement()->getTimezone())
         );
         $intervention->setScheduledAt($scheduledAtUtc);
 

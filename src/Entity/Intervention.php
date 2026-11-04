@@ -137,7 +137,7 @@ class Intervention implements EntityHistoryInterface, EntitySanitizerInterface
 
     public function getScheduledAt(): \DateTimeImmutable
     {
-        $timezone = $this->getPartner()?->getTerritory()?->getTimezone() ?? $this->getSignalement()->getTimezone() ?? TimezoneProvider::TIMEZONE_EUROPE_PARIS;
+        $timezone = $this->getSignalement()->getTimezone() ?? TimezoneProvider::TIMEZONE_EUROPE_PARIS;
         $scheduledDateConverted = $this->scheduledAt->setTimezone(new \DateTimeZone($timezone));
 
         return $scheduledDateConverted;
