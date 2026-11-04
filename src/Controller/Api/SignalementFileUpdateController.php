@@ -3,7 +3,6 @@
 namespace App\Controller\Api;
 
 use App\Dto\Api\Request\FileRequest;
-use App\Entity\Enum\DocumentType;
 use App\Entity\File;
 use App\EventListener\SecurityApiExceptionListener;
 use App\Factory\Api\FileFactory;
@@ -104,7 +103,6 @@ class SignalementFileUpdateController extends AbstractController
             throw new ValidationFailedException($fileRequest, $errors);
         }
 
-        $documentType = DocumentType::tryFrom($fileRequest->documentType);
         $ext = pathinfo($file->getFilename(), \PATHINFO_EXTENSION);
         if ($file->isTypeImage()) {
             $file->setDescription($fileRequest->description);
@@ -112,7 +110,7 @@ class SignalementFileUpdateController extends AbstractController
             $file->setDescription(null);
         }
         $file->setExtension($ext);
-        $file->setDocumentType($documentType);
+        $file->setDocumentType($fileRequest->getDocumentType());
         $this->entityManager->flush();
 
         return $this->json($this->fileFactory->createFrom($file));

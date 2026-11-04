@@ -4,7 +4,9 @@ namespace App\Controller\Api;
 
 use App\Dto\Api\Request\ArreteRequest;
 use App\Dto\Api\Response\ArreteResponse;
+use App\Entity\Affectation;
 use App\Entity\Signalement;
+use App\Entity\Suivi;
 use App\Entity\User;
 use App\Manager\ArreteManager;
 use App\Security\Voter\Api\ApiSignalementPartnerVoter;
@@ -176,6 +178,7 @@ class ArreteCreateController extends AbstractController
             ApiSignalementPartnerVoter::API_ADD_INTERVENTION,
             ['signalement' => $signalement, 'partner' => $partner]
         );
+        /** @var Affectation $affectation */
         $affectation = $signalement->getAffectationForPartner($partner);
 
         $errors = $this->validator->validate($arreteRequest);

@@ -208,6 +208,8 @@ class VisiteUploadDocumentsController extends AbstractController
             ], Response::HTTP_FORBIDDEN);
         }
 
+        /** @var Partner $partner */
+        $partner = $intervention->getPartner();
         $signalement = $intervention->getSignalement();
         /** @var User $user */
         $user = $this->getUser();
@@ -229,7 +231,7 @@ class VisiteUploadDocumentsController extends AbstractController
             $filesUploadRequest,
             $signalement,
             $intervention,
-            $intervention->getPartner(),
+            $partner,
             $user,
             $this->getDocumentType($typeDocumentVisite),
         );
@@ -238,12 +240,12 @@ class VisiteUploadDocumentsController extends AbstractController
 
         if ($this->isRapportVisite($typeDocumentVisite)) {
             $this->eventDispatcher->dispatch(
-                new InterventionEditedEvent($intervention, $user, $intervention->getPartner()),
+                new InterventionEditedEvent($intervention, $user, $partner),
                 InterventionEditedEvent::NAME
             );
         } else {
             $this->eventDispatcher->dispatch(
-                new FileUploadedEvent($signalement, $user, $fileList, $intervention->getPartner()),
+                new FileUploadedEvent($signalement, $user, $fileList, $partner),
                 FileUploadedEvent::NAME
             );
         }

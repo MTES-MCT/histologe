@@ -6,8 +6,6 @@ use App\Dto\Api\Request\AffectationRequest;
 use App\Dto\Api\Response\AffectationResponse;
 use App\Entity\Affectation;
 use App\Entity\Enum\AffectationStatus;
-use App\Entity\Enum\MotifCloture;
-use App\Entity\Enum\MotifRefus;
 use App\Entity\User;
 use App\EventListener\SecurityApiExceptionListener;
 use App\Manager\AffectationManager;
@@ -186,7 +184,7 @@ class AffectationUpdateController extends AbstractController
             throw new ValidationFailedException($affectationRequest, $errors);
         }
 
-        $affectation->setNextStatut(AffectationStatus::tryFrom($affectationRequest->statut));
+        $affectation->setNextStatut($affectationRequest->getStatut());
         $this->denyAccessUnlessGranted(ApiAffectationVoter::API_AFFECTATION_UPDATE_STATUS, $affectation, SecurityApiExceptionListener::TRANSITION_STATUT_DENIED);
         $this->applyUsagerNotification($affectationRequest, $affectation);
 
@@ -201,9 +199,10 @@ class AffectationUpdateController extends AbstractController
         /** @var User $user */
         $user = $this->getUser();
 
+        /** @var AffectationStatus $statut */
         $statut = $affectation->getNextStatut();
         if (AffectationStatus::CLOSED === $statut) {
-            $motifCloture = MotifCloture::tryFrom($affectationRequest->motifCloture);
+            $motifCloture = $affectationRequest->getMotifCloture();
 
             return $this->affectationManager->closeAffectation(
                 affectation: $affectation,
@@ -216,7 +215,7 @@ class AffectationUpdateController extends AbstractController
         }
         $motifRefus = $message = null;
         if (AffectationStatus::REFUSED === $statut) {
-            $motifRefus = MotifRefus::tryFrom($affectationRequest->motifRefus);
+            $motifRefus = $affectationRequest->getMotifRefus();
             $message = $affectationRequest->message;
         }
 
