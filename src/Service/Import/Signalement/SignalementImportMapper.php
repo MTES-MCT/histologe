@@ -18,6 +18,24 @@ class SignalementImportMapper
     private const STATUT_CSV_OUVERTURE = 'ouverture';
     private const STATUT_CSV_FERMETURE = 'fermeture';
 
+    private const ANONYMIZE_FIELDS = [
+        'numAllocataire',
+        'nomOccupant',
+        'prenomOccupant',
+        'telOccupant',
+        'mailOccupant',
+        'nomProprio',
+        'telProprio',
+        'mailProprio',
+        'nomDeclarant',
+        'prenomDeclarant',
+        'telDeclarant',
+        'mailDeclarant',
+        'structureDeclarant',
+        'montantAllocation',
+        'naissanceOccupants',
+    ];
+
     /**
      * @return array<string, string|int>
      */
@@ -115,7 +133,7 @@ class SignalementImportMapper
      *
      * @return array<int|string, mixed>
      */
-    public function map(array $columns, array $data): array
+    public function map(array $columns, array $data, bool $anonymize = false): array
     {
         /** @var array<int|string, mixed> $dataMapped */
         $dataMapped = [];
@@ -251,6 +269,17 @@ class SignalementImportMapper
                         $fieldValue = mb_strimwidth($fieldValue, 0, 50);
                         break;
                     default:
+                }
+
+                if ($anonymize && \in_array($fieldColumn, self::ANONYMIZE_FIELDS)) {
+                    if ('numAllocataire' === $fieldColumn || 'montantAllocation' === $fieldColumn) {
+                        $fieldValue = 0;
+                    } else {
+                        $fieldValue = $fieldColumn.'_anonymized_'.uniqid();
+                        if ('mailOccupant' === $fieldColumn || 'mailDeclarant' === $fieldColumn || 'mailProprio' === $fieldColumn) {
+                            $fieldValue .= '@example.com';
+                        }
+                    }
                 }
 
                 if (str_contains($fileColumn, 'Signalement - ')) {

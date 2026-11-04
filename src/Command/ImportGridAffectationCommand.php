@@ -35,6 +35,7 @@ class ImportGridAffectationCommand extends Command
     private const string PARAM_IGNORE_NOTIFICATION_ALL_PARTNER = 'ignore-notification-all';
     private const string PARAM_IGNORE_NOTIFICATION_PARTNER = 'ignore-notification-partners';
     private const string PARAM_FILE_VERSION = 'file-version';
+    private const string PARAM_ANONYMIZE = 'anonymize';
 
     public function __construct(
         #[Target('file.storage')] private readonly FilesystemOperator $fileStorage,
@@ -69,7 +70,18 @@ class ImportGridAffectationCommand extends Command
                 null,
                 'Partners will not be notify'
             )
-            ->addOption(self::PARAM_FILE_VERSION, null, InputOption::VALUE_REQUIRED, 'Grid affectation file version')
+            ->addOption(
+                self::PARAM_FILE_VERSION,
+                null,
+                InputOption::VALUE_REQUIRED,
+                'Grid affectation file version'
+            )
+            ->addOption(
+                self::PARAM_ANONYMIZE,
+                null,
+                InputOption::VALUE_NONE,
+                'Anonymize the data'
+            )
         ;
     }
 
@@ -84,6 +96,11 @@ class ImportGridAffectationCommand extends Command
         $toFile = $this->parameterBag->get('uploads_tmp_dir').'grille.csv';
         $isModeUpdate = false;
         $fileVersion = $input->getOption(self::PARAM_FILE_VERSION);
+        $anonymize = $input->getOption(self::PARAM_ANONYMIZE);
+
+        if ($anonymize) {
+            $io->warning('Anonymization mode is enabled, all user data will be anonymized');
+        }
 
         /** @var Territory $territory */
         $territory = $this->territoryRepository->findOneBy(['zip' => $territoryZip]);
@@ -126,6 +143,7 @@ class ImportGridAffectationCommand extends Command
             $territory,
             $csvData,
             $ignoreNotifPartnerTypes,
+            $anonymize,
             $output
         );
 
