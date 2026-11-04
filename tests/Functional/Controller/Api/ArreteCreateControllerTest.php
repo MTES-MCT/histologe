@@ -67,6 +67,9 @@ class ArreteCreateControllerTest extends WebTestCase
             if (('arrete_mainlevee' === $type && 'type' === $key) || 'partenaireUuid' === $key) {
                 continue;
             }
+            if (\in_array($key, ['date', 'mainLeveeDate'], true)) {
+                $value = (new \DateTimeImmutable($value))->format('d/m/Y');
+            }
             $this->assertStringContainsString($value, $lastDescription);
         }
         $notifs = static::getContainer()->get(NotificationRepository::class)->findBy([
@@ -173,7 +176,7 @@ class ArreteCreateControllerTest extends WebTestCase
                 'date' => '2025-03-11',
                 'numero' => '2023/DD13/00664',
                 'numeroDossier' => '2023-DD13-00172',
-                'type' => 'Arrêté L.511-11 - Suroccupation',
+                'type' => 'Suroccupation',
             ],
         ];
         yield 'Payload arrêté with mainlevee' => [
@@ -182,7 +185,7 @@ class ArreteCreateControllerTest extends WebTestCase
                 'date' => '2025-03-11',
                 'numero' => '2023/DD13/00664',
                 'numeroDossier' => '2023-DD13-00172',
-                'type' => 'Arrêté L.511-11 - Suroccupation',
+                'type' => 'Suroccupation',
                 'mainLeveeDate' => '2025-03-13',
                 'mainLeveeNumero' => '2023-DD13-00172',
             ],

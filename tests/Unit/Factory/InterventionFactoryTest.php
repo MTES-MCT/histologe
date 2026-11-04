@@ -18,7 +18,7 @@ class InterventionFactoryTest extends TestCase
     {
         $intervention = (new InterventionFactory())->createInstanceFrom(
             $affectation = $this->getAffectation(PartnerType::ARS),
-            InterventionType::ARRETE_PREFECTORAL,
+            InterventionType::VISITE,
             new \DateTimeImmutable(),
             new \DateTimeImmutable(),
             Intervention::STATUS_DONE,
@@ -26,14 +26,12 @@ class InterventionFactoryTest extends TestCase
             1,
             'ARS 13',
             'Il existe 1 arrêté de n° 2023-DD13-00032 daté du 05/05/2023 dans le dossier de n° 2023/DD13/00001.',
-            $this->getAdditionalInformationArrete()
         );
-        $this->assertEquals(InterventionType::ARRETE_PREFECTORAL, $intervention->getType());
+        $this->assertEquals(InterventionType::VISITE, $intervention->getType());
         $this->assertEquals('esabora', $intervention->getProviderName());
         $this->assertEquals(1, $intervention->getProviderId());
         $this->assertEquals('ARS 13', $intervention->getDoneBy());
         $this->assertStringStartsWith('Il existe 1', $intervention->getDetails());
-        $this->assertCount(4, $intervention->getAdditionalInformation());
         $this->assertNotNull($affectation->getSignalement());
         $this->assertNotNull($affectation->getPartner());
     }

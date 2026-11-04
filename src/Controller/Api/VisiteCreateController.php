@@ -30,7 +30,7 @@ class VisiteCreateController extends AbstractController
 {
     public function __construct(
         private readonly InterventionManager $interventionManager,
-        private readonly VisiteFactory $interventionFactory,
+        private readonly VisiteFactory $visiteFactory,
         private readonly ValidatorInterface $validator,
         private readonly PartnerAuthorizedResolver $partnerAuthorizedResolver,
         private readonly EntityManagerInterface $entityManager,
@@ -227,7 +227,7 @@ class VisiteCreateController extends AbstractController
 
         $this->entityManager->flush();
 
-        return $this->json($this->interventionFactory->createInstance($intervention), Response::HTTP_CREATED);
+        return $this->json($this->visiteFactory->createInstance($intervention), Response::HTTP_CREATED);
     }
 
     private function getInterventionVisitePlanned(Signalement $signalement, Partner $partner): false|Intervention

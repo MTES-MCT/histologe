@@ -11,9 +11,11 @@ use App\Entity\Suivi;
 use App\Factory\FileFactory;
 use App\Factory\InterventionFactory;
 use App\Manager\AffectationManager;
+use App\Manager\ArreteManager;
 use App\Manager\SuiviManager;
 use App\Manager\UserManager;
 use App\Manager\UserSignalementSubscriptionManager;
+use App\Repository\ArreteRepository;
 use App\Repository\InterventionRepository;
 use App\Repository\SuiviRepository;
 use App\Service\Files\ImageManipulationHandler;
@@ -24,7 +26,6 @@ use App\Service\Interconnection\Esabora\EsaboraSISHService;
 use App\Service\Interconnection\Esabora\Response\DossierStateSCHSResponse;
 use App\Service\Interconnection\Esabora\Response\DossierStateSISHResponse;
 use App\Service\Security\FileScanner;
-use App\Service\Signalement\Qualification\SignalementQualificationUpdater;
 use App\Service\Signalement\Suivi\SuiviDescriptionHelper;
 use App\Service\UploadHandlerService;
 use App\Tests\FixturesHelper;
@@ -34,7 +35,6 @@ use PHPUnit\Framework\Attributes\DataProvider;
 use Psr\EventDispatcher\EventDispatcherInterface;
 use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
-use Symfony\Component\HtmlSanitizer\HtmlSanitizerInterface;
 use Symfony\Component\Workflow\WorkflowInterface;
 
 class EsaboraManagerTest extends KernelTestCase
@@ -46,6 +46,8 @@ class EsaboraManagerTest extends KernelTestCase
     private SuiviManager $suiviManager;
     private SuiviRepository $suiviRepository;
     private InterventionRepository $interventionRepository;
+    private ArreteRepository $arreteRepository;
+    private ArreteManager $arreteManager;
     private EventDispatcherInterface $eventDispatcher;
     private UserManager $userManager;
     private LoggerInterface $logger;
@@ -54,8 +56,6 @@ class EsaboraManagerTest extends KernelTestCase
     private UploadHandlerService $uploadHander;
     private ImageManipulationHandler $imageManipulationHandler;
     private FileFactory $fileFactory;
-    private SignalementQualificationUpdater $signalementQualificationUpdater;
-    private HtmlSanitizerInterface $htmlSanitizerInterface;
     private WorkflowInterface $workflow;
     private UserSignalementSubscriptionManager $userSignalementSubscriptionManager;
 
@@ -73,6 +73,8 @@ class EsaboraManagerTest extends KernelTestCase
         $this->suiviManager = static::getContainer()->get(SuiviManager::class);
         $this->suiviRepository = static::getContainer()->get(SuiviRepository::class);
         $this->interventionRepository = static::getContainer()->get(InterventionRepository::class);
+        $this->arreteRepository = static::getContainer()->get(ArreteRepository::class);
+        $this->arreteManager = static::getContainer()->get(ArreteManager::class);
 
         $this->eventDispatcher = static::getContainer()->get(EventDispatcherInterface::class);
         $this->userManager = static::getContainer()->get(UserManager::class);
@@ -82,10 +84,34 @@ class EsaboraManagerTest extends KernelTestCase
         $this->uploadHander = static::getContainer()->get(UploadHandlerService::class);
         $this->imageManipulationHandler = static::getContainer()->get(ImageManipulationHandler::class);
         $this->fileFactory = static::getContainer()->get(FileFactory::class);
-        $this->signalementQualificationUpdater = static::getContainer()->get(SignalementQualificationUpdater::class);
-        $this->htmlSanitizerInterface = static::getContainer()->get('html_sanitizer.sanitizer.app.message_sanitizer');
         $this->workflow = static::getContainer()->get('state_machine.intervention_planning');
         $this->userSignalementSubscriptionManager = static::getContainer()->get(UserSignalementSubscriptionManager::class);
+    }
+
+    private function createEsaboraManager(): EsaboraManager
+    {
+        return new EsaboraManager(
+            $this->affectationManager,
+            $this->suiviManager,
+            $this->suiviRepository,
+            $this->interventionRepository,
+            $this->arreteRepository,
+            new InterventionFactory(),
+            $this->arreteManager,
+            $this->eventDispatcher, // @phpstan-ignore-line
+            $this->userManager,
+            $this->logger,
+            $this->entityManager,
+            $this->zipHelper,
+            $this->fileScanner,
+            $this->uploadHander,
+            $this->imageManipulationHandler,
+            $this->fileFactory,
+            $this->workflow,
+            $this->userSignalementSubscriptionManager,
+            true,
+            static::getContainer()->get(SuiviDescriptionHelper::class),
+        );
     }
 
     #[DataProvider('provideDataForSynchronization')]
@@ -113,28 +139,7 @@ class EsaboraManagerTest extends KernelTestCase
                 ? new DossierStateSISHResponse(json_decode((string) $responseEsabora, true), 200)
                 : new DossierStateSCHSResponse(json_decode((string) $responseEsabora, true), 200);
 
-        $esaboraManager = new EsaboraManager(
-            $this->affectationManager,
-            $this->suiviManager,
-            $this->suiviRepository,
-            $this->interventionRepository,
-            new InterventionFactory(),
-            $this->eventDispatcher, // @phpstan-ignore-line
-            $this->userManager,
-            $this->logger,
-            $this->entityManager,
-            $this->zipHelper,
-            $this->fileScanner,
-            $this->uploadHander,
-            $this->imageManipulationHandler,
-            $this->fileFactory,
-            $this->signalementQualificationUpdater,
-            $this->htmlSanitizerInterface,
-            $this->workflow,
-            $this->userSignalementSubscriptionManager,
-            true,
-            static::getContainer()->get(SuiviDescriptionHelper::class),
-        );
+        $esaboraManager = $this->createEsaboraManager();
 
         $esaboraManager->synchronizeAffectationFrom($dossierResponse, $affectation);
         $this->entityManager->flush();
@@ -248,28 +253,7 @@ class EsaboraManagerTest extends KernelTestCase
                 ? new DossierStateSISHResponse(json_decode((string) $responseEsabora, true), 200)
                 : new DossierStateSCHSResponse(json_decode((string) $responseEsabora, true), 200);
 
-        $esaboraManager = new EsaboraManager(
-            $this->affectationManager,
-            $this->suiviManager,
-            $this->suiviRepository,
-            $this->interventionRepository,
-            new InterventionFactory(),
-            $this->eventDispatcher, // @phpstan-ignore-line
-            $this->userManager,
-            $this->logger,
-            $this->entityManager,
-            $this->zipHelper,
-            $this->fileScanner,
-            $this->uploadHander,
-            $this->imageManipulationHandler,
-            $this->fileFactory,
-            $this->signalementQualificationUpdater,
-            $this->htmlSanitizerInterface,
-            $this->workflow,
-            $this->userSignalementSubscriptionManager,
-            true,
-            static::getContainer()->get(SuiviDescriptionHelper::class),
-        );
+        $esaboraManager = $this->createEsaboraManager();
 
         $esaboraManager->synchronizeAffectationFrom($dossierResponse, $affectation);
         $this->entityManager->flush();
@@ -309,28 +293,7 @@ class EsaboraManagerTest extends KernelTestCase
         $signalement = $this->entityManager->getRepository(Signalement::class)->findOneBy([
             'reference' => $referenceSignalement,
         ]);
-        $esaboraManager = new EsaboraManager(
-            $this->affectationManager,
-            $this->suiviManager,
-            $this->suiviRepository,
-            $this->interventionRepository,
-            new InterventionFactory(),
-            $this->eventDispatcher, // @phpstan-ignore-line
-            $this->userManager,
-            $this->logger,
-            $this->entityManager,
-            $this->zipHelper,
-            $this->fileScanner,
-            $this->uploadHander,
-            $this->imageManipulationHandler,
-            $this->fileFactory,
-            $this->signalementQualificationUpdater,
-            $this->htmlSanitizerInterface,
-            $this->workflow,
-            $this->userSignalementSubscriptionManager,
-            true,
-            static::getContainer()->get(SuiviDescriptionHelper::class),
-        );
+        $esaboraManager = $this->createEsaboraManager();
 
         $dossierVisite = $this->getDossierVisiteSISHCollectionResponse()->getCollection()[0];
         $affectation = $signalement->getAffectations()->first();

@@ -2,8 +2,11 @@
 
 namespace App\Factory;
 
+use App\Entity\Address;
 use App\Entity\Arrete;
+use App\Entity\Enum\ArreteCreationSource;
 use App\Entity\Enum\ArreteType;
+use App\Entity\Signalement;
 use App\Entity\User;
 use App\Exception\Address\TerritoryNotFoundForCityCodeException;
 use App\Repository\AddressRepository;
@@ -20,6 +23,42 @@ class ArreteFactory
         private readonly RnbService $rnbService,
         private readonly AddressFactory $addressFactory,
     ) {
+    }
+
+    /**
+     * @param array<mixed> $additionalInformation
+     */
+    public function createInstance(
+        \DateTimeImmutable $dateArrete,
+        ArreteType $arreteType,
+        Address $address,
+        ?string $syndic = null,
+        ?string $identifiantParcellaire = null,
+        ?\DateTimeImmutable $dateMainLevee = null,
+        ?User $createdBy = null,
+        array $additionalInformation = [],
+        ?Signalement $signalement = null,
+        ArreteCreationSource $arreteCreationSource = ArreteCreationSource::IMPORT,
+        ?int $providerId = null,
+    ): Arrete {
+        $arrete = new Arrete()
+            ->setDateArrete($dateArrete)
+            ->setArreteType($arreteType)
+            ->setAddress($address)
+            ->setSyndic($syndic)
+            ->setIdentifiantParcellaire($identifiantParcellaire)
+            ->setImportedAt(new \DateTimeImmutable())
+            ->setCreatedBy($createdBy)
+            ->setAdditionalInformation($additionalInformation)
+            ->setSignalement($signalement)
+            ->setArreteCreationSource($arreteCreationSource)
+            ->setProviderId($providerId);
+
+        if ($dateMainLevee) {
+            $arrete->setDateMainLevee($dateMainLevee);
+        }
+
+        return $arrete;
     }
 
     /**
@@ -89,18 +128,15 @@ class ArreteFactory
             return null;
         }
 
-        $arrete = new Arrete()
-            ->setDateArrete($arreteImportRow->getDateArrete())
-            ->setArreteType(ArreteType::tryFromLabel($arreteImportRow->getClassificationArrete()))
-            ->setSyndic($arreteImportRow->getDenominationSyndic())
-            ->setAddress($address)
-            ->setIdentifiantParcellaire($arreteImportRow->getIdentifiantParcellaire())
-            ->setImportedAt(new \DateTimeImmutable())
-            ->setCreatedBy($user);
-
-        if ($arreteImportRow->getDateArreteMainLevee()) {
-            $arrete->setDateMainLevee($arreteImportRow->getDateArreteMainLevee());
-        }
+        $arrete = $this->createInstance(
+            dateArrete: $arreteImportRow->getDateArrete(),
+            arreteType: ArreteType::tryFromLabel($arreteImportRow->getClassificationArrete()),
+            address: $address,
+            syndic: $arreteImportRow->getDenominationSyndic(),
+            identifiantParcellaire: $arreteImportRow->getIdentifiantParcellaire(),
+            dateMainLevee: $arreteImportRow->getDateArreteMainLevee(),
+            createdBy: $user,
+        );
 
         return $arrete;
     }
