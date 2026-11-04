@@ -113,6 +113,18 @@ class VisiteRequest implements RequestInterface, RequestFileInterface
         return $this->details ?? null;
     }
 
+    #[Ignore]
+    public function getScheduledAt(): \DateTimeImmutable
+    {
+        return new \DateTimeImmutable($this->date);
+    }
+
+    #[Ignore]
+    public function getScheduledAtTime(): \DateTimeImmutable
+    {
+        return new \DateTimeImmutable($this->getScheduledAt()->format('Y-m-d').' '.$this->time);
+    }
+
     /**
      * @return array<mixed>
      */

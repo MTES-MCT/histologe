@@ -2,8 +2,12 @@
 
 namespace App\Dto\Api\Request;
 
+use App\Entity\Enum\AffectationStatus;
+use App\Entity\Enum\MotifCloture;
+use App\Entity\Enum\MotifRefus;
 use OpenApi\Attributes as OA;
 use Symfony\Component\Serializer\Attribute\Groups;
+use Symfony\Component\Serializer\Attribute\Ignore;
 use Symfony\Component\Validator\Constraints as Assert;
 
 #[OA\Schema(
@@ -132,5 +136,23 @@ class AffectationRequest implements RequestInterface
         )]
         public ?bool $notifyUsager = null,
     ) {
+    }
+
+    #[Ignore]
+    public function getStatut(): AffectationStatus
+    {
+        return AffectationStatus::from($this->statut);
+    }
+
+    #[Ignore]
+    public function getMotifCloture(): MotifCloture
+    {
+        return MotifCloture::from($this->motifCloture);
+    }
+
+    #[Ignore]
+    public function getMotifRefus(): MotifRefus
+    {
+        return MotifRefus::from($this->motifRefus);
     }
 }
