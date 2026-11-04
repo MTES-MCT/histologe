@@ -3,6 +3,10 @@
 namespace App\Service\ServiceSecours;
 
 use App\Entity\Enum\ServiceSecoursCategory;
+use Sentry\Severity;
+use Sentry\State\Scope;
+use function Sentry\captureMessage;
+use function Sentry\withScope;
 
 class ServiceSecoursCategoryResolver
 {
@@ -28,6 +32,14 @@ class ServiceSecoursCategoryResolver
         if (preg_match(self::PATTERN_SDIS, $organizationalUnit)) {
             return ServiceSecoursCategory::SDIS;
         }
+        withScope(static function (Scope $scope) use ($organizationalUnit): void {
+            $scope->setLevel(Severity::warning());
+            $scope->setExtra('organizational_unit', $organizationalUnit);
+            captureMessage(
+                '[Service-secours] OrganizationalUnit non résolu : '.$organizationalUnit,
+                Severity::warning()
+            );
+        });
 
         return ServiceSecoursCategory::AUTRE;
     }
