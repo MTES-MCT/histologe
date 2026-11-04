@@ -5,6 +5,7 @@ namespace App\Tests\Unit\EventSubscriber;
 use App\Entity\User;
 use App\EventSubscriber\LogoutSubscriber;
 use App\Security\User\ServiceSecoursUser;
+use App\Security\User\SignalementBailleur;
 use App\Security\User\SignalementUser;
 use App\Service\Gouv\ProConnect\ProConnectAuthentication;
 use App\Service\Gouv\ProConnect\ProConnectContext;
@@ -204,6 +205,130 @@ class LogoutSubscriberTest extends TestCase
             $this->proConnectContext,
             $this->urlGenerator,
             $logger,
+        );
+
+        $subscriber->onLogout($event);
+
+        $response = $event->getResponse();
+        $this->assertInstanceOf(RedirectResponse::class, $response);
+        $this->assertSame('http://service-secours.histologe.test', $response->getTargetUrl());
+    }
+
+    public function testLogoutRedirectsForSignalementBailleur(): void
+    {
+        /** @var MockObject&SignalementBailleur $user */
+        $user = $this->createMock(SignalementBailleur::class);
+
+        /** @var MockObject&TokenInterface $token */
+        $token = $this->createMock(TokenInterface::class);
+        $token->method('getUser')->willReturn($user);
+
+        $this->session
+            ->expects($this->once())
+            ->method('invalidate');
+
+        $request = new Request();
+        $request->setSession($this->session);
+
+        $event = new LogoutEvent($request, $token);
+
+        $this->proConnectContext
+            ->expects($this->once())
+            ->method('clearSession');
+
+        $this->urlGenerator
+            ->expects($this->once())
+            ->method('generate')
+            ->with($this->equalTo('app_login_bailleur'))
+            ->willReturn('/connexion-bailleur');
+
+        $subscriber = new LogoutSubscriber(
+            $this->proConnectAuth,
+            $this->proConnectContext,
+            $this->urlGenerator,
+            $this->logger,
+        );
+
+        $subscriber->onLogout($event);
+
+        $response = $event->getResponse();
+        $this->assertInstanceOf(RedirectResponse::class, $response);
+        $this->assertSame('/connexion-bailleur', $response->getTargetUrl());
+    }
+
+    public function testLogoutRedirectsToProConnectForServiceSecoursUser(): void
+    {
+        $request = new Request([], [], [], [], [], ['HTTP_HOST' => 'service-secours.histologe.test']);
+        $this->session
+            ->expects($this->once())
+            ->method('has')
+            ->with('proconnect_id_token')
+            ->willReturn(true);
+        $request->setSession($this->session);
+
+        $serviceSecoursUser = new ServiceSecoursUser(
+            'uuid-123',
+            'agent@test.fr',
+            'SDIS 13',
+            '12345678901234',
+            '00000000-0000-0000-0000-000000000001',
+        );
+
+        /** @var MockObject&TokenInterface $token */
+        $token = $this->createMock(TokenInterface::class);
+        $token->method('getUser')->willReturn($serviceSecoursUser);
+
+        $event = new LogoutEvent($request, $token);
+
+        $this->proConnectAuth = $this->createMock(ProConnectAuthentication::class);
+        $this->proConnectAuth->method('getLogoutUrl')->willReturn('https://proconnect/logout');
+
+        $subscriber = new LogoutSubscriber(
+            $this->proConnectAuth,
+            $this->proConnectContext,
+            $this->urlGenerator,
+            $this->logger,
+        );
+
+        $subscriber->onLogout($event);
+        $response = $event->getResponse();
+        $this->assertInstanceOf(RedirectResponse::class, $response);
+        $this->assertSame('https://proconnect/logout', $response->getTargetUrl());
+    }
+
+    public function testLogoutRedirectsToServiceSecoursHomeWhenNoIdToken(): void
+    {
+        $request = new Request([], [], [], [], [], ['HTTP_HOST' => 'service-secours.histologe.test']);
+        $this->session
+            ->expects($this->once())
+            ->method('has')
+            ->with('proconnect_id_token')
+            ->willReturn(false);
+        $request->setSession($this->session);
+
+        $serviceSecoursUser = new ServiceSecoursUser(
+            'uuid-123',
+            'agent@test.fr',
+            'SDIS 13',
+            '12345678901234',
+            '00000000-0000-0000-0000-000000000001',
+        );
+
+        /** @var MockObject&TokenInterface $token */
+        $token = $this->createMock(TokenInterface::class);
+        $token->method('getUser')->willReturn($serviceSecoursUser);
+
+        $event = new LogoutEvent($request, $token);
+
+        $this->urlGenerator->method('generate')
+            ->with('service_secours_home', ['domain' => 'histologe.test'])
+            ->willReturn('http://service-secours.histologe.test');
+
+        $subscriber = new LogoutSubscriber(
+            $this->proConnectAuth,
+            $this->proConnectContext,
+            $this->urlGenerator,
+            $this->logger,
         );
 
         $subscriber->onLogout($event);
