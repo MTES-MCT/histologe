@@ -3,6 +3,7 @@
 namespace App\Form;
 
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\FileType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -24,6 +25,13 @@ class DocumentIAType extends AbstractType
                 'required' => true,
                 'help' => 'Vous pouvez récupérer l\'ID d\'un workflow en utilisant l\'API Document IA (GET /api/v2/workflows)',
             ])
+            ->add('documentType', ChoiceType::class, [
+                'label' => 'Type de document (facultatif)',
+                'required' => false,
+                'placeholder' => 'Aucun',
+                'choices' => array_combine($options['document_types'], $options['document_types']),
+                'help' => 'Champ utilisé pour le workflow document-extraction-v2',
+            ])
             ->add('file', FileType::class, [
                 'label' => 'Fichier à faire analyser par Document IA',
                 'required' => true,
@@ -39,6 +47,8 @@ class DocumentIAType extends AbstractType
         $resolver->setDefaults([
             'allow_extra_fields' => true,
             'csrf_token_id' => 'document_ia_form',
+            'document_types' => [],
         ]);
+        $resolver->setAllowedTypes('document_types', 'string[]');
     }
 }

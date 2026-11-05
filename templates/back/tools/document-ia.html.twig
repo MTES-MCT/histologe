@@ -48,7 +48,43 @@
                     </div>
                 </div>
             </header>
-            
+
+            {% if executionError %}
+                {% set problemDetail = executionError.problemDetail %}
+                <div class="fr-my-5v">
+                    <h2>Résultats :</h2>
+                    <p><span class="fr-badge fr-badge--error">Erreur</span></p>
+
+                    <div class="fr-alert fr-alert--error fr-mb-3v">
+                        <p>{{ executionError.message|nl2br }}</p>
+                    </div>
+
+                    {% if problemDetail %}
+                        <ul>
+                            {% if problemDetail.status ?? null %}
+                                <li>Statut HTTP : <strong>{{ problemDetail.status }}</strong></li>
+                            {% endif %}
+                            {% if problemDetail.code ?? null %}
+                                <li>Code : <strong>{{ problemDetail.code }}</strong></li>
+                            {% endif %}
+                            {% if problemDetail.trace_id ?? null %}
+                                <li>Trace ID : <code>{{ problemDetail.trace_id }}</code></li>
+                            {% endif %}
+                        </ul>
+
+                        {% if problemDetail.errors ?? null %}
+                            <h3>Détails de l'erreur</h3>
+                            <pre>{{ problemDetail.errors|json_encode(constant('JSON_PRETTY_PRINT') b-or constant('JSON_UNESCAPED_UNICODE') b-or constant('JSON_UNESCAPED_SLASHES')) }}</pre>
+                        {% endif %}
+
+                        <details class="fr-mt-3v">
+                            <summary>Réponse brute (JSON)</summary>
+                            <pre>{{ problemDetail|json_encode(constant('JSON_PRETTY_PRINT') b-or constant('JSON_UNESCAPED_UNICODE') b-or constant('JSON_UNESCAPED_SLASHES')) }}</pre>
+                        </details>
+                    {% endif %}
+                </div>
+            {% endif %}
+
             {% if results %}
                 {% import _self as documentIA %}
                 <div class="fr-my-5v">
@@ -113,6 +149,7 @@
                 <h2>Analyser un fichier :</h2>
                 {{ form_start(documentIAForm) }}
                     {{ form_row(documentIAForm.workflowId) }}
+                    {{ form_row(documentIAForm.documentType) }}
                     {{ form_row(documentIAForm.file) }}
                     <div class="fr-grid-row fr-grid-row--middle">
                         {{ form_widget(documentIAForm.submit) }}

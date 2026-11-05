@@ -28,9 +28,12 @@ class DocumentIAToolController extends AbstractController
 
         $workflows = $documentIAService->listWorkflows();
 
-        $documentIAForm = $this->createForm(DocumentIAType::class);
+        $documentIAForm = $this->createForm(DocumentIAType::class, null, [
+            'document_types' => $documentIAService->listDocumentTypes(),
+        ]);
         $documentIAForm->handleRequest($request);
         $results = [];
+        $executionError = null;
 
         if ($workflows && $documentIAForm->isSubmitted()) {
             if ($documentIAForm->isValid()) {
@@ -59,9 +62,16 @@ class DocumentIAToolController extends AbstractController
 
                     if ($workflowFound && $fileExtensionValid) {
                         try {
-                            $results = $documentIAService->executeWorkflow($workflowId, $file);
+                            $results = $documentIAService->executeWorkflow(
+                                $workflowId,
+                                $file,
+                                $documentIAForm->get('documentType')->getData()
+                            );
                         } catch (\Exception $e) {
-                            $this->addFlash('error', 'Erreur lors de l\'exécution du workflow : '.$e->getMessage());
+                            $executionError = [
+                                'message' => $e->getMessage(),
+                                'problemDetail' => $documentIAService->getProblemDetail($e),
+                            ];
                         }
                     }
                 } else {
@@ -76,6 +86,7 @@ class DocumentIAToolController extends AbstractController
             'documentIAWorkflows' => $workflows,
             'documentIAForm' => $documentIAForm->createView(),
             'results' => $results,
+            'executionError' => $executionError,
         ]);
     }
 }
