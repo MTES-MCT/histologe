@@ -6,7 +6,24 @@
     {% include "breadcrumbs.html.twig" with { 'breadcrumbsLabel': 'Test Iframe' } %}
 	<main id="content">
 		<section class="fr-container">
+			<h2>Demande de lien de signalement</h2>
 			<iframe src="{{ path('iframe_demande_lien_signalement') }}" width="100%" height="500px" frameborder="0"></iframe>
+		</section>
+
+		<section class="fr-container fr-mt-5w">
+			{# Reproduit l'intégration du site vitrine (CMS) : hauteur ajustée au contenu via iframe-resizer #}
+			<h2>Statistiques</h2>
+			<iframe
+				id="stats-iframe"
+				src="{{ path('iframe_stats') }}"
+				title="Statistiques d'usage du service {{ platform.name }}"
+				width="100%"
+				style="border:0; width:1px; min-width:100%; height:3900px;"
+			></iframe>
+			<script nonce="{{ app.request.attributes.get('csp_script_nonce') }}" src="https://cdnjs.cloudflare.com/ajax/libs/iframe-resizer/4.3.2/iframeResizer.min.js"></script>
+			<script nonce="{{ app.request.attributes.get('csp_script_nonce') }}">
+				iFrameResize({ checkOrigin: false, heightCalculationMethod: 'max', scrolling: 'auto' }, '#stats-iframe');
+			</script>
 		</section>
 	</main>
 {% endblock %}
