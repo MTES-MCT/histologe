@@ -41,7 +41,9 @@ Voir aussi la partie Stockage.
 ### Réseau
 L'ensemble du système communique avec le protocole HTTPS.
 
-Les DNS sont gérés via le service Alwaysdata, qui redirige vers Scalingo.
+Les DNS sont gérés via le service OVH, qui redirige vers Ogo pour les sous-domaines et Scalingo pour le domaine principal.
+
+La configuration DNS, les contraintes techniques et les procédures de modification sont documentées dans [dns.md](./infrastructure/dns.md).
 
 ### Stockage
 Les documents sont stockés sur une infrastructure cloud OVH de type "Object Storage".
