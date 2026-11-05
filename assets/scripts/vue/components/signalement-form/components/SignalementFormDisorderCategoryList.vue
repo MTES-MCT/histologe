@@ -4,7 +4,7 @@
       <div
         v-for="component in components.body"
         v-bind:key="component.slug"
-        class="fr-col-6 fr-col-md-4"
+        class="fr-col-12 fr-col-md-6"
         role="listitem"
         >
           <SignalementFormDisorderCategoryItem
