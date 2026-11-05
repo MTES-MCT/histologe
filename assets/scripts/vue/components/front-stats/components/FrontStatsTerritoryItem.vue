@@ -9,7 +9,7 @@
         />
       <div class="clear"></div>
       <!-- Les graphiques ne réagissent pas au changement de données : la clé force leur recréation -->
-      <div class="graph" :key="modelValue"><slot name="graph" :title-id="titleId"></slot></div>
+      <div class="graph" :key="modelValue"><slot name="graph" :titleId="titleId"></slot></div>
     </div>
   </div>
 </template>
@@ -30,6 +30,12 @@ withDefaults(defineProps<{
 // Émissions
 const emit = defineEmits<{
   'update:modelValue': [value: YearType]
+}>()
+
+// Slots
+defineSlots<{
+  title(): unknown
+  graph(props: { titleId: string }): unknown
 }>()
 
 // Identifiant du titre, qui sert de libellé au graphique et à son tableau de données
