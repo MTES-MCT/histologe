@@ -1,4 +1,4 @@
-<div id="suivi_{{ suivi.id }}" class="message-box {{ messageBoxClass }}">
+<li id="suivi_{{ suivi.id }}" class="message-box {{ messageBoxClass }}">
 	<div>
 		<strong>
 			{{ suivi.getCreatedByLabel(forBailleur: not forUsager, withAgentName: false) }}
@@ -13,4 +13,4 @@
 		{% set recipient = forUsager ? constant('App\\Service\\Signalement\\Suivi\\SuiviRecipient::USAGER') : constant('App\\Service\\Signalement\\Suivi\\SuiviRecipient::DEFAULT') %}
 		{{ suivi.description(recipient: recipient)|replace({'___TOKEN___':csrf_token('suivi_signalement_ext_file_view')})|raw }}
 	</div>
-</div>
+</li>

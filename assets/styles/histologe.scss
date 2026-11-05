@@ -133,7 +133,7 @@ pre {
             display: flex;
             flex-wrap: nowrap;
             flex-direction: row-reverse;
-            justify-content: flex-end; /* par défaut : tous à droite */
+            justify-content: end;
             gap: 0.5rem;
             width: 100%;
         }
@@ -1056,8 +1056,12 @@ ul + p {
     }
 }
 
+.message-box-container {
+    padding-left: 0px;
+} 
 .message-box{
     margin-top: 1rem;
+    list-style: none;
     .message-box-message{
         background: #E5E5E5;
         padding: 1rem;

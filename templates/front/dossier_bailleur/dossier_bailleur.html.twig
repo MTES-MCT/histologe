@@ -38,55 +38,57 @@
 			<div class="signalement-card fr-mb-3w">
 				<div class="fr-grid-row fr-grid-row--gutters">
 					<div class="fr-col-12 fr-col-md-6">
-						<div class="fr-mb-1w">
-							Déclarant
-							<br>
-							<span class="info">
-								{{signalement.civiliteOccupant(false)}} {{ signalement.nomOccupant|capitalize }} {{ signalement.prenomOccupant|capitalize }}
-							</span>
-						</div>
-						<div class="fr-mb-1w">
-							Adresse du logement
-							<br>
-							<span class="info">
-								{{ signalement.address.full }}
-								{% if signalement.complementAdresseOccupant %}
-									<br>
-									{{signalement.complementAdresseOccupant}}
-								{% endif %}
-							</span>
-						</div>
+						<ul class="fr-grid-row">
+							<li class="fr-col-12">
+								Déclarant
+								<br>
+								<span class="info">
+									{{signalement.civiliteOccupant(false)}} {{ signalement.nomOccupant|capitalize }} {{ signalement.prenomOccupant|capitalize }}
+								</span>
+							</li>
+							<li class="fr-col-12 fr-mt-1w">
+								Adresse du logement
+								<br>
+								<span class="info">
+									{{ signalement.address.full }}
+									{% if signalement.complementAdresseOccupant %}
+										<br>
+										{{signalement.complementAdresseOccupant}}
+									{% endif %}
+								</span>
+							</li>
+						</ul>
 					</div>
 					<div class="fr-col-12 fr-col-md-6">
-						<div class="fr-mb-1w">
-							Référence du dossier
-							<br>
-							<span class="info">#{{ signalement.referenceInjonction }}</span>
-						</div>
-						
-						<div class="fr-mb-1w">
-							Votre réponse
-							<br>
-							<span class="info">
-								{{suiviReponse ? suiviReponse.category.labelReponseBailleur : 'Aucune'}}
-							</span>
-						</div>
-						
-						<div class="fr-mb-1w">
-							{% if suiviReponse %}
-								Réponse donnée le
+						<ul class="fr-grid-row">
+							<li class="fr-col-12">
+								Référence du dossier
+								<br>
+								<span class="info">#{{ signalement.referenceInjonction }}</span>
+							</li>
+							<li class="fr-col-12 fr-mt-1w">
+								Votre réponse
 								<br>
 								<span class="info">
-									{{ suiviReponse.createdAt|date('d/m/Y') }}
+									{{suiviReponse ? suiviReponse.category.labelReponseBailleur : 'Aucune'}}
 								</span>
-							{% elseif signalement.statut is same as enum('App\\Entity\\Enum\\SignalementStatus').INJONCTION_BAILLEUR %}
-								Réponse attendue d'ici le
-								<br>
-								<span class="info">
-									{{ dateLimit|date('d/m/Y') }}
-								</span>
-							{% endif %}
-						</div>
+							</li>
+							<li class="fr-col-12 fr-mt-1w">
+								{% if suiviReponse %}
+									Réponse donnée le
+									<br>
+									<span class="info">
+										{{ suiviReponse.createdAt|date('d/m/Y') }}
+									</span>
+								{% elseif signalement.statut is same as enum('App\\Entity\\Enum\\SignalementStatus').INJONCTION_BAILLEUR %}
+									Réponse attendue d'ici le
+									<br>
+									<span class="info">
+										{{ dateLimit|date('d/m/Y') }}
+									</span>
+								{% endif %}
+							</li>
+						</ul>
 					</div>
 				</div>	
 			</div>
@@ -182,35 +184,45 @@
 		<div class="fr-col-12 fr-col-md-6">
 			<div class="fr-mb-4w signalement-group-data-card">
 				<h2 class="title-blue-france fr-mb-1w">Vos coordonnées</h2>
-				{{signalement.nomProprio}}
-				{% if signalement.prenomProprio %}
-					{{ signalement.prenomProprio }}
-				{% endif %}
-				{% if signalement.adresseProprio %}
-					<br>
-					{{ signalement.adresseProprio }}
-				{% endif %}
-				{% if signalement.codePostalProprio %}
-					{{ signalement.codePostalProprio }}
-				{% endif %}
-				{% if signalement.villeProprio %}
-					{{ signalement.villeProprio }}
-				{% endif %}
-				{% if signalement.mailProprio %}
-					<br>
-					{{ signalement.mailProprio }}
-					{% if show_email_alert(signalement.mailProprio) %}
-						<p class="fr-badge fr-badge--error">Format non valide, merci de nous le signaler.</p>
+				<ul class="fr-grid-row">
+					<li class="fr-col-12">
+						{{signalement.nomProprio}}
+						{% if signalement.prenomProprio %}
+							{{ signalement.prenomProprio }}
+						{% endif %}
+					</li>
+					{% if signalement.adresseProprio or signalement.codePostalProprio or signalement.villeProprio %}
+						<li class="fr-col-12">
+							{% if signalement.adresseProprio %}
+								{{ signalement.adresseProprio }}
+							{% endif %}
+							{% if signalement.codePostalProprio %}
+								{{ signalement.codePostalProprio }}
+							{% endif %}
+							{% if signalement.villeProprio %}
+								{{ signalement.villeProprio }}
+							{% endif %}
+						</li>
 					{% endif %}
-				{% endif %}
-				{% if signalement.telProprio %}
-					<br>
-					{{ signalement.telProprioDecoded|phone }}
-				{% endif %}
-				{% if signalement.telProprioSecondaire %}
-					<br>
-					{{ signalement.telProprioSecondaireDecoded|phone }}
-				{% endif %}
+					{% if signalement.mailProprio %}
+						<li class="fr-col-12">
+							{{ signalement.mailProprio }}
+							{% if show_email_alert(signalement.mailProprio) %}
+								<p class="fr-badge fr-badge--error">Format non valide, merci de nous le signaler.</p>
+							{% endif %}
+						</li>
+					{% endif %}
+					{% if signalement.telProprio %}
+						<li class="fr-col-12">
+							{{ signalement.telProprioDecoded|phone }}
+						</li>
+					{% endif %}
+					{% if signalement.telProprioSecondaire %}
+						<li class="fr-col-12">
+							{{ signalement.telProprioSecondaireDecoded|phone }}
+						</li>
+					{% endif %}
+				</ul>
 			</div>
 
 			<div class="fr-mb-4w">
@@ -232,29 +244,30 @@
 			<h2 class="title-blue-france">La procédure en cours</h2>
 		
 			<div class="signalement-card fr-mb-3w">
-				<div class="fr-mb-1w">
-					Votre réponse
-					<br>
-					<span class="info">
-						{{suiviReponse ? suiviReponse.category.labelReponseBailleur : 'Aucune'}}
-					</span>
-				</div>
-				
-				<div class="fr-mb-1w">
-					{% if suiviReponse %}
-						Réponse donnée le
+				<ul class="fr-grid-row">
+					<li class="fr-col-12">
+						Votre réponse
 						<br>
 						<span class="info">
-							{{ suiviReponse.createdAt|date('d/m/Y') }}
+							{{suiviReponse ? suiviReponse.category.labelReponseBailleur : 'Aucune'}}
 						</span>
-					{% elseif signalement.statut is same as enum('App\\Entity\\Enum\\SignalementStatus').INJONCTION_BAILLEUR %}
-						Réponse attendue d'ici le
-						<br>
-						<span class="info">
-							{{ dateLimit|date('d/m/Y') }}
-						</span>
-					{% endif %}
-				</div>
+					</li>
+					<li class="fr-col-12">
+						{% if suiviReponse %}
+							Réponse donnée le
+							<br>
+							<span class="info">
+								{{ suiviReponse.createdAt|date('d/m/Y') }}
+							</span>
+						{% elseif signalement.statut is same as enum('App\\Entity\\Enum\\SignalementStatus').INJONCTION_BAILLEUR %}
+							Réponse attendue d'ici le
+							<br>
+							<span class="info">
+								{{ dateLimit|date('d/m/Y') }}
+							</span>
+						{% endif %}
+					</li>
+				</ul>
 			</div>
 			{% if signalement.statut is same as enum('App\\Entity\\Enum\\SignalementStatus').INJONCTION_BAILLEUR %}
 				<h3 class="title-blue-france">Bon à savoir</h3>
@@ -450,6 +463,7 @@
 
 			<div class="fr-col-12 fr-col-md-6">
 				<h2 class="title-blue-france">Suivre vos échanges</h2>
+				<ul class="message-box-container">
 				{% for suivi in signalement.suivis|filter(s => s.isVisibleForBailleur)|reverse %}
 					{% set isUnreadMessage = false %}
 					{% set messageBoxClass = 'message-box--usager' %}
@@ -458,6 +472,7 @@
 					{% endif %}
 					{% include 'front/_partials/_suivi_signalement_suivi.html.twig' with {'forUsager': false} %}
 				{% endfor %}
+				</ul>
 			</div>
 		</div>
 	{% endif %}
