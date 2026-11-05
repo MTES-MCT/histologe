@@ -1,7 +1,7 @@
 {% extends 'service_secours/base.html.twig' %}
 
 {% block body %}
-    <main class="fr-container fr-mb-5w" id="content">
+    <main role="main" class="fr-container fr-mb-5w" id="content">
         {% set current_step = form.vars.cursor.currentStep %}
         {% if current_step == 'step2' %}
             <dialog 

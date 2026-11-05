@@ -1,6 +1,6 @@
 {% set nbPhotosSituation = signalement.getSortedPhotos('situation')|length %}
 {% set canSelectPhotos = nbPhotosSituation <= 12 %}
-<nav role="navigation" class="fr-translate menu-actions-signalement fr-nav fr-mb-3v">
+<nav role="navigation" class="fr-translate menu-actions-signalement fr-nav fr-mb-3v" aria-label="Actions du signalement">
     <div class="fr-nav__item fr-display-flex-row fr-justify-content-right">
         <button
                 aria-controls="actions-signalement-menu"
