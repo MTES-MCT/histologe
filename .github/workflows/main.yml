@@ -15,7 +15,7 @@ on:
   schedule:
     # Off-the-hour minute on purpose: GitHub heavily delays schedules at :00 (peak load)
     # https://docs.github.com/en/actions/reference/workflows-and-actions/events-that-trigger-workflows#schedule
-    - cron: '43 6 * * *' # 6:43 UTC
+    - cron: '43 1 * * *' # 6:43 UTC
 
 env:
   APP_URL: http://localhost:8080
