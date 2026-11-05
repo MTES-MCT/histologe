@@ -463,7 +463,7 @@
 
 			<div class="fr-col-12 fr-col-md-6">
 				<h2 class="title-blue-france">Suivre vos échanges</h2>
-				<ul>
+				<ul class="message-box-container">
 				{% for suivi in signalement.suivis|filter(s => s.isVisibleForBailleur)|reverse %}
 					{% set isUnreadMessage = false %}
 					{% set messageBoxClass = 'message-box--usager' %}
