@@ -8,7 +8,8 @@
       :id="shouldAddFieldset ? id + '_subscreen_fieldset' : undefined"
       :class="{ 'fr-fieldset form-subscreen-fieldset': shouldAddFieldset }"
       >
-      <legend v-if="shouldAddFieldset && label"><h3>{{ variablesReplacer.replace(label) }}</h3></legend>
+      <legend v-if="shouldAddFieldset && label && isLegendHeading"><h3>{{ variablesReplacer.replace(label) }}</h3></legend>
+      <legend v-else-if="shouldAddFieldset && label" class="fr-fieldset__legend fr-fieldset__legend--bold fr-my-3v">{{ variablesReplacer.replace(label) }}</legend>
       <div v-if="shouldAddFieldset && description" v-html="variablesReplacer.replace(description)" class="form-subscreen-description"></div>
       <component
         v-for="component in components.body"
@@ -36,6 +37,7 @@
         :tagWhenEdit="component.tagWhenEdit"
         :maxlength="component.maxlength"
         :shouldAddFieldset="component.shouldAddFieldset"
+        :isLegendHeading="component.isLegendHeading"
         v-model="formStore.data[component.slug]"
         :hasError="formStore.validationErrors[component.slug] !== undefined"
         :error="formStore.validationErrors[component.slug]"
@@ -122,6 +124,7 @@ export default defineComponent({
     handleClickComponent: Function,
     error: { type: String, default: undefined },
     shouldAddFieldset: { type: Boolean, default: false },
+    isLegendHeading: { type: Boolean, default: true },
     // les propriétés suivantes ne sont pas utilisées,
     // mais si on ne les met pas, elles apparaissent dans le DOM
     // et ça soulève des erreurs W3C
@@ -163,11 +166,5 @@ export default defineComponent({
 .form-subscreen-fieldset > legend,
 .form-subscreen-fieldset > .form-subscreen-description {
   padding: 0 0.25rem;
-}
-.signalement-form-subscreen-under-checkbox > .form-subscreen-fieldset > legend h3 {
-  font-size: 1rem;
-  font-weight: 400;
-  line-height: 1.5rem;
-  margin-bottom: 0.5rem;
 }
 </style>

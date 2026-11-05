@@ -30,4 +30,5 @@ export interface Component {
   autocomplete?: string
   accessibility?: any
   shouldAddFieldset?: boolean
+  isLegendHeading?: boolean
 }

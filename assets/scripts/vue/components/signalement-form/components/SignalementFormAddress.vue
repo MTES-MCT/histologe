@@ -45,8 +45,9 @@
     <SignalementFormSubscreen
       :key="idSubscreen"
       :id="idSubscreen"
-      :label="label"
+      label="Détail de l'adresse"
       :shouldAddFieldset="true"
+      :isLegendHeading="false"
       :customCss="subscreenCss + ' fr-mt-3v'"
       :aria-hidden="subscreenCss == 'fr-hidden' ? true : undefined"
       :hidden="subscreenCss == 'fr-hidden' ? true : undefined"

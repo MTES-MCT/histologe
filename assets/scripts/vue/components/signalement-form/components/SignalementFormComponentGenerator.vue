@@ -24,6 +24,7 @@
       :tagWhenEdit="component.tagWhenEdit"
       :maxlength="component.maxlength"
       :shouldAddFieldset="component.shouldAddFieldset"
+      :isLegendHeading="component.isLegendHeading"
       v-model="formStore.data[component.slug]"
       :hasError="formStore.validationErrors[component.slug] !== undefined"
       :error="formStore.validationErrors[component.slug]"
