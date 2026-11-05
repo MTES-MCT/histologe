@@ -1,83 +1,52 @@
 <template>
   <div :class="[ customCss, { 'signalement-form-subscreen-error': hasError && error } ]" :id="id">
-    <h3 v-if="label">{{ variablesReplacer.replace(label) }}</h3>
-    <div v-if="description" v-html="variablesReplacer.replace(description)"></div>
-    <div
+    <h3 v-if="!shouldAddFieldset && label">{{ variablesReplacer.replace(label) }}</h3>
+    <div v-if="!shouldAddFieldset && description" v-html="variablesReplacer.replace(description)"></div>
+    <component
       v-if="components != undefined"
+      :is="shouldAddFieldset ? 'fieldset' : 'div'"
+      :id="shouldAddFieldset ? id + '_subscreen_fieldset' : undefined"
+      :class="{ 'fr-fieldset form-subscreen-fieldset': shouldAddFieldset }"
       >
-      <template v-if="formStore.shouldAddFieldset(components.body)">
-        <fieldset :id="id+'_subscreen_fieldset'" class="fr-fieldset form-subscreen-fieldset">
-          <component
-            v-for="component in components.body"
-            :is="component.type"
-            v-bind:key="component.slug"
-            :id="component.slug"
-            :access_name="component.accessibility?.name ?? component.slug"
-            :access_autocomplete="component.accessibility?.autocomplete ?? 'off'"
-            :access_focus="component.accessibility?.focus ?? false"
-            :label="component.label"
-            :labelInfo="component.labelInfo"
-            :labelUpload="component.labelUpload"
-            :description="component.description"
-            :placeholder="component.placeholder"
-            :action="component.action"
-            :link="component.link"
-            :linktarget="component.linktarget"
-            :components="component.components"
-            :values="component.values"
-            :customCss="component.customCss"
-            :validate="component.validate"
-            :disabled="component.disabled"
-            :multiple="component.multiple"
-            :ariaControls="component.ariaControls"
-            :tagWhenEdit="component.tagWhenEdit"
-            :maxlength="component.maxlength"
-            v-model="formStore.data[component.slug]"
-            :hasError="formStore.validationErrors[component.slug] !== undefined"
-            :error="formStore.validationErrors[component.slug]"
-            :class="{ 'fr-hidden': !formStore.shouldShowField(component) }"
-            :aria-hidden="!formStore.shouldShowField(component) ? true : undefined"
-            :hidden="!formStore.shouldShowField(component) ? true : undefined"
-            :clickEvent="handleClickComponent"
-          />
-        </fieldset>
-      </template>
-      <template v-else>
-        <component
-          v-for="component in components.body"
-          :is="component.type"
-          v-bind:key="component.slug"
-          :id="component.slug"
-          :access_name="component.accessibility?.name ?? component.slug"
-          :access_autocomplete="component.accessibility?.autocomplete ?? 'off'"
-          :access_focus="component.accessibility?.focus ?? false"
-          :label="component.label"
-          :labelInfo="component.labelInfo"
-          :labelUpload="component.labelUpload"
-          :description="component.description"
-          :placeholder="component.placeholder"
-          :action="component.action"
-          :link="component.link"
-          :linktarget="component.linktarget"
-          :components="component.components"
-          :values="component.values"
-          :customCss="component.customCss"
-          :validate="component.validate"
-          :disabled="component.disabled"
-          :multiple="component.multiple"
-          :ariaControls="component.ariaControls"
-          :tagWhenEdit="component.tagWhenEdit"
-          :maxlength="component.maxlength"
-          v-model="formStore.data[component.slug]"
-          :hasError="formStore.validationErrors[component.slug] !== undefined"
-          :error="formStore.validationErrors[component.slug]"
-          :class="{ 'fr-hidden': !formStore.shouldShowField(component) }"
-          :aria-hidden="!formStore.shouldShowField(component) ? true : undefined"
-          :hidden="!formStore.shouldShowField(component) ? true : undefined"
-          :clickEvent="handleClickComponent"
-        />
-      </template>
-    </div>
+      <legend v-if="shouldAddFieldset && label && isLegendHeading"><h3>{{ variablesReplacer.replace(label) }}</h3></legend>
+      <legend v-else-if="shouldAddFieldset && label" class="fr-fieldset__legend fr-fieldset__legend--bold fr-my-3v">{{ variablesReplacer.replace(label) }}</legend>
+      <div v-if="shouldAddFieldset && description" v-html="variablesReplacer.replace(description)" class="form-subscreen-description"></div>
+      <component
+        v-for="component in components.body"
+        :is="component.type"
+        v-bind:key="component.slug"
+        :id="component.slug"
+        :access_name="component.accessibility?.name ?? component.slug"
+        :access_autocomplete="component.accessibility?.autocomplete ?? 'off'"
+        :access_focus="component.accessibility?.focus ?? false"
+        :label="component.label"
+        :labelInfo="component.labelInfo"
+        :labelUpload="component.labelUpload"
+        :description="component.description"
+        :placeholder="component.placeholder"
+        :action="component.action"
+        :link="component.link"
+        :linktarget="component.linktarget"
+        :components="component.components"
+        :values="component.values"
+        :customCss="component.customCss"
+        :validate="component.validate"
+        :disabled="component.disabled"
+        :multiple="component.multiple"
+        :ariaControls="component.ariaControls"
+        :tagWhenEdit="component.tagWhenEdit"
+        :maxlength="component.maxlength"
+        :shouldAddFieldset="component.shouldAddFieldset"
+        :isLegendHeading="component.isLegendHeading"
+        v-model="formStore.data[component.slug]"
+        :hasError="formStore.validationErrors[component.slug] !== undefined"
+        :error="formStore.validationErrors[component.slug]"
+        :class="{ 'fr-hidden': !formStore.shouldShowField(component) }"
+        :aria-hidden="!formStore.shouldShowField(component) ? true : undefined"
+        :hidden="!formStore.shouldShowField(component) ? true : undefined"
+        :clickEvent="handleClickComponent"
+      />
+    </component>
     <div
       :id="id + '-error'"
       class="fr-error-text"
@@ -154,6 +123,8 @@ export default defineComponent({
     customCss: { type: String, default: '' },
     handleClickComponent: Function,
     error: { type: String, default: undefined },
+    shouldAddFieldset: { type: Boolean, default: false },
+    isLegendHeading: { type: Boolean, default: true },
     // les propriétés suivantes ne sont pas utilisées,
     // mais si on ne les met pas, elles apparaissent dans le DOM
     // et ça soulève des erreurs W3C
@@ -191,5 +162,9 @@ export default defineComponent({
   display: inherit ;
   margin: 0 -0.25rem 1rem;
   padding: 0 0rem;
+}
+.form-subscreen-fieldset > legend,
+.form-subscreen-fieldset > .form-subscreen-description {
+  padding: 0 0.25rem;
 }
 </style>

@@ -246,12 +246,13 @@
   {
     "type": "SignalementFormScreen",
     "label": "Propreté et entretien dans le bâtiment",
-    "description": "",
+    "description": "Sélectionnez le ou les problèmes rencontrés.",
     "icon": {
       "src": "/img/form/BATIMENT/Picto-proprete_entretien.svg",
       "alt": ""
     },
     "slug": "desordres_batiment_proprete",
+    "shouldAddFieldset": true,
     "screenCategory": "Désordres",
     "components": {
       "body": [
@@ -336,12 +337,13 @@
   {
     "type": "SignalementFormScreen",
     "label": "Eau et évacuation dans le bâtiment",
-    "description": "",
+    "description": "Sélectionnez le ou les problèmes rencontrés.",
     "icon": {
       "src": "/img/form/BATIMENT/Picto-eau_evacuation.svg",
       "alt": ""
     },
     "slug": "desordres_batiment_eau",
+    "shouldAddFieldset": true,
     "screenCategory": "Désordres",
     "components": {
       "body": [
@@ -418,12 +420,13 @@
   {
     "type": "SignalementFormScreen",
     "label": "Isolation du bâtiment",
-    "description": "",
+    "description": "Sélectionnez le ou les problèmes rencontrés.",
     "icon": {
       "src": "/img/form/BATIMENT/Picto-isolation_batiment.svg",
       "alt": ""
     },
     "slug": "desordres_batiment_isolation",
+    "shouldAddFieldset": true,
     "screenCategory": "Désordres",
     "components": {
       "body": [
@@ -511,12 +514,13 @@
   {
     "type": "SignalementFormScreen",
     "label": "Maintenance et équipement dans le bâtiment",
-    "description": "",
+    "description": "Sélectionnez le ou les problèmes rencontrés.",
     "icon": {
       "src": "/img/form/BATIMENT/Picto-maintenance_equipement.svg",
       "alt": ""
     },
     "slug": "desordres_batiment_maintenance",
+    "shouldAddFieldset": true,
     "screenCategory": "Désordres",
     "components": {
       "body": [
@@ -594,6 +598,7 @@
       "alt": ""
     },
     "slug": "desordres_batiment_nuisibles",
+    "shouldAddFieldset": true,
     "screenCategory": "Désordres",
     "components": {
       "body": [
@@ -725,6 +730,7 @@
       "alt": ""
     },
     "slug": "desordres_batiment_securite",
+    "shouldAddFieldset": true,
     "screenCategory": "Désordres",
     "components": {
       "body": [
@@ -964,12 +970,13 @@
   {
     "type": "SignalementFormScreen",
     "label": "Risque d'incendie dans le bâtiment",
-    "description": "",
+    "description": "Sélectionnez le ou les problèmes rencontrés.",
     "icon": {
       "src": "/img/form/BATIMENT/Picto-protection_incendie.svg",
       "alt": ""
     },
     "slug": "desordres_batiment_incendie",
+    "shouldAddFieldset": true,
     "screenCategory": "Désordres",
     "components": {
       "body": [
@@ -1030,12 +1037,13 @@
   {
     "type": "SignalementFormScreen",
     "label": "Accessibilité et alentours du bâtiment",
-    "description": "",
+    "description": "Sélectionnez le ou les problèmes rencontrés.",
     "icon": {
       "src": "/img/form/BATIMENT/Picto-accessibilite_et_alentours.svg",
       "alt": ""
     },
     "slug": "desordres_batiment_accessibilite",
+    "shouldAddFieldset": true,
     "screenCategory": "Désordres",
     "components": {
       "body": [
@@ -1146,12 +1154,13 @@
   {
     "type": "SignalementFormScreen",
     "label": "Bruit, pollution sonore dans le bâtiment",
-    "description": "",
+    "description": "Sélectionnez le ou les problèmes rencontrés.",
     "icon": {
       "src": "/img/form/BATIMENT/Picto-bruit_pollution_sonore.svg",
       "alt": ""
     },
     "slug": "desordres_batiment_bruit",
+    "shouldAddFieldset": true,
     "screenCategory": "Désordres",
     "components": {
       "body": [
@@ -1442,12 +1451,13 @@
   {
     "type": "SignalementFormScreen",
     "label": "Eau et évacuation dans le logement",
-    "description": "",
+    "description": "Sélectionnez le ou les problèmes rencontrés.",
     "icon": {
       "src": "/img/form/LOGEMENT/Picto-eau_evacuation.svg",
       "alt": ""
     },
     "slug": "desordres_logement_eau",
+    "shouldAddFieldset": true,
     "screenCategory": "Désordres",
     "components": {
       "body": [
@@ -1522,6 +1532,7 @@
       "alt": ""
     },
     "slug": "desordres_logement_aeration",
+    "shouldAddFieldset": true,
     "screenCategory": "Désordres",
     "components": {
       "body": [
@@ -1645,18 +1656,19 @@
   {
     "type": "SignalementFormScreen",
     "label": "Chauffage et isolation dans le logement",
-    "description": "Quel est le type de chauffage du logement ?<br>Sauf mention contraire tous les champs sont obligatoires.",
+    "description": "Sauf mention contraire tous les champs sont obligatoires.",
     "icon": {
       "src": "/img/form/LOGEMENT/Picto-chauffage_isolation.svg",
       "alt": ""
     },
     "slug": "desordres_logement_chauffage",
+    "shouldAddFieldset": true,
     "screenCategory": "Désordres",
     "components": {
       "body": [
         {
           "type": "SignalementFormOnlyChoice",
-          "label": "",
+          "label": "Quel est le type de chauffage du logement ?",
           "slug": "desordres_logement_chauffage_type",
           "values": [
             {
@@ -1699,6 +1711,7 @@
           "type": "SignalementFormSubscreen",
           "label": "Le type de chauffage est : {{dictionaryStore::formStore.data.desordres_logement_chauffage_type}}",
           "slug": "desordres_logement_chauffage_details",
+          "shouldAddFieldset": true,
           "description": "Sélectionnez le ou les problèmes rencontrés",
           "conditional": {
             "show": "formStore.data.desordres_logement_chauffage_type !== 'aucun' && formStore.data.desordres_logement_chauffage_type !== undefined" 
@@ -1834,6 +1847,7 @@
       "alt": ""
     },
     "slug": "desordres_logement_humidite",
+    "shouldAddFieldset": true,
     "screenCategory": "Désordres",
     "components": {
       "body": [
@@ -2316,6 +2330,7 @@
       "alt": ""
     },
     "slug": "desordres_logement_securite",
+    "shouldAddFieldset": true,
     "screenCategory": "Désordres",
     "components": {
       "body": [
@@ -2512,6 +2527,7 @@
       "alt": ""
     },
     "slug": "desordres_logement_electricite",
+    "shouldAddFieldset": true,
     "screenCategory": "Désordres",
     "components": {
       "body": [
@@ -2646,6 +2662,7 @@
       "alt": ""
     },
     "slug": "desordres_logement_nuisibles",
+    "shouldAddFieldset": true,
     "screenCategory": "Désordres",
     "components": {
       "body": [
@@ -2869,12 +2886,13 @@
   {
     "type": "SignalementFormScreen",
     "label": "Bruit, pollution sonore dans le logement",
-    "description": "",
+    "description": "Sélectionnez le ou les problèmes rencontrés.",
     "icon": {
       "src": "/img/form/LOGEMENT/Picto-bruit_pollution_sonore.svg",
       "alt": ""
     },
     "slug": "desordres_logement_bruit",
+    "shouldAddFieldset": true,
     "screenCategory": "Désordres",
     "components": {
       "body": [
@@ -2959,6 +2977,7 @@
       "alt": ""
     },
     "slug": "desordres_logement_lumiere",
+    "shouldAddFieldset": true,
     "screenCategory": "Désordres",
     "components": {
       "body": [
@@ -3023,6 +3042,8 @@
             "requiredIf": "formStore.data.desordres_logement_lumiere_plafond_trop_bas_piece_a_vivre !== 1 && formStore.data.desordres_logement_lumiere_plafond_trop_bas_cuisine !== 1 && formStore.data.desordres_logement_lumiere_plafond_trop_bas_salle_de_bain !== 1",
             "message": "Veuillez sélectionner la ou les pièces."
           },
+          "shouldAddFieldset": true,
+          "isLegendHeading": false,
           "customCss": "signalement-form-subscreen-under-checkbox",
           "conditional": {
             "show": "formStore.data.desordres_logement_lumiere_plafond_trop_bas === 1 && formStore.data.composition_logement_piece_unique === 'plusieurs_pieces'"
