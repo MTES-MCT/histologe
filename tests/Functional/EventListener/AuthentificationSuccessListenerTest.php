@@ -2,12 +2,16 @@
 
 namespace App\Tests\Functional\EventListener;
 
+use App\Entity\Enum\HistoryEntryEvent;
+use App\Entity\ServiceSecoursRoute;
 use App\EventListener\AuthentificationSuccessListener;
 use App\Manager\HistoryEntryManager;
 use App\Manager\SuiviManager;
 use App\Repository\HistoryEntryRepository;
+use App\Repository\ServiceSecoursRouteRepository;
 use App\Repository\SignalementRepository;
 use App\Repository\UserRepository;
+use App\Security\User\ServiceSecoursUser;
 use App\Service\History\HistoryEntryBuffer;
 use Doctrine\ORM\EntityManagerInterface;
 use PHPUnit\Framework\MockObject\MockObject;
@@ -18,6 +22,7 @@ use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
+use Symfony\Component\Security\Http\Event\InteractiveLoginEvent;
 
 class AuthentificationSuccessListenerTest extends WebTestCase
 {
@@ -65,12 +70,14 @@ class AuthentificationSuccessListenerTest extends WebTestCase
         $historyEntryManager = static::getContainer()->get(HistoryEntryManager::class);
         /** @var SignalementRepository $signalementRepository */
         $signalementRepository = static::getContainer()->get(SignalementRepository::class);
+        $serviceSecoursRouteRepository = static::getContainer()->get(ServiceSecoursRouteRepository::class);
         /** @var EntityManagerInterface $entityManager */
         $entityManager = static::getContainer()->get(EntityManagerInterface::class);
         $authentificationSuccessListener = new AuthentificationSuccessListener(
             $historyEntryManager,
             $this->logger,
             $signalementRepository,
+            $serviceSecoursRouteRepository,
             $entityManager,
             '1',
             static::getContainer()->get(HistoryEntryBuffer::class),
@@ -109,5 +116,69 @@ class AuthentificationSuccessListenerTest extends WebTestCase
         $this->assertNotNull($userAfterLogin->getLastLoginAt(), 'lastLoginAt doit être mis à jour après succès 2FA');
         $historyEntries = $this->historyEntryRepository->findAll();
         $this->assertNotEmpty($historyEntries);
+    }
+
+    public function testInteractiveLoginServiceSecoursUser(): void
+    {
+        $historyEntryManager = static::getContainer()->get(HistoryEntryManager::class);
+        /** @var SignalementRepository $signalementRepository */
+        $signalementRepository = static::getContainer()->get(SignalementRepository::class);
+        /** @var ServiceSecoursRouteRepository $serviceSecoursRouteRepository */
+        $serviceSecoursRouteRepository = static::getContainer()->get(ServiceSecoursRouteRepository::class);
+        /** @var EntityManagerInterface $entityManager */
+        $entityManager = static::getContainer()->get(EntityManagerInterface::class);
+        /** @var HistoryEntryBuffer $historyEntryBuffer */
+        $historyEntryBuffer = static::getContainer()->get(HistoryEntryBuffer::class);
+        /** @var SuiviManager $suiviManager */
+        $suiviManager = static::getContainer()->get(SuiviManager::class);
+
+        $authentificationSuccessListener = new AuthentificationSuccessListener(
+            $historyEntryManager,
+            $this->logger,
+            $signalementRepository,
+            $serviceSecoursRouteRepository,
+            $entityManager,
+            '1',
+            $historyEntryBuffer,
+            $suiviManager
+        );
+
+        $serviceSecoursRoute = $serviceSecoursRouteRepository->findOneBy(['name' => 'SDIS 13']);
+        $this->assertNotNull($serviceSecoursRoute);
+
+        $serviceSecoursUser = new ServiceSecoursUser(
+            userIdentifier: 'agent@sdis13.fr',
+            email: 'agent@sdis13.fr',
+            serviceSecoursRouteUuid: (string) $serviceSecoursRoute->getUuid(),
+            matricule: 'MAT-123',
+            fullname: 'Jean Dupont'
+        );
+
+        $this->token
+            ->expects($this->atLeastOnce())
+            ->method('getUser')
+            ->willReturn($serviceSecoursUser);
+
+        $event = new InteractiveLoginEvent(
+            Request::create('/services-secours/sdis-13/connexion'),
+            $this->token
+        );
+
+        $authentificationSuccessListener->onSecurityInteractiveLogin($event);
+
+        $historyKey = $serviceSecoursRoute::class.'_'.$serviceSecoursRoute->getId().'_'.HistoryEntryEvent::LOGIN->value;
+        $this->assertTrue($historyEntryBuffer->exist($historyKey));
+
+        $historyEntryBuffer->flushPendingHistoryEntries();
+
+        $historyEntry = $this->historyEntryRepository->findOneBy([
+            'entityName' => ServiceSecoursRoute::class,
+            'entityId' => $serviceSecoursRoute->getId(),
+            'event' => HistoryEntryEvent::LOGIN,
+        ]);
+
+        $this->assertNotNull($historyEntry, 'L\'entrée d\'historique de connexion Service Secours doit exister en base');
+        $this->assertSame(HistoryEntryEvent::LOGIN, $historyEntry->getEvent());
+        $this->assertSame($serviceSecoursRoute->getId(), $historyEntry->getEntityId());
     }
 }

@@ -50,6 +50,7 @@ metabase-data/*
 *.report.html
 /CLAUDE.md
 /CLAUDE.local.md
+.junie
 
 # Controllers de test manuel
 /src/Controller/Dev/

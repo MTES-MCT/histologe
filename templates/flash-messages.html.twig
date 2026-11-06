@@ -1,5 +1,5 @@
 {% if app.session.flashbag.peekAll()|length > 0 %}
-    <div class="{{ container_class }}">
+    <div class="{{ container_class|default('') }}">
     {% for label, messages in app.flashes %}
         {% for message in messages %}
             {% if label in ['error', 'error error-raw'] %}
