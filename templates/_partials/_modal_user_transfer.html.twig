@@ -8,7 +8,7 @@
                     </div>
                     <div class="fr-modal__content">
                         <h1 id="fr-user-transfer-title" class="fr-modal__title">
-                            Transférer <span id="fr-modal-user-transfer_username"></span>
+                            Transférer <span id="fr-modal-user-transfer_username" data-partner-user-modal-target="transferUsername"></span>
                         </h1>
                         <form action="{{ path('back_partner_user_transfer', {id:partner.id}) }}" name="user_transfer" id="user_transfer_form" method="POST" data-submit-type="formData">
                             <div class="fr-select-group">
@@ -21,7 +21,7 @@
                                     {% endfor %}
                                 </select>
                             </div>
-                            <input type="hidden" name="user_transfer[user]" id="fr-modal-user-transfer_userid">
+                            <input type="hidden" name="user_transfer[user]" id="fr-modal-user-transfer_userid" data-partner-user-modal-target="transferUserId">
                             <input type="hidden" name="_token" value="{{ csrf_token('partner_user_transfer') }}">
                         </form>
                     </div>
