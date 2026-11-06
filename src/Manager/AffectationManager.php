@@ -94,6 +94,7 @@ class AffectationManager
         ?User $user,
         bool $dispatchEvent = true,
         bool $dispatchInterconnection = true,
+        bool $flush = true,
     ): Affectation|bool {
         $hasAffectation = $signalement
             ->getAffectations()
@@ -116,7 +117,7 @@ class AffectationManager
             return false;
         }
 
-        return $this->createAffectation($signalement, $partner, $user, $dispatchEvent, $dispatchInterconnection);
+        return $this->createAffectation($signalement, $partner, $user, $dispatchEvent, $dispatchInterconnection, $flush);
     }
 
     /**
@@ -128,6 +129,7 @@ class AffectationManager
         ?User $user = null,
         bool $dispatchEvent = true,
         bool $dispatchInterconnection = true,
+        bool $flush = true,
     ): Affectation {
         $affectation = (new Affectation())
             ->setSignalement($signalement)
@@ -139,8 +141,11 @@ class AffectationManager
             $this->notificationAndMailSender->sendNewAffectation($affectation);
         }
 
-        $this->entityManager->persist($affectation);
-        $this->entityManager->flush();
+        // On flush avant l'interconnexion pour que l'affectation existe
+        if ($flush) {
+            $this->entityManager->persist($affectation);
+            $this->entityManager->flush();
+        }
 
         if ($dispatchInterconnection) {
             $this->interconnectionBus->dispatch($affectation);
