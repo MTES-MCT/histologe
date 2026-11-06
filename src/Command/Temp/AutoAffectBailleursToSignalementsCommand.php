@@ -24,6 +24,8 @@ use Symfony\Component\Console\Style\SymfonyStyle;
 )]
 class AutoAffectBailleursToSignalementsCommand extends Command
 {
+    public const START_DATE = '2026-01-01 00:00:00';
+
     public function __construct(
         private readonly SignalementRepository $signalementRepository,
         private readonly PartnerRepository $partnerRepository,
@@ -68,7 +70,6 @@ class AutoAffectBailleursToSignalementsCommand extends Command
         $adminUser = $this->userManager->getSystemUser();
 
         $io = new SymfonyStyle($input, $output);
-        $dateStart = '2026-01-01 00:00:00';
 
         $queryBuilder = $this->signalementRepository->createQueryBuilder('s');
         $queryBuilder
@@ -77,7 +78,7 @@ class AutoAffectBailleursToSignalementsCommand extends Command
             ->andWhere('s.bailleur IS NOT NULL')
             ->andWhere('s.isLogementSocial = true or s.isLogementSocial IS NULL')
             ->andWhere('s.statut IN (:statuses)')
-            ->setParameter('dateStart', $dateStart)
+            ->setParameter('dateStart', self::START_DATE)
             ->setParameter('territory', $territory)
             ->setParameter('statuses', [SignalementStatus::ACTIVE]);
 
@@ -111,7 +112,8 @@ class AutoAffectBailleursToSignalementsCommand extends Command
                 signalement: $signalement,
                 partner: $partner,
                 user: $adminUser,
-                dispatchEvent: false, // TODO : veut-on envoyer plein de mails d'un coup à chaque bailleur ?
+                dispatchEvent: false, // On évite d'envoyer plein de mails d'un coup à chaque bailleur
+                dispatchInterconnection: false, // Pas besoin de gérer les interconnexions pour les bailleurs sociaux
                 flush: !$dryRun,
             );
 
