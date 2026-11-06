@@ -85,9 +85,6 @@ class UserVoter extends Voter
         if (\count($subjectRoles) > \count($userRoles)) {
             return false;
         }
-        if (!$user->getFirstTerritory()) {
-            return false;
-        }
         $commonTerritoriesKeys = array_intersect_key($subject->getPartnersTerritories(), $user->getPartnersTerritories());
 
         return $this->security->isGranted('ROLE_ADMIN_PARTNER') && \count($commonTerritoriesKeys);

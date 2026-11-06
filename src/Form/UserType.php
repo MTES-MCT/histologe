@@ -36,7 +36,7 @@ class UserType extends AbstractType
     {
         /** @var User $user */
         $user = $options['data'];
-        $territory = $user->getPartners()->count() ? $user->getFirstTerritory() : null;
+        $territory = $user->getFirstTerritoryOrNull();
 
         $builder
             ->add('email', EmailType::class, [
@@ -78,7 +78,8 @@ class UserType extends AbstractType
 
         $builder->addEventListener(FormEvents::PRE_SET_DATA, static function (FormEvent $event) use ($formModifier) {
             $data = $event->getData();
-            $formModifier($event->getForm(), $data->getPartners()->count() ? $data->getFirstTerritory() : null);
+            $territory = $data->getFirstTerritoryOrNull();
+            $formModifier($event->getForm(), $territory);
         });
         $builder->addEventListener(FormEvents::PRE_SUBMIT, function (FormEvent $event) use ($formModifier) {
             $formModifier($event->getForm(), $this->territoryRepository->find($event->getData()['territory']));
