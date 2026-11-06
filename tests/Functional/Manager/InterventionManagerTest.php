@@ -13,7 +13,6 @@ use App\Repository\InterventionRepository;
 use App\Repository\SignalementRepository;
 use App\Repository\UserRepository;
 use App\Service\Signalement\Qualification\SignalementQualificationUpdater;
-use App\Service\TimezoneProvider;
 use Doctrine\ORM\EntityManagerInterface;
 use Psr\EventDispatcher\EventDispatcherInterface;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
@@ -34,7 +33,6 @@ class InterventionManagerTest extends KernelTestCase
     private EntityManagerInterface $entityManager;
     private HtmlSanitizerInterface $htmlSanitizer;
     private ?InterventionManager $interventionManager = null;
-    private TimezoneProvider $timezoneProvider;
     private EventDispatcherInterface $eventDispatcher;
 
     /**
@@ -52,7 +50,6 @@ class InterventionManagerTest extends KernelTestCase
         $this->signalementRepository = static::getContainer()->get(SignalementRepository::class);
         $this->entityManager = static::getContainer()->get(EntityManagerInterface::class);
         $this->htmlSanitizer = static::getContainer()->get('html_sanitizer.sanitizer.app.message_sanitizer');
-        $this->timezoneProvider = static::getContainer()->get(TimezoneProvider::class);
         $this->eventDispatcher = static::getContainer()->get(EventDispatcherInterface::class);
 
         $user = static::getContainer()->get(UserRepository::class)->findOneBy(['email' => 'admin-01@signal-logement.fr']);
@@ -67,7 +64,6 @@ class InterventionManagerTest extends KernelTestCase
             $this->security,
             $this->entityManager,
             $this->htmlSanitizer,
-            $this->timezoneProvider,
             $this->eventDispatcher,
         );
     }

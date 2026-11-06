@@ -4,7 +4,7 @@
             <div class="fr-col-12 fr-col-md-6 fr-h6 fr-mb-3v">
                 Visite
                 {% if visites is not empty or intervention.scheduledAt is not empty %}
-                    du {{ intervention.scheduledAt|date('d/m/Y') }}
+                    du {{ intervention.scheduledAtFormated }}
                 {% endif %}
             </div>
             <div class="fr-col-12 fr-col-md-6">
