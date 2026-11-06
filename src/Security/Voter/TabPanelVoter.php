@@ -4,6 +4,7 @@ namespace App\Security\Voter;
 
 use App\Entity\User;
 use App\Service\DashboardTabPanel\TabBodyType;
+use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Authorization\Voter\Vote;
 use Symfony\Component\Security\Core\Authorization\Voter\Voter;
@@ -14,6 +15,10 @@ use Symfony\Component\Security\Core\Authorization\Voter\Voter;
 class TabPanelVoter extends Voter
 {
     public const string TAB_PANEL_VIEW = 'TAB_PANEL_VIEW';
+
+    public function __construct(private readonly Security $security)
+    {
+    }
 
     protected function supports(string $attribute, mixed $subject): bool
     {
@@ -40,6 +45,14 @@ class TabPanelVoter extends Voter
         }
 
         if (!empty(array_filter($roles, static fn ($role) => in_array($role, $accessConfig[$subject])))) {
+            if (TabBodyType::TAB_DATA_TYPE_DOSSIERS_FORM_SERVICE_SECOURS === $subject
+                && !$this->security->isGranted(ServiceSecoursVoter::SERVICE_SECOURS_SEE)
+            ) {
+                $vote?->addReason('Aucune route service secours configurée sur le territoire.');
+
+                return false;
+            }
+
             return true;
         }
 
@@ -61,6 +74,7 @@ class TabPanelVoter extends Voter
             TabBodyType::TAB_DATA_TYPE_DERNIER_ACTION_DOSSIERS => ['ROLE_ADMIN', 'ROLE_ADMIN_TERRITORY', 'ROLE_ADMIN_PARTNER', 'ROLE_USER_PARTNER'],
             TabBodyType::TAB_DATA_TYPE_DOSSIERS_FORM_PRO => ['ROLE_ADMIN', 'ROLE_ADMIN_TERRITORY'],
             TabBodyType::TAB_DATA_TYPE_DOSSIERS_FORM_USAGER => ['ROLE_ADMIN', 'ROLE_ADMIN_TERRITORY'],
+            TabBodyType::TAB_DATA_TYPE_DOSSIERS_FORM_SERVICE_SECOURS => ['ROLE_ADMIN_TERRITORY'],
             TabBodyType::TAB_DATA_TYPE_DOSSIERS_NON_AFFECTATION => ['ROLE_ADMIN', 'ROLE_ADMIN_TERRITORY'],
             TabBodyType::TAB_DATA_TYPE_DOSSIERS_NEW_AFFECTATION => ['ROLE_ADMIN_PARTNER', 'ROLE_USER_PARTNER'],
             TabBodyType::TAB_DATA_TYPE_DOSSIERS_NO_AGENT => ['ROLE_ADMIN_PARTNER', 'ROLE_USER_PARTNER'],

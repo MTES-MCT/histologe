@@ -60,6 +60,12 @@ class DossiersQuery
             } elseif (CreationSource::CREATED_FROM_FORMULAIRE_PRO === $tabQueryParameters->createdFrom) {
                 $qb->andWhere('s.creationSource IN (:creationSources)')
                     ->setParameter('creationSources', CreationSource::getFormProValues());
+            } elseif (CreationSource::CREATED_FROM_FORMULAIRE_PRO_BO_API === $tabQueryParameters->createdFrom) {
+                $qb->andWhere('s.creationSource IN (:creationSources)')
+                    ->setParameter('creationSources', CreationSource::getFormProBOAPIValues());
+            } elseif (CreationSource::FORM_SERVICE_SECOURS->value === $tabQueryParameters->createdFrom) {
+                $qb->andWhere('s.creationSource = :creationSource')
+                    ->setParameter('creationSource', CreationSource::FORM_SERVICE_SECOURS->value);
             }
         }
 
@@ -108,7 +114,10 @@ class DossiersQuery
             tabQueryParameters: $tabQueryParameters
         );
 
-        if (CreationSource::CREATED_FROM_FORMULAIRE_PRO === $tabQueryParameters->createdFrom) {
+        if (CreationSource::CREATED_FROM_FORMULAIRE_PRO === $tabQueryParameters->createdFrom
+            || CreationSource::CREATED_FROM_FORMULAIRE_PRO_BO_API === $tabQueryParameters->createdFrom
+            || CreationSource::FORM_SERVICE_SECOURS->value === $tabQueryParameters->createdFrom
+        ) {
             $qb
                 ->leftJoin('s.createdBy', 'u')
                 ->leftJoin('u.userPartners', 'up')
@@ -136,6 +145,8 @@ class DossiersQuery
                 TabDossier::class,
 
                 CreationSource::CREATED_FROM_FORMULAIRE_PRO === $tabQueryParameters->createdFrom
+                || CreationSource::CREATED_FROM_FORMULAIRE_PRO_BO_API === $tabQueryParameters->createdFrom
+                || CreationSource::FORM_SERVICE_SECOURS->value === $tabQueryParameters->createdFrom
                 ? "
                     (CASE
                         WHEN s.creationSource = :formServiceSecours
@@ -152,7 +163,9 @@ class DossiersQuery
             )
         );
 
-        if (CreationSource::CREATED_FROM_FORMULAIRE_PRO === $tabQueryParameters->createdFrom) {
+        if (CreationSource::CREATED_FROM_FORMULAIRE_PRO === $tabQueryParameters->createdFrom
+            || CreationSource::CREATED_FROM_FORMULAIRE_PRO_BO_API === $tabQueryParameters->createdFrom
+            || CreationSource::FORM_SERVICE_SECOURS->value === $tabQueryParameters->createdFrom) {
             $qb->setParameter('formServiceSecours', CreationSource::FORM_SERVICE_SECOURS);
         }
 

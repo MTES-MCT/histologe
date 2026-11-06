@@ -461,11 +461,13 @@ document.addEventListener('click', (event) => {
     return;
   }
   const url = btn.dataset.urlGetInvariantList;
-  document.querySelector('#panel-edit-invariant-fiscal .list-invariants').innerHTML = 'Chargement en cours...';
+  document.querySelector('#panel-edit-invariant-fiscal .list-invariants').innerHTML =
+    'Chargement en cours...';
   fetch(url).then((response) => {
     if (response.ok) {
       response.json().then((response) => {
-        document.querySelector('#panel-edit-invariant-fiscal .list-invariants').innerHTML = response.html;
+        document.querySelector('#panel-edit-invariant-fiscal .list-invariants').innerHTML =
+          response.html;
       });
     } else {
       const content =

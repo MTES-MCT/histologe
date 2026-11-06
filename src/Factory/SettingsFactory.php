@@ -8,6 +8,7 @@ use App\Entity\Territory;
 use App\Entity\User;
 use App\Repository\Query\User\UserSearchFilterQuery;
 use App\Security\Voter\InjonctionBailleurVoter;
+use App\Security\Voter\ServiceSecoursVoter;
 use App\Service\Files\UserAvatar;
 use App\Service\Signalement\SearchFilterOptionDataProvider;
 use Psr\Cache\InvalidArgumentException;
@@ -55,6 +56,7 @@ class SettingsFactory
             avatarOrPlaceHolder: $this->userAvatar->userAvatarOrPlaceHolder($user, 80),
             savedSearches: $this->userSearchFilterQuery->findAllForUserArray($user),
             arreteTypes: $this->getArreteTypesGrouped(),
+            hasServiceSecours: $this->security->isGranted(ServiceSecoursVoter::SERVICE_SECOURS_SEE)
         );
     }
 

@@ -126,6 +126,7 @@ class SignalementSearchQuery
         #[Assert\Choice(choices: [
             CreationSource::CREATED_FROM_FORMULAIRE_USAGER,
             CreationSource::CREATED_FROM_FORMULAIRE_PRO,
+            CreationSource::CREATED_FROM_FORMULAIRE_PRO_BO_API,
             CreationSource::FORM_USAGER_V1->value,
             CreationSource::FORM_USAGER_V2->value,
             CreationSource::FORM_PRO_BO->value,

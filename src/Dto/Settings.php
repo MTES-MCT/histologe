@@ -66,6 +66,8 @@ class Settings
     private bool $isMultiTerritoire = false;
     #[Groups('settings:read')]
     private bool $hasInjonction = false;
+    #[Groups('settings:read')]
+    private bool $hasServiceSecours = false;
     /**
      * @var array<int, mixed>
      */
@@ -111,6 +113,7 @@ class Settings
         string $avatarOrPlaceHolder = '',
         array $savedSearches = [],
         array $arreteTypes = [],
+        bool $hasServiceSecours = false,
     ) {
         $this->firstname = $user->getPrenom();
         $this->lastname = $user->getNom();
@@ -127,6 +130,7 @@ class Settings
         $this->zones = $zones;
         $this->hasSignalementImported = $hasSignalementImported;
         $this->hasInjonction = $hasInjonction;
+        $this->hasServiceSecours = $hasServiceSecours;
         $this->isMultiTerritoire = $user->isMultiTerritoire();
         $this->bailleursSociaux = $bailleursSociaux;
         $this->savedSearches = $savedSearches;
@@ -233,6 +237,11 @@ class Settings
     public function getHasInjonction(): bool
     {
         return $this->hasInjonction;
+    }
+
+    public function getHasServiceSecours(): bool
+    {
+        return $this->hasServiceSecours;
     }
 
     public function getIsMultiTerritoire(): bool

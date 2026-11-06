@@ -72,6 +72,7 @@ export function handleSettings (context: any, requestResponse: any): any {
   context.sharedState.user.canSeeStatusAffectation = isAdminOrAdminTerritoire
   context.sharedState.user.canSeeWithoutAffectation = isAdminOrAdminTerritoire
   context.sharedState.user.canSeeInjonction = requestResponse.hasInjonction
+  context.sharedState.user.canSeeServiceSecours = requestResponse.hasServiceSecours
   context.sharedState.user.partnerIds = requestResponse.partnerIds
   context.sharedState.hasSignalementImported = requestResponse.hasSignalementImported
   context.sharedState.input.filters.isImported = context.sharedState.hasSignalementImported ? "oui" : null

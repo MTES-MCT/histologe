@@ -99,6 +99,7 @@ class SignalementListControllerTest extends WebTestCase
         yield 'Search by Demande fermeture usager territoire 13' => [['territoire' => '13', 'usagerAbandonProcedure' => '1'], 1];
         yield 'Search by Demande fermeture usager all' => [['usagerAbandonProcedure' => '1'], 2];
         yield 'Search by Created from CREATED_FROM_FORMULAIRE_PRO' => [['createdFrom' => CreationSource::CREATED_FROM_FORMULAIRE_PRO], 11];
+        yield 'Search by Created from CREATED_FROM_FORMULAIRE_PRO_BO_API' => [['createdFrom' => CreationSource::CREATED_FROM_FORMULAIRE_PRO_BO_API], 11];
         yield 'Search by Created from CREATED_FROM_FORMULAIRE_USAGER' => [['createdFrom' => CreationSource::CREATED_FROM_FORMULAIRE_USAGER, 'isImported' => 'oui'], 47];
         yield 'Search by Provenance IMPORT' => [['createdFrom' => CreationSource::IMPORT->value, 'isImported' => 'oui'], 6];
         yield 'Search by Provenance FORM_USAGER_V1' => [['createdFrom' => CreationSource::FORM_USAGER_V1->value], 35];

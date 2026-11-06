@@ -10,6 +10,7 @@ enum CreationSource: string
 
     public const string CREATED_FROM_FORMULAIRE_USAGER = 'formulaire-usager'; // valeur tableau de bord
     public const string CREATED_FROM_FORMULAIRE_PRO = 'formulaire-pro'; // valeur tableau de bord
+    public const string CREATED_FROM_FORMULAIRE_PRO_BO_API = 'formulaire-pro-bo-api'; // valeur spéciale RT
 
     case API = 'API';
     case FORM_PRO_BO = 'FORM_PRO_BO';
@@ -63,6 +64,17 @@ enum CreationSource: string
             self::FORM_PRO_BO,
             self::API,
             self::FORM_SERVICE_SECOURS,
+        ];
+    }
+
+    /**
+     * @return array<self>
+     */
+    public static function getFormProBOAPIValues(): array
+    {
+        return [
+            self::FORM_PRO_BO,
+            self::API,
         ];
     }
 }
