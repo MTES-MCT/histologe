@@ -6,6 +6,9 @@ use App\Service\Gouv\DocumentIA\DocumentIAService;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Psr\Log\LoggerInterface;
+use Symfony\Component\Cache\Adapter\ArrayAdapter;
+use Symfony\Component\HttpClient\Exception\ClientException;
+use Symfony\Component\HttpClient\Exception\ServerException;
 use Symfony\Component\HttpClient\Exception\TransportException;
 use Symfony\Component\HttpClient\MockHttpClient;
 use Symfony\Component\HttpClient\Response\MockResponse;
@@ -93,6 +96,118 @@ class DocumentIAServiceTest extends TestCase
         $this->assertNull($this->createService($mockHttpClient, '0')->listWorkflows());
     }
 
+    public function testListWorkflowsIsCached(): void
+    {
+        $calls = 0;
+        $mockHttpClient = new MockHttpClient(static function () use (&$calls): MockResponse {
+            ++$calls;
+
+            return new MockResponse((string) json_encode([
+                'status' => 'success',
+                'data' => [['id' => self::WORKFLOW_ID]],
+            ]));
+        });
+
+        $service = $this->createService($mockHttpClient);
+
+        $this->assertSame([['id' => self::WORKFLOW_ID]], $service->listWorkflows());
+        $this->assertSame([['id' => self::WORKFLOW_ID]], $service->listWorkflows());
+        $this->assertSame(1, $calls);
+    }
+
+    public function testListWorkflowsErrorsAreNotCached(): void
+    {
+        $success = new MockResponse((string) json_encode([
+            'status' => 'success',
+            'data' => [['id' => self::WORKFLOW_ID]],
+        ]));
+        $mockHttpClient = new MockHttpClient([
+            new MockResponse('{}', ['http_code' => 401]),
+            new MockResponse('{}', ['http_code' => 500]),
+            new MockResponse((string) json_encode(['status' => 'error', 'message' => 'Something went wrong'])),
+            new MockResponse('', ['error' => 'Connection refused']),
+            $success,
+        ]);
+
+        $service = $this->createService($mockHttpClient);
+
+        $this->assertNull($service->listWorkflows());
+        $this->assertNull($service->listWorkflows());
+        $this->assertSame([], $service->listWorkflows());
+        $this->assertNull($service->listWorkflows());
+        $this->assertSame([['id' => self::WORKFLOW_ID]], $service->listWorkflows());
+    }
+
+    public function testListDocumentTypesIsCached(): void
+    {
+        $calls = 0;
+        $mockHttpClient = new MockHttpClient(function (string $method, string $url) use (&$calls): MockResponse {
+            ++$calls;
+            $this->assertSame('GET', $method);
+            $this->assertSame(self::API_URL.'api/v1/extraction-schemas', $url);
+
+            return new MockResponse((string) json_encode([
+                ['document_type' => 'cni', 'model' => ['type' => 'object']],
+                ['document_type' => 'passeport', 'model' => ['type' => 'object']],
+            ]));
+        });
+
+        $service = $this->createService($mockHttpClient);
+
+        $this->assertSame(['cni', 'passeport'], $service->listDocumentTypes());
+        $this->assertSame(['cni', 'passeport'], $service->listDocumentTypes());
+        $this->assertSame(1, $calls);
+    }
+
+    public function testListDocumentTypesErrorIsLoggedAndNotCached(): void
+    {
+        $mockHttpClient = new MockHttpClient([
+            new MockResponse('{}', ['http_code' => 500]),
+            new MockResponse((string) json_encode([['document_type' => 'cni', 'model' => []]])),
+        ]);
+
+        $this->logger->expects($this->once())->method('error');
+
+        $service = $this->createService($mockHttpClient);
+
+        $this->assertSame([], $service->listDocumentTypes());
+        $this->assertSame(['cni'], $service->listDocumentTypes());
+    }
+
+    public function testListDocumentTypesDisabledDoesNotCallApi(): void
+    {
+        $mockHttpClient = new MockHttpClient(function (): MockResponse {
+            $this->fail('The API should not be called when Document IA is disabled.');
+        });
+
+        $this->assertSame([], $this->createService($mockHttpClient, '0')->listDocumentTypes());
+    }
+
+    public function testExecuteWorkflowSendsDocumentTypeForExtractionWorkflow(): void
+    {
+        $body = $this->executeWorkflowAndGetRequestBody(self::WORKFLOW_ID, 'passeport');
+
+        $this->assertStringContainsString('name="override"', $body);
+        $this->assertStringContainsString(
+            '{"llm_extract_data":[{"param":"document_type","value":"passeport"}]}',
+            $body
+        );
+    }
+
+    public function testExecuteWorkflowIgnoresDocumentTypeForOtherWorkflow(): void
+    {
+        $body = $this->executeWorkflowAndGetRequestBody('other-workflow', 'passeport');
+
+        $this->assertStringNotContainsString('name="override"', $body);
+    }
+
+    public function testExecuteWorkflowWithoutDocumentTypeSendsNoOverride(): void
+    {
+        $body = $this->executeWorkflowAndGetRequestBody(self::WORKFLOW_ID, null);
+
+        $this->assertStringNotContainsString('name="override"', $body);
+    }
+
     public function testExecuteWorkflowSuccess(): void
     {
         $mockHttpClient = new MockHttpClient(function (string $method, string $url, array $options): MockResponse {
@@ -155,30 +270,67 @@ class DocumentIAServiceTest extends TestCase
         $this->assertSame('FAILED', $result['status']);
     }
 
-    public function testExecuteWorkflowBadRequestLogsErrorAndThrows(): void
+    public function testExecuteWorkflowBadRequestLogsResponseAndThrowsWithProblemDetail(): void
     {
-        $mockHttpClient = new MockHttpClient(new MockResponse('{}', ['http_code' => 400]));
+        $body = (string) json_encode([
+            'title' => 'Bad Request',
+            'status' => 400,
+            'detail' => 'Invalid file',
+            'code' => 'workflow.invalid_file',
+            'trace_id' => 'trace-123',
+            'errors' => ['file' => 'unsupported'],
+        ]);
+        $mockHttpClient = new MockHttpClient(new MockResponse($body, [
+            'http_code' => 400,
+            'response_headers' => ['content-type: application/problem+json'],
+        ]));
 
-        $this->logger->expects($this->once())->method('error');
+        $this->logger->expects($this->once())->method('error')
+            ->with("Bad Request\n\nInvalid file", $this->callback(
+                static fn (array $context): bool => $body === $context['response']
+            ));
         $this->logger->expects($this->never())->method('warning');
 
-        $this->expectException(\RuntimeException::class);
-        $this->expectExceptionMessage('Bad Request (code 400)');
+        $service = $this->createService($mockHttpClient);
 
-        $this->createService($mockHttpClient)->executeWorkflow(self::WORKFLOW_ID, $this->getUploadedFile());
+        try {
+            $service->executeWorkflow(self::WORKFLOW_ID, $this->getUploadedFile());
+            $this->fail('An exception should have been thrown.');
+        } catch (ClientException $exception) {
+            $this->assertSame("Bad Request\n\nInvalid file", $exception->getMessage());
+
+            $problemDetail = $service->getProblemDetail($exception);
+            $this->assertSame('workflow.invalid_file', $problemDetail['code']);
+            $this->assertSame('trace-123', $problemDetail['trace_id']);
+            $this->assertSame(['file' => 'unsupported'], $problemDetail['errors']);
+        }
     }
 
-    public function testExecuteWorkflowTimeoutLogsErrorAndThrows(): void
+    public function testExecuteWorkflowServerErrorWithoutJsonHasNoProblemDetail(): void
     {
-        $mockHttpClient = new MockHttpClient(new MockResponse('{}', ['http_code' => 408]));
+        $mockHttpClient = new MockHttpClient(new MockResponse('<html>Bad Gateway</html>', [
+            'http_code' => 502,
+            'response_headers' => ['content-type: text/html'],
+        ]));
 
         $this->logger->expects($this->once())->method('error');
-        $this->logger->expects($this->never())->method('warning');
 
-        $this->expectException(\RuntimeException::class);
-        $this->expectExceptionMessage('Request Timeout (code 408)');
+        $service = $this->createService($mockHttpClient);
 
-        $this->createService($mockHttpClient)->executeWorkflow(self::WORKFLOW_ID, $this->getUploadedFile());
+        try {
+            $service->executeWorkflow(self::WORKFLOW_ID, $this->getUploadedFile());
+            $this->fail('An exception should have been thrown.');
+        } catch (ServerException $exception) {
+            $this->assertStringContainsString('HTTP 502', $exception->getMessage());
+            $this->assertSame([], $service->getProblemDetail($exception));
+        }
+    }
+
+    public function testGetProblemDetailIsEmptyForNonHttpException(): void
+    {
+        $service = $this->createService(new MockHttpClient());
+
+        $this->assertSame([], $service->getProblemDetail(new TransportException('Connection refused')));
     }
 
     public function testExecuteWorkflowTransportExceptionLogsErrorAndThrows(): void
@@ -207,11 +359,28 @@ class DocumentIAServiceTest extends TestCase
         );
     }
 
+    private function executeWorkflowAndGetRequestBody(string $workflowId, ?string $documentType): string
+    {
+        $body = '';
+        $mockHttpClient = new MockHttpClient(static function (string $method, string $url, array $options) use (&$body): MockResponse {
+            while ('' !== $chunk = ($options['body'])(16384)) {
+                $body .= $chunk;
+            }
+
+            return new MockResponse((string) json_encode(['id' => 'exec_123', 'status' => 'SUCCESS']));
+        });
+
+        $this->createService($mockHttpClient)->executeWorkflow($workflowId, $this->getUploadedFile(), $documentType);
+
+        return $body;
+    }
+
     private function createService(MockHttpClient $mockHttpClient, string $enable = '1'): DocumentIAService
     {
         return new DocumentIAService(
             $mockHttpClient,
             $this->logger,
+            new ArrayAdapter(),
             self::API_URL,
             self::API_KEY,
             $enable,
