@@ -21,4 +21,9 @@ class UserSearchFilterRequest
 
     #[Assert\NotBlank(message: 'Le jeton CSRF est manquant.')]
     public ?string $_token = null;
+
+    public function getName(): string
+    {
+        return $this->name;
+    }
 }

@@ -120,8 +120,8 @@ class File implements EntityHistoryInterface
     #[ORM\Column(type: Types::BIGINT, nullable: true)]
     private ?int $size = null;
 
-    #[ORM\Column(type: 'string', nullable: true, enumType: DocumentType::class)]
-    private ?DocumentType $documentType = null;
+    #[ORM\Column(type: 'string', enumType: DocumentType::class)]
+    private DocumentType $documentType;
 
     #[ORM\Column(nullable: true)]
     private ?string $desordreSlug = null;
@@ -325,12 +325,12 @@ class File implements EntityHistoryInterface
         return $this;
     }
 
-    public function getDocumentType(): ?DocumentType
+    public function getDocumentType(): DocumentType
     {
         return $this->documentType;
     }
 
-    public function setDocumentType(?DocumentType $documentType): static
+    public function setDocumentType(DocumentType $documentType): static
     {
         $this->documentType = $documentType;
 

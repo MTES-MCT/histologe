@@ -261,9 +261,9 @@ class Intervention implements EntityHistoryInterface, EntitySanitizerInterface
     }
 
     /** @return list<ProcedureType> */
-    public function getConcludeProcedure(): ?array
+    public function getConcludeProcedure(): array
     {
-        return $this->concludeProcedure;
+        return $this->concludeProcedure ?? [];
     }
 
     public function getConcludeProcedureString(string $separator = ', '): string

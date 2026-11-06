@@ -46,7 +46,7 @@ readonly class InterventionEditedSubscriber implements EventSubscriberInterface
                     'concludeProcedureChanged' => isset($changes['concludeProcedure']['new']),
                     'concludeProcedures' => array_map(
                         static fn (ProcedureType $procedure) => $procedure->label(),
-                        $intervention->getConcludeProcedure() ?? []
+                        $intervention->getConcludeProcedure()
                     ),
                     'detailsChanged' => isset($changes['details']['new']),
                     'details' => $intervention->getDetails(),

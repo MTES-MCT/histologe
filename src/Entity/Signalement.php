@@ -66,8 +66,8 @@ class Signalement implements EntityHistoryInterface, EntityHistoryCollectionInte
     #[ORM\Column(type: 'string', length: 50, unique: true)]
     private string $uuid;
 
-    #[ORM\Column(type: 'string', nullable: true, enumType: ProfileDeclarant::class, length: 50)]
-    private ?ProfileDeclarant $profileDeclarant = null;
+    #[ORM\Column(type: 'string', enumType: ProfileDeclarant::class, length: 50)]
+    private ProfileDeclarant $profileDeclarant;
 
     #[ORM\Column(type: 'string', nullable: true, enumType: ProfileOccupant::class, length: 50)]
     private ?ProfileOccupant $profileOccupant = null;
@@ -2355,12 +2355,12 @@ class Signalement implements EntityHistoryInterface, EntityHistoryCollectionInte
         return $this;
     }
 
-    public function getProfileDeclarant(): ?ProfileDeclarant
+    public function getProfileDeclarant(): ProfileDeclarant
     {
         return $this->profileDeclarant;
     }
 
-    public function setProfileDeclarant(?ProfileDeclarant $profileDeclarant): static
+    public function setProfileDeclarant(ProfileDeclarant $profileDeclarant): static
     {
         $this->profileDeclarant = $profileDeclarant;
 

@@ -164,7 +164,9 @@ class ArreteImportController extends AbstractController
     ): void {
         $territoryZips = [];
         foreach ($arreteImportRows as $row) {
-            $territory = $this->zipcodeProvider->getTerritoryByPostalCode($row->getCodePostal());
+            /** @var string $codePostal */
+            $codePostal = $row->getCodePostal();
+            $territory = $this->zipcodeProvider->getTerritoryByPostalCode($codePostal);
             if ($territory) {
                 $territoryZips[] = $territory->getZip();
             }

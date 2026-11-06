@@ -528,7 +528,7 @@ class User implements UserInterface, EntityHistoryInterface, PasswordAuthenticat
         return $territories;
     }
 
-    public function getPartnerInTerritory(Territory $territory): ?Partner
+    public function getPartnerInTerritoryOrNull(Territory $territory): ?Partner
     {
         foreach ($this->userPartners as $userPartner) {
             if ($userPartner->getPartner()->getTerritory()?->getId() === $territory->getId()) {
@@ -539,9 +539,19 @@ class User implements UserInterface, EntityHistoryInterface, PasswordAuthenticat
         return null;
     }
 
-    public function getPartnerInTerritoryOrFirstOne(Territory $territory): ?Partner
+    public function getPartnerInTerritory(Territory $territory): Partner
     {
-        $partnerInTerritory = $this->getPartnerInTerritory($territory);
+        $partner = $this->getPartnerInTerritoryOrNull($territory);
+        if (null === $partner) {
+            throw new \LogicException(sprintf('Aucun partenaire pour l\'utilisateur %s dans le territoire %s', $this->getId(), $territory->getId()));
+        }
+
+        return $partner;
+    }
+
+    public function getPartnerInTerritoryOrFirstOneOrNull(Territory $territory): ?Partner
+    {
+        $partnerInTerritory = $this->getPartnerInTerritoryOrNull($territory);
         if (null !== $partnerInTerritory) {
             return $partnerInTerritory;
         }
@@ -549,6 +559,15 @@ class User implements UserInterface, EntityHistoryInterface, PasswordAuthenticat
         $first = $this->getPartners()->first();
 
         return $first instanceof Partner ? $first : null;
+    }
+
+    public function getPartnerInTerritoryOrFirstOne(Territory $territory): Partner
+    {
+        if ($partnerInTerritory = $this->getPartnerInTerritory($territory)) {
+            return $partnerInTerritory;
+        }
+
+        throw new \LogicException(sprintf('Aucun partenaire pour l\'utilisateur %s dans le territoire %s', $this->getId(), $territory->getId()));
     }
 
     public function hasPartnerInTerritory(Territory $territory): bool
@@ -562,17 +581,24 @@ class User implements UserInterface, EntityHistoryInterface, PasswordAuthenticat
         return false;
     }
 
-    public function getFirstTerritory(): ?Territory
+    public function getFirstTerritoryOrNull(): ?Territory
     {
-        $territory = null;
-        if ($this->userPartners->count()) {
-            $first = $this->userPartners->first();
-            if ($first instanceof UserPartner) {
-                $territory = $first->getPartner()->getTerritory();
-            }
+        $first = $this->userPartners->first();
+
+        if ($first instanceof UserPartner) {
+            return $first->getPartner()->getTerritory();
         }
 
-        return $territory;
+        return null;
+    }
+
+    public function getFirstTerritory(): Territory
+    {
+        if ($territory = $this->getFirstTerritoryOrNull()) {
+            return $territory;
+        }
+
+        throw new \LogicException(sprintf('Aucun territoire pour l\'utilisateur %s', $this->getId()));
     }
 
     public function getNom(): ?string
@@ -645,7 +671,7 @@ class User implements UserInterface, EntityHistoryInterface, PasswordAuthenticat
         return $this;
     }
 
-    public function getIsMailingActive(): ?bool
+    public function getIsMailingActive(): bool
     {
         return $this->isMailingActive;
     }
@@ -701,12 +727,7 @@ class User implements UserInterface, EntityHistoryInterface, PasswordAuthenticat
 
     public function removeNotification(Notification $notification): static
     {
-        if ($this->notifications->removeElement($notification)) {
-            // set the owning side to null (unless already changed)
-            if ($notification->getUser() === $this) {
-                $notification->setUser(null);
-            }
-        }
+        $this->notifications->removeElement($notification);
 
         return $this;
     }

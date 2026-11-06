@@ -264,9 +264,9 @@ class Territory implements EntityHistoryInterface
     }
 
     /** @return array<string|int, mixed> */
-    public function getAuthorizedCodesInsee(): ?array
+    public function getAuthorizedCodesInsee(): array
     {
-        return $this->authorizedCodesInsee;
+        return $this->authorizedCodesInsee ?? [];
     }
 
     /** @param array<string|int, mixed> $authorizedCodesInsee */

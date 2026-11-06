@@ -152,11 +152,12 @@ class PartnerController extends AbstractController
         $this->denyAccessUnlessGranted(PartnerVoter::PARTNER_EDIT, $partner);
         if ($partner->getIsArchive()) {
             $this->addFlash('error', 'Ce partenaire est archivé.');
+            $params = ['page' => 1];
+            if ($partner->getTerritory()) {
+                $params['territory'] = $partner->getTerritory()->getId();
+            }
 
-            return $this->redirect($this->generateUrl('back_partner_index', [
-                'page' => 1,
-                'territory' => $partner->getTerritory()->getId(),
-            ]));
+            return $this->redirect($this->generateUrl('back_partner_index', $params));
         }
 
         $lastJobEvent = $jobEventQuery->findLastEsaboraByPartner($partner);
@@ -191,10 +192,12 @@ class PartnerController extends AbstractController
     ): Response {
         $this->denyAccessUnlessGranted(PartnerVoter::PARTNER_EDIT, $partner);
         if ($partner->getIsArchive()) {
-            return $this->redirect($this->generateUrl('back_partner_index', [
-                'page' => 1,
-                'territory' => $partner->getTerritory()->getId(),
-            ]));
+            $params = ['page' => 1];
+            if ($partner->getTerritory()) {
+                $params['territory'] = $partner->getTerritory()->getId();
+            }
+
+            return $this->redirect($this->generateUrl('back_partner_index', $params));
         }
 
         $previousTerritory = $partner->getTerritory();
@@ -278,7 +281,12 @@ class PartnerController extends AbstractController
     ): Response {
         $this->denyAccessUnlessGranted(PartnerVoter::PARTNER_EDIT, $partner);
         if ($partner->getIsArchive()) {
-            return $this->redirect($this->generateUrl('back_partner_index', ['page' => 1, 'territory' => $partner->getTerritory()->getId()]));
+            $params = ['page' => 1];
+            if ($partner->getTerritory()) {
+                $params['territory'] = $partner->getTerritory()->getId();
+            }
+
+            return $this->redirect($this->generateUrl('back_partner_index', $params));
         }
         $form = $this->createForm(PartnerPerimetreType::class, $partner);
         $form->handleRequest($request);
@@ -385,7 +393,7 @@ class PartnerController extends AbstractController
         WorkflowInterface $interventionPlanningStateMachine,
         EntityManagerInterface $entityManager,
     ): void {
-        if (\in_array(Qualification::VISITES, $partner->getCompetence())) {
+        if ($partner->getCompetence() && \in_array(Qualification::VISITES, $partner->getCompetence())) {
             /** @var Intervention $intervention */
             foreach ($partner->getInterventions() as $intervention) {
                 if (

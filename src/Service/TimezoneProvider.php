@@ -17,7 +17,7 @@ readonly class TimezoneProvider
     {
         /** @var User $user */
         $user = $user ?? $this->security->getUser();
-        if ($user && $user instanceof User && $user->getFirstTerritory()) {
+        if ($user && $user instanceof User && $user->getFirstTerritoryOrNull()) {
             return $user->getFirstTerritory()->getTimezone();
         }
 
