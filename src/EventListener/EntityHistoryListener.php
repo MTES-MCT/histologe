@@ -25,6 +25,7 @@ class EntityHistoryListener
     /** @var string[] */
     public const array FIELDS_TO_IGNORE = [
         'lastLoginAt',
+        'lastLoginFingerprint',
         'updatedAt',
         'lastSuiviAt',
         'lastSuiviBy',

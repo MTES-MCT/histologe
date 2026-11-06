@@ -134,6 +134,10 @@ class User implements UserInterface, EntityHistoryInterface, PasswordAuthenticat
     #[ORM\Column(type: 'datetime_immutable', nullable: true)]
     private ?\DateTimeImmutable $lastLoginAt = null;
 
+    #[ORM\Column(length: 64, nullable: true)]
+    #[Ignore]
+    private ?string $lastLoginFingerprint = null;
+
     #[ORM\Column(type: 'boolean')]
     private bool $isMailingActive = true;
 
@@ -641,6 +645,18 @@ class User implements UserInterface, EntityHistoryInterface, PasswordAuthenticat
     {
         $this->lastLoginAt = $lastLoginAt;
         $this->archivingScheduledAt = null;
+
+        return $this;
+    }
+
+    public function getLastLoginFingerprint(): ?string
+    {
+        return $this->lastLoginFingerprint;
+    }
+
+    public function setLastLoginFingerprint(?string $lastLoginFingerprint): static
+    {
+        $this->lastLoginFingerprint = $lastLoginFingerprint;
 
         return $this;
     }

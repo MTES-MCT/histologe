@@ -9,6 +9,7 @@ use App\Repository\HistoryEntryRepository;
 use App\Repository\SignalementRepository;
 use App\Repository\UserRepository;
 use App\Service\History\HistoryEntryBuffer;
+use App\Service\Security\NewLoginNotifier;
 use Doctrine\ORM\EntityManagerInterface;
 use PHPUnit\Framework\MockObject\MockObject;
 use Psr\Log\LoggerInterface;
@@ -52,6 +53,8 @@ class AuthentificationSuccessListenerTest extends WebTestCase
 
         $userAfterLogin = $userRepository->find($user->getId());
         $this->assertNotNull($userAfterLogin->getLastLoginAt(), 'lastLoginAt doit être mis à jour après connexion');
+        $this->assertNotNull($userAfterLogin->getLastLoginFingerprint(), 'l\'empreinte de connexion doit être enregistrée pour tous les rôles');
+        $this->assertEmailCount(0, message: 'pas de notification de nouvelle connexion sans empreinte précédente');
 
         $now = new \DateTimeImmutable();
         $diffSeconds = abs($now->getTimestamp() - $userAfterLogin->getLastLoginAt()->getTimestamp());
@@ -74,7 +77,8 @@ class AuthentificationSuccessListenerTest extends WebTestCase
             $entityManager,
             '1',
             static::getContainer()->get(HistoryEntryBuffer::class),
-            static::getContainer()->get(SuiviManager::class)
+            static::getContainer()->get(SuiviManager::class),
+            static::getContainer()->get(NewLoginNotifier::class),
         );
 
         /** @var UserRepository $userRepository */
@@ -82,6 +86,8 @@ class AuthentificationSuccessListenerTest extends WebTestCase
         $user = $userRepository->findOneBy(['email' => 'admin-01@signal-logement.fr']);
 
         $this->assertNull($user->getLastLoginAt(), 'lastLoginAt doit être null avant 2FA');
+        $user->setLastLoginFingerprint(hash('sha256', 'environnement précédent'));
+        $entityManager->flush();
         $this->token
             ->expects($this->once())
             ->method('getUser')
@@ -107,6 +113,9 @@ class AuthentificationSuccessListenerTest extends WebTestCase
         $this->assertLessThan(5, $diffSeconds, 'lastLoginAt doit être très récent (moins de 5 secondes)');
 
         $this->assertNotNull($userAfterLogin->getLastLoginAt(), 'lastLoginAt doit être mis à jour après succès 2FA');
+        $this->assertNotSame(hash('sha256', 'environnement précédent'), $userAfterLogin->getLastLoginFingerprint(), 'l\'empreinte de connexion doit être mise à jour');
+        $this->assertEmailCount(1);
+        $this->assertEmailSubjectContains($this->getMailerMessage(), 'Nouvelle connexion à votre compte');
         $historyEntries = $this->historyEntryRepository->findAll();
         $this->assertNotEmpty($historyEntries);
     }

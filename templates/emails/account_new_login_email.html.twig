@@ -1,0 +1,38 @@
+{% extends 'emails/base_email.html.twig' %}
+
+{% block body %}
+    <p>Bonjour,</p>
+    <p>
+        Une nouvelle connexion à votre compte {{ platform.name }} a été détectée depuis un environnement
+        différent de celui de votre dernière connexion :
+    </p>
+    <ul>
+        <li><strong>Date :</strong> {{ login_date }}</li>
+        <li><strong>Adresse IP :</strong> {{ ip_address }}</li>
+        <li><strong>Navigateur :</strong> {{ user_agent }}</li>
+    </ul>
+    <p>Si vous êtes à l'origine de cette connexion, vous n'avez rien à faire.</p>
+    <p>
+        Si vous n'êtes pas à l'origine de cette connexion, nous vous recommandons de modifier immédiatement
+        votre mot de passe et de prévenir l'équipe {{ platform.name }}.
+    </p>
+    <table role="presentation" border="0" cellpadding="0" cellspacing="0" class="btn btn-primary"
+           style="text-align: center">
+        <tbody>
+        <tr>
+            <td align="left">
+                <table role="presentation" border="0" cellpadding="0" cellspacing="0">
+                    <tbody>
+                    <tr style="text-align: center;width: 100%">
+                        <td>
+                            <a href="{{ link|raw }}" target="_blank" rel="noopener">{{ btntext }}</a></td>
+                    </tr>
+                    </tbody>
+                </table>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+    <p>Si le bouton ne fonctionne pas <a href="{{ link|raw }}">cliquez ici</a></p>
+    <p>A bientôt sur {{ platform.name }} !</p>
+{% endblock %}
