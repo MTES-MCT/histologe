@@ -69,6 +69,7 @@ export const store = {
       canSeeStatusAffectation: false,
       canSeeWithoutAffectation: false,
       canSeeInjonction: false,
+      canSeeServiceSecours: false,
       partnerIds: new Array<string>()
     },
     showOptions: false,
@@ -206,6 +207,11 @@ export const store = {
       { Id: 'FORM_PRO_BO', Text: 'Formulaire pro BO' },
       { Id: 'API', Text: 'API' },
       { Id: 'IMPORT', Text: 'Import' },
+      { Id: 'FORM_SERVICE_SECOURS', Text: 'Formulaire service secours' }
+    ],
+    createdFromListRT: [
+      { Id: 'formulaire-usager', Text: 'Formulaire usager et import' },
+      { Id: 'formulaire-pro-bo-api', Text: 'Formulaire pro et API' },
       { Id: 'FORM_SERVICE_SECOURS', Text: 'Formulaire service secours' }
     ],
     selectedSavedSearchId: undefined as string | undefined,

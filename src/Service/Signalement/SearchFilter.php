@@ -527,6 +527,9 @@ class SearchFilter
             } elseif (CreationSource::CREATED_FROM_FORMULAIRE_PRO === $filters['createdFrom']) {
                 $qb->andWhere('s.creationSource IN (:creationSourcesFormPro)')
                     ->setParameter('creationSourcesFormPro', CreationSource::getFormProValues());
+            } elseif (CreationSource::CREATED_FROM_FORMULAIRE_PRO_BO_API === $filters['createdFrom']) {
+                $qb->andWhere('s.creationSource IN (:creationSourcesFormPro)')
+                    ->setParameter('creationSourcesFormPro', CreationSource::getFormProBOAPIValues());
             } else {
                 $creationSource = CreationSource::tryFrom($filters['createdFrom']);
                 if (null !== $creationSource) {

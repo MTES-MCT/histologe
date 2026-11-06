@@ -313,7 +313,7 @@ async function handleConfirm(elements) {
     });
 
     if (!response.ok) {
-      showErrors(elements, ['Une erreur est survenue lors de la validation de l\'import.']);
+      showErrors(elements, ["Une erreur est survenue lors de la validation de l'import."]);
       updateValidationState(elements);
       return;
     }

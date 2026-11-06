@@ -2,11 +2,13 @@
 
 namespace App\Tests\Unit\Security\Voter;
 
+use App\Security\Voter\ServiceSecoursVoter;
 use App\Security\Voter\TabPanelVoter;
 use App\Service\DashboardTabPanel\TabBodyType;
 use App\Tests\FixturesHelper;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
+use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 
 class TabPanelVoterTest extends TestCase
@@ -22,7 +24,7 @@ class TabPanelVoterTest extends TestCase
         $user->setHasPermissionAffectation(false);
         $token->method('getUser')->willReturn($user);
 
-        $voter = new TabPanelVoter();
+        $voter = new TabPanelVoter($this->createMock(Security::class));
         $subject = TabBodyType::TAB_DATA_TYPE_DOSSIERS_NON_AFFECTATION;
 
         $voteResult = $voter->vote($token, $subject, [TabPanelVoter::TAB_PANEL_VIEW]);
@@ -37,7 +39,7 @@ class TabPanelVoterTest extends TestCase
 
         $token->method('getUser')->willReturn(null);
 
-        $voter = new TabPanelVoter();
+        $voter = new TabPanelVoter($this->createMock(Security::class));
         $subject = TabBodyType::TAB_DATA_TYPE_DOSSIERS_NON_AFFECTATION;
 
         $voteResult = $voter->vote($token, $subject, [TabPanelVoter::TAB_PANEL_VIEW]);
@@ -54,11 +56,47 @@ class TabPanelVoterTest extends TestCase
         $user->setHasPermissionAffectation(false);
         $token->method('getUser')->willReturn($user);
 
-        $voter = new TabPanelVoter();
+        $voter = new TabPanelVoter($this->createMock(Security::class));
         $subject = 'unknown-tab-type';
 
         $voteResult = $voter->vote($token, $subject, [TabPanelVoter::TAB_PANEL_VIEW]);
 
         $this->assertSame(-1, $voteResult, 'Voter should deny access for an unknown tab type.');
+    }
+
+    public function testVoteGrantsServiceSecoursTabWhenTerritoryHasRoutes(): void
+    {
+        /** @var MockObject&TokenInterface $token */
+        $token = $this->createMock(TokenInterface::class);
+        $token->method('getUser')->willReturn($this->getUser(['ROLE_ADMIN_TERRITORY']));
+
+        /** @var MockObject&Security $security */
+        $security = $this->createMock(Security::class);
+        $security->method('isGranted')->with(ServiceSecoursVoter::SERVICE_SECOURS_SEE)->willReturn(true);
+
+        $voter = new TabPanelVoter($security);
+        $subject = TabBodyType::TAB_DATA_TYPE_DOSSIERS_FORM_SERVICE_SECOURS;
+
+        $voteResult = $voter->vote($token, $subject, [TabPanelVoter::TAB_PANEL_VIEW]);
+
+        $this->assertSame(1, $voteResult, 'Voter should grant access when the territory has service secours routes.');
+    }
+
+    public function testVoteDeniesServiceSecoursTabWhenTerritoryHasNoRoute(): void
+    {
+        /** @var MockObject&TokenInterface $token */
+        $token = $this->createMock(TokenInterface::class);
+        $token->method('getUser')->willReturn($this->getUser(['ROLE_ADMIN_TERRITORY']));
+
+        /** @var MockObject&Security $security */
+        $security = $this->createMock(Security::class);
+        $security->method('isGranted')->with(ServiceSecoursVoter::SERVICE_SECOURS_SEE)->willReturn(false);
+
+        $voter = new TabPanelVoter($security);
+        $subject = TabBodyType::TAB_DATA_TYPE_DOSSIERS_FORM_SERVICE_SECOURS;
+
+        $voteResult = $voter->vote($token, $subject, [TabPanelVoter::TAB_PANEL_VIEW]);
+
+        $this->assertSame(-1, $voteResult, 'Voter should deny access when the territory has no service secours route.');
     }
 }
