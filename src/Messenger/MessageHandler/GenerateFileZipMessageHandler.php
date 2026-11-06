@@ -89,7 +89,7 @@ final class GenerateFileZipMessageHandler
      */
     private function getExportAt(User $user): string
     {
-        $timezone = $user->getFirstTerritory()?->getTimezone() ?? TimezoneProvider::TIMEZONE_EUROPE_PARIS;
+        $timezone = $user->getFirstTerritoryOrNull()?->getTimezone() ?? TimezoneProvider::TIMEZONE_EUROPE_PARIS;
 
         return (new \DateTimeImmutable())->setTimezone(new \DateTimeZone($timezone))->format('Ymd-His');
     }

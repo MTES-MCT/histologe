@@ -185,7 +185,7 @@ class SignalementVoter extends Voter
         if (!$checkAffectationAccepted) {
             return false;
         }
-        $partner = $user->getPartnerInTerritory($signalement->getAddress()->getTerritory());
+        $partner = $user->getPartnerInTerritoryOrFirstOne($signalement->getAddress()->getTerritory());
 
         return $signalement->getAffectations()->filter(static function (Affectation $affectation) use ($partner) {
             return $affectation->getPartner()->getId() === $partner?->getId() && AffectationStatus::ACCEPTED === $affectation->getStatut();
@@ -256,7 +256,7 @@ class SignalementVoter extends Voter
             return true;
         }
 
-        $partner = $user->getPartnerInTerritory($signalement->getAddress()->getTerritory());
+        $partner = $user->getPartnerInTerritoryOrFirstOne($signalement->getAddress()->getTerritory());
         if (!$partner) {
             return false;
         }
@@ -302,7 +302,7 @@ class SignalementVoter extends Voter
         if ($user->isTerritoryAdmin() && $user->hasPartnerInTerritory($signalement->getAddress()->getTerritory())) {
             return true;
         }
-        $partner = $user->getPartnerInTerritory($signalement->getAddress()->getTerritory());
+        $partner = $user->getPartnerInTerritoryOrFirstOne($signalement->getAddress()->getTerritory());
         if (!$partner || !in_array(Qualification::VISITES, $partner->getCompetence())) {
             return false;
         }
@@ -321,7 +321,7 @@ class SignalementVoter extends Voter
         if ($user->isTerritoryAdmin() && $user->hasPartnerInTerritory($signalement->getAddress()->getTerritory())) {
             return true;
         }
-        $partner = $user->getPartnerInTerritory($signalement->getAddress()->getTerritory());
+        $partner = $user->getPartnerInTerritoryOrFirstOne($signalement->getAddress()->getTerritory());
         if (!$partner || !in_array(Qualification::VISITES, $partner->getCompetence())) {
             return false;
         }
@@ -380,7 +380,7 @@ class SignalementVoter extends Voter
             return true;
         }
 
-        $partner = $user->getPartnerInTerritory($signalement->getAddress()->getTerritory());
+        $partner = $user->getPartnerInTerritoryOrFirstOne($signalement->getAddress()->getTerritory());
 
         return $signalement->getAffectations()->filter(static function (Affectation $affectation) use ($partner) {
             return $affectation->getPartner()->getId() === $partner->getId() && AffectationStatus::ACCEPTED == $affectation->getStatut();

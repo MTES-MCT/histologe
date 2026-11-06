@@ -77,6 +77,7 @@ class ProfilController extends AbstractController
         $user = $this->getUser();
         $territories = $user->getPartnersTerritories();
         foreach ($territories as $territory) {
+            /** @var int $territoryId */
             $territoryId = $territory->getId();
             $territoryAdmins = $userRepository->findActiveTerritoryAdmins($territoryId);
             $activeTerritoryAdminsByTerritory[$territoryId] = $territoryAdmins;
@@ -262,7 +263,9 @@ class ProfilController extends AbstractController
                 }
 
                 if (empty($errorMessage)) {
-                    $user->setEmail($user->getTempEmail());
+                    /** @var string $tempEmail */
+                    $tempEmail = $user->getTempEmail();
+                    $user->setEmail($tempEmail);
                     $user->setEmailAuthCode(null);
                     $user->setTempEmail(null);
                     $doctrine->getManager()->persist($user);

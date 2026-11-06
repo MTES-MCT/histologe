@@ -18,7 +18,7 @@ class UserAvatar implements RuntimeExtensionInterface
 
     public function userAvatarOrPlaceholder(User $user, int $size = 74, bool $ariaHidden = true): string
     {
-        $zipCode = ($user->getFirstTerritory()) ? substr($user->getFirstTerritory()->getZip(), 0, 2) : 'SA';
+        $zipCode = (!$user->isSuperAdmin()) ? substr($user->getFirstTerritory()->getZip(), 0, 2) : 'SA';
 
         $filename = $user->getAvatarFilename();
 

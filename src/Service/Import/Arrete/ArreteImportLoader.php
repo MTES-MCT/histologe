@@ -189,7 +189,7 @@ class ArreteImportLoader
             return false;
         }
 
-        $userTerritory = $user->getFirstTerritory();
+        $userTerritory = $user->getFirstTerritoryOrNull();
 
         return null === $userTerritory
             || $userTerritory->getId() !== $territoryAddress->getId();
