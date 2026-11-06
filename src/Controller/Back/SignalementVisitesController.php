@@ -322,7 +322,7 @@ class SignalementVisitesController extends AbstractController
             return $this->buildVisitesAjaxResponse(intervention: $intervention, flashMessages: $flashMessages);
         }
 
-        $title = 'Modifier la visite du '.$intervention->getScheduledAt()->format('d/m/Y à H:i');
+        $title = 'Modifier la visite du '.$intervention->getScheduledAtFormated();
         $html = $this->renderView('back/signalement/view/visites/_reschedule-visite-form.html.twig', [
             'rescheduleVisiteForm' => $rescheduleVisiteForm,
             'intervention' => $intervention,
