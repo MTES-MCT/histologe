@@ -40,11 +40,11 @@ async function selectFirstMultiSelectOption(page: Page, label: string) {
 }
 
 async function useCommonFilters(page: Page) {
-  await changeFilterAndWaitForStats(page, () => page.getByLabel('Statut').selectOption('active'));
-  await expect(page.getByLabel('Statut')).toHaveValue('active');
+  await changeFilterAndWaitForStats(page, () => page.getByLabel('Statut', { exact: true }).selectOption('active'));
+  await expect(page.getByLabel('Statut', { exact: true })).toHaveValue('active');
 
-  await changeFilterAndWaitForStats(page, () => page.getByLabel('Type').selectOption('public'));
-  await expect(page.getByLabel('Type')).toHaveValue('public');
+  await changeFilterAndWaitForStats(page, () => page.getByLabel('Type', { exact: true }).selectOption('public'));
+  await expect(page.getByLabel('Type', { exact: true })).toHaveValue('public');
 
   await changeFilterAndWaitForStats(page, () => page.getByText('Cocher la case pour comptabiliser les signalements refusés').click());
   await expect(page.locator('#count-refused')).toBeChecked();
@@ -52,8 +52,8 @@ async function useCommonFilters(page: Page) {
   await selectFirstMultiSelectOption(page, 'Communes');
 
   await changeFilterAndWaitForStats(page, () => page.getByRole('link', { name: 'Tout réinitialiser' }).click());
-  await expect(page.getByLabel('Statut')).toHaveValue('all');
-  await expect(page.getByLabel('Type')).toHaveValue('all');
+  await expect(page.getByLabel('Statut', { exact: true })).toHaveValue('all');
+  await expect(page.getByLabel('Type', { exact: true })).toHaveValue('all');
   await expect(page.locator('#count-refused')).not.toBeChecked();
 }
 
@@ -65,11 +65,11 @@ test('statistiques page and filters for admin', async ({page, context}) => {
   await gotoStatistiques(page);
 
   // Le super admin peut filtrer par territoire et voir les signalements archivés
-  await expect(page.getByLabel('Territoire')).toBeVisible();
+  await expect(page.getByLabel('Territoire', { exact: true })).toBeVisible();
   await expect(page.getByText('Cocher la case pour comptabiliser les signalements archivés')).toBeVisible();
 
-  await changeFilterAndWaitForStats(page, () => page.getByLabel('Territoire').selectOption({ index: 1 }));
-  await expect(page.getByLabel('Territoire')).not.toHaveValue('all');
+  await changeFilterAndWaitForStats(page, () => page.getByLabel('Territoire', { exact: true }).selectOption({ index: 1 }));
+  await expect(page.getByLabel('Territoire', { exact: true })).not.toHaveValue('all');
 
   await useCommonFilters(page);
 
@@ -84,7 +84,7 @@ test('statistiques page and filters for RT', async ({page, context}) => {
   await gotoStatistiques(page);
 
   // Le responsable de territoire n'a pas le filtre territoire mais voit la répartition par partenaires
-  await expect(page.getByLabel('Territoire')).toBeHidden();
+  await expect(page.getByLabel('Territoire', { exact: true })).toBeHidden();
   await expect(page.getByText('Répartition par partenaires')).toBeVisible();
 
   await useCommonFilters(page);

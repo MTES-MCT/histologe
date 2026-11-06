@@ -29,5 +29,8 @@
 
     <body class="iframed">
         {% block body %}{% endblock %}
+
+        <script type="module" src="{{ asset('build/dsfr/dsfr.module.min.js') }}"></script>
+        <script nomodule src="{{ asset('build/dsfr/dsfr.nomodule.min.js') }}"></script>
     </body>
 </html>
