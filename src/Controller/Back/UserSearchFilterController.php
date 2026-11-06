@@ -53,7 +53,7 @@ class UserSearchFilterController extends AbstractController
 
         $search = new UserSearchFilter();
         $search->setUser($user);
-        $search->setName($userSearchFilterRequest->name);
+        $search->setName($userSearchFilterRequest->getName());
         $search->setParams($userSearchFilterRequest->params);
 
         $errors = $validator->validate($search);
@@ -129,7 +129,7 @@ class UserSearchFilterController extends AbstractController
         if (count($errors) > 0) {
             return $this->jsonValidation($errors);
         }
-        $name = trim($userSearchFilterRequest->name);
+        $name = trim($userSearchFilterRequest->getName());
 
         $userSearchFilter = $userSearchFilterRepository->findOneBy(['id' => $id, 'user' => $user]);
         if (!$userSearchFilter) {

@@ -26,7 +26,7 @@ class FileVisibilityService
                 return true;
             }
             if ($f->getTerritory()) {
-                $partners = [$user->getPartnerInTerritory($f->getTerritory())];
+                $partners = [$user->getPartnerInTerritoryOrNull($f->getTerritory())];
             } else {
                 $partners = $user->getPartners();
             }

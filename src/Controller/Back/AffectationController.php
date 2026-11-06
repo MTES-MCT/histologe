@@ -215,9 +215,9 @@ class AffectationController extends AbstractController
             return $this->json(['stayOnPage' => true, 'flashMessages' => [$flashMessage]]);
         }
         if ($this->isCsrfTokenValid('signalement_remove_partner_'.$signalement->getId(), (string) $request->request->get('_token'))) {
-            $partnersIdToRemove = [];
-            $partnersIdToRemove[] = $affectation->getPartner()->getId();
-            $this->affectationManager->removeAffectationsFrom($signalement, [], $partnersIdToRemove);
+            /** @var int $partnerId */
+            $partnerId = $affectation->getPartner()->getId();
+            $this->affectationManager->removeAffectationsFrom($signalement, [], [$partnerId]);
             $entityManager->flush();
             $flashMessage = ['type' => 'success', 'title' => 'Affectation supprimée', 'message' => 'L\'affectation du partenaire '.$affectation->getPartner()->getNom().' a bien été supprimée.'];
             $htmlTargetContents = $this->getHtmlTargetContentsForAffectationWithActionItems($signalement);
@@ -401,10 +401,12 @@ class AffectationController extends AbstractController
             $affectation->setTravauxMiseEnConformite(null);
         }
 
+        /** @var MotifCloture $motifCloture */
+        $motifCloture = $affectation->getMotifCloture();
         $affectationManager->closeAffectation(
             affectation: $affectation,
             user: $user,
-            motif: $affectation->getMotifCloture(),
+            motif: $motifCloture,
             partner: $partner,
             message: $affectation->getPrecisionsCloture(),
             files: $form->get('files')->getData(),

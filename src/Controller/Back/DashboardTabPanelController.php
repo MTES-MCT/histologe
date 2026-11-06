@@ -28,7 +28,7 @@ class DashboardTabPanelController extends AbstractController
         TabBodyLoaderCollection $tabBodyLoaderCollection,
         #[MapQueryString] TabQueryParameters $tabQueryParameter,
     ): Response {
-        /** @var ?User $user */
+        /** @var User $user */
         $user = $this->getUser();
         $territoires = $this->resolveTerritoires($tabQueryParameter, $user);
 

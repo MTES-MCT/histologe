@@ -17,7 +17,7 @@ class PopNotificationController extends AbstractController
     public function show(
         PartnerRepository $partnerRepository,
     ): Response {
-        /** @var ?User $user */
+        /** @var User $user */
         $user = $this->getUser();
         $popNotification = $user->getPopNotifications()->first();
         if (!$popNotification instanceof PopNotification) {
@@ -42,7 +42,7 @@ class PopNotificationController extends AbstractController
     public function delete(
         EntityManagerInterface $entityManager,
     ): JsonResponse {
-        /** @var ?User $user */
+        /** @var User $user */
         $user = $this->getUser();
         $popNotification = $user->getPopNotifications()->count() ? $user->getPopNotifications()->first() : null;
         if ($popNotification) {

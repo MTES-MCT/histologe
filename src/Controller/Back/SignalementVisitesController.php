@@ -252,7 +252,7 @@ class SignalementVisitesController extends AbstractController
         if ($cancelVisiteForm->isSubmitted() && $cancelVisiteForm->isValid()) {
             /** @var User $user */
             $user = $this->getUser();
-            $context['createdByPartner'] = $user->getPartnerInTerritory($intervention->getSignalement()->getAddress()->getTerritory());
+            $context['createdByPartner'] = $user->getPartnerInTerritoryOrFirstOne($intervention->getSignalement()->getAddress()->getTerritory());
             $this->interventionPlanningStateMachine->apply($intervention, 'cancel', $context);
             $this->entityManager->flush();
             $flashMessages[] = ['type' => 'success', 'title' => 'Visite annulée', 'message' => 'La visite a bien été annulée.'];
@@ -368,7 +368,7 @@ class SignalementVisitesController extends AbstractController
             $intervention->setNotifyUsager(true);
             /** @var User $user */
             $user = $this->getUser();
-            $createdByPartner = $user->getPartnerInTerritory($intervention->getSignalement()->getAddress()->getTerritory());
+            $createdByPartner = $user->getPartnerInTerritoryOrFirstOne($intervention->getSignalement()->getAddress()->getTerritory());
             $this->interventionManager->confirmOrAbortVisiteFromData($intervention, $createdByPartner, $confirmVisiteForm->get('visiteDone')->getData(), $fileNameOrError);
             $this->entityManager->flush();
             $flashMessages[] = ['type' => 'success', 'title' => 'Modifications enregistrées', 'message' => self::SUCCESS_MSG_CONFIRM];
@@ -439,14 +439,13 @@ class SignalementVisitesController extends AbstractController
     public function deleteRapportVisiteFromSignalement(
         Intervention $intervention,
     ): Response {
-        if (!$intervention->getRapportDeVisite()) {
+        if (!$file = $intervention->getRapportDeVisite()) {
             $flashMessages[] = ['type' => 'alert', 'title' => 'Erreur', 'message' => "Ce rapport n'existe pas."];
 
             return $this->json(['stayOnPage' => true, 'flashMessages' => $flashMessages]);
         }
         $this->denyAccessUnlessGranted(InterventionVoter::INTERVENTION_EDIT_VISITE, $intervention);
 
-        $file = $intervention->getRapportDeVisite();
         $this->uploadHandler->deleteFileInBucket($file);
         $this->entityManager->remove($file);
         $this->entityManager->flush();

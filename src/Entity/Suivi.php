@@ -207,7 +207,7 @@ class Suivi implements EntityHistoryInterface
         }
 
         $partnerOrType = null;
-        $partner = $this->getPartner() ?: $this->getCreatedBy()?->getPartnerInTerritoryOrFirstOne($this->getSignalement()->getAddress()->getTerritory());
+        $partner = $this->getPartner() ?: $this->getCreatedBy()?->getPartnerInTerritoryOrFirstOneOrNull($this->getSignalement()->getAddress()->getTerritory());
         if ($partner) {
             if ($partner->getIsArchive()) {
                 $partnerOrType = 'Partenaire supprimé';

@@ -72,9 +72,6 @@ class PartnerVoter extends Voter
 
     private function canAssignPermissionAffectation(Partner $partner, User $user): bool
     {
-        if (!$user->getFirstTerritory()) {
-            return false;
-        }
         if ($this->security->isGranted('ROLE_ADMIN_TERRITORY') && $user->hasPartnerInTerritory($partner->getTerritory())) {
             return true;
         }
@@ -84,9 +81,6 @@ class PartnerVoter extends Voter
 
     private function canManage(Partner $partner, User $user): bool
     {
-        if (!$user->getFirstTerritory()) {
-            return false;
-        }
         if ($this->security->isGranted('ROLE_ADMIN_PARTNER') && $user->hasPartner($partner)) {
             return true;
         }

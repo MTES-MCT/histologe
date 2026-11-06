@@ -611,7 +611,7 @@ class TabDataManager
                 ->toArray();
         } else {
             $territoire = $territoires[$tabQueryParameters->territoireId];
-            $partner = $user->getPartnerInTerritory($territoire);
+            $partner = $user->getPartnerInTerritoryOrNull($territoire);
             $tabQueryParameters->partenairesId = [$partner->getId()];
         }
 
