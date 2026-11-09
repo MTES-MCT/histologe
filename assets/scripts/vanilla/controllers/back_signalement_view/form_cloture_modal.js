@@ -81,10 +81,14 @@ function initCloseSignalementForm() {
   }
 
   function updateTravauxWarningSignalement() {
+    const selectedOption =
+      motifClotureSelectSignalement?.options[motifClotureSelectSignalement.selectedIndex];
     const selectedTravaux = document.querySelector(
       'input[name="close_signalement[travauxMiseEnConformite]"]:checked'
     );
-    travauxWarningSignalement?.classList.toggle('fr-hidden', selectedTravaux?.value !== 'EN_COURS');
+    const needRelanceUsager = selectedOption?.getAttribute('data-need-relance-usager') === 'true';
+    const shouldShowWarning = selectedTravaux?.value === 'EN_COURS' && needRelanceUsager;
+    travauxWarningSignalement?.classList.toggle('fr-hidden', !shouldShowWarning);
   }
 
   function updateProceduresStateSignalement() {
@@ -102,6 +106,7 @@ function initCloseSignalementForm() {
   }
 
   motifClotureSelectSignalement?.addEventListener('change', updateTravauxVisibilitySignalement);
+  motifClotureSelectSignalement?.addEventListener('change', updateTravauxWarningSignalement);
   travauxRadioButtonsSignalement.forEach((radioButton) => {
     radioButton.addEventListener('change', updateTravauxWarningSignalement);
   });

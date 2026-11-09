@@ -165,6 +165,18 @@ enum MotifCloture: string
     }
 
     /** @return array<MotifCloture> */
+    public static function getListNeedRelanceUsager(): array
+    {
+        $needTravauxAndRelance = self::getListNeedTravauxPrecisions();
+        unset($needTravauxAndRelance[array_search(self::RELOGEMENT_OCCUPANT, $needTravauxAndRelance, true)]);
+        unset($needTravauxAndRelance[array_search(self::DEMANDE_FERMETURE_ABANDON_OCCUPANT, $needTravauxAndRelance, true)]);
+        unset($needTravauxAndRelance[array_search(self::ABSENCE_DE_REPONSE_OCCUPANT, $needTravauxAndRelance, true)]);
+        unset($needTravauxAndRelance[array_search(self::DEPART_OCCUPANT, $needTravauxAndRelance, true)]);
+
+        return $needTravauxAndRelance;
+    }
+
+    /** @return array<MotifCloture> */
     public static function getListForBailleur(): array
     {
         return [
