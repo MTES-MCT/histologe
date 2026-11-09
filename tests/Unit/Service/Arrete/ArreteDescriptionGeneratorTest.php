@@ -3,6 +3,7 @@
 namespace App\Tests\Unit\Service\Arrete;
 
 use App\Entity\Arrete;
+use App\Entity\Enum\ArreteCreationSource;
 use App\Entity\Enum\ArreteType;
 use App\Service\Arrete\ArreteDescriptionGenerator;
 use App\Service\Interconnection\Esabora\Response\Model\DossierArreteSISH;
@@ -37,7 +38,7 @@ class ArreteDescriptionGeneratorTest extends TestCase
         $dossierArreteSISH->method('getArreteModificatifNumero')->willReturn(null);
 
         $description = ArreteDescriptionGenerator::buildDescriptionArreteCreated($this->createArreteFromDossier($dossierArreteSISH));
-        $this->assertEquals("L'arrêté 2023/DD13/00664 du 14/06/2023 a été pris dans le dossier de n°2023/DD13/0010.<br>Type arrêté : Suroccupation<br>", $description);
+        $this->assertEquals("L'arrêté 2023/DD13/00664 du 14/06/2023 a été pris dans le dossier de n°2023/DD13/0010.<br>Type arrêté : Arrêté L.511-11 - Suroccupation<br>", $description);
     }
 
     public function testArreteModificatifDescriptionOnInterventionCreated(): void
@@ -95,7 +96,7 @@ class ArreteDescriptionGeneratorTest extends TestCase
         $dossierArreteSISH->method('getArreteModificatifDate')->willReturn(null);
 
         $description = ArreteDescriptionGenerator::buildDescriptionArreteCreated($this->createArreteFromDossier($dossierArreteSISH));
-        $this->assertEquals("L'arrêté 2023/DD13/00664 du 14/06/2023 a été pris dans le dossier de n°2023/DD13/0010.<br>Type arrêté : Suroccupation<br>", $description);
+        $this->assertEquals("L'arrêté 2023/DD13/00664 du 14/06/2023 a été pris dans le dossier de n°2023/DD13/0010.<br>Type arrêté : Arrêté L.511-11 - Suroccupation<br>", $description);
     }
 
     public function testArreteMainLeveeAvecModificatifNumeroSansDateDescriptionOnInterventionCreated(): void
@@ -121,7 +122,7 @@ class ArreteDescriptionGeneratorTest extends TestCase
             'arrete_mainlevee_numero' => '2023-DD13-00172',
         ];
         $arrete = $this->createArrete($oldAdditionalInformation);
-        $typeLine = 'Type arrêté : '.$arrete->getArreteType()->label();
+        $typeLine = 'Type arrêté : Arrêté L.511-19 - Insalubrité';
 
         // Test modification date et numéro arrêté
         $description = ArreteDescriptionGenerator::buildDescriptionArreteUpdated($arrete, [
@@ -260,15 +261,38 @@ class ArreteDescriptionGeneratorTest extends TestCase
         $this->assertStringContainsString('Un arrêté de mainlevée APML45K09O du 01/02/2026 a été pris pour l\'arrêté 2023/DD13/00664 du 14/06/2023 dans le dossier de n°2023/DD13/0010.', $description);
     }
 
+    public function testArreteDescriptionWithNonEsaboraSource(): void
+    {
+        $arrete = $this->createArrete(
+            [
+                'numero_dossier' => '2023/DD13/0010',
+                'arrete_numero' => '2023/DD13/00664',
+                'arrete_mainlevee_numero' => null,
+                'arrete_modificatif_date' => null,
+                'arrete_modificatif_numero' => null,
+            ],
+            '14/06/2023',
+            null,
+            ArreteCreationSource::IMPORT
+        );
+        $description = ArreteDescriptionGenerator::buildDescriptionArreteCreated($arrete);
+        $this->assertEquals("L'arrêté 2023/DD13/00664 du 14/06/2023 a été pris dans le dossier de n°2023/DD13/0010.<br>Type arrêté : Insalubrité<br>", $description);
+    }
+
     /**
      * @param array<string, string|null> $additionalInformation
      */
-    private function createArrete(array $additionalInformation, string $dateArrete = '14/06/2023', ?string $dateMainLevee = null): Arrete
-    {
+    private function createArrete(
+        array $additionalInformation,
+        string $dateArrete = '14/06/2023',
+        ?string $dateMainLevee = null,
+        ArreteCreationSource $arreteCreationSource = ArreteCreationSource::ESABORA,
+    ): Arrete {
         return (new Arrete())
             ->setDateArrete(\DateTimeImmutable::createFromFormat('d/m/Y', $dateArrete) ?: new \DateTimeImmutable())
             ->setDateMainLevee($dateMainLevee ? (\DateTimeImmutable::createFromFormat('d/m/Y', $dateMainLevee) ?: null) : null)
             ->setArreteType(ArreteType::ARRETE_L_511_19_INSALUBRITE)
+            ->setArreteCreationSource($arreteCreationSource)
             ->setAdditionalInformation($additionalInformation);
     }
 
