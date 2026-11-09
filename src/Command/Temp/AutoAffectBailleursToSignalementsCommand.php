@@ -115,11 +115,11 @@ class AutoAffectBailleursToSignalementsCommand extends Command
                 $hasAffectation = $signalement
                     ->getAffectations()
                     ->exists(
-                        function (int $key, Affectation $affectation) use ($signalement, $partner) {
+                        static function (int $key, Affectation $affectation) use ($partner) {
                             return $affectation->getPartner() === $partner;
                         }
                     );
-                
+
                 if (!$hasAffectation) {
                     $newAffectation = (new Affectation())
                         ->setSignalement($signalement)
@@ -127,7 +127,6 @@ class AutoAffectBailleursToSignalementsCommand extends Command
                         ->setAffectedBy($user ?? null)
                         ->setTerritory($signalement->getAddress()->getTerritory());
                 }
-
             } else {
                 $newAffectation = $this->affectationManager->createAffectationFrom(
                     signalement: $signalement,
