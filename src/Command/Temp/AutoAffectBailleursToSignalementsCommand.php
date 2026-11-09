@@ -124,7 +124,7 @@ class AutoAffectBailleursToSignalementsCommand extends Command
                     $newAffectation = (new Affectation())
                         ->setSignalement($signalement)
                         ->setPartner($partner)
-                        ->setAffectedBy($user ?? null)
+                        ->setAffectedBy($adminUser)
                         ->setTerritory($signalement->getAddress()->getTerritory());
                 }
             } else {
