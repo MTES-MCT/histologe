@@ -12,10 +12,12 @@ use App\Repository\SignalementRepository;
 use App\Security\User\SignalementBailleur;
 use App\Security\User\SignalementUser;
 use App\Service\History\HistoryEntryBuffer;
+use App\Service\Security\NewLoginNotifier;
 use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerInterface;
 use Scheb\TwoFactorBundle\Security\TwoFactor\Event\TwoFactorAuthenticationEvent;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Security\Http\Event\InteractiveLoginEvent;
 
@@ -32,6 +34,7 @@ class AuthentificationSuccessListener
         private readonly string $historyTrackingEnable,
         private readonly HistoryEntryBuffer $historyEntryBuffer,
         private readonly SuiviManager $suiviManager,
+        private readonly NewLoginNotifier $newLoginNotifier,
     ) {
     }
 
@@ -50,7 +53,8 @@ class AuthentificationSuccessListener
         }
         $this->handleSuccessfulLogin(
             $user,
-            HistoryEntryEvent::LOGIN
+            HistoryEntryEvent::LOGIN,
+            $event->getRequest(),
         );
     }
 
@@ -60,11 +64,12 @@ class AuthentificationSuccessListener
         $user = $event->getToken()->getUser();
         $this->handleSuccessfulLogin(
             $user,
-            HistoryEntryEvent::LOGIN_2FA
+            HistoryEntryEvent::LOGIN_2FA,
+            $event->getRequest(),
         );
     }
 
-    private function handleSuccessfulLogin(?UserInterface $user, HistoryEntryEvent $eventType): void
+    private function handleSuccessfulLogin(?UserInterface $user, HistoryEntryEvent $eventType, Request $request): void
     {
         if (!$user) {
             return;
@@ -72,6 +77,7 @@ class AuthentificationSuccessListener
 
         if ($user instanceof User) {
             $user->setLastLoginAt(new \DateTimeImmutable());
+            $this->newLoginNotifier->handleLogin($user, $request);
             $this->entityManager->flush();
         } elseif ($user instanceof SignalementBailleur) {
             $signalement = $this->signalementRepository->findOneByUuidWithSuivis($user->getUserIdentifier());
