@@ -3,6 +3,9 @@
     motifSuivi est la saisie de l'agent, déjà passée dans Sanitizer::sanitize() : |raw comme avant, le HtmlSanitizer de createSuivi() la nettoie.
 -#}
 Le signalement a été clôturé pour {{ subject }} avec le motif suivant :<br><strong>{{ motifCloture }}</strong>
+{% if dateDepartOccupant %}
+    <br><strong>Date de départ de l'occupant : </strong>{{ dateDepartOccupant }}
+{% endif %}
 {%- if travauxMiseEnConformite -%}
     <br><strong>Travaux de mise en conformité réalisés ? </strong>{{ travauxMiseEnConformite }}
 {%- endif -%}

@@ -261,10 +261,14 @@ class SignalementActionController extends AbstractController
         if ($signalement->getTravauxMiseEnConformite() && !in_array($signalement->getMotifCloture(), MotifCloture::getListNeedTravauxPrecisions(), true)) {
             $signalement->setTravauxMiseEnConformite(null);
         }
+        if ($signalement->getDepartOccupantAt() && MotifCloture::DEPART_OCCUPANT !== $signalement->getMotifCloture()) {
+            $signalement->setDepartOccupantAt(null);
+        }
 
         $description = $this->suiviManager->buildDescriptionClotureSignalement([
             'subject' => 'tous les partenaires',
             'motif_cloture' => $signalement->getMotifCloture(),
+            'date_depart_occupant' => $signalement->getDepartOccupantAt(),
             'motif_suivi' => $signalement->getComCloture(),
             'procedures' => $signalement->getSignalementProcedures(ProcedureCategory::PROCEDURE_RETENUE),
         ]);

@@ -46,6 +46,9 @@ updateTravauxVisibilityAffectation();
 //cloture signalement v2
 function initCloseSignalementForm() {
   const motifClotureSelectSignalement = document.querySelector('#close_signalement_motifCloture');
+  const departOccupantContainerSignalement = document.querySelector(
+    '#close_signalement_departOccupantAt_container'
+  );
   const travauxContainerSignalement = document.querySelector(
     '#close_signalement_travauxMiseEnConformite_container'
   );
@@ -61,6 +64,13 @@ function initCloseSignalementForm() {
   const withoutProcedureCheckboxSignalement = document.querySelector(
     '#close_signalement_withoutProcedure'
   );
+
+  function updateDepartOccupantVisibilitySignalement() {
+    departOccupantContainerSignalement?.classList.toggle(
+      'fr-hidden',
+      motifClotureSelectSignalement?.value !== 'DEPART_OCCUPANT'
+    );
+  }
 
   function updateTravauxVisibilitySignalement() {
     if (!motifClotureSelectSignalement || !travauxContainerSignalement) return;
@@ -105,12 +115,14 @@ function initCloseSignalementForm() {
     window.dispatchEvent(new Event('refreshSearchCheckboxContainerEvent'));
   }
 
+  motifClotureSelectSignalement?.addEventListener('change', updateDepartOccupantVisibilitySignalement);
   motifClotureSelectSignalement?.addEventListener('change', updateTravauxVisibilitySignalement);
   motifClotureSelectSignalement?.addEventListener('change', updateTravauxWarningSignalement);
   travauxRadioButtonsSignalement.forEach((radioButton) => {
     radioButton.addEventListener('change', updateTravauxWarningSignalement);
   });
   withoutProcedureCheckboxSignalement?.addEventListener('change', updateProceduresStateSignalement);
+  updateDepartOccupantVisibilitySignalement();
   updateTravauxVisibilitySignalement();
   updateTravauxWarningSignalement();
   updateProceduresStateSignalement();
