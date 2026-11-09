@@ -5,6 +5,7 @@ namespace App\Controller;
 use App\Dto\DemandeLienSignalement;
 use App\Dto\Request\Signalement\SignalementDraftArchiveRequest;
 use App\Dto\Request\Signalement\SignalementDraftRequest;
+use App\Entity\Commune;
 use App\Entity\Enum\MotifCloture;
 use App\Entity\Enum\MotifClotureUsager;
 use App\Entity\Enum\ProfileDeclarant;
@@ -137,7 +138,7 @@ class SignalementController extends AbstractController
         $errors = $validator->validate(
             $signalementDraftRequest,
             null,
-            ['Default', 'POST_'.strtoupper($signalementDraftRequest->getProfil())]
+            ['Default', 'POST_'.strtoupper((string) $signalementDraftRequest->getProfil())]
         );
         if (0 === $errors->count()) {
             return $this->json([
@@ -220,9 +221,9 @@ class SignalementController extends AbstractController
             SignalementDraftRequest::class,
             'json'
         );
-        $groupValidation = ['Default', 'POST_'.strtoupper($signalementDraftRequest->getProfil())];
+        $groupValidation = ['Default', 'POST_'.strtoupper((string) $signalementDraftRequest->getProfil())];
         if ('validation_signalement' === $signalementDraftRequest->getCurrentStep()) {
-            $groupValidation[] = 'PUT_'.strtoupper($signalementDraftRequest->getProfil());
+            $groupValidation[] = 'PUT_'.strtoupper((string) $signalementDraftRequest->getProfil());
         }
         $errors = $validator->validate($signalementDraftRequest, null, $groupValidation);
         if (0 === $errors->count()) {
@@ -308,12 +309,11 @@ class SignalementController extends AbstractController
             } else {
                 $profil = $request->query->get('profil');
             }
+            $to = 'locataire' === $profil || 'bailleur_occupant' === $profil ? $signalement->getMailOccupant() : $signalement->getMailDeclarant();
             $success = $notificationMailerRegistry->send(
                 new NotificationMail(
                     type: NotificationMailerType::TYPE_SIGNALEMENT_LIEN_SUIVI_TO_USAGER,
-                    to: 'locataire' === $profil || 'bailleur_occupant' === $profil
-                        ? $signalement->getMailOccupant()
-                        : $signalement->getMailDeclarant(),
+                    to: (string) $to,
                     signalement: $signalement,
                 )
             );
@@ -422,6 +422,7 @@ class SignalementController extends AbstractController
             }
         } else {
             if ($postalCodeHomeChecker->isActiveByPostalCode($postalCode)) {
+                /** @var Commune $commune */
                 $commune = $communeRepository->findOneBy(['codePostal' => $postalCode]);
 
                 return $this->json(['success' => true, 'territoryCode' => $commune->getTerritory()->getZip()]);
@@ -503,6 +504,7 @@ class SignalementController extends AbstractController
         TiersInvitationRepository $tiersInvitationRepository,
         SuiviCategoryMapper $suiviCategoryMapper,
     ): Response {
+        /** @var Signalement $signalement */
         $signalement = $signalementRepository->findOneByCodeForPublic($code);
         $this->denyAccessUnlessGranted(SignalementFoVoter::SIGN_USAGER_VIEW, $signalement);
 
@@ -553,6 +555,7 @@ class SignalementController extends AbstractController
         EntityManagerInterface $entityManager,
         Request $request,
     ): Response {
+        /** @var Signalement $signalement */
         $signalement = $signalementRepository->findOneByCodeForPublic($code);
         $this->denyAccessUnlessGranted(SignalementFoVoter::SIGN_USAGER_VIEW, $signalement);
 
@@ -583,6 +586,7 @@ class SignalementController extends AbstractController
         TiersInvitationRepository $tiersInvitationRepository,
         SignalementDesordresProcessor $signalementDesordresProcessor,
     ): Response {
+        /** @var Signalement $signalement */
         $signalement = $signalementRepository->findOneByCodeForPublic($code);
         $this->denyAccessUnlessGranted(SignalementFoVoter::SIGN_USAGER_VIEW, $signalement);
 
@@ -625,6 +629,7 @@ class SignalementController extends AbstractController
         SuiviSeenMarker $suiviSeenMarker,
         EntityManagerInterface $entityManager,
     ): Response {
+        /** @var Signalement $signalement */
         $signalement = $signalementRepository->findOneByCodeForPublic($code);
         $this->denyAccessUnlessGranted(SignalementFoVoter::SIGN_USAGER_VIEW, $signalement);
 
@@ -705,6 +710,7 @@ class SignalementController extends AbstractController
         Request $request,
         EntityManagerInterface $entityManager,
     ): Response {
+        /** @var Signalement $signalement */
         $signalement = $signalementRepository->findOneByCodeForPublic($code);
         $this->denyAccessUnlessGranted(SignalementFoVoter::SIGN_USAGER_VIEW, $signalement);
         /** @var SignalementUser $signalementUser */
@@ -762,6 +768,7 @@ class SignalementController extends AbstractController
         string $code,
         SignalementRepository $signalementRepository,
     ): Response {
+        /** @var Signalement $signalement */
         $signalement = $signalementRepository->findOneByCodeForPublic($code);
         $this->denyAccessUnlessGranted(SignalementFoVoter::SIGN_USAGER_VIEW, $signalement);
         if (!$this->isGranted(SignalementFoVoter::SIGN_USAGER_EDIT, $signalement)) {
@@ -795,6 +802,7 @@ class SignalementController extends AbstractController
         UserRepository $userRepository,
         ParameterBagInterface $parameterBag,
     ): Response {
+        /** @var Signalement $signalement */
         $signalement = $signalementRepository->findOneByCodeForPublic($code);
         $this->denyAccessUnlessGranted(SignalementFoVoter::SIGN_USAGER_VIEW, $signalement);
         if ($signalement->getIsUsagerAbandonProcedure()) {
@@ -833,7 +841,7 @@ class SignalementController extends AbstractController
                 $notificationAndMailSender->sendUsagerCloseInjonctionToBailleur($signalement, $motif->label());
 
                 // On clôture le signalement
-                $adminUser = $userRepository->findOneBy(['email' => $parameterBag->get('user_system_email')]);
+                $adminUser = $userRepository->getUserSystem();
                 $signalementManager->closeInjonction(
                     signalement: $signalement,
                     closedBy: $adminUser,
@@ -886,6 +894,7 @@ class SignalementController extends AbstractController
         SuiviRepository $suiviRepository,
         EntityManagerInterface $entityManager,
     ): Response {
+        /** @var Signalement $signalement */
         $signalement = $signalementRepository->findOneByCodeForPublic($code);
         $this->denyAccessUnlessGranted(SignalementFoVoter::SIGN_USAGER_VIEW, $signalement);
         if (!$this->isGranted(SignalementFoVoter::SIGN_USAGER_EDIT, $signalement)) {
@@ -951,6 +960,7 @@ class SignalementController extends AbstractController
         EntityManagerInterface $entityManager,
         LoggerInterface $logger,
     ): Response {
+        /** @var Signalement $signalement */
         $signalement = $signalementRepository->findOneByCodeForPublic($code);
         $this->denyAccessUnlessGranted(SignalementFoVoter::SIGN_USAGER_BASCULE_PROCEDURE, $signalement);
 
@@ -1024,6 +1034,7 @@ class SignalementController extends AbstractController
         ParameterBagInterface $parameterBag,
         LoggerInterface $logger,
     ): Response {
+        /** @var Signalement $signalement */
         $signalement = $signalementRepository->findOneByCodeForPublic($code);
         $this->denyAccessUnlessGranted(SignalementFoVoter::SIGN_USAGER_VIEW, $signalement);
         if (!$this->isGranted(SignalementFoVoter::SIGN_USAGER_EDIT, $signalement)) {
@@ -1089,7 +1100,7 @@ class SignalementController extends AbstractController
                     $injonctionBailleurService->switchFromInjonctionToProcedure($signalement);
                 } else {
                     // On clôture le signalement
-                    $adminUser = $userRepository->findOneBy(['email' => $parameterBag->get('user_system_email')]);
+                    $adminUser = $userRepository->getUserSystem();
                     $signalementManager->closeInjonction(
                         signalement: $signalement,
                         closedBy: $adminUser,
@@ -1136,6 +1147,7 @@ class SignalementController extends AbstractController
         SignalementRepository $signalementRepository,
         SignalementUpdateService $signalementUpdateService,
     ): Response {
+        /** @var Signalement $signalement */
         $signalement = $signalementRepository->findOneByCodeForPublic($code);
         $this->denyAccessUnlessGranted(SignalementFoVoter::SIGN_USAGER_EDIT, $signalement);
 
@@ -1175,6 +1187,7 @@ class SignalementController extends AbstractController
         NotificationMailerRegistry $notificationMailerRegistry,
         EntityManagerInterface $entityManager,
     ): Response {
+        /** @var Signalement $signalement */
         $signalement = $signalementRepository->findOneByCodeForPublic($code);
         $this->denyAccessUnlessGranted(SignalementFoVoter::SIGN_USAGER_EDIT, $signalement);
 

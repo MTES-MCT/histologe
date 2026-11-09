@@ -94,7 +94,7 @@ class BrevoWebhookController extends AbstractController
             $emailDeliveryIssue = $emailDeliveryIssueRepository->findOneBy(['email' => $email]) ?? new EmailDeliveryIssue();
             $emailDeliveryIssue
                 ->setEmail($email)
-                ->setEvent(BrevoEvent::tryFrom($event))
+                ->setEvent(BrevoEvent::from($event))
                 ->setReason($payload['reason'] ?? null)
                 ->setPayload($payload);
 

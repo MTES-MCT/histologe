@@ -72,12 +72,12 @@ class TiersInvitation implements EntityHistoryInterface
         return $this->id;
     }
 
-    public function getSignalement(): ?Signalement
+    public function getSignalement(): Signalement
     {
         return $this->signalement;
     }
 
-    public function setSignalement(?Signalement $signalement): static
+    public function setSignalement(Signalement $signalement): static
     {
         $this->signalement = $signalement;
 
