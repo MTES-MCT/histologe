@@ -3,7 +3,7 @@
     <strong>{{ tabOrientationItem.date|date('d/m/Y') }}</strong>
 </div>
 
-<div class="fr-p-3w fr-mb-3w {% if is_granted('SIGN_MANAGE_PROCEDURE_ENGAGEE') %}fr-frame--white{% else %}fr-frame--grey{% endif %}">
+<div class="fr-p-3w fr-mb-3w {% if is_granted('SIGN_MANAGE_PROCEDURE_ENGAGEE', tabOrientationItem.signalement) %}fr-frame--white{% else %}fr-frame--grey{% endif %}">
     <div class="fr-grid-row">
         <div class="fr-col-12 fr-mb-4v">
             <div class="fr-grid-row fr-grid-row--middle fr-grid-row--gutters">
@@ -43,8 +43,10 @@
                 {% set lastSuivi = tabOrientationItem.signalement.getSuivisWithCategory(constant('App\\Entity\\Enum\\SuiviCategory::ADD_OR_EDIT_PROCEDURE_ENGAGEE')).last() %}
                 {% set commentaire = lastSuivi ? (lastSuivi.getOriginalData()['commentaire']) : null %}
                 {% if commentaire %}
-                    <div class="fr-highlight fr-ml-1v">
-                        {{ commentaire|raw }}
+                    <div class="fr-background--white">
+                        <div class="fr-highlight fr-ml-0">
+                            {{ commentaire|raw }}
+                        </div>
                     </div>
                 {% endif %}
             {% endif %}
