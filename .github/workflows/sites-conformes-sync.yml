@@ -1,0 +1,65 @@
+name: Sites Conformes Sync
+
+# Synchronise les branches main et production du dépôt passe-plat
+# MTES-MCT/signal-logement-sites-conformes depuis numerique-gouv/sites-conformes.
+# Uniquement en fast-forward : si une branche a divergé, le job échoue.
+
+on:
+  schedule:
+    # Du lundi au vendredi, en évitant le début d'heure
+    # Cron GitHub Actions en UTC
+    - cron: '17 5 * * 1-5'
+
+  # Permet un lancement manuel
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  sites-conformes-sync:
+    name: Sync main and production from sites-conformes
+    runs-on: ubuntu-latest
+    environment: sites-conformes-sync
+
+    steps:
+      - name: Synchroniser main et production
+        env:
+          DEPLOY_KEY: ${{ secrets.SITES_CONFORMES_SYNC_DEPLOY_KEY }}
+        run: |
+          # Deploy key (avec droit d'écriture) du dépôt passe-plat
+          mkdir -p ~/.ssh
+          echo "$DEPLOY_KEY" > ~/.ssh/id_ed25519
+          chmod 600 ~/.ssh/id_ed25519
+          ssh-keyscan github.com >> ~/.ssh/known_hosts 2>/dev/null
+
+          git clone \
+            --quiet \
+            git@github.com:MTES-MCT/signal-logement-sites-conformes.git \
+            repo
+          cd repo
+
+          git remote add sites-conformes https://github.com/numerique-gouv/sites-conformes.git
+          git fetch --quiet sites-conformes main production
+
+          echo "# 🔄 Sites Conformes Sync" >> "$GITHUB_STEP_SUMMARY"
+          echo "" >> "$GITHUB_STEP_SUMMARY"
+
+          for branch in main production; do
+            if ! git merge-base --is-ancestor "origin/${branch}" "sites-conformes/${branch}"; then
+              echo "::error::La branche ${branch} a divergé de sites-conformes, synchronisation impossible"
+              echo "- ❌ \`${branch}\` : a divergé de sites-conformes" >> "$GITHUB_STEP_SUMMARY"
+              exit 1
+            fi
+
+            BEFORE=$(git rev-parse --short "origin/${branch}")
+            AFTER=$(git rev-parse --short "sites-conformes/${branch}")
+
+            git push origin "refs/remotes/sites-conformes/${branch}:refs/heads/${branch}"
+
+            if [ "$BEFORE" = "$AFTER" ]; then
+              echo "- ✅ \`${branch}\` : déjà à jour (${AFTER})" >> "$GITHUB_STEP_SUMMARY"
+            else
+              echo "- ⬆️ \`${branch}\` : ${BEFORE} → ${AFTER}" >> "$GITHUB_STEP_SUMMARY"
+            fi
+          done
