@@ -2,13 +2,18 @@
 
 namespace App\Tests\Unit\Service\Security;
 
+use App\Entity\Partner;
+use App\Entity\Territory;
 use App\Entity\User;
+use App\Entity\UserPartner;
 use App\Service\Mailer\NotificationMail;
 use App\Service\Mailer\NotificationMailerRegistry;
 use App\Service\Mailer\NotificationMailerType;
 use App\Service\Security\NewLoginNotifier;
+use App\Service\TimezoneProvider;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
+use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\HttpFoundation\Request;
 
 class NewLoginNotifierTest extends TestCase
@@ -116,9 +121,65 @@ class NewLoginNotifierTest extends TestCase
             ->handleLogin($user, $this->createRequest('10.0.0.2', 'Firefox'));
     }
 
+    /**
+     * @return iterable<string, array{string}>
+     */
+    public static function provideNonAgentRoles(): iterable
+    {
+        yield 'usager' => [User::ROLE_USAGER];
+        yield 'utilisateur API' => [User::ROLE_API_USER];
+    }
+
+    #[DataProvider('provideNonAgentRoles')]
+    public function testNonAgentLoginIsIgnored(string $role): void
+    {
+        $user = $this->createUser($role);
+        $user->setLastLoginFingerprint(hash('sha256', 'environnement précédent'));
+
+        $notificationMailerRegistry = $this->createMock(NotificationMailerRegistry::class);
+        $notificationMailerRegistry->expects($this->never())->method('send');
+
+        $this->createNotifier($notificationMailerRegistry, notifyAllUsers: true)
+            ->handleLogin($user, $this->createRequest('10.0.0.1', 'Firefox'));
+
+        $this->assertSame(hash('sha256', 'environnement précédent'), $user->getLastLoginFingerprint());
+    }
+
+    public function testLoginDateUsesUserTerritoryTimezone(): void
+    {
+        $timezone = 'America/Cayenne';
+        $user = $this->createUser(User::ROLE_USER_PARTNER);
+        $partner = (new Partner())->setTerritory((new Territory())->setTimezone($timezone));
+        $user->addUserPartner((new UserPartner())->setUser($user)->setPartner($partner));
+        $this->loginOnce($user, '10.0.0.1', 'Firefox');
+
+        $before = (new \DateTimeImmutable('now', new \DateTimeZone($timezone)))->format('d/m/Y à H:i');
+        $loginDate = null;
+        $notificationMailerRegistry = $this->createMock(NotificationMailerRegistry::class);
+        $notificationMailerRegistry
+            ->expects($this->once())
+            ->method('send')
+            ->with($this->callback(static function (NotificationMail $notificationMail) use (&$loginDate) {
+                $loginDate = $notificationMail->getParams()['login_date'];
+
+                return true;
+            }));
+
+        $this->createNotifier($notificationMailerRegistry, notifyAllUsers: true)
+            ->handleLogin($user, $this->createRequest('10.0.0.2', 'Firefox'));
+        $after = (new \DateTimeImmutable('now', new \DateTimeZone($timezone)))->format('d/m/Y à H:i');
+
+        $this->assertContains($loginDate, [$before, $after]);
+    }
+
     private function createNotifier(NotificationMailerRegistry $notificationMailerRegistry, bool $notifyAllUsers = false): NewLoginNotifier
     {
-        return new NewLoginNotifier($notificationMailerRegistry, 'secret', $notifyAllUsers);
+        return new NewLoginNotifier(
+            $notificationMailerRegistry,
+            new TimezoneProvider($this->createStub(Security::class)),
+            'secret',
+            $notifyAllUsers,
+        );
     }
 
     private function loginOnce(User $user, string $ipAddress, string $userAgent): void

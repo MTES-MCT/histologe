@@ -15,13 +15,14 @@ use Symfony\Component\HttpFoundation\Request;
  * (adresse IP + navigateur) différent de celui de sa dernière connexion.
  *
  * L'environnement n'est pas stocké en clair : seule une empreinte HMAC est conservée.
- * L'empreinte est enregistrée pour tous les utilisateurs, mais la notification n'est envoyée
+ * L'empreinte est enregistrée pour tous les agents, mais la notification n'est envoyée
  * qu'aux super admins tant que NEW_LOGIN_NOTIFICATION_TO_ALL_USERS est désactivé.
  */
 class NewLoginNotifier
 {
     public function __construct(
         private readonly NotificationMailerRegistry $notificationMailerRegistry,
+        private readonly TimezoneProvider $timezoneProvider,
         #[Autowire('%kernel.secret%')]
         private readonly string $secret,
         #[Autowire(env: 'bool:NEW_LOGIN_NOTIFICATION_TO_ALL_USERS')]
@@ -35,12 +36,16 @@ class NewLoginNotifier
      */
     public function handleLogin(User $user, Request $request): void
     {
+        if (!$this->isAgent($user)) {
+            return;
+        }
+
         $ipAddress = $request->getClientIp() ?? '';
         $userAgent = (string) $request->headers->get('User-Agent', '');
         $fingerprint = $this->computeFingerprint($ipAddress, $userAgent);
 
         $previousFingerprint = $user->getLastLoginFingerprint();
-        if (null !== $previousFingerprint && hash_equals($previousFingerprint, $fingerprint)) {
+        if ($previousFingerprint === $fingerprint) {
             return;
         }
 
@@ -51,7 +56,7 @@ class NewLoginNotifier
             return;
         }
 
-        $loginAt = new \DateTimeImmutable('now', new \DateTimeZone(TimezoneProvider::TIMEZONE_EUROPE_PARIS));
+        $loginAt = new \DateTimeImmutable('now', new \DateTimeZone($this->timezoneProvider->getTimezone($user)));
         $this->notificationMailerRegistry->send(
             new NotificationMail(
                 type: NotificationMailerType::TYPE_ACCOUNT_NEW_LOGIN,
@@ -68,11 +73,19 @@ class NewLoginNotifier
 
     /**
      * Quand on supprimera NEW_LOGIN_NOTIFICATION_TO_ALL_USERS,
-     * supprimer cette méthode et notifier tous les utilisateurs.
+     * supprimer cette méthode et notifier tous les agents.
      */
     private function isNotificationEnabledFor(User $user): bool
     {
         return $this->notifyAllUsers || $user->isSuperAdmin();
+    }
+
+    private function isAgent(User $user): bool
+    {
+        return $user->isSuperAdmin()
+            || $user->isTerritoryAdmin()
+            || $user->isPartnerAdmin()
+            || $user->isUserPartner();
     }
 
     private function computeFingerprint(string $ipAddress, string $userAgent): string
