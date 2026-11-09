@@ -222,7 +222,9 @@ class SuiviManagerTest extends KernelTestCase
     public function testCreateInstanceForFilesSignalementRapportDeVisite(): void
     {
         [$signalement, $user] = $this->getSignalementAndUserForFiles();
-        $intervention = (new Intervention())->setScheduledAt(new \DateTimeImmutable('2026-03-15 10:00:00'));
+        $intervention = (new Intervention())
+            ->setSignalement($signalement)
+            ->setScheduledAt(new \DateTimeImmutable('2026-03-15 10:00:00'));
 
         $suivi = $this->suiviManager->createInstanceForFilesSignalement($user, $signalement, [
             $this->createFile(DocumentType::PROCEDURE_RAPPORT_DE_VISITE, $intervention),
@@ -237,7 +239,9 @@ class SuiviManagerTest extends KernelTestCase
     public function testCreateInstanceForFilesSignalementPhotosDeVisite(): void
     {
         [$signalement, $user] = $this->getSignalementAndUserForFiles();
-        $intervention = (new Intervention())->setScheduledAt(new \DateTimeImmutable('2026-03-15 10:00:00'));
+        $intervention = (new Intervention())
+            ->setSignalement($signalement)
+            ->setScheduledAt(new \DateTimeImmutable('2026-03-15 10:00:00'));
 
         $suivi = $this->suiviManager->createInstanceForFilesSignalement($user, $signalement, [
             $this->createFile(DocumentType::PHOTO_VISITE, $intervention),

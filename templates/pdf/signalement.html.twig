@@ -589,7 +589,7 @@
                             <div class="fr-col-12 fr-col-md-6 fr-h6 fr-mb-3v">
                                 Visite
                                 {% if visites is not empty or intervention.scheduledAt is not empty %}
-                                    du {{ intervention.scheduledAt|date('d/m/Y') }}
+                                    du {{ intervention.scheduledAtFormated }}
                                 {% endif %}
                             </div>
                         </div>
@@ -706,7 +706,7 @@
                 <div style="page-break-inside: avoid;margin-top: 25px;">
                     <h2>Photo : {{ photo.title }}</h2>
                     {% if photo.documentType.name == 'PHOTO_VISITE' %}
-                       <h3>Photo de la visite du {{ photo.intervention is defined and photo.intervention.scheduledAt is defined ? photo.intervention.scheduledAt|date('d/m/Y') : 'N/R'}}</h3>  
+                       <h3>Photo de la visite du {{ photo.intervention is defined and photo.intervention.scheduledAt is defined ? photo.intervention.scheduledAtFormated : 'N/R'}}</h3>  
                     {% endif %}
                     {% if not isForUsager %}                    
                         <small>Ajoutée par {{ photo.uploadedBy.nomComplet ?? 'N/R' }}</small><br>

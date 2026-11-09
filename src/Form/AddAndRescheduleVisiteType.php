@@ -48,13 +48,20 @@ class AddAndRescheduleVisiteType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $intervention = $builder->getData();
+        $scheduledAt = $intervention->getId() ? $intervention->getScheduledAt() : null;
+        $scheduledAtTimezone = $scheduledAt?->getTimezone()->getName();
 
         $builder->add('scheduledAt', DateType::class, [
             'label' => 'Date de la visite <span class="fr-text-default--error">*</span>',
             'label_html' => true,
             'required' => false,
             'input' => 'datetime_immutable',
+            'model_timezone' => $scheduledAtTimezone,
+            'view_timezone' => $scheduledAtTimezone,
             'constraints' => [new Assert\NotBlank(message: 'Veuillez indiquer la date de la visite.')],
+            'getter' => static function (Intervention $intervention) use ($scheduledAt) {
+                return $scheduledAt;
+            },
         ]);
         $builder->add('scheduledAtTime', TimeType::class, [
             'label' => 'Heure de la visite',
@@ -62,7 +69,9 @@ class AddAndRescheduleVisiteType extends AbstractType
             'required' => false,
             'mapped' => false,
             'input' => 'datetime_immutable',
-            'data' => $intervention->getScheduledAt(),
+            'model_timezone' => $scheduledAtTimezone,
+            'view_timezone' => $scheduledAtTimezone,
+            'data' => $scheduledAt,
         ]);
         if ($this->security->isGranted('ROLE_ADMIN_TERRITORY')) {
             $partners = $this->partnerRepository->findPartnersWithQualificationAffectedOnSignalement(Qualification::VISITES, $intervention->getSignalement());

@@ -35,9 +35,8 @@ class InterventionDescriptionGenerator
     {
         $labelVisite = strtolower($intervention->getType()->label());
         $partnerName = $intervention->getExternalOperator() ?? $intervention->getPartner()?->getNom() ?? 'Non renseigné';
-        $today = new \DateTimeImmutable();
-        $isInPast = $today > $intervention->getScheduledAt()
-            && Intervention::STATUS_DONE === $intervention->getStatus();
+        $today = new \DateTimeImmutable('now', $intervention->getScheduledAt()->getTimezone());
+        $isInPast = $today->format('Y-m-d') > $intervention->getScheduledAt()->format('Y-m-d') && Intervention::STATUS_DONE === $intervention->getStatus();
         $commentBeforeVisite = !$isInPast ? $intervention->getCommentBeforeVisite() : '';
 
         return \sprintf(
@@ -58,9 +57,8 @@ class InterventionDescriptionGenerator
     public static function buildDescriptionVisiteUpdated(Intervention $intervention): string
     {
         $labelVisite = strtolower($intervention->getType()->label());
-        $today = new \DateTimeImmutable();
-        $isInPast = $today > $intervention->getScheduledAt()
-            && Intervention::STATUS_DONE === $intervention->getStatus();
+        $today = new \DateTimeImmutable('now', $intervention->getScheduledAt()->getTimezone());
+        $isInPast = $today->format('Y-m-d') > $intervention->getScheduledAt()->format('Y-m-d') && Intervention::STATUS_DONE === $intervention->getStatus();
         $commentBeforeVisite = !$isInPast ? $intervention->getCommentBeforeVisite() : '';
         $timezone = $intervention->getSignalement()->getTimezone() ?? 'Europe/Paris';
 
@@ -127,7 +125,7 @@ class InterventionDescriptionGenerator
         $messages = [];
         $oldAdditionalInformation = $intervention->getAdditionalInformation() ?? [];
 
-        $oldDate = $intervention->getScheduledAt()?->format('d/m/Y');
+        $oldDate = $intervention->getScheduledAt()->format('d/m/Y');
         $newDate = $dossierArreteSISH->getArreteDate();
         $oldNumero = $oldAdditionalInformation['arrete_numero'] ?? null;
         $newNumero = $dossierArreteSISH->getArreteNumero();
