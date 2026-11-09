@@ -34,17 +34,7 @@ class InterventionRescheduledSubscriber implements EventSubscriberInterface
         if (InterventionType::VISITE === $intervention->getType()) {
             $today = new \DateTimeImmutable('now', $intervention->getScheduledAt()->getTimezone());
             $isInPast = $today->format('Y-m-d') > $intervention->getScheduledAt()->format('Y-m-d') && Intervention::STATUS_DONE === $intervention->getStatus();
-            $commentBeforeVisite = !$isInPast ? $intervention->getCommentBeforeVisite() : '';
-            $partnerName = $intervention->getPartner() ? $intervention->getPartner()->getNom() : 'Non renseigné';
-            $description = 'Changement de date de visite : la visite du logement initialement prévue le ';
-            $description .= $event->getPreviousDate()->format('d/m/Y');
-            $description .= ' a été décalée au ';
-            $description .= $intervention->getScheduledAt()->format('d/m/Y').'.';
-            $description .= '<br>';
-            $description .= 'La visite sera effectuée par '.$partnerName.'.';
-            if (!empty($commentBeforeVisite)) {
-                $description .= '<br>Informations complémentaires : '.$commentBeforeVisite;
-            }
+            $category = SuiviCategory::INTERVENTION_IS_RESCHEDULED;
             $isVisibleForUsager = $intervention->getNotifyUsager() ?? false;
             $suivi = $this->suiviManager->createSuivi(
                 signalement: $intervention->getSignalement(),
