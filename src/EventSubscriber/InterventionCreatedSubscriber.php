@@ -32,20 +32,20 @@ readonly class InterventionCreatedSubscriber implements EventSubscriberInterface
     public function onInterventionCreated(InterventionCreatedEvent $event): void
     {
         $intervention = $event->getIntervention();
+        $today = new \DateTimeImmutable('now', $intervention->getScheduledAt()->getTimezone());
         $signalement = $intervention->getSignalement();
         $isVisibleForUsager = true;
         if (EsaboraSISHService::NAME_SI === $event->getSource() && $signalement->isTiersDeclarant()) {
             $isVisibleForUsager = false;
-        } elseif ($intervention->getScheduledAt()->format('Y-m-d') >= (new \DateTimeImmutable())->format('Y-m-d')) {
+        } elseif (InterventionType::ARRETE_PREFECTORAL === $intervention->getType()) { // TODO migration arretes : condition a supprimer
+            $isVisibleForUsager = true;
+        } elseif ($intervention->getScheduledAt()->format('Y-m-d') >= $today->format('Y-m-d')) {
             $isVisibleForUsager = true;
         } else {
             $isVisibleForUsager = $intervention->getNotifyUsager() ?? false;
         }
 
-        $today = new \DateTimeImmutable();
-        $isInPast = $today > $intervention->getScheduledAt()
-            && Intervention::STATUS_DONE === $intervention->getStatus();
-
+        $isInPast = $today->format('Y-m-d') > $intervention->getScheduledAt()->format('Y-m-d') && Intervention::STATUS_DONE === $intervention->getStatus();
         switch ($intervention->getType()) {
             case InterventionType::VISITE:
                 $suiviCategory = $isInPast ? SuiviCategory::INTERVENTION_IS_DONE : SuiviCategory::INTERVENTION_IS_CREATED;
@@ -77,7 +77,7 @@ readonly class InterventionCreatedSubscriber implements EventSubscriberInterface
         );
         $event->setSuivi($suivi);
         if (InterventionType::VISITE === $intervention->getType()
-            && $intervention->getScheduledAt()->format('Y-m-d') >= (new \DateTimeImmutable())->format('Y-m-d')
+            && $intervention->getScheduledAt()->format('Y-m-d') >= $today->format('Y-m-d')
         ) {
             $this->visiteNotifier->notifyUsagers(
                 intervention: $intervention,

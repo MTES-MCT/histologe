@@ -14,7 +14,6 @@ use App\Event\InterventionRescheduledEvent;
 use App\Factory\FileFactory;
 use App\Factory\InterventionFactory;
 use App\Service\Signalement\Qualification\SignalementQualificationUpdater;
-use App\Service\TimezoneProvider;
 use App\Utils\DateHelper;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\SecurityBundle\Security;
@@ -36,7 +35,6 @@ class InterventionManager
         private readonly EntityManagerInterface $entityManager,
         #[Autowire(service: 'html_sanitizer.sanitizer.app.message_sanitizer')]
         private readonly HtmlSanitizerInterface $htmlSanitizer,
-        private readonly TimezoneProvider $timezoneProvider,
         private readonly EventDispatcherInterface $eventDispatcher,
     ) {
     }
@@ -66,7 +64,7 @@ class InterventionManager
         $scheduledAtUtc = DateHelper::getDateUTCFromLocalDateAndTime(
             $scheduledAt,
             $scheduledAtTime,
-            $this->timezoneProvider->getDateTimezone()
+            new \DateTimeZone($intervention->getSignalement()->getTimezone())
         );
         $intervention->setScheduledAt($scheduledAtUtc);
 
@@ -76,7 +74,7 @@ class InterventionManager
 
         $this->confirmOrAbortVisiteFromData($intervention, $createdByPartner, $visiteDone, $fileName);
 
-        $todayDate = new \DateTimeImmutable();
+        $todayDate = new \DateTimeImmutable('now', $intervention->getScheduledAt()->getTimezone());
         if ($intervention->getScheduledAt()->format('Y-m-d') > $todayDate->format('Y-m-d')) {
             if ('create' === $eventType) {
                 $this->eventDispatcher->dispatch(new InterventionCreatedEvent($intervention, $user, $createdByPartner), InterventionCreatedEvent::NAME);

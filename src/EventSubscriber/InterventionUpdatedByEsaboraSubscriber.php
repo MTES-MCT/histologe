@@ -70,7 +70,7 @@ readonly class InterventionUpdatedByEsaboraSubscriber implements EventSubscriber
             sendMail: false,
         );
         if (InterventionType::VISITE === $intervention->getType()
-            && $intervention->getScheduledAt()->format('Y-m-d') >= (new \DateTimeImmutable())->format('Y-m-d')
+            && $intervention->getScheduledAt()->format('Y-m-d') >= (new \DateTimeImmutable('now', $intervention->getScheduledAt()->getTimezone()))->format('Y-m-d')
             && $suivi->getIsVisibleForUsager()
         ) {
             $this->visiteNotifier->notifyUsagers(

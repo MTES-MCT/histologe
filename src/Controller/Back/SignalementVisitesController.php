@@ -217,7 +217,7 @@ class SignalementVisitesController extends AbstractController
             fileName: $fileNameOrError,
         );
 
-        $todayDate = new \DateTimeImmutable();
+        $todayDate = new \DateTimeImmutable('now', $intervention->getScheduledAt()->getTimezone());
         if ($intervention->getScheduledAt()->format('Y-m-d') <= $todayDate->format('Y-m-d')) {
             $flashMessages[] = ['type' => 'success', 'title' => 'Visite ajoutée', 'message' => self::SUCCESS_MSG_CONFIRM];
         } else {
@@ -260,7 +260,7 @@ class SignalementVisitesController extends AbstractController
             return $this->buildVisitesAjaxResponse(intervention: $intervention, flashMessages: $flashMessages);
         }
 
-        $title = 'Annuler la visite du '.($intervention->getScheduledAt()->format('H') > 0 ? $intervention->getScheduledAt()->format('d/m/Y à H:i') : $intervention->getScheduledAt()->format('d/m/Y'));
+        $title = 'Annuler la visite du '.$intervention->getScheduledAtFormated();
         $html = $this->renderView('back/signalement/view/visites/_cancel-visite-form.html.twig', [
             'cancelVisiteForm' => $cancelVisiteForm,
         ]);
@@ -322,7 +322,7 @@ class SignalementVisitesController extends AbstractController
             return $this->buildVisitesAjaxResponse(intervention: $intervention, flashMessages: $flashMessages);
         }
 
-        $title = 'Modifier la visite du '.($intervention->getScheduledAt()->format('H') > 0 ? $intervention->getScheduledAt()->format('d/m/Y à H:i') : $intervention->getScheduledAt()->format('d/m/Y'));
+        $title = 'Modifier la visite du '.$intervention->getScheduledAtFormated();
         $html = $this->renderView('back/signalement/view/visites/_reschedule-visite-form.html.twig', [
             'rescheduleVisiteForm' => $rescheduleVisiteForm,
             'intervention' => $intervention,
@@ -376,7 +376,7 @@ class SignalementVisitesController extends AbstractController
             return $this->buildVisitesAjaxResponse(intervention: $intervention, flashMessages: $flashMessages);
         }
 
-        $title = 'Conclusion de la visite du '.($intervention->getScheduledAt()->format('H') > 0 ? $intervention->getScheduledAt()->format('d/m/Y à H:i') : $intervention->getScheduledAt()->format('d/m/Y'));
+        $title = 'Conclusion de la visite du '.$intervention->getScheduledAtFormated();
         $html = $this->renderView('back/signalement/view/visites/_confirm-visite-form.html.twig', [
             'confirmVisiteForm' => $confirmVisiteForm,
             'intervention' => $intervention,
@@ -426,7 +426,7 @@ class SignalementVisitesController extends AbstractController
             return $this->buildVisitesAjaxResponse(intervention: $intervention, flashMessages: $flashMessages);
         }
 
-        $title = 'Edition de la visite du '.($intervention->getScheduledAt()->format('H') > 0 ? $intervention->getScheduledAt()->format('d/m/Y à H:i') : $intervention->getScheduledAt()->format('d/m/Y'));
+        $title = 'Edition de la visite du '.$intervention->getScheduledAtFormated();
         $html = $this->renderView('back/signalement/view/visites/_edit-conclusion-visite-form.html.twig', [
             'editConclusionVisiteForm' => $editConclusionVisiteForm,
             'intervention' => $intervention,
