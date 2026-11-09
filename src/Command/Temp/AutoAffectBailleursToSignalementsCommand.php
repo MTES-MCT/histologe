@@ -2,6 +2,7 @@
 
 namespace App\Command\Temp;
 
+use App\Entity\Affectation;
 use App\Entity\Enum\PartnerType;
 use App\Entity\Enum\SignalementStatus;
 use App\Entity\Signalement;
@@ -108,16 +109,36 @@ class AutoAffectBailleursToSignalementsCommand extends Command
                 continue;
             }
 
-            $affectation = $this->affectationManager->createAffectationFrom(
-                signalement: $signalement,
-                partner: $partner,
-                user: $adminUser,
-                dispatchEvent: false, // On évite d'envoyer plein de mails d'un coup à chaque bailleur
-                dispatchInterconnection: false, // Pas besoin de gérer les interconnexions pour les bailleurs sociaux
-                flush: !$dryRun,
-            );
+            $newAffectation = null;
+            if ($dryRun) {
+                // En dry-run, simulation de createAffectationFrom sans le flush
+                $hasAffectation = $signalement
+                    ->getAffectations()
+                    ->exists(
+                        function (int $key, Affectation $affectation) use ($signalement, $partner) {
+                            return $affectation->getPartner() === $partner;
+                        }
+                    );
+                
+                if (!$hasAffectation) {
+                    $newAffectation = (new Affectation())
+                        ->setSignalement($signalement)
+                        ->setPartner($partner)
+                        ->setAffectedBy($user ?? null)
+                        ->setTerritory($signalement->getAddress()->getTerritory());
+                }
 
-            if ($affectation) {
+            } else {
+                $newAffectation = $this->affectationManager->createAffectationFrom(
+                    signalement: $signalement,
+                    partner: $partner,
+                    user: $adminUser,
+                    dispatchEvent: false, // On évite d'envoyer plein de mails d'un coup à chaque bailleur
+                    dispatchInterconnection: false, // Pas besoin de gérer les interconnexions pour les bailleurs sociaux
+                );
+            }
+
+            if ($newAffectation) {
                 $affectedSignalements[] = [
                     'id' => $signalement->getId(),
                     'uuid' => $signalement->getUuid(),
