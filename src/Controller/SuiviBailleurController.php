@@ -62,6 +62,9 @@ class SuiviBailleurController extends AbstractController
          */
         $user = $this->getUser();
         $signalement = $signalementRepository->findOneBy(['uuid' => $user->getUserIdentifier()]);
+        if (!$signalement) {
+            throw new \LogicException('Signalement not found for bailleur '.$user->getUserIdentifier().'.');
+        }
         $infoDesordres = $signalementDesordresProcessor->process($signalement);
         $dateLimit = $signalement->getCreatedAt()->modify('+'.InjonctionBailleurService::DELAIS_DE_REPONSE.' -1 day');
         $suiviReponse = $suiviRepository->findOneBy(['signalement' => $signalement, 'category' => SuiviCategory::injonctionBailleurReponseCategories()]);
@@ -154,6 +157,9 @@ class SuiviBailleurController extends AbstractController
          */
         $user = $this->getUser();
         $signalement = $signalementRepository->findOneBy(['uuid' => $user->getUserIdentifier()]);
+        if (!$signalement) {
+            throw new \LogicException('Signalement not found for bailleur '.$user->getUserIdentifier().'.');
+        }
         if (SignalementStatus::INJONCTION_BAILLEUR !== $signalement->getStatut()) {
             throw $this->createNotFoundException();
         }
@@ -204,6 +210,9 @@ class SuiviBailleurController extends AbstractController
          */
         $user = $this->getUser();
         $signalement = $signalementRepository->findOneBy(['uuid' => $user->getUserIdentifier()]);
+        if (!$signalement) {
+            throw new \LogicException('Signalement not found for bailleur '.$user->getUserIdentifier().'.');
+        }
         $pdf = $fileRepository->findOneBy(['signalement' => $signalement, 'documentType' => DocumentType::ENGAGEMENT_TRAVAUX_BAILLEUR]);
         if ($pdf) {
             $file = $imageVariantProvider->getFileVariant($pdf->getFilename());
@@ -236,6 +245,9 @@ class SuiviBailleurController extends AbstractController
          */
         $user = $this->getUser();
         $signalement = $signalementRepository->findOneBy(['uuid' => $user->getUserIdentifier()]);
+        if (!$signalement) {
+            throw new \LogicException('Signalement not found for bailleur '.$user->getUserIdentifier().'.');
+        }
 
         if (!$this->isGranted(SignalementBailleurVoter::SIGN_BAILLEUR_ADD_SUIVI, $signalement)) {
             throw $this->createAccessDeniedException();

@@ -18,13 +18,13 @@ class SignalementUser implements UserInterface
 
     public function __construct(
         private readonly string $userIdentifier,
+        private readonly User $user,
         private readonly ?string $email = null,
-        private readonly ?User $user = null,
     ) {
         [$this->codeSuivi, $this->type] = explode(':', $this->userIdentifier);
         $roles = ['ROLE_SUIVI_SIGNALEMENT'];
         $roles[] = UserManager::DECLARANT === $this->type ? 'ROLE_DECLARANT' : 'ROLE_OCCUPANT';
-        $userRoles = $this->user?->getRoles() ?? [];
+        $userRoles = $this->user->getRoles() ?? [];
         $this->roles = array_values(array_unique([...$roles, ...$userRoles]));
     }
 
@@ -58,7 +58,7 @@ class SignalementUser implements UserInterface
         return $this->type;
     }
 
-    public function getUser(): ?User
+    public function getUser(): User
     {
         return $this->user;
     }

@@ -23,7 +23,7 @@ class BailleurController extends AbstractController
     ): JsonResponse {
         $name = mb_trim($name);
         $territory = $zipcodeProvider->getTerritoryByInseeCode($inseecode);
-        $bailleurs = !empty($name) ? $bailleurRepository->findBailleursBy($name, $territory) : [];
+        $bailleurs = (!empty($name) && !empty($territory)) ? $bailleurRepository->findBailleursBy($name, $territory) : [];
 
         if ($sanitize) {
             $bailleurCollection = $this->sanitizeBailleurs($bailleurs, $name);
@@ -48,7 +48,7 @@ class BailleurController extends AbstractController
                     $converted = iconv('UTF-8', 'ASCII//TRANSLIT//IGNORE', $name);
                     $name = false !== $converted ? $converted : $name;
 
-                    return str_contains(strtolower($this->sanitizeName($bailleurItem->getName())), $name) || str_contains(strtolower($bailleurItem->getRaisonSociale()), $name);
+                    return str_contains(strtolower($this->sanitizeName($bailleurItem->getName())), $name) || str_contains(strtolower((string) $bailleurItem->getRaisonSociale()), $name);
                 }
 
                 return true;

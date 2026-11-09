@@ -73,6 +73,8 @@ class ServiceSecoursController extends AbstractController
             $signalement->setReference($referenceGenerator->generateReference($signalement->getAddress()->getTerritory()));
             $entityManager->persist($signalement);
             $entityManager->flush();
+            /** @var int $signalementId */
+            $signalementId = $signalement->getId();
             $entityManager->commit();
             $userManager->createUsagersFromSignalement($signalement);
             $autoAssigner->assignOrSendNewSignalementNotification($signalement);
@@ -86,7 +88,7 @@ class ServiceSecoursController extends AbstractController
                     attachment: $pdfContent,
                 )
             );
-            $messageBus->dispatch(new SignalementServiceSecoursFileMessage($signalement->getId()));
+            $messageBus->dispatch(new SignalementServiceSecoursFileMessage($signalementId));
 
             return $this->render('service_secours/success.html.twig', ['serviceSecoursRoute' => $serviceSecoursRoute, 'signalement' => $signalement]);
         }
