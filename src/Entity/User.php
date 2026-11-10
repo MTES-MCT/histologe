@@ -24,6 +24,7 @@ use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Component\Validator\Constraints\Email;
 
 #[ORM\Entity(repositoryClass: UserRepository::class)]
+#[ORM\Table(name: '`user`')]
 #[UniqueEntity('email', message: '{{ value }} existe déja, merci de saisir un nouvel e-mail', groups: ['registration', 'Default'])]
 #[ORM\Index(columns: ['statut'], name: 'idx_user_statut')]
 #[ORM\HasLifecycleCallbacks()]

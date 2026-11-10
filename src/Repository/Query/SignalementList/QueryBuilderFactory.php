@@ -42,6 +42,7 @@ readonly class QueryBuilderFactory
         $qb->innerJoin('s.address', 'address');
         $qb->leftJoin('s.affectations', 'a');
         $qb->groupBy('s.id');
+        $qb->addGroupBy('address.id');
         $qb->where('s.statut NOT IN (:statusList)');
 
         $filterTerritoryId = null;
@@ -140,6 +141,7 @@ readonly class QueryBuilderFactory
         $qb->innerJoin('s.address', 'address');
         $qb->leftJoin('s.affectations', 'a');
         $qb->groupBy('s.id');
+        $qb->addGroupBy('address.id');
         $this->addDataSelect($qb);
 
         $qb->where('s.id IN (:ids)')->setParameter('ids', $ids);

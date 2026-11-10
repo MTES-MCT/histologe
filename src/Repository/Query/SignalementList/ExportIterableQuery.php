@@ -137,7 +137,7 @@ class ExportIterableQuery
             ->select('s.id')
             ->where('s.id IN (:signalementIds)')
             ->setParameter('signalementIds', $signalementIds)
-            ->groupBy('s.id');
+            ->groupBy('s.id, address.id');
 
         foreach ($selectedColumns as $column) {
             if (\in_array($column, $specificSelectKeys, true)) {

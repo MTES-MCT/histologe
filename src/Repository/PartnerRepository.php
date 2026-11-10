@@ -94,7 +94,21 @@ class PartnerRepository extends ServiceEntityRepository
         }
 
         if ($searchPartner->getIsNotNotifiable()) {
-            $queryBuilder->andHaving('isNotifiable = 0');
+            $queryBuilder->andWhere(
+                '(CASE
+                    WHEN (p.email IS NOT NULL AND p.email != \'\' AND p.emailNotifiable = 1) THEN 1
+                    WHEN EXISTS (
+                        SELECT 1
+                        FROM '.UserPartner::class.' upNotif
+                        JOIN upNotif.user uNotif
+                        WHERE upNotif.partner = p
+                        AND uNotif.email IS NOT NULL
+                        AND uNotif.statut LIKE \''.UserStatus::ACTIVE->value.'\'
+                        AND uNotif.isMailingActive = 1
+                    ) THEN 1
+                    ELSE 0
+                END) = 0'
+            );
         }
 
         if ($searchPartner->getIsOnlyInterconnected()) {

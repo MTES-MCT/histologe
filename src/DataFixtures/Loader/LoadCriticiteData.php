@@ -31,8 +31,8 @@ class LoadCriticiteData extends Fixture implements OrderedFixtureInterface
     private function loadCriticite(ObjectManager $manager, array $row): void
     {
         $criticite = (new Criticite())
-            ->setCritere($this->critereRepository->findOneBy(['label' => $row['critere']]))
-            ->setLabel($row['label'])
+            ->setCritere($this->critereRepository->findOneBy(['label' => trim($row['critere'])]))
+            ->setLabel(trim($row['label']))
             ->setIsArchive($row['is_archive'])
             ->setIsDefault($row['is_default'])
             ->setCreatedAt(new \DateTimeImmutable())

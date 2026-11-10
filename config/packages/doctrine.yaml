@@ -5,15 +5,8 @@ doctrine:
         connections:
             default:
                 url: '%env(resolve:DATABASE_URL)%'
-                # IMPORTANT: You MUST configure your server version,
-                # either here or in the DATABASE_URL env var (see .env file)
-                server_version: '8.4.8'
-                charset: utf8mb4
                 # The schema tool will ignore all views or tables as well as start by view.
                 schema_filter: ~^(?!view_)~
-                default_table_options:
-                    charset: utf8mb4
-                    collate: utf8mb4_unicode_ci
         types:
             type_composition_logement: App\Entity\DoctrineType\Signalement\TypeCompositionLogementType
             situation_foyer: App\Entity\DoctrineType\Signalement\SituationFoyerType
@@ -40,15 +33,15 @@ doctrine:
                 DATEDIFF: DoctrineExtensions\Query\Mysql\DateDiff
                 DATE: DoctrineExtensions\Query\Mysql\Date
                 NOW: DoctrineExtensions\Query\Mysql\Now
-                JSON_CONTAINS: Scienta\DoctrineJsonFunctions\Query\AST\Functions\Mysql\JsonContains
-                JSON_CONTAINS_PATH: Scienta\DoctrineJsonFunctions\Query\AST\Functions\Mysql\JsonContainsPath
-                JSON_EXTRACT: Scienta\DoctrineJsonFunctions\Query\AST\Functions\Mysql\JsonExtract
+                JSON_CONTAINS: App\Doctrine\Dql\PlatformJsonContains
+                JSON_CONTAINS_PATH: App\Doctrine\Dql\PlatformJsonContainsPath
+                JSON_EXTRACT: App\Doctrine\Dql\PlatformJsonExtract
                 JSON_ARRAY: Scienta\DoctrineJsonFunctions\Query\AST\Functions\Mysql\JsonArray
                 JSON_OBJECT: Scienta\DoctrineJsonFunctions\Query\AST\Functions\Mysql\JsonObject
                 IF: DoctrineExtensions\Query\Mysql\IfElse
                 SUBSTRING_INDEX: DoctrineExtensions\Query\Mysql\SubstringIndex
-                CAST: DoctrineExtensions\Query\Mysql\Cast
-                GROUP_CONCAT: DoctrineExtensions\Query\Mysql\GroupConcat
+                CAST: App\Doctrine\Dql\PlatformCast
+                GROUP_CONCAT: App\Doctrine\Dql\PlatformGroupConcat
                 FIND_IN_SET: DoctrineExtensions\Query\Mysql\FindInSet
                 CONCAT_WS: DoctrineExtensions\Query\Mysql\ConcatWs
                 REGEXP: DoctrineExtensions\Query\Mysql\Regexp

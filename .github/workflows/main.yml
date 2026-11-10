@@ -143,7 +143,7 @@ jobs:
           php bin/console --env=test doctrine:fixtures:load --no-interaction -vvv
         env:
           APP_SECRET: ${{ secrets.APP_SECRET }}
-          DATABASE_URL: mysql://root:signallogement@127.0.0.1:${{ job.services.mysql.ports['3306'] }}/signal_logement_db
+          DATABASE_URL: mysql://root:signallogement@127.0.0.1:${{ job.services.mysql.ports['3306'] }}/signal_logement_db?serverVersion=8.4.8&charset=utf8
           NOTIFICATIONS_EMAIL: notifications@signal-logement.beta.gouv.fr
           APP_URL: http://localhost:8080
           SERVER_NAME: localhost:8080
@@ -155,14 +155,14 @@ jobs:
         run: vendor/bin/phpstan analyse
         env:
           APP_SECRET: ${{ secrets.APP_SECRET }}
-          DATABASE_URL: mysql://root:signallogement@127.0.0.1:${{ job.services.mysql.ports['3306'] }}/signal_logement_db
+          DATABASE_URL: mysql://root:signallogement@127.0.0.1:${{ job.services.mysql.ports['3306'] }}/signal_logement_db?serverVersion=8.4.8&charset=utf8
 
       - name: Run tests
         run: |
           ./vendor/bin/phpunit --stop-on-failure --testdox -d memory_limit=-1
         env:
           APP_SECRET: ${{ secrets.APP_SECRET }}
-          DATABASE_URL: mysql://root:signallogement@127.0.0.1:${{ job.services.mysql.ports['3306'] }}/signal_logement_db
+          DATABASE_URL: mysql://root:signallogement@127.0.0.1:${{ job.services.mysql.ports['3306'] }}/signal_logement_db?serverVersion=8.4.8&charset=utf8
           ADMIN_EMAIL: support@signal-logement.beta.gouv.fr
           NOTIFICATIONS_EMAIL: notifications@signal-logement.beta.gouv.fr
           APP_URL: http://localhost:8080

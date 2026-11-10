@@ -30,8 +30,8 @@ class LoadCritereData extends Fixture implements OrderedFixtureInterface
     public function loadCritere(ObjectManager $manager, array $row): void
     {
         $critere = (new Critere())
-            ->setSituation($this->situationRepository->findOneBy(['label' => $row['situation']]))
-            ->setLabel($row['label'])
+            ->setSituation($this->situationRepository->findOneBy(['label' => trim($row['situation'])]))
+            ->setLabel(trim($row['label']))
             ->setDescription($row['description'])
             ->setIsArchive($row['is_archive'])
             ->setIsDanger($row['is_danger'])

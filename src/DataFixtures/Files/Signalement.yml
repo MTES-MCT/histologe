@@ -73,7 +73,7 @@ signalements:
     nb_niveaux_logement: 0
     nb_occupants_logement: 2
     tags:
-      - "Peril"
+      - "Péril"
     criticites:
       - "les déchets ne peuvent être stockés nulle part. Il y a des ordures stockées n’importe où à l'intérieur ou à l'extérieur du bâtiment."
       - "il n’y a pas de détecteur OU l’évacuation du logement est complexe (une seule sortie étroite, étage élevé, absence de fenêtre, escalier peu praticable…)."
@@ -438,7 +438,7 @@ signalements:
     nb_niveaux_logement: 0
     nb_occupants_logement: 2
     tags:
-      - "Peril"
+      - "Péril"
     criticites:
       - "les déchets ne peuvent être stockés nulle part. Il y a des ordures stockées n’importe où à l'intérieur ou à l'extérieur du bâtiment."
       - "il n’y a pas de détecteur OU l’évacuation du logement est complexe (une seule sortie étroite, étage élevé, absence de fenêtre, escalier peu praticable…)."
@@ -478,7 +478,7 @@ signalements:
     nb_niveaux_logement: 0
     nb_occupants_logement: 2
     tags:
-      - "Peril"
+      - "Péril"
     criticites:
       - "les déchets ne peuvent être stockés nulle part. Il y a des ordures stockées n’importe où à l'intérieur ou à l'extérieur du bâtiment."
       - "il n’y a pas de détecteur OU l’évacuation du logement est complexe (une seule sortie étroite, étage élevé, absence de fenêtre, escalier peu praticable…)."
@@ -517,7 +517,7 @@ signalements:
     nb_niveaux_logement: 0
     nb_occupants_logement: 2
     tags:
-      - "Peril"
+      - "Péril"
     criticites:
       - "les déchets ne peuvent être stockés nulle part. Il y a des ordures stockées n’importe où à l'intérieur ou à l'extérieur du bâtiment."
       - "il n’y a pas de détecteur OU l’évacuation du logement est complexe (une seule sortie étroite, étage élevé, absence de fenêtre, escalier peu praticable…)."
