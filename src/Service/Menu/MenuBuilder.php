@@ -53,15 +53,15 @@ readonly class MenuBuilder
                 ->addChild(new MenuItem(label: 'Statistiques (version beta)', route: 'back_beta_statistiques', roleGranted: User::ROLE_USER));
         }
 
-        $adminToolsSubItem = (new MenuItem(label: 'Outils Admin', roleGranted: User::ROLE_ADMIN_PARTNER))
+        $mesOutilsSubMenu = (new MenuItem(label: 'Mes outils', roleGranted: User::ROLE_USER))
             ->addChild(new MenuItem(label: 'Partenaires', route: 'back_partner_index', roleGranted: User::ROLE_ADMIN_TERRITORY));
         foreach ($user->getPartners() as $partner) {
             $partnerName = $user->getPartners()->count() > 1 ? ' '.$partner->getNom() : '';
-            $adminToolsSubItem->addChild(new MenuItem(label: 'Mon partenaire'.$partnerName, route: 'back_partner_view', routeParameters: ['id' => $partner->getId()], roleGranted: User::ROLE_ADMIN_PARTNER, roleNotGranted: User::ROLE_ADMIN_TERRITORY));
+            $mesOutilsSubMenu->addChild(new MenuItem(label: 'Mon partenaire'.$partnerName, route: 'back_partner_view', routeParameters: ['id' => $partner->getId()], roleGranted: User::ROLE_ADMIN_PARTNER, roleNotGranted: User::ROLE_ADMIN_TERRITORY));
         }
-        $adminToolsSubItem->addChild(new MenuItem(label: 'Utilisateurs', route: 'back_user_index', roleGranted: User::ROLE_ADMIN_TERRITORY));
-        $adminToolsSubItem->addChild(new MenuItem(label: $user->isSuperAdmin() ? 'Gérer les territoires' : 'Gérer mon territoire', route: 'back_territory_management_index', roleGranted: User::ROLE_ADMIN_TERRITORY));
-        $adminToolsSubItem->addChild(new MenuItem(route: 'back_territory_management_zone_index'))
+        $mesOutilsSubMenu->addChild(new MenuItem(label: 'Utilisateurs', route: 'back_user_index', roleGranted: User::ROLE_ADMIN_TERRITORY));
+        $mesOutilsSubMenu->addChild(new MenuItem(label: $user->isSuperAdmin() ? 'Gérer les territoires' : 'Gérer mon territoire', route: 'back_territory_management_index', roleGranted: User::ROLE_ADMIN_TERRITORY));
+        $mesOutilsSubMenu->addChild(new MenuItem(route: 'back_territory_management_zone_index'))
             ->addChild(new MenuItem(route: 'back_territory_management_tags_index'))
             ->addChild(new MenuItem(route: 'back_partner_new'))
             ->addChild(new MenuItem(route: 'back_partner_edit'))
@@ -69,8 +69,6 @@ readonly class MenuBuilder
             ->addChild(new MenuItem(route: 'back_territory_management_zone_show'))
             ->addChild(new MenuItem(route: 'back_territory_management_zone_edit'))
         ;
-
-        $mesOutilsSubMenu = (new MenuItem(label: 'Mes outils', roleGranted: User::ROLE_USER));
         $mesOutilsSubMenu->addChild(new MenuItem(label: 'Espace documentaire', route: 'back_territory_files_index', roleGranted: User::ROLE_USER));
         $mesOutilsSubMenu->addChild(new MenuItem(label: 'Annuaire des agents', route: 'back_annuaire_index', roleGranted: User::ROLE_USER));
         $mesOutilsSubMenu->addChild(new MenuItem(label: 'Besoin d\'aide ?', externalLink: 'https://documentation.signal-logement.beta.gouv.fr', roleGranted: User::ROLE_USER));
@@ -115,7 +113,6 @@ readonly class MenuBuilder
             ->addChild(new MenuItem(label: 'Tableau de bord', route: 'back_dashboard', routeParameters: $listRouteBOParameters, icon: 'fr-icon-home-4-fill', roleGranted: User::ROLE_USER))
             ->addChild($signalementsSubMenu)
             ->addChild($donneesChiffreesSubMenu)
-            ->addChild($adminToolsSubItem)
             ->addChild($mesOutilsSubMenu)
             ->addChild($superAdminToolsSubItem)
             ->addChild($techAdminToolsSubItem)

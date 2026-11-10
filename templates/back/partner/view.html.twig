@@ -16,7 +16,7 @@
     <section class="fr-pt-4v">
         {% if is_granted('ROLE_ADMIN_TERRITORY') %}
             {% include 'back/breadcrumb_bo.html.twig' with {
-                'level2Title': 'Outils admin',
+                'level2Title': 'Mes outils',
                 'level2Link': '',
                 'level2Label': '',
                 'level3Title': 'Partenaires',
@@ -192,7 +192,7 @@
                 <div class="fr-col-12">
                     <h3>Zones</h3>
                     <p>
-                        Les zones doivent être créées dans la partie Outils Admin > Zones.
+                        Les zones doivent être créées dans la partie Mes outils > Mon territoire > Zones.
                     </p>
                     {% if partner.zones|length %}
                         {% for zone in partner.zones %}
@@ -209,7 +209,7 @@
                         <br> 
                         Ces zones à exclure sont prioritaires sur les codes insee et les zones. Dès qu'un signalement se trouve dans une zone à exclure, ce partenaire ne peut pas y être affecté, quels que soient la configuration des codes insee et des zones.
                         <br>
-                        Les zones doivent être créées dans la partie Outils Admin > Zones.
+                        Les zones doivent être créées dans la partie Mes outils > Mon territoire > Zones.
                     </p>
                     {% if partner.excludedZones|length %}
                         {% for zone in partner.excludedZones %}

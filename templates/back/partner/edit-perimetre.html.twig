@@ -5,7 +5,7 @@
 {% block content %}
     <section class="fr-col-12 fr-pt-4v">
             {% include 'back/breadcrumb_bo.html.twig' with {
-                'level2Title': 'Outils admin',
+                'level2Title': 'Mes outils',
                 'level2Link': '',
                 'level2Label': '',
                 'level3Title': 'Partenaires',
@@ -38,7 +38,7 @@
                 <h2>Périmètre d'intervention</h2>
                 <p>
                     Définissez ci-dessous les zones géographiques dans lesquelles le partenaire doit intervenir. 
-                    Il peut s'agir de communes{% if not partner.isCommune %}, d'EPCI{% endif %} et / ou de zones définies au préalable dans la partie Outils Admin > Zones.
+                    Il peut s'agir de communes{% if not partner.isCommune %}, d'EPCI{% endif %} et / ou de zones définies au préalable dans la partie Mes outils > Mon territoire > Zones.
                 </p>
                 {{ form_start(form)}}
                 {{ form_errors(form) }}
@@ -59,7 +59,7 @@
                             <br>
                             Ces zones à exclure sont prioritaires sur les codes insee et les zones. Dès qu'un signalement se trouve dans une zone à exclure, ce partenaire ne peut pas y être affecté, quels que soient la configuration des codes insee et des zones.
                             <br>
-                            Les zones doivent être créées dans la partie Outils Admin > Zones.
+                            Les zones doivent être créées dans la partie Mes outils > Mon territoire > Zones.
                         </p>
                     </div>
                     <div class="fr-col-6">
