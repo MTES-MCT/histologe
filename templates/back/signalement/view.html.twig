@@ -169,6 +169,9 @@
             {% include 'back/signalement/view/panels/_panel-close-demarche-acceleree.html.twig' %}
         </div>
     {% endif %}
+    {% if is_granted('SIGN_INJONCTION_PROCEDURE_BASCULE', signalement) %}
+        {% include 'back/signalement/view/panels/_panel-bascule-procedure.html.twig' %}
+    {% endif %}
     {% include '_partials/_modal_file_delete.html.twig' %}
     {% include '_partials/_select_file_document_type.html.twig' %}
     <div data-ajax-form>

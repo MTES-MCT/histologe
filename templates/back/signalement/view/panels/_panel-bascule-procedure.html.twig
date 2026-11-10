@@ -1,0 +1,35 @@
+<dialog aria-labelledby="panel-bascule-procedure-title" id="panel-bascule-procedure" class="side-panel">
+    <div class="side-panel__inner">
+        <div class="side-panel__header">
+            <button type="button" class="fr-btn--close fr-btn js-close-panel" data-panel="panel-bascule-procedure" aria-controls="panel-bascule-procedure" aria-expanded="false">Fermer</button>
+        </div>
+        <div class="side-panel__content fr-mx-3w">
+            <h1 id="panel-bascule-procedure-title" class="fr-modal__title title-blue-france">Basculer en procédure administrative</h1>
+
+            <form action="{{ path('back_injonction_procedure_bascule', {uuid: signalement.uuid}) }}" id="form-bascule-procedure" method="POST">
+                <p>Vous êtes sur le point d'arrêter la démarche accélérée et de basculer le dossier en procédure administrative.</p>
+                <ul>
+                    <li>Le signalement recevra une nouvelle référence et repassera au statut « Nouveau ».</li>
+                    <li>Il sera affecté automatiquement aux partenaires compétents si des règles d'auto-affectation s'appliquent sur le territoire.</li>
+                    <li>Un suivi sera visible par l'usager et le bailleur.</li>
+                </ul>
+                <p class="fr-mb-0">Cette action est irréversible.</p>
+                <input type="hidden" name="_token" value="{{ csrf_token('signalement_procedure_bascule_' ~ signalement.id) }}">
+            </form>
+        </div>
+        <div class="side-panel__footer">
+            <ul class="fr-btns-group fr-btns-group--right fr-btns-group--inline-reverse fr-btns-group--inline-sm fr-btns-group--icon-left">
+                <li>
+                    <button type="submit" class="fr-btn fr-btn--icon-left fr-icon-check-line" form="form-bascule-procedure">
+                        Confirmer la bascule
+                    </button>
+                </li>
+                <li>
+                    <button type="button" class="fr-btn fr-btn--secondary fr-icon-close-line js-close-panel" data-panel="panel-bascule-procedure" aria-controls="panel-bascule-procedure" aria-expanded="false">
+                        Annuler
+                    </button>
+                </li>
+            </ul>
+        </div>
+    </div>
+</dialog>

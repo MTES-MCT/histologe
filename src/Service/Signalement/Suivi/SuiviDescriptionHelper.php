@@ -50,7 +50,7 @@ class SuiviDescriptionHelper
             SuiviRecipient::DEFAULT->value => 'suivi/signalement_is_injonction.html.twig',
         ],
         SuiviCategory::INJONCTION_BAILLEUR_BASCULE_PROCEDURE_PAR_ADMIN->value => [
-            SuiviDescriptionVariant::DEFAULT->value => 'suivi/injonction_bailleur_bascule_procedure_par_admin.html.twig',
+            SuiviRecipient::DEFAULT->value => 'suivi/injonction_bailleur_bascule_procedure_par_admin.html.twig',
         ],
     ];
 

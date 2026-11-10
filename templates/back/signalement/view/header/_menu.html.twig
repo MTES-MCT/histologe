@@ -113,16 +113,15 @@
                             </a>
                         </li>
                     {% endif %}
-                    {% if 
-                        signalement.statut is same as enum('App\\Entity\\Enum\\SignalementStatus').INJONCTION_BAILLEUR or 
-                        signalement.statut is same as enum('App\\Entity\\Enum\\SignalementStatus').INJONCTION_CLOSED 
-                    %}
+                    {% if is_granted('SIGN_INJONCTION_PROCEDURE_BASCULE', signalement) %}
                         <li>
-                            <a href="{{ path('back_injonction_procedure_bascule',{uuid:signalement.uuid}) }}"
+                            <button
+                                type="button"
                                 class="fr-nav__link fr-btn--icon-left fr-icon-refresh-line"
-                                title="Basculer en procédure administrative">
-                                Basculer en procédure administrative
-                            </a>
+                                data-panel-open="panel-bascule-procedure"
+                                aria-controls="panel-bascule-procedure"
+                                data-fr-opened="false"
+                                >Basculer en procédure administrative</button>
                         </li>
                     {% endif %}
                     <li>

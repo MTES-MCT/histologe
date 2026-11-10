@@ -7,7 +7,7 @@ use App\Dto\RefusAffectation;
 use App\Dto\RefusSignalement;
 use App\Entity\Enum\DocumentType;
 use App\Entity\Enum\SignalementStatus;
-use App\Entity\Enum\SuiviCategory as EnumSuiviCategory;
+use App\Entity\Enum\SuiviCategory;
 use App\Entity\Enum\TiersInvitationStatus;
 use App\Entity\Intervention;
 use App\Entity\Signalement;
@@ -52,7 +52,6 @@ use App\Service\Signalement\PhotoHelper;
 use App\Service\Signalement\SignalementDesordresProcessor;
 use App\Service\Signalement\SignalementQualificationNde;
 use App\Service\Signalement\SignalementSameAddressArreteFinder;
-use App\Service\Signalement\Suivi\SuiviDescriptionHelper;
 use App\Service\Signalement\Suivi\SuiviSeenMarker;
 use App\Service\Signalement\TabOrientation\TabOrientationService;
 use App\Service\SignalementAddressContentService;
@@ -447,21 +446,29 @@ class SignalementController extends AbstractController
         return $this->redirect($this->generateUrl('back_signalement_view', ['uuid' => $signalement->getUuid()]));
     }
 
-    #[Route('/{uuid:signalement}/procedure/bascule', name: 'back_injonction_procedure_bascule', methods: ['GET', 'POST'])]
+    #[Route('/{uuid:signalement}/procedure/bascule', name: 'back_injonction_procedure_bascule', methods: ['POST'])]
     public function suiviSignalementProcedureBascule(
         Signalement $signalement,
+        Request $request,
         SuiviManager $suiviManager,
         AutoAssigner $autoAssigner,
         InjonctionBailleurService $injonctionBailleurService,
-        SuiviDescriptionHelper $suiviDescriptionHelper,
         EntityManagerInterface $entityManager,
         LoggerInterface $logger,
     ): Response {
         $this->denyAccessUnlessGranted(SignalementVoter::SIGN_INJONCTION_PROCEDURE_BASCULE, $signalement);
+        if (!$this->isCsrfTokenValid(
+            'signalement_procedure_bascule_'.$signalement->getId(),
+            (string) $request->request->get('_token')
+        )) {
+            $this->addFlash('error', 'Le jeton de sécurité est invalide, veuillez réessayer.');
+
+            return $this->redirect($this->generateUrl('back_signalement_view', ['uuid' => $signalement->getUuid()]));
+        }
         /** @var User $user */
         $user = $this->getUser();
 
-        $category = EnumSuiviCategory::INJONCTION_BAILLEUR_BASCULE_PROCEDURE_PAR_ADMIN;
+        $category = SuiviCategory::INJONCTION_BAILLEUR_BASCULE_PROCEDURE_PAR_ADMIN;
         $entityManager->beginTransaction();
         try {
             $suiviManager->createSuivi(

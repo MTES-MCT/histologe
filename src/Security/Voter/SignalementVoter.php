@@ -216,10 +216,8 @@ class SignalementVoter extends Voter
 
     private function canSwitchInjonctionToProcedure(Signalement $signalement, User $user): bool
     {
-        return
-            $this->security->isGranted('ROLE_ADMIN')
-            && ($this->canEditStatus($signalement, $user, SignalementStatus::INJONCTION_BAILLEUR)
-            || $this->canEditStatus($signalement, $user, SignalementStatus::INJONCTION_CLOSED));
+        return $this->security->isGranted('ROLE_ADMIN')
+            && in_array($signalement->getStatut(), [SignalementStatus::INJONCTION_BAILLEUR, SignalementStatus::INJONCTION_CLOSED], true);
     }
 
     private function canEditClosed(Signalement $signalement, User $user): bool
