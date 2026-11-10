@@ -17,22 +17,29 @@ La configuration de domaines personnalisés sur Scalingo reste nécessaire même
 
 ## 2. Inventaire des domaines applicatifs
 
-| Domaine public | Type / destination DNS connue | Origine configurée dans OGO | État / remarque |
+| Domaine public | Type / destination DNS | Origine configurée dans OGO | État / remarque |
 | --- | --- | --- | --- |
-| `signal-logement.beta.gouv.fr` | `A` vers des IP d'infrastructure Scalingo | `https://histologe-sites-faciles.osc-fr1.scalingo.io` | **Bascule OGO non résolue** : racine de zone, CNAME interdit |
-| `bo.signal-logement.beta.gouv.fr` | `CNAME` vers `p1-ogo-euw2-6.shield.ogosecurity.com.` | `https://histologe.osc-fr1.scalingo.io` | Bascule OGO réalisée selon les informations d'exploitation |
-| `service-secours.signal-logement.beta.gouv.fr` | `CNAME` vers `p1-ogo-euw2-6.shield.ogosecurity.com.` | `https://histologe.osc-fr1.scalingo.io` | Bascule OGO réalisée selon les informations d'exploitation |
+| `signal-logement.beta.gouv.fr` | `A` `137.74.140.241`<br>`AAAA` `2001:41d0:d00:4d00::12`<br>`AAAA` `2001:41d0:b00:d400::11` (Cluster OGO EUW2) | `https://histologe-sites-faciles.osc-fr1.scalingo.io` | Bascule OGO réalisée. Racine de zone : pas de CNAME possible, d'où l'usage des IP du cluster. |
+| `bo.signal-logement.beta.gouv.fr` | `CNAME` vers `p1-ogo-euw2-6.shield.ogosecurity.com.` | `https://histologe.osc-fr1.scalingo.io` | Bascule OGO réalisée. |
+| `service-secours.signal-logement.beta.gouv.fr` | `CNAME` vers `p1-ogo-euw2-6.shield.ogosecurity.com.` | `https://histologe.osc-fr1.scalingo.io` | Bascule OGO réalisée. |
 | `demo.signal-logement.beta.gouv.fr` | `CNAME` vers `histologe-demo.osc-fr1.scalingo.io.` | — | Hors périmètre OGO décrit ici |
 | `service-secours.demo.signal-logement.beta.gouv.fr` | `CNAME` vers `histologe-demo.osc-fr1.scalingo.io.` | — | Hors périmètre OGO décrit ici |
 | `documentation.signal-logement.beta.gouv.fr` | `CNAME` vers `2da0050bbd-hosting.gitbook.io.` | — | Documentation externe |
 
 Les domaines `bo` et `service-secours` utilisent **la même origine Scalingo** ; ne pas mettre en place une redirection canonique globale qui renverrait involontairement l'un vers l'autre.
 
-### Enregistrements A historiques de la racine
+### Enregistrements de messagerie et services tiers
 
-https://doc.scalingo.com/platform/networking/public/ingress
+Les enregistrements suivants restent intacts et ne doivent pas être modifiés lors des opérations sur le routage web :
+- Enregistrements `MX`
+- Enregistrements `SPF`
+- Configuration `Brevo`
+- Enregistrements `DKIM`
+- Autres sous-domaines hors périmètre
 
-La zone enregistrée comporte les quatre adresses suivantes :
+### Enregistrements Scalingo historiques (procédure de retour arrière)
+
+En cas d'incident critique sur le routage ou le WAF OGO, un retour arrière immédiat est possible en reconfigurant la racine `@` avec les adresses IP d'origine Scalingo (https://doc.scalingo.com/platform/networking/public/ingress) :
 
 ```dns
 @ IN A 5.104.101.30
@@ -40,8 +47,6 @@ La zone enregistrée comporte les quatre adresses suivantes :
 @ IN A 109.232.236.90
 @ IN A 148.253.75.120
 ```
-
-La zone comporte également des enregistrements `SOA`, `NS`, `MX`, `TXT` (notamment SPF et vérifications de domaine), ainsi que des entrées liées à la messagerie. Les préserver lors de toute opération.
 
 ## 3. Architecture des flux
 
@@ -76,17 +81,36 @@ API partenaire (Esabora, DGFiP, etc.)
 ```
 
 La mise en place du WAF **entrant** ne modifie normalement pas le chemin de sortie des appels HTTP effectués par l'application. 
-## 4. Limitation DNS à la racine
+## 4. Configuration et limitation DNS à la racine
 
-`signal-logement.beta.gouv.fr` est le domaine racine de notre zone DNS chez OVH. 
-Il possède obligatoirement des enregistrements SOA et NS, ce qui empêche la configuration d’un CNAME classique, même après suppression des enregistrements A.
+`signal-logement.beta.gouv.fr` est le domaine racine (apex) de notre zone DNS chez OVH. 
+Il possède obligatoirement des enregistrements SOA et NS, ce qui empêche la configuration d’un CNAME classique.
 
+### Solution mise en place (Cluster Ogo EUW2)
 
-### Options de résolution
+La bascule vers OGO Security a été opérée en remplaçant les 4 enregistrements `A` Scalingo historiques par les adresses IP du cluster **Ogo EUW2** :
 
-**Option privilégiée si supportée par OGO :** obtenir d'OGO (fabrique numérique) des **IP d'entrée fixes et officiellement utilisables dans des enregistrements `A`/`AAAA`**. 
+- **Enregistrement A (IPv4) :**
+  ```dns
+  @ IN A 137.74.140.241
+  ```
+- **Enregistrements AAAA (IPv6) :**
+  ```dns
+  @ IN AAAA 2001:41d0:d00:4d00::12
+  @ IN AAAA 2001:41d0:b00:d400::11
+  ```
 
-**Décision en attente :** validation par OGO (fabrique numérique) de la méthode officiellement supportée pour configurer le domaine racine chez OVH. Ne pas supprimer les `A` de production en attendant.
+## 5. Exploitation et suivi post-bascule
+
+### Surveillance du Mode Audit
+1. **Période d'observation :** Conserver le **Mode Audit activé pendant 1 à 2 semaines**.
+2. **Analyse des journaux :** Examiner la section « Mes logs » dans l'interface Ogo Security pour qualifier le trafic intercepté.
+3. **Passage en mode bloquant / Ajustements :**
+   - Si les requêtes interceptées ne sont que des attaques avérées → désactiver le Mode Audit pour basculer en filtrage bloquant.
+   - En présence de faux positifs (requêtes légitimes bloquées) → définir les règles d'exception nécessaires avant de désactiver le Mode Audit.
+
+### Procédure de retour arrière
+En cas d'anomalie critique ou d'indisponibilité, le retour arrière immédiat vers l'infrastructure Scalingo reste possible en reconfigurant les 4 adresses IP d'origine dans OVH (cf. section 2).
 
 ## 6. Procédure de modification DNS applicatifs
 
@@ -102,7 +126,7 @@ Il possède obligatoirement des enregistrements SOA et NS, ce qui empêche la co
 ### Pendant l'intervention
 
 - [ ] Modifier uniquement les enregistrements nécessaires dans OVH.
-- [ ] Ne pas modifier `NS`, `MX`, `TXT`, `SPF`, ect... sans justification explicite.
+- [ ] Ne pas modifier `NS`, `MX`, `TXT`, `SPF`, etc. sans justification explicite.
 - [ ] Contrôler la résolution via la ligne de commande `dig`.
 - [ ] Vérifier HTTPS, les redirections et les journaux OGO / Scalingo.
 
@@ -118,24 +142,24 @@ Il possède obligatoirement des enregistrements SOA et NS, ce qui empêche la co
 
 ```bash
 # Vérifier les serveurs de noms
- dig +short NS signal-logement.beta.gouv.fr
+dig +short NS signal-logement.beta.gouv.fr
 
-# Racine : résolution A 
- dig +short A signal-logement.beta.gouv.fr
+# Racine : résolution A et AAAA (OGO EUW2)
+dig +short A signal-logement.beta.gouv.fr
+dig +short AAAA signal-logement.beta.gouv.fr
 
 # Sous-domaines : CNAME
- dig +short CNAME bo.signal-logement.beta.gouv.fr
- dig +short CNAME service-secours.signal-logement.beta.gouv.fr
+dig +short CNAME bo.signal-logement.beta.gouv.fr
+dig +short CNAME service-secours.signal-logement.beta.gouv.fr
 
-# Cible OGO : adresses résolues à l'instant T (NON garanties fixes)
- dig +short A p1-ogo-euw2-6.shield.ogosecurity.com
- dig +short AAAA p1-ogo-euw2-6.shield.ogosecurity.com
+# Cible OGO : adresses résolues à l'instant T (NON garanties fixes pour les sous-domaines)
+dig +short A p1-ogo-euw2-6.shield.ogosecurity.com
+dig +short AAAA p1-ogo-euw2-6.shield.ogosecurity.com
 
-# Vérifier les réponses HTTP
- curl -I https://signal-logement.beta.gouv.fr/
- curl -I https://bo.signal-logement.beta.gouv.fr/
- curl -I https://service-secours.signal-logement.beta.gouv.fr/
-
+# Vérifier les réponses HTTP / HTTPS
+curl -I https://signal-logement.beta.gouv.fr/
+curl -I https://bo.signal-logement.beta.gouv.fr/
+curl -I https://service-secours.signal-logement.beta.gouv.fr/
 ```
 
 Les réponses de `dig` reflètent l'état de résolution au moment du test.
@@ -145,9 +169,5 @@ Les réponses de `dig` reflètent l'état de résolution au moment du test.
 - [Architecture technique](../ARCHITECTURE.md).
 - [Procédure de compromission DNS](../incident-response/procedure-dns-compromission.md) — restauration OVH, vérifications et sauvegardes Vaultwarden.
 - [OGO — Bascule DNS](https://aide.ogosecurity.com/help/bascule-dns).
+_ [OGO — Fonctionnement général d\'Ogo](https://aide.ogosecurity.com/help/fonctionnement-general-d-ogo)
 
-
-## 9. Points à confirmer / maintenir
-
-- [ ] Confirmer avec OGO (fabrique numérique) la prise en charge d'IP d'entrée fixes sur le domaine principale.
-- [ ] Mettre à jour [ARCHITECTURE.md](../ARCHITECTURE.md) pour refléter les évolutions de l'infrastructure réseau.
