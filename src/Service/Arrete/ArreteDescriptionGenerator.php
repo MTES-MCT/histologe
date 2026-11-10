@@ -3,6 +3,7 @@
 namespace App\Service\Arrete;
 
 use App\Entity\Arrete;
+use App\Entity\Enum\ArreteCreationSource;
 use App\Service\Interconnection\Esabora\EsaboraSISHService;
 
 class ArreteDescriptionGenerator
@@ -48,7 +49,7 @@ class ArreteDescriptionGenerator
             $arrete->getAdditionalInformation()['numero_dossier']
         );
 
-        $description .= \sprintf('Type arrêté : %s<br>', $arrete->getArreteType()->label());
+        $description .= \sprintf('Type arrêté : %s<br>', self::getArreteTypeLabel($arrete));
 
         return $description;
     }
@@ -121,9 +122,23 @@ class ArreteDescriptionGenerator
                 $changedInformations['arrete_type']
             );
         } else {
-            $messages[] = \sprintf('Type arrêté : %s', $arrete->getArreteType()->label());
+            $messages[] = \sprintf('Type arrêté : %s', self::getArreteTypeLabel($arrete));
         }
 
         return empty($messages) ? null : implode('<br>', $messages);
+    }
+
+    private static function getArreteTypeLabel(Arrete $arrete): string
+    {
+        $arreteType = $arrete->getArreteType();
+        try {
+            if (ArreteCreationSource::ESABORA === $arrete->getArreteCreationSource()) {
+                return $arreteType->completeLabelInMapView();
+            }
+        } catch (\Error) {
+            return $arreteType->label();
+        }
+
+        return $arreteType->label();
     }
 }
