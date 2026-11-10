@@ -17,7 +17,7 @@ Cette application est déployé chez Scalingo, hébergé par Outscale.
 | Requirements                           | Release                                                                            |
 |----------------------------------------|------------------------------------------------------------------------------------|
 | Docker engine (minimum)                | [25.0.*](https://www.docker.com/)                                                  |
-| Scalingo CLI (minimum)                 | [1.44](https://doc.scalingo.com/platform/cli/start)                                |
+| Scalingo CLI (minimum)                 | [1.52](https://doc.scalingo.com/platform/cli/start)                                |
 | AWS CLI OVH Object storage (optionnel) | [1.25](https://docs.ovh.com/fr/storage/s3/debuter-avec-s3/#utilisation-de-aws-cli) |
 | PHP (optionnel)                        | [8.4.*](https://www.php.net/)                                                      |
 | Composer (optionnel)                   | [2.9.*](https://getcomposer.org/download/)                                         |
@@ -33,13 +33,14 @@ Cette application est déployé chez Scalingo, hébergé par Outscale.
 
 ### Versions des dépendances
 
-| Service | Version |
-|---------|---------|
-| Nginx   | 1.28.x  |
-| PHP     | 8.4.x   |
-| Node.js | 24.x.x  |
-| MySQL   | 8.4.x   |
-| Redis   | 7.x     |
+| Service    | Version |
+|------------|---------|
+| Nginx      | 1.30.x  |
+| PHP        | 8.4.x   |
+| Node.js    | 24.x.x  |
+| MySQL      | 8.4.x   |
+| PostgreSQL | 18.6    |
+| Redis      | 7.x     |
 
 ### URL(s)
 
@@ -47,6 +48,7 @@ Cette application est déployé chez Scalingo, hébergé par Outscale.
 |----------------------------|-----------------------------------------|
 | Plateforme Signal Logement | [localhost:8080](http://localhost:8080) |
 | phpMyAdmin                 | [localhost:8081](http://localhost:8081) |
+| Adminer (PostgreSQL)       | [localhost:8083](http://localhost:8083) |
 | MailCatcher                | [localhost:1080](http://localhost:1080) |
 | Wiremock                   | [localhost:1082](http://localhost:1082) |
 | Metabase                   | [localhost:3007](http://localhost:3007) |
@@ -63,6 +65,8 @@ Merci de vérifier que ces ports ne soient pas utilisés sur votre poste local
 | php-worker  | signal_logement_phpworker  | **8089**             |
 | MySQL       | signal_logement_mysql      | **3307**             |
 | PhpMyAdmin  | signal_logement_phpmyadmin | **8081**             |
+| PostgreSQL  | signal_logement_postgres   | **5433**             |
+| Adminer     | signal_logement_adminer    | **8083**             |
 | Mailcatcher | signal_logement_mailer     | **1025** et **1080** |
 | Wiremock    | signal_logement_wiremock   | **8082**             |
 | Metabase    | signal_logement_metabase   | **3007**             |
@@ -131,6 +135,7 @@ S3_URL_BUCKET=
 - [Documentation usager](https://documentation.signal-logement.beta.gouv.fr/)
 - [Dossier d'architecture technique](./docs/ARCHITECTURE.md)
 - [Document d'exploitation](./docs/EXPLOITATION.md)
+- [Migration PostgreSQL (expérimentale)](./docs/migration-db/README.md)
 
 ## Sécurité
 

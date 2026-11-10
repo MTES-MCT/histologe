@@ -35,10 +35,11 @@ class SignalementsSansAffectationAccepteeQuery
             AND a_active.id IS NULL
         SQL;
 
+        $territoryIds = array_keys($user->getPartnersTerritories());
         if ($params->territoireId) {
             $sql .= ' AND address.territory_id = '.$params->territoireId;
         } elseif (!$user->isSuperAdmin()) {
-            $sql .= ' AND address.territory_id IN ('.implode(',', array_keys($user->getPartnersTerritories())).')';
+            $sql .= ' AND address.territory_id IN ('.(!empty($territoryIds) ? implode(',', $territoryIds) : '0').')';
         }
 
         if ($params->mesDossiersAverifier && '1' === $params->mesDossiersAverifier) {
@@ -98,17 +99,17 @@ class SignalementsSansAffectationAccepteeQuery
         $sql = <<<SQL
         SELECT DISTINCT
             s.id,
-            s.uuid AS uuid,
-            s.reference AS reference,
-            s.nom_occupant AS nomOccupant,
-            s.prenom_occupant AS prenomOccupant,
-            CONCAT_WS(', ', CONCAT_WS(' ', address.housenumber, address.street), CONCAT_WS(' ', address.post_code, address.city)) AS adresse,
+            s.uuid AS "uuid",
+            s.reference AS "reference",
+            s.nom_occupant AS "nomOccupant",
+            s.prenom_occupant AS "prenomOccupant",
+            CONCAT_WS(', ', CONCAT_WS(' ', address.housenumber, address.street), CONCAT_WS(' ', address.post_code, address.city)) AS "adresse",
             CASE
                 WHEN s.is_logement_social = true THEN 'PUBLIC'
                 ELSE 'PRIVÉ'
-            END AS parc,
-            COUNT(a.id) AS nbAffectations,
-            MAX(a.created_at) AS lastAffectationAt
+            END AS "parc",
+            COUNT(a.id) AS "nbAffectations",
+            MAX(a.created_at) AS "lastAffectationAt"
         SQL;
         /** @var string $sqlPrincipal */
         /** @var array<mixed> $paramsToBind */

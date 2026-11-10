@@ -213,13 +213,13 @@ class LoadSignalementData extends Fixture implements OrderedFixtureInterface
 
         if (isset($row['tags'])) {
             foreach ($row['tags'] as $tag) {
-                $signalement->addTag($this->tagRepository->findOneBy(['label' => $tag, 'territory' => $signalement->getAddress()->getTerritory()]));
+                $signalement->addTag($this->tagRepository->findOneBy(['label' => trim($tag), 'territory' => $signalement->getAddress()->getTerritory()]));
             }
         }
 
         if (isset($row['criticites'])) {
             foreach ($row['criticites'] as $criticite) {
-                $signalement->addCriticite($this->criticiteRepository->findOneBy(['label' => $criticite]));
+                $signalement->addCriticite($this->criticiteRepository->findOneBy(['label' => trim($criticite)]));
             }
         }
 

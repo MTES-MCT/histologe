@@ -13,6 +13,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
         sqlite3 \
         libxslt1-dev \
         libicu-dev \
+        libpq-dev \
         supervisor \
         && curl -fsSL https://deb.nodesource.com/setup_24.x | bash \
         && apt-get install -y  nodejs \
@@ -34,7 +35,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
         # PHP GD
         && docker-php-ext-configure gd --with-freetype --with-jpeg \
         # Install others
-        && docker-php-ext-install -j2 bcmath ctype iconv pdo pdo_mysql pdo_sqlite zip xsl gd sockets exif \
+        && docker-php-ext-install -j2 bcmath ctype iconv pdo pdo_mysql pdo_pgsql pdo_sqlite zip xsl gd sockets exif \
         && docker-php-ext-enable opcache \
         && rm /usr/src/php/ext/*.tgz \
         && curl -sS https://getcomposer.org/installer | php && mv composer.phar /usr/local/bin/composer  \

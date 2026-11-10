@@ -131,6 +131,7 @@ class DossiersSuivisUsagerQuery
 
         $qb->setMaxResults(TabDossier::MAX_ITEMS_LIST);
         $qb->groupBy('signalement.id');
+        $qb->addGroupBy('address.id');
 
         return $qb;
     }
