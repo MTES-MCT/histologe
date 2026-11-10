@@ -12,11 +12,7 @@
     </div>
     <div v-else>
       <FrontStatsGlobal />
-
-      <div v-if="sharedState.loadingStats" class="loading fr-m-10w">
-        Mise à jour des statistiques...
-      </div>
-      <FrontStatsTerritory v-else @territory-change="reloadStats" />
+      <FrontStatsTerritory @territory-change="reloadStats" />
     </div>
   </div>
 </template>

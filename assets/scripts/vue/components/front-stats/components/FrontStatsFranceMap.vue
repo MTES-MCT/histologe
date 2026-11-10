@@ -17,7 +17,7 @@
 
     <div v-show="displayMode === 'map'">
       <div class="fr-skiplinks">
-        <a class="fr-link fr-link--icon-right fr-icon-arrow-down-line" href="#donnees-historiques">Passer la carte des départements</a>
+        <a class="fr-link fr-link--icon-right fr-icon-arrow-down-line" href="#donnees-historiques">Aller aux données historiques</a>
       </div>
 
       <div class="fr-container--fluid fr-my-10v">

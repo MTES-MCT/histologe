@@ -11,7 +11,15 @@
         :option-items="sharedState.territoiresList"
         />
 
-      <div class="fr-container--fluid fr-py-5v">
+      <p class="fr-mt-2w fr-mb-0" aria-live="polite">
+        <template v-if="sharedState.loadingStats">Mise à jour des statistiques...</template>
+      </p>
+
+      <div
+        class="fr-container--fluid fr-py-5v"
+        :aria-busy="sharedState.loadingStats"
+        :class="{ 'front-stats-territory--loading': sharedState.loadingStats }"
+        >
         <div class="fr-grid-row fr-grid-row--gutters">
           <FrontStatsTerritoryItem size-class="7" v-model="filters.yearTypes.perMonth">
             <template #title>Nombre de signalements déposés</template>
@@ -108,5 +116,10 @@ const chartItems = (key: ChartKey): StatsChartData => sharedState.stats.charts[k
   div.front-stats-territory .histo-select {
     display: block;
     max-width: 250px;
+  }
+
+  div.front-stats-territory .front-stats-territory--loading {
+    opacity: .5;
+    pointer-events: none;
   }
 </style>
