@@ -20,7 +20,7 @@
         :aria-busy="sharedState.loadingStats"
         :class="{ 'front-stats-territory--loading': sharedState.loadingStats }"
         >
-        <div class="fr-grid-row fr-grid-row--gutters">
+        <div class="fr-grid-row fr-grid-row--gutters" :key="statsVersion">
           <FrontStatsTerritoryItem size-class="7" v-model="filters.yearTypes.perMonth">
             <template #title>Nombre de signalements déposés</template>
             <template #graph="{ titleId }: { titleId: string }">
@@ -71,6 +71,7 @@
 </template>
 
 <script setup lang="ts">
+import { ref, watch } from 'vue'
 import { store } from '../composables/useFrontStatsStore'
 import type { ChartKey, StatsChartData } from '../types'
 import HistoSelect from '../../common/HistoSelect.vue'
@@ -88,6 +89,10 @@ const emit = defineEmits<{
 // State
 const sharedState = store.state
 const filters = sharedState.filters
+
+// Les graphiques ne réagissent pas au changement de données : la clé force leur recréation à chaque nouveau jeu de stats
+const statsVersion = ref(0)
+watch(() => sharedState.stats, () => { statsVersion.value++ })
 
 /**
  * Données du graphique pour la période sélectionnée (année en cours ou total)
