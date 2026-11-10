@@ -1,23 +1,48 @@
 <template>
   <div class="histo-chart-bar histo-chart-item">
-    <span class="histo-chart-item-title"><slot name="title"></slot></span>
-    <Bar
-      :chart-options="chartOptions"
-      :chart-data="chartData"
-      :chart-id="chartId"
-      :dataset-id-key="datasetIdKey"
-      :plugins="showValues ? [...plugins, valueLabelsPlugin] : plugins"
-      :css-classes="cssClasses"
-      :styles="styles"
-      :width="width"
-      :height="height"
-      />
+    <span :id="titleId" class="histo-chart-item-title"><slot name="title"></slot></span>
+    <div
+      tabindex="0"
+      role="img"
+      :aria-labelledby="labelledBy || titleId"
+      aria-description="Utilisez les flèches pour parcourir les valeurs du graphique"
+      @keydown.right.prevent="showNextChartValue"
+      @keydown.down.prevent="showNextChartValue"
+      @keydown.left.prevent="showPreviousChartValue"
+      @keydown.up.prevent="showPreviousChartValue"
+      @keydown.home.prevent="showFirstChartValue"
+      @keydown.end.prevent="showLastChartValue"
+      @keydown.esc="hideChartValue"
+      @blur="hideChartValue"
+      >
+      <Bar
+        :chart-options="chartOptions"
+        :chart-data="chartData"
+        :chart-id="chartId"
+        :dataset-id-key="datasetIdKey"
+        :plugins="showValues ? [...plugins, valueLabelsPlugin] : plugins"
+        :css-classes="cssClasses"
+        :styles="styles"
+        :width="width"
+        :height="height"
+        />
+    </div>
+    <details class="fr-mt-2w">
+      <summary>Afficher les données</summary>
+      <ChartDataTable
+        :labels="chartData.labels"
+        :values="chartData.datasets[0].data"
+        :labelled-by="labelledBy || titleId"
+        />
+    </details>
   </div>
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue'
+import { defineComponent, useId } from 'vue'
 import { Bar } from 'vue-chartjs'
+import { showNextChartValue, showPreviousChartValue, showFirstChartValue, showLastChartValue, hideChartValue } from './chartKeyboardNav'
+import ChartDataTable from '../../ChartDataTable.vue'
 import { Chart as ChartJS, Title, Tooltip, Legend, BarElement, CategoryScale, LinearScale } from 'chart.js'
 import type { Plugin } from 'chart.js'
 
@@ -48,7 +73,7 @@ ChartJS.register(Title, Tooltip, Legend, BarElement, CategoryScale, LinearScale)
 
 export default defineComponent({
   name: 'HistoChartBar',
-  components: { Bar },
+  components: { Bar, ChartDataTable },
   props: {
     chartId: {
       type: String,
@@ -96,7 +121,15 @@ export default defineComponent({
     plugins: {
       type: Array,
       default: () => []
+    },
+    labelledBy: {
+      type: String,
+      default: ''
     }
+  },
+  setup () {
+    // Identifiant du titre, qui sert de libellé par défaut au graphique et à son tableau de données
+    return { titleId: useId() }
   },
   data () {
     const inLabels = []
@@ -154,6 +187,13 @@ export default defineComponent({
         }
       }
     }
+  },
+  methods: {
+    showNextChartValue,
+    showPreviousChartValue,
+    showFirstChartValue,
+    showLastChartValue,
+    hideChartValue
   }
 })
 </script>
