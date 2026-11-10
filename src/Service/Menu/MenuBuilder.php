@@ -54,12 +54,12 @@ readonly class MenuBuilder
         }
 
         $mesOutilsSubMenu = (new MenuItem(label: 'Mes outils', roleGranted: User::ROLE_USER))
-            ->addChild(new MenuItem(label: 'Partenaires', route: 'back_partner_index', roleGranted: User::ROLE_ADMIN_TERRITORY));
+            ->addChild(new MenuItem(label: 'Gérer les partenaires', route: 'back_partner_index', roleGranted: User::ROLE_ADMIN_TERRITORY));
         foreach ($user->getPartners() as $partner) {
             $partnerName = $user->getPartners()->count() > 1 ? ' '.$partner->getNom() : '';
             $mesOutilsSubMenu->addChild(new MenuItem(label: 'Mon partenaire'.$partnerName, route: 'back_partner_view', routeParameters: ['id' => $partner->getId()], roleGranted: User::ROLE_ADMIN_PARTNER, roleNotGranted: User::ROLE_ADMIN_TERRITORY));
         }
-        $mesOutilsSubMenu->addChild(new MenuItem(label: 'Utilisateurs', route: 'back_user_index', roleGranted: User::ROLE_ADMIN_TERRITORY));
+        $mesOutilsSubMenu->addChild(new MenuItem(label: 'Gérer les utilisateurs', route: 'back_user_index', roleGranted: User::ROLE_ADMIN_TERRITORY));
         $mesOutilsSubMenu->addChild(new MenuItem(label: $user->isSuperAdmin() ? 'Gérer les territoires' : 'Gérer mon territoire', route: 'back_territory_management_index', roleGranted: User::ROLE_ADMIN_TERRITORY));
         $mesOutilsSubMenu->addChild(new MenuItem(route: 'back_territory_management_zone_index'))
             ->addChild(new MenuItem(route: 'back_territory_management_tags_index'))
