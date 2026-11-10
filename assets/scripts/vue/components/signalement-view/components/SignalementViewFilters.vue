@@ -459,7 +459,7 @@ export default defineComponent({
       return sanitizeFilters(this.sharedState.input.filters)
     },
     createdFromListRT () {
-      if (this.sharedState.user.canSeeServiceSecours) {
+      if (this.sharedState.user.hasServiceSecours) {
         return store.state.createdFromListRT
       }
       return store.state.createdFromListRT.filter(item => item.Id !== 'FORM_SERVICE_SECOURS')

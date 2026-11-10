@@ -69,7 +69,7 @@ export const store = {
       canSeeStatusAffectation: false,
       canSeeWithoutAffectation: false,
       canSeeInjonction: false,
-      canSeeServiceSecours: false,
+      hasServiceSecours: false,
       partnerIds: new Array<string>()
     },
     showOptions: false,
