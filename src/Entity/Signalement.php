@@ -2239,11 +2239,7 @@ class Signalement implements EntityHistoryInterface, EntityHistoryCollectionInte
 
     public function removeIntervention(Intervention $intervention): static
     {
-        if ($this->interventions->removeElement($intervention)) {
-            if ($intervention->getSignalement() === $this) {
-                $intervention->setSignalement(null);
-            }
-        }
+        $this->interventions->removeElement($intervention);
 
         return $this;
     }
@@ -3003,12 +2999,7 @@ class Signalement implements EntityHistoryInterface, EntityHistoryCollectionInte
 
     public function removeTiersInvitation(TiersInvitation $tiersInvitation): static
     {
-        if ($this->tiersInvitations->removeElement($tiersInvitation)) {
-            // set the owning side to null (unless already changed)
-            if ($tiersInvitation->getSignalement() === $this) {
-                $tiersInvitation->setSignalement(null);
-            }
-        }
+        $this->tiersInvitations->removeElement($tiersInvitation);
 
         return $this;
     }

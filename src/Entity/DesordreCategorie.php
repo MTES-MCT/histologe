@@ -72,12 +72,7 @@ class DesordreCategorie
 
     public function removeDesordreCritere(DesordreCritere $desordreCritere): static
     {
-        if ($this->desordreCriteres->removeElement($desordreCritere)) {
-            // set the owning side to null (unless already changed)
-            if ($desordreCritere->getDesordreCategorie() === $this) {
-                $desordreCritere->setDesordreCategorie(null);
-            }
-        }
+        $this->desordreCriteres->removeElement($desordreCritere);
 
         return $this;
     }

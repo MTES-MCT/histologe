@@ -5,6 +5,7 @@ namespace App\Tests\Functional\EventSubscriber;
 use App\Entity\Enum\NotificationType;
 use App\Entity\Notification;
 use App\Entity\Signalement;
+use App\Entity\User;
 use App\Event\SignalementViewedEvent;
 use App\Event\SuiviViewedEvent;
 use App\EventSubscriber\SignalementViewedSubscriber;
@@ -73,6 +74,7 @@ class SignalementViewedSubscriberTest extends WebTestCase
 
     public function testOnSuiviViewed(): void
     {
+        /** @var User $user */
         $user = $this->userRepository->findOneBy(['email' => 'user-partenaire-multi-ter-34-30@signal-logement.fr']);
         $notifications = $this->notificationRepository->findUnseenNotificationsBy($this->signalement, $user, NotificationType::getForUsager());
         foreach ($notifications as $notification) {
@@ -87,8 +89,8 @@ class SignalementViewedSubscriberTest extends WebTestCase
 
         $signalementUser = new SignalementUser(
             $this->signalement->getCodeSuivi().':'.UserManager::DECLARANT,
+            $user,
             $this->signalement->getMailDeclarant(),
-            $user
         );
 
         $suiviViewedEvent = new SuiviViewedEvent($this->signalement, $signalementUser);

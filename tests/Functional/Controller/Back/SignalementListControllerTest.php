@@ -155,7 +155,7 @@ class SignalementListControllerTest extends WebTestCase
         });
         /** @var User $user */
         foreach ($users as $user) {
-            if ($user->getFirstTerritory()) {
+            if ($user->getFirstTerritoryOrNull()) {
                 yield $user->getEmail() => [$user->getEmail()];
             }
         }

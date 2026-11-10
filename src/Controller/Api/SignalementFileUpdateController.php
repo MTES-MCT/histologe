@@ -110,7 +110,7 @@ class SignalementFileUpdateController extends AbstractController
             $file->setDescription(null);
         }
         $file->setExtension($ext);
-        $file->setDocumentType($fileRequest->getDocumentType());
+        $file->setDocumentType($fileRequest->getDocumentTypeEnum());
         $this->entityManager->flush();
 
         return $this->json($this->fileFactory->createFrom($file));

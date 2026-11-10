@@ -50,7 +50,7 @@ class UserFactoryTest extends KernelTestCase
 
         $this->assertTrue($user->getIsMailingActive());
         $this->assertEquals(UserStatus::INACTIVE, $user->getStatut());
-        $this->assertNull($user->getFirstTerritory());
+        $this->assertNull($user->getFirstTerritoryOrNull());
         $this->assertEquals(0, $user->getPartners()->count());
     }
 }

@@ -67,7 +67,7 @@ class FileRequest implements RequestInterface
     public ?string $description = null;
 
     #[Ignore]
-    public function getDocumentType(): DocumentType
+    public function getDocumentTypeEnum(): DocumentType
     {
         return DocumentType::from($this->documentType);
     }
