@@ -53,7 +53,7 @@ class CartographieControllerTest extends WebTestCase
         $users = $userRepository->findBy(['statut' => UserStatus::ACTIVE]);
         /** @var User $user */
         foreach ($users as $user) {
-            if ($user->getFirstTerritory()) {
+            if ($user->getFirstTerritoryOrNull()) {
                 yield $user->getEmail() => [$user->getEmail()];
             }
         }

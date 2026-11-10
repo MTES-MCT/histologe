@@ -567,11 +567,11 @@ class User implements UserInterface, EntityHistoryInterface, PasswordAuthenticat
 
     public function getPartnerInTerritoryOrFirstOne(Territory $territory): Partner
     {
-        if ($partnerInTerritory = $this->getPartnerInTerritory($territory)) {
+        if ($partnerInTerritory = $this->getPartnerInTerritoryOrFirstOneOrNull($territory)) {
             return $partnerInTerritory;
         }
 
-        throw new \LogicException(sprintf('Aucun partenaire pour l\'utilisateur %s dans le territoire %s', $this->getId(), $territory->getId()));
+        throw new \LogicException(sprintf('Aucun partenaire pour l\'utilisateur %s dans le territoire %s', $this->getId().' '.$this->getEmail(), $territory->getId()));
     }
 
     public function hasPartnerInTerritory(Territory $territory): bool

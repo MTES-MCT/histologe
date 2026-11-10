@@ -157,14 +157,12 @@ class SignalementImportLoader
         foreach ($dataMappedOk as $dataMapped) {
             ++$countSignalement;
             $signalement = $this->signalementManager->createOrUpdateFromArrayForImport($territory, $dataMapped);
-            if (!$signalement->getProfileDeclarant()) {
-                if (!$signalement->getIsNotOccupant()) {
-                    $signalement->setProfileDeclarant(ProfileDeclarant::LOCATAIRE);
-                } elseif (OccupantLink::PRO->name == mb_strtoupper($signalement->getLienDeclarantOccupant())) {
-                    $signalement->setProfileDeclarant(ProfileDeclarant::TIERS_PRO);
-                } else {
-                    $signalement->setProfileDeclarant(ProfileDeclarant::TIERS_PARTICULIER);
-                }
+            if (!$signalement->getIsNotOccupant()) {
+                $signalement->setProfileDeclarant(ProfileDeclarant::LOCATAIRE);
+            } elseif (OccupantLink::PRO->name == mb_strtoupper($signalement->getLienDeclarantOccupant())) {
+                $signalement->setProfileDeclarant(ProfileDeclarant::TIERS_PRO);
+            } else {
+                $signalement->setProfileDeclarant(ProfileDeclarant::TIERS_PARTICULIER);
             }
             if (null === $signalement->getIsLogementVacant() && !empty($signalement->getNomOccupant())) {
                 $signalement->setIsLogementVacant(false);

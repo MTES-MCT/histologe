@@ -11,6 +11,7 @@ use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\Validator\Constraints\NotNull;
 
 /**
  * @extends AbstractType<mixed>
@@ -40,18 +41,12 @@ class ClubEventType extends AbstractType
             'widget' => 'single_text',
             'required' => false,
             'getter' => static function (ClubEvent $clubEvent) use ($timezoneProvider): ?\DateTimeInterface {
-                $date = $clubEvent->getDateEvent();
+                $date = $clubEvent->getId() ? $clubEvent->getDateEvent() : null;
 
-                if (null === $date) {
-                    return null;
-                }
-
-                return $date->setTimezone($timezoneProvider->getDateTimezone());
+                return $date ? $date->setTimezone($timezoneProvider->getDateTimezone()) : null;
             },
             'setter' => static function (ClubEvent $clubEvent, ?\DateTimeInterface $date) use ($timezoneProvider): void {
                 if (null === $date) {
-                    $clubEvent->setDateEvent(null);
-
                     return;
                 }
                 $utcDate = new \DateTimeImmutable(
@@ -61,6 +56,9 @@ class ClubEventType extends AbstractType
                 $utcDate = $utcDate->setTimezone(new \DateTimeZone('UTC'));
                 $clubEvent->setDateEvent($utcDate);
             },
+            'constraints' => [
+                new NotNull(),
+            ],
         ]);
         $builder->add('userRoles', ChoiceType::class, [
             'label' => 'Utilisateurs concernés (facultatif)',

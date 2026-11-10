@@ -64,9 +64,6 @@ class SignalementViewedSubscriber implements EventSubscriberInterface
         if ($user instanceof SignalementUser) {
             $user = $user->getUser();
         }
-        if (!$user) {
-            return;
-        }
         $notifications = $this->notificationRepository->findUnseenNotificationsBy(
             signalement: $signalement,
             user: $user,

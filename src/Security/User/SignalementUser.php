@@ -24,7 +24,7 @@ class SignalementUser implements UserInterface
         [$this->codeSuivi, $this->type] = explode(':', $this->userIdentifier);
         $roles = ['ROLE_SUIVI_SIGNALEMENT'];
         $roles[] = UserManager::DECLARANT === $this->type ? 'ROLE_DECLARANT' : 'ROLE_OCCUPANT';
-        $userRoles = $this->user->getRoles() ?? [];
+        $userRoles = $this->user->getRoles();
         $this->roles = array_values(array_unique([...$roles, ...$userRoles]));
     }
 

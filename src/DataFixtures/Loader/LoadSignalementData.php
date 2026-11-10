@@ -325,7 +325,7 @@ class LoadSignalementData extends Fixture implements OrderedFixtureInterface
                     filename: 'blank-'.$row['reference'].'-'.$countMorePhoto.'.jpg',
                     title: 'Blank.pdf',
                     signalement: $signalement,
-                    partner: $user?->getPartnerInTerritoryOrFirstOne($signalement->getAddress()->getTerritory()),
+                    partner: $user?->getPartnerInTerritoryOrFirstOneOrNull($signalement->getAddress()->getTerritory()),
                     user: $user,
                     documentType: DocumentType::AUTRE,
                     setDatePriseDeVueFromExifData: false,
