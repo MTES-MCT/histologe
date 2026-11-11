@@ -28,7 +28,7 @@ DATABASE_URL="postgresql://signal_logement:signal_logement@signal_logement_postg
 
 Pour revenir sur MySQL (moteur par défaut) :
 ```dotenv
-DATABASE_URL="mysql://signal_logement:signal_logement@signal_logement_mysql:3306/signal_logement_db?serverVersion=8.4.8&charset=utf8mb4"
+DATABASE_URL="mysql://signal_logement:signal_logement@signal_logement_mysql:3306/signal_logement_db?serverVersion=8.4.11&charset=utf8mb4"
 ```
 
 ## Réinitialiser la base PostgreSQL
