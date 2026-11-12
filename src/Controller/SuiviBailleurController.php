@@ -39,6 +39,8 @@ use Symfony\Component\Routing\Attribute\Route;
 #[Route('/dossier-bailleur')]
 class SuiviBailleurController extends AbstractController
 {
+    private const string SIGNALMENT_NOT_FOUND_FOR_BAILLEUR = 'Signalement not found for bailleur %s.';
+
     public function __construct(
         #[Autowire(env: 'S3_ENABLE')]
         private bool $s3Enable,
@@ -63,7 +65,7 @@ class SuiviBailleurController extends AbstractController
         $user = $this->getUser();
         $signalement = $signalementRepository->findOneBy(['uuid' => $user->getUserIdentifier()]);
         if (!$signalement) {
-            throw new \LogicException('Signalement not found for bailleur '.$user->getUserIdentifier().'.');
+            throw new \LogicException(sprintf(self::SIGNALMENT_NOT_FOUND_FOR_BAILLEUR, $user->getUserIdentifier()));
         }
         $infoDesordres = $signalementDesordresProcessor->process($signalement);
         $dateLimit = $signalement->getCreatedAt()->modify('+'.InjonctionBailleurService::DELAIS_DE_REPONSE.' -1 day');
@@ -158,7 +160,7 @@ class SuiviBailleurController extends AbstractController
         $user = $this->getUser();
         $signalement = $signalementRepository->findOneBy(['uuid' => $user->getUserIdentifier()]);
         if (!$signalement) {
-            throw new \LogicException('Signalement not found for bailleur '.$user->getUserIdentifier().'.');
+            throw new \LogicException(sprintf(self::SIGNALMENT_NOT_FOUND_FOR_BAILLEUR, $user->getUserIdentifier()));
         }
         if (SignalementStatus::INJONCTION_BAILLEUR !== $signalement->getStatut()) {
             throw $this->createNotFoundException();
@@ -211,7 +213,7 @@ class SuiviBailleurController extends AbstractController
         $user = $this->getUser();
         $signalement = $signalementRepository->findOneBy(['uuid' => $user->getUserIdentifier()]);
         if (!$signalement) {
-            throw new \LogicException('Signalement not found for bailleur '.$user->getUserIdentifier().'.');
+            throw new \LogicException(sprintf(self::SIGNALMENT_NOT_FOUND_FOR_BAILLEUR, $user->getUserIdentifier()));
         }
         $pdf = $fileRepository->findOneBy(['signalement' => $signalement, 'documentType' => DocumentType::ENGAGEMENT_TRAVAUX_BAILLEUR]);
         if ($pdf) {
@@ -246,7 +248,7 @@ class SuiviBailleurController extends AbstractController
         $user = $this->getUser();
         $signalement = $signalementRepository->findOneBy(['uuid' => $user->getUserIdentifier()]);
         if (!$signalement) {
-            throw new \LogicException('Signalement not found for bailleur '.$user->getUserIdentifier().'.');
+            throw new \LogicException(sprintf(self::SIGNALMENT_NOT_FOUND_FOR_BAILLEUR, $user->getUserIdentifier()));
         }
 
         if (!$this->isGranted(SignalementBailleurVoter::SIGN_BAILLEUR_ADD_SUIVI, $signalement)) {
