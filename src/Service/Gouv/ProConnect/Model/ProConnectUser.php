@@ -9,6 +9,10 @@ class ProConnectUser
     public string $uid;
     public string $sub;
     public string $email;
+    public ?string $siret = null;
+    public ?string $organizationalUnit = null;
+    public ?string $chorusdtMatricule = null;
+    public ?string $fullname = null;
 
     /**
      * @param array<string, mixed> $data
@@ -24,5 +28,11 @@ class ProConnectUser
         $this->sub = $data['sub'];
         $this->uid = $data['uid'];
         $this->email = $data['email'];
+        $this->siret = $data['siret'] ?? null;
+        $this->organizationalUnit = $data['organizational_unit'] ?? null;
+        $this->chorusdtMatricule = $data['chorusdt:matricule'] ?? null;
+        $lastName = $data['usual_name'] ?? $data['family_name'] ?? '';
+        $fullname = trim(sprintf('%s %s', $data['given_name'] ?? '', $lastName));
+        $this->fullname = '' !== $fullname ? $fullname : null;
     }
 }

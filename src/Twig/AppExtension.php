@@ -22,6 +22,7 @@ use App\Utils\AttributeParser;
 use App\Utils\UrlHelper;
 use App\Validator\EmailFormatValidator;
 use CoopTilleuls\UrlSignerBundle\UrlSigner\UrlSignerInterface;
+use Symfony\Component\HttpFoundation\Request;
 use Twig\Extension\AbstractExtension;
 use Twig\Extension\GlobalsInterface;
 use Twig\TwigFilter;
@@ -243,7 +244,13 @@ class AppExtension extends AbstractExtension implements GlobalsInterface
             new TwigFunction('sign_url', [$this, 'signUrl']),
             new TwigFunction('get_communes_by_insee', [$this, 'getCommunesByInsee']),
             new TwigFunction('root_domain', [$this, 'extractRootDomain']),
+            new TwigFunction('root_url', [$this, 'generateRootUrl']),
         ];
+    }
+
+    public function generateRootUrl(string $path, ?Request $request = null): string
+    {
+        return UrlHelper::buildRootUrl($path, $request);
     }
 
     public function extractRootDomain(string $host): string
