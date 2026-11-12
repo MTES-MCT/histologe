@@ -252,11 +252,7 @@ class SignalementController extends AbstractController
         $subscriptionsInMyPartner = $signalementSubscriptionRepository->findForSignalementAndPartner($signalement, $partner);
 
         $epciOccupant = $epciRepository->findOneByCommuneInseeAndPostalCode($signalement->getAddress()->getCityCode(), $signalement->getAddress()->getPostCode());
-
-        $personalNote = null;
-        if ($this->isGranted('ROLE_ADMIN_TERRITORY')) {
-            $personalNote = $personalNoteRepository->findOneBy(['user' => $user, 'signalement' => $signalement]);
-        }
+        $personalNote = $personalNoteRepository->findOneBy(['user' => $user, 'signalement' => $signalement]);
 
         $syncStatuses = [];
         if ($this->isGranted('ROLE_ADMIN')) {
