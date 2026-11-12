@@ -6,6 +6,8 @@ namespace App\Tests\Functional\Controller\Back;
 
 use App\Repository\UserRepository;
 use App\Service\DashboardTabPanel\TabBodyType;
+use App\Service\DashboardTabPanel\TabDataManager;
+use App\Service\DashboardTabPanel\TabDossierResult;
 use PHPUnit\Framework\Attributes\DataProvider;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 
@@ -57,6 +59,57 @@ class DashboardTabPanelControllerTest extends WebTestCase
 
         $client->request('GET', $url);
         $this->assertResponseStatusCodeSame($expectedStatusCode);
+    }
+
+    #[DataProvider('provideTerritoryFilterByUserType')]
+    public function testTerritoryFilterIsRenderedForUserType(string $email, bool $selectTerritory, bool $expectedTerritoryFilter): void
+    {
+        self::ensureKernelShutdown();
+        $client = static::createClient();
+        $container = static::getContainer();
+        /** @var UserRepository $userRepository */
+        $userRepository = $container->get(UserRepository::class);
+        $user = $userRepository->findOneBy(['email' => $email]);
+        $client->loginUser($user);
+
+        $territories = $user->getPartnersTerritories();
+        $territory = current($territories);
+        if (!$territory) {
+            $territoryId = 13;
+        } else {
+            $territoryId = $territory->getId();
+        }
+        $tabDataManager = $this->createMock(TabDataManager::class);
+        $tabDataManager->method('getDossiersActiviteRecente')->willReturn(new TabDossierResult([], 11));
+        $container->set(TabDataManager::class, $tabDataManager);
+
+        $router = $container->get('router');
+        $routeParameters = ['tabBodyType' => TabBodyType::TAB_DATA_TYPE_DOSSIERS_ACTIVITE_RECENTE];
+        if ($selectTerritory) {
+            $routeParameters['territoireId'] = $territoryId;
+        }
+        $url = $router->generate('back_tab_panel_body', $routeParameters);
+        $crawler = $client->request('GET', $url);
+
+        $this->assertResponseIsSuccessful();
+        $href = $crawler->filter('a.fr-text-label--blue-france')->attr('href');
+        parse_str((string) parse_url($href, \PHP_URL_QUERY), $filters);
+
+        if ($expectedTerritoryFilter) {
+            $this->assertSame((string) $territoryId, $filters['territoire'] ?? null);
+        } else {
+            $this->assertArrayNotHasKey('territoire', $filters);
+        }
+    }
+
+    public static function provideTerritoryFilterByUserType(): \Generator
+    {
+        yield 'SA without territory' => ['admin-01@signal-logement.fr', false, false];
+        yield 'SA with territory' => ['admin-01@signal-logement.fr', true, true];
+        yield 'RT' => ['admin-territoire-13-01@signal-logement.fr', false, false];
+        yield 'Agent' => ['admin-partenaire-13-01@signal-logement.fr', false, false];
+        yield 'Multi-territory without territory' => ['admin-partenaire-multi-ter-13-01@signal-logement.fr', false, false];
+        yield 'Multi-territory with territory' => ['admin-partenaire-multi-ter-13-01@signal-logement.fr', true, true];
     }
 
     public static function provideServiceSecoursAccess(): \Generator
