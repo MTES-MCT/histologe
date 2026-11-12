@@ -59,7 +59,7 @@ class ExportSignalementController extends AbstractController
         SignalementSearchQueryFactory $signalementSearchQueryFactory,
     ): RedirectResponse {
         $requestData = $request->request->all();
-        $format = RequestDataExtractor::getString($requestData, 'file-format');
+        $format = (string) RequestDataExtractor::getString($requestData, 'file-format');
         $selectedColumns = RequestDataExtractor::getArray($requestData, 'cols');
         $request->getSession()->set('selectedCols', $selectedColumns);
 
@@ -77,6 +77,8 @@ class ExportSignalementController extends AbstractController
 
         /** @var User $user */
         $user = $this->getUser();
+        /** @var int $userId */
+        $userId = $user->getId();
 
         $signalementSearchQuery = $signalementSearchQueryFactory->createFromCookie($request);
         $filters = null !== $signalementSearchQuery
@@ -84,7 +86,7 @@ class ExportSignalementController extends AbstractController
             : ['isImported' => 'oui'];
 
         $message = (new ListExportMessage())
-            ->setUserId($user->getId())
+            ->setUserId($userId)
             ->setFormat($format)
             ->setFilters($filters)
             ->setSelectedColumns($selectedColumns);

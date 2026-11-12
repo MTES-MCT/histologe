@@ -30,7 +30,7 @@ class InactiveUserExportMessageHandler
         try {
             $user = $this->userRepository->find($exportMessage->getUserId());
             $format = $exportMessage->getFormat();
-            $timezone = $user->getFirstTerritory()?->getTimezone() ?? TimezoneProvider::TIMEZONE_EUROPE_PARIS;
+            $timezone = $user->getFirstTerritoryOrNull()?->getTimezone() ?? TimezoneProvider::TIMEZONE_EUROPE_PARIS;
             $datetimeStr = (new \DateTimeImmutable())->setTimezone(new \DateTimeZone($timezone))->format('dmY-Hi');
             $filename = 'utilisateurs-inactifs-'.$user->getId().'-'.$datetimeStr.'.'.$format;
             $tmpFilepath = $this->parameterBag->get('uploads_tmp_dir').$filename;

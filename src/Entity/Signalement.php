@@ -66,8 +66,8 @@ class Signalement implements EntityHistoryInterface, EntityHistoryCollectionInte
     #[ORM\Column(type: 'string', length: 50, unique: true)]
     private string $uuid;
 
-    #[ORM\Column(type: 'string', nullable: true, enumType: ProfileDeclarant::class, length: 50)]
-    private ?ProfileDeclarant $profileDeclarant = null;
+    #[ORM\Column(type: 'string', enumType: ProfileDeclarant::class, length: 50)]
+    private ProfileDeclarant $profileDeclarant;
 
     #[ORM\Column(type: 'string', nullable: true, enumType: ProfileOccupant::class, length: 50)]
     private ?ProfileOccupant $profileOccupant = null;
@@ -1416,7 +1416,7 @@ class Signalement implements EntityHistoryInterface, EntityHistoryCollectionInte
         return $this;
     }
 
-    public function getCreatedAt(): ?\DateTimeImmutable
+    public function getCreatedAt(): \DateTimeImmutable
     {
         return $this->createdAt;
     }
@@ -2239,11 +2239,7 @@ class Signalement implements EntityHistoryInterface, EntityHistoryCollectionInte
 
     public function removeIntervention(Intervention $intervention): static
     {
-        if ($this->interventions->removeElement($intervention)) {
-            if ($intervention->getSignalement() === $this) {
-                $intervention->setSignalement(null);
-            }
-        }
+        $this->interventions->removeElement($intervention);
 
         return $this;
     }
@@ -2355,12 +2351,12 @@ class Signalement implements EntityHistoryInterface, EntityHistoryCollectionInte
         return $this;
     }
 
-    public function getProfileDeclarant(): ?ProfileDeclarant
+    public function getProfileDeclarant(): ProfileDeclarant
     {
         return $this->profileDeclarant;
     }
 
-    public function setProfileDeclarant(?ProfileDeclarant $profileDeclarant): static
+    public function setProfileDeclarant(ProfileDeclarant $profileDeclarant): static
     {
         $this->profileDeclarant = $profileDeclarant;
 
@@ -3003,12 +2999,7 @@ class Signalement implements EntityHistoryInterface, EntityHistoryCollectionInte
 
     public function removeTiersInvitation(TiersInvitation $tiersInvitation): static
     {
-        if ($this->tiersInvitations->removeElement($tiersInvitation)) {
-            // set the owning side to null (unless already changed)
-            if ($tiersInvitation->getSignalement() === $this) {
-                $tiersInvitation->setSignalement(null);
-            }
-        }
+        $this->tiersInvitations->removeElement($tiersInvitation);
 
         return $this;
     }

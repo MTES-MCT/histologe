@@ -42,8 +42,8 @@ class SignalementUserProvider implements UserProviderInterface
 
         return new SignalementUser(
             $usagerData['identifier'],
-            $usagerData['email'],
             $usagerData['user'],
+            $usagerData['email'],
         );
     }
 

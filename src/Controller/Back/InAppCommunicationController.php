@@ -28,7 +28,7 @@ class InAppCommunicationController extends AbstractController
         InAppCommunicationRepository $inAppCommunicationRepository,
         InAppCommunicationUserRepository $inAppCommunicationUserRepository,
     ): Response {
-        /** @var ?User $user */
+        /** @var User $user */
         $user = $this->getUser();
         $inAppCommunications = $inAppCommunicationRepository->findForUser($user);
         $listInAppCommunications = [];
@@ -61,7 +61,7 @@ class InAppCommunicationController extends AbstractController
         InAppCommunication $inAppCommunication,
         InAppCommunicationRepository $inAppCommunicationRepository,
     ): JsonResponse {
-        /** @var ?User $user */
+        /** @var User $user */
         $user = $this->getUser();
         $inAppCommunications = $inAppCommunicationRepository->findForUser($user, $inAppCommunication->getId());
         if (!$inAppCommunications) {

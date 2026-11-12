@@ -4,6 +4,7 @@ namespace App\Controller;
 
 use App\Entity\Enum\DocumentType;
 use App\Entity\Enum\SuiviDelayedType;
+use App\Entity\Signalement;
 use App\Factory\SuiviDelayedFactory;
 use App\Manager\SuiviManager;
 use App\Messenger\Message\PdfExportMessage;
@@ -51,6 +52,7 @@ class SignalementFileController extends AbstractController
             );
         }
 
+        /** @var Signalement $signalement */
         $signalement = $signalementRepository->findOneByCodeForPublic($code);
         if (!$this->isGranted(SignalementFoVoter::SIGN_USAGER_EDIT, $signalement) && false === !$this->isGranted(SignalementFoVoter::SIGN_USAGER_ADD_SUIVI, $signalement)) {
             throw $this->createAccessDeniedException();
@@ -89,6 +91,7 @@ class SignalementFileController extends AbstractController
                 Response::HTTP_BAD_REQUEST
             );
         }
+        /** @var Signalement $signalement */
         $signalement = $signalementRepository->findOneByCodeForPublic($code);
         if (!$this->isGranted(SignalementFoVoter::SIGN_USAGER_EDIT, $signalement) && false === !$this->isGranted(SignalementFoVoter::SIGN_USAGER_ADD_SUIVI, $signalement)) {
             throw $this->createAccessDeniedException();
@@ -106,7 +109,7 @@ class SignalementFileController extends AbstractController
         $infoDesordres = $signalementDesordresProcessor->process($signalement);
 
         $requestData = $request->request->all();
-        $documentTypeData = RequestDataExtractor::getString($requestData, 'documentType');
+        $documentTypeData = (string) RequestDataExtractor::getString($requestData, 'documentType');
         $documentType = DocumentType::tryFrom($documentTypeData);
         if ($documentTypeData && isset($infoDesordres['criteres'][$documentTypeData])) {
             $file->setDocumentType(DocumentType::PHOTO_SITUATION);
@@ -176,6 +179,7 @@ class SignalementFileController extends AbstractController
                 Response::HTTP_BAD_REQUEST
             );
         }
+        /** @var Signalement $signalement */
         $signalement = $signalementRepository->findOneByCodeForPublic($code);
         $this->denyAccessUnlessGranted('SIGN_USAGER_EDIT', $signalement);
         /** @var SignalementUser $signalementUser */
@@ -221,6 +225,7 @@ class SignalementFileController extends AbstractController
                 Response::HTTP_BAD_REQUEST
             );
         }
+        /** @var Signalement $signalement */
         $signalement = $signalementRepository->findOneByCodeForPublic($code);
         $this->denyAccessUnlessGranted(SignalementFoVoter::SIGN_USAGER_VIEW, $signalement);
         /** @var SignalementUser $signalementUser */
@@ -229,9 +234,11 @@ class SignalementFileController extends AbstractController
             $this->addFlash('error', ['title' => 'Problème d\'adresse e-mail', 'message' => 'Il n\'y a pas d\'adresse e-mail à laquelle vous envoyer le signalement au format PDF.']);
         } else {
             $usagerEmail = $signalementUser->getEmail();
+            /** @var int $signalementId */
+            $signalementId = $signalement->getId();
 
             $message = (new PdfExportMessage())
-                ->setSignalementId($signalement->getId())
+                ->setSignalementId($signalementId)
                 ->setUserEmail($usagerEmail)
                 ->setIsForUsager(true);
 

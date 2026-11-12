@@ -179,12 +179,12 @@ class Intervention implements EntityHistoryInterface, EntitySanitizerInterface
         return $this->getScheduledAt()->format('Y-m-d') <= (new \DateTimeImmutable())->format('Y-m-d');
     }
 
-    public function getSignalement(): ?Signalement
+    public function getSignalement(): Signalement
     {
         return $this->signalement;
     }
 
-    public function setSignalement(?Signalement $signalement): static
+    public function setSignalement(Signalement $signalement): static
     {
         $this->signalement = $signalement;
 
@@ -260,9 +260,9 @@ class Intervention implements EntityHistoryInterface, EntitySanitizerInterface
     }
 
     /** @return list<ProcedureType> */
-    public function getConcludeProcedure(): ?array
+    public function getConcludeProcedure(): array
     {
-        return $this->concludeProcedure;
+        return $this->concludeProcedure ?? [];
     }
 
     public function getConcludeProcedureString(string $separator = ', '): string

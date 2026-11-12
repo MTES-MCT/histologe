@@ -222,13 +222,13 @@ class SuiviManager
 
         if (DocumentType::PROCEDURE_RAPPORT_DE_VISITE === $documentType && null !== $intervention) {
             $isVisibleForUsager = true;
-            $partner = $user->getPartnerInTerritoryOrFirstOne($signalement->getAddress()->getTerritory());
+            $partner = $user->getPartnerInTerritoryOrFirstOneOrNull($signalement->getAddress()->getTerritory());
             $context = 'rapport_visite';
         }
 
         if (DocumentType::PHOTO_VISITE === $documentType && null !== $intervention) {
             $isVisibleForUsager = true;
-            $partner = $user->getPartnerInTerritoryOrFirstOne($signalement->getAddress()->getTerritory());
+            $partner = $user->getPartnerInTerritoryOrFirstOneOrNull($signalement->getAddress()->getTerritory());
             $context = 'photo_visite';
         }
 
@@ -348,7 +348,7 @@ class SuiviManager
         $partner = null;
         $isVisibleForUsager = true;
         if (SuiviCategory::SIGNALEMENT_EDITED_BO === $category) {
-            $partner = $user->getPartnerInTerritoryOrFirstOne($signalement->getAddress()->getTerritory());
+            $partner = $user->getPartnerInTerritoryOrFirstOneOrNull($signalement->getAddress()->getTerritory());
             $isVisibleForUsager = false;
         }
 

@@ -6,6 +6,7 @@ use App\Entity\Address;
 use App\Entity\Enum\ProfileDeclarant;
 use App\Entity\Signalement;
 use App\Entity\Territory;
+use App\Entity\User;
 use App\Repository\SignalementRepository;
 use App\Security\Authenticator\CodeSuiviLoginAuthenticator;
 use App\Security\Provider\SignalementUserProvider;
@@ -46,7 +47,11 @@ class CodeSuiviLoginAuthenticatorTest extends TestCase
         $request = new Request([], $requestData, ['code' => $requestData['code']]);
 
         $this->signalementRepository->method('findOneByCodeForPublic')->willReturn($signalement);
-        $this->signalementUserProvider->method('getUsagerData')->willReturn($expectedUserData);
+        $this->signalementUserProvider->method('getUsagerData')->willReturn([
+            'identifier' => $expectedUserData['identifier'],
+            'email' => $expectedUserData['email'],
+            'user' => new User(),
+        ]);
 
         $authenticator = new CodeSuiviLoginAuthenticator(
             $this->urlGenerator,

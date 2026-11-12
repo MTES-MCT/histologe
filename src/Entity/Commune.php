@@ -85,12 +85,12 @@ class Commune implements EntityHistoryInterface
         return $this;
     }
 
-    public function getTerritory(): ?Territory
+    public function getTerritory(): Territory
     {
         return $this->territory;
     }
 
-    public function setTerritory(?Territory $territory): self
+    public function setTerritory(Territory $territory): self
     {
         $this->territory = $territory;
 

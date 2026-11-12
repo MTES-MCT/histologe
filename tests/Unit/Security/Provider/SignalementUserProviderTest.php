@@ -112,8 +112,8 @@ class SignalementUserProviderTest extends TestCase
 
         $signalementUser = new SignalementUser(
             '12345678:occupant',
+            $mockUserEntity,
             'luc.martin@example.com',
-            $mockUserEntity
         );
 
         $refreshedUser = $signalementUserProvider->refreshUser($signalementUser);

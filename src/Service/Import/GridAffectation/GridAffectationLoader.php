@@ -254,7 +254,7 @@ class GridAffectationLoader
                             fonction: $fonction
                         );
                         $canAddUserPartner = true;
-                    } elseif (!$currentPartner = $user->getPartnerInTerritory($territory)) {
+                    } elseif (!$currentPartner = $user->getPartnerInTerritoryOrNull($territory)) {
                         ++$countUserMultiTerritory;
                         $canAddUserPartner = true;
                         if ($user->isUsager()) {

@@ -79,7 +79,7 @@ class BackArchivedUsersController extends AbstractController
 
         $partnerExist = $partnerRepository->findOneBy(['email' => $untaggedEmail]);
         if ($partnerExist) {
-            $message = 'Un partenaire existe déjà avec cette adresse e-mail. '.$partnerExist->getNom().' ( id '.$partnerExist->getId().' ) dans le territoire '.$partnerExist->getTerritory()->getName();
+            $message = 'Un partenaire existe déjà avec cette adresse e-mail. '.$partnerExist->getNom().' ( id '.$partnerExist->getId().' ) dans le territoire '.$partnerExist->getTerritory()?->getName();
             $this->addFlash('error', ['title' => 'Adresse e-mail existante', 'message' => $message]);
         }
 

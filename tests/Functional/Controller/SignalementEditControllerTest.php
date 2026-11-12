@@ -553,7 +553,7 @@ class SignalementEditControllerTest extends WebTestCase
         $signalement->setClosedAt($closedAt);
         $entityManager->flush();
 
-        $signalementUser = $this->getSignalementUser($signalement, UserManager::DECLARANT);
+        $signalementUser = $this->getSignalementUser($signalement);
         $client->loginUser($signalementUser, 'code_suivi');
 
         /** @var RouterInterface $router */
@@ -579,7 +579,7 @@ class SignalementEditControllerTest extends WebTestCase
         $entityManager = static::getContainer()->get('doctrine')->getManager();
         /** @var Signalement $signalement */
         $signalement = $entityManager->getRepository(Signalement::class)->findOneBy(['reference' => '2023-1']);
-        $signalementUser = $this->getSignalementUser($signalement, UserManager::DECLARANT);
+        $signalementUser = $this->getSignalementUser($signalement);
         $client->loginUser($signalementUser, 'code_suivi');
 
         /** @var RouterInterface $router */
@@ -617,7 +617,7 @@ class SignalementEditControllerTest extends WebTestCase
         $entityManager = static::getContainer()->get('doctrine')->getManager();
         /** @var Signalement $signalement */
         $signalement = $entityManager->getRepository(Signalement::class)->findOneBy(['reference' => '2023-1']);
-        $signalementUser = $this->getSignalementUser($signalement, UserManager::DECLARANT);
+        $signalementUser = $this->getSignalementUser($signalement);
         $client->loginUser($signalementUser, 'code_suivi');
 
         /** @var RouterInterface $router */

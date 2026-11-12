@@ -10,7 +10,6 @@ use App\Service\Mailer\NotificationMailerRegistry;
 use App\Service\Mailer\NotificationMailerType;
 use App\Utils\Sanitizer;
 use Doctrine\ORM\EntityManagerInterface;
-use Psr\Log\LoggerInterface;
 use Symfony\Component\Clock\ClockInterface;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
@@ -35,7 +34,6 @@ class NotifyAndArchiveInactiveAccountCommand extends AbstractCronCommand
         private readonly UserRepository $userRepository,
         private readonly NotificationMailerRegistry $notificationMailerRegistry,
         private readonly ParameterBagInterface $parameterBag,
-        private readonly LoggerInterface $logger,
     ) {
         parent::__construct($this->parameterBag);
     }
@@ -166,11 +164,6 @@ class NotifyAndArchiveInactiveAccountCommand extends AbstractCronCommand
     private function sendRtNotification(array $adminsList, array $usersList): void
     {
         $territory = $adminsList[0]->getFirstTerritory();
-        if (null === $territory) {
-            $this->logger->error('No territory found for $adminsList with user ID '.$adminsList[0]->getId().'.');
-
-            return;
-        }
 
         $adminMails = [];
         $usersData = [];
@@ -179,7 +172,7 @@ class NotifyAndArchiveInactiveAccountCommand extends AbstractCronCommand
                 'email' => $user->getEmail(),
                 'nom' => $user->getNom(),
                 'prenom' => $user->getPrenom(),
-                'partenaire' => $user->getPartnerInTerritory($territory)?->getNom(),
+                'partenaire' => $user->getPartnerInTerritory($territory)->getNom(),
             ];
         }
         foreach ($adminsList as $admin) {

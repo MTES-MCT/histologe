@@ -2,8 +2,10 @@
 
 namespace App\Dto\Api\Request;
 
+use App\Entity\Enum\DocumentType;
 use OpenApi\Attributes as OA;
 use Symfony\Component\Serializer\Attribute\Groups;
+use Symfony\Component\Serializer\Attribute\Ignore;
 use Symfony\Component\Validator\Constraints as Assert;
 
 #[OA\Schema(
@@ -63,4 +65,10 @@ class FileRequest implements RequestInterface
     )]
     #[Assert\Length(max: 255)]
     public ?string $description = null;
+
+    #[Ignore]
+    public function getDocumentTypeEnum(): DocumentType
+    {
+        return DocumentType::from($this->documentType);
+    }
 }
