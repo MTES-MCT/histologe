@@ -44,7 +44,7 @@ export default defineComponent({
   data () {
     return {
       map: null as L.Map | null,
-      markers: L.markerClusterGroup(),
+      markers: L.markerClusterGroup({maxClusterRadius: zoom => zoom >= 19 ? 1 : 80}),
       sharedState: store.state,
       sharedProps: store.props,
       offset: 0,
@@ -78,8 +78,7 @@ export default defineComponent({
       L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { 
         crossOrigin: true, 
         referrerPolicy: "origin", 
-        maxNativeZoom: 19,
-        maxZoom: 21
+        maxZoom: 19
        }).addTo(this.map as unknown as L.Map)
     },
     addMarkers (signalements: any[]) {
