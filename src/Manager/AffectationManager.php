@@ -139,6 +139,7 @@ class AffectationManager
             $this->notificationAndMailSender->sendNewAffectation($affectation);
         }
 
+        // On flush avant l'interconnexion pour que l'affectation existe
         $this->entityManager->persist($affectation);
         $this->entityManager->flush();
 
