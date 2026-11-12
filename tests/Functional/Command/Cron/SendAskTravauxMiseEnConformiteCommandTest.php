@@ -28,6 +28,7 @@ class SendAskTravauxMiseEnConformiteCommandTest extends KernelTestCase
         $commandTester->execute([]);
         $commandTester->assertCommandIsSuccessful();
         $output = $commandTester->getDisplay();
+        // 2023-1
         $this->assertStringStartsWith('[OK] 1 emails de demande d\'avancement des travaux envoyés pour 1 signalements.', trim($output));
         $this->assertEmailCount(2);
 
@@ -52,7 +53,8 @@ class SendAskTravauxMiseEnConformiteCommandTest extends KernelTestCase
         $commandTester->execute([]);
         $commandTester->assertCommandIsSuccessful();
         $output = $commandTester->getDisplay();
-        $this->assertStringStartsWith('[OK] 1 emails de demande d\'avancement des travaux envoyés pour 1 signalements.', trim($output));
-        $this->assertEmailCount(4);
+        // 2022-13 correspond mais avec un motif de clôture ne nécessitant pas de relance usager
+        $this->assertStringStartsWith('[OK] 0 emails de demande d\'avancement des travaux envoyés pour 0 signalements.', trim($output));
+        $this->assertEmailCount(2);
     }
 }

@@ -532,6 +532,7 @@ class SuiviDescriptionHelperTest extends KernelTestCase
         $description = $this->suiviDescriptionHelper->buildDescriptionForCreation(SuiviCategory::SIGNALEMENT_IS_CLOSED, [
             'subject' => 'Partenaire 13-01',
             'motifCloture' => 'Non décence',
+            'dateDepartOccupant' => null,
             'travauxMiseEnConformite' => 'Oui',
             'procedures' => ['Non décence', 'Insalubrité'],
             'motifSuivi' => 'Travaux <b>réalisés</b>',
@@ -551,13 +552,16 @@ class SuiviDescriptionHelperTest extends KernelTestCase
         $description = $this->suiviDescriptionHelper->buildDescriptionForCreation(SuiviCategory::AFFECTATION_IS_CLOSED, [
             'subject' => 'tous les partenaires',
             'motifCloture' => 'Autre',
+            'dateDepartOccupant' => '01/01/2026',
             'travauxMiseEnConformite' => null,
             'procedures' => [],
             'motifSuivi' => 'Dossier traité',
         ]);
 
         $this->assertSame(
-            'Le signalement a été clôturé pour tous les partenaires avec le motif suivant :<br><strong>Autre</strong><br><strong>Desc. : </strong>Dossier traité',
+            'Le signalement a été clôturé pour tous les partenaires avec le motif suivant :<br><strong>Autre</strong><br>'
+            .'<strong>Date de départ de l\'occupant : </strong>01/01/2026<br>'
+            .'<strong>Desc. : </strong>Dossier traité',
             $description
         );
     }

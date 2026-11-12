@@ -407,6 +407,9 @@ class Signalement implements EntityHistoryInterface, EntityHistoryCollectionInte
     #[ORM\Column(type: 'string', enumType: MotifClotureUsager::class, nullable: true, length: 50)]
     private ?MotifClotureUsager $motifClotureUsager = null;
 
+    #[ORM\Column(type: 'datetime_immutable', nullable: true)]
+    private ?\DateTimeImmutable $departOccupantAt = null;
+
     #[ORM\Column(type: 'string', enumType: MotifRefus::class, nullable: true, length: 50)]
     private ?MotifRefus $motifRefus = null;
 
@@ -1986,6 +1989,18 @@ class Signalement implements EntityHistoryInterface, EntityHistoryCollectionInte
     public function setMotifClotureUsager(?MotifClotureUsager $motifClotureUsager): static
     {
         $this->motifClotureUsager = $motifClotureUsager;
+
+        return $this;
+    }
+
+    public function getDepartOccupantAt(): ?\DateTimeImmutable
+    {
+        return $this->departOccupantAt;
+    }
+
+    public function setDepartOccupantAt(?\DateTimeImmutable $departOccupantAt): static
+    {
+        $this->departOccupantAt = $departOccupantAt;
 
         return $this;
     }

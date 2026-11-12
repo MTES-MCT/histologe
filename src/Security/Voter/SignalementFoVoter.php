@@ -2,6 +2,7 @@
 
 namespace App\Security\Voter;
 
+use App\Entity\Enum\MotifCloture;
 use App\Entity\Enum\SignalementStatus;
 use App\Entity\Enum\TravauxMiseEnConformite;
 use App\Entity\Signalement;
@@ -140,6 +141,7 @@ class SignalementFoVoter extends Voter
         $beforeDate = $this->clock->now()->modify('-6 month +1 day')->setTime(0, 0);
         if (SignalementStatus::CLOSED === $signalement->getStatut()
             && TravauxMiseEnConformite::EN_COURS === $signalement->getTravauxMiseEnConformite()
+            && in_array($signalement->getMotifCloture(), MotifCloture::getListNeedRelanceUsager(), true)
             && $signalement->getClosedAt() <= $beforeDate
         ) {
             return true;

@@ -11,12 +11,15 @@
     <p><i>Sauf mention contraire, tous les champs sont obligatoires.</i></p>
     {% include "back/signalement/view/_destinataires-du-message.html.twig" with {'form': closeSignalementForm, 'signalement': signalement} %}
     {{ form_row(closeSignalementForm.motifCloture) }}
+    <div id="close_signalement_departOccupantAt_container" class="fr-hidden fr-input-group">
+        {{ form_row(closeSignalementForm.departOccupantAt) }}
+    </div>
     <div id="close_signalement_travauxMiseEnConformite_container">
         {{ form_row(closeSignalementForm.travauxMiseEnConformite) }}
         <div class="fr-notice fr-notice--warning fr-notice--no-icon fr-mt-n6v fr-mb-4v fr-hidden" id="close_signalement_travauxMiseEnConformite_warning">
             <div class="fr-container">
                 <div class="fr-notice__body">
-                    <p><span class="fr-notice__title">Dans 6 mois, nous enverrons un message à l'usager pour l’interroger sur l’avancement des travaux.</span></p>
+                    <p><span class="fr-notice__title">Dans 6 mois, nous enverrons un message à l'usager pour l’interroger sur l'avancement des travaux.</span></p>
                 </div>
             </div>
         </div>

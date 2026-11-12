@@ -5,6 +5,7 @@ namespace App\Repository;
 use App\Dto\Api\Request\SignalementListQueryParams;
 use App\Entity\EmailDeliveryIssue;
 use App\Entity\Enum\AffectationStatus;
+use App\Entity\Enum\MotifCloture;
 use App\Entity\Enum\SignalementStatus;
 use App\Entity\Enum\SuiviCategory;
 use App\Entity\Enum\TravauxMiseEnConformite;
@@ -1056,7 +1057,9 @@ class SignalementRepository extends ServiceEntityRepository
         $qb = $this->createQueryBuilder('s');
         $qb->where('s.statut = :statut')->setParameter('statut', SignalementStatus::CLOSED);
         $qb->andWhere('s.closedAt >= :startDate AND s.closedAt < :endDate')->setParameter('startDate', $startDate)->setParameter('endDate', $endDate);
-        $qb->andWhere('s.travauxMiseEnConformite = :travauxMiseEnConformite')->setParameter('travauxMiseEnConformite', TravauxMiseEnConformite::EN_COURS);
+        $qb->andWhere('s.travauxMiseEnConformite = :travauxMiseEnConformite AND s.motifCloture IN (:motifs)')
+            ->setParameter('travauxMiseEnConformite', TravauxMiseEnConformite::EN_COURS)
+            ->setParameter('motifs', MotifCloture::getListNeedRelanceUsager());
         $qb->andWhere('s.travauxMiseEnConformiteUsager IS NULL');
         $qb->andWhere('s.isLogementVacant IS NULL OR s.isLogementVacant = :is_logement_vacant')->setParameter('is_logement_vacant', false);
 

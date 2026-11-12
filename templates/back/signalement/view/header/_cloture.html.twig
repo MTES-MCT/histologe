@@ -1,0 +1,10 @@
+ {% if signalement.statut is same as enum('App\\Entity\\Enum\\SignalementStatus').CLOSED and signalement.motifCloture is not null %}
+    <div class="fr-mb-4v fr-m-1v">
+        <span class="fr-badge fr-badge--error fr-badge--no-icon">
+            {{signalement.motifCloture.label}}
+            {% if signalement.motifCloture is same as enum('App\\Entity\\Enum\\MotifCloture').DEPART_OCCUPANT and signalement.departOccupantAt is not null %}
+                (Départ le {{ signalement.departOccupantAt|date('d/m/Y') }})
+            {% endif %}
+        </span>
+    </div>
+{% endif %}

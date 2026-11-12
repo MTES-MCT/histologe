@@ -257,6 +257,7 @@ class SuiviManager
      * @param array{
      *     subject: string,
      *     motif_cloture: MotifCloture,
+     *     date_depart_occupant?: ?\DateTimeInterface,
      *     motif_suivi: ?string,
      *     travaux_mise_en_conformite?: ?TravauxMiseEnConformite,
      *     procedures?: iterable<SignalementProcedure>,
@@ -272,6 +273,7 @@ class SuiviManager
         return $this->suiviDescriptionHelper->buildDescriptionForCreation($category, [
             'subject' => $params['subject'],
             'motifCloture' => $params['motif_cloture']->label(),
+            'dateDepartOccupant' => ($params['date_depart_occupant'] ?? null)?->format('d/m/Y'),
             'travauxMiseEnConformite' => !empty($params['travaux_mise_en_conformite']) ? $params['travaux_mise_en_conformite']->label() : null,
             'procedures' => $procedureLabels,
             'motifSuivi' => Sanitizer::sanitize($params['motif_suivi']),

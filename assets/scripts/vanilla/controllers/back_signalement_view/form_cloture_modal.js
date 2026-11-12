@@ -46,6 +46,9 @@ updateTravauxVisibilityAffectation();
 //cloture signalement v2
 function initCloseSignalementForm() {
   const motifClotureSelectSignalement = document.querySelector('#close_signalement_motifCloture');
+  const departOccupantContainerSignalement = document.querySelector(
+    '#close_signalement_departOccupantAt_container'
+  );
   const travauxContainerSignalement = document.querySelector(
     '#close_signalement_travauxMiseEnConformite_container'
   );
@@ -62,13 +65,18 @@ function initCloseSignalementForm() {
     '#close_signalement_withoutProcedure'
   );
 
-  function updateTravauxVisibilitySignalement() {
+  function updateMotifClotureSubFields() {
     if (!motifClotureSelectSignalement || !travauxContainerSignalement) return;
+
+    departOccupantContainerSignalement?.classList.toggle(
+      'fr-hidden',
+      motifClotureSelectSignalement.value !== 'DEPART_OCCUPANT'
+    );
     const selectedOption =
       motifClotureSelectSignalement.options[motifClotureSelectSignalement.selectedIndex];
     const needTravaux = selectedOption?.hasAttribute('data-need-travaux-precisions');
     travauxContainerSignalement.classList.toggle('fr-hidden', !needTravaux);
-    if (needTravaux && travauxContainerSignalement) {
+    if (needTravaux) {
       const needTravauxNon = selectedOption?.getAttribute('data-need-travaux-precisions-non');
       const travauxRadioNon = travauxContainerSignalement.querySelector('input[value="NON"]');
       if (travauxRadioNon) {
@@ -81,10 +89,14 @@ function initCloseSignalementForm() {
   }
 
   function updateTravauxWarningSignalement() {
+    const selectedOption =
+      motifClotureSelectSignalement?.options[motifClotureSelectSignalement.selectedIndex];
     const selectedTravaux = document.querySelector(
       'input[name="close_signalement[travauxMiseEnConformite]"]:checked'
     );
-    travauxWarningSignalement?.classList.toggle('fr-hidden', selectedTravaux?.value !== 'EN_COURS');
+    const needRelanceUsager = selectedOption?.getAttribute('data-need-relance-usager') === 'true';
+    const shouldShowWarning = selectedTravaux?.value === 'EN_COURS' && needRelanceUsager;
+    travauxWarningSignalement?.classList.toggle('fr-hidden', !shouldShowWarning);
   }
 
   function updateProceduresStateSignalement() {
@@ -101,12 +113,13 @@ function initCloseSignalementForm() {
     window.dispatchEvent(new Event('refreshSearchCheckboxContainerEvent'));
   }
 
-  motifClotureSelectSignalement?.addEventListener('change', updateTravauxVisibilitySignalement);
+  motifClotureSelectSignalement?.addEventListener('change', updateMotifClotureSubFields);
+  motifClotureSelectSignalement?.addEventListener('change', updateTravauxWarningSignalement);
   travauxRadioButtonsSignalement.forEach((radioButton) => {
     radioButton.addEventListener('change', updateTravauxWarningSignalement);
   });
   withoutProcedureCheckboxSignalement?.addEventListener('change', updateProceduresStateSignalement);
-  updateTravauxVisibilitySignalement();
+  updateMotifClotureSubFields();
   updateTravauxWarningSignalement();
   updateProceduresStateSignalement();
 }

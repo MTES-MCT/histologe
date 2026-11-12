@@ -13,6 +13,7 @@ use App\Service\Signalement\SignalementProcedureService;
 use App\Validator\EmailFormatValidator;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
+use Symfony\Component\Form\Extension\Core\Type\DateType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
@@ -48,6 +49,7 @@ class CloseSignalementType extends AbstractType
                         return [
                             'data-need-travaux-precisions' => 'true',
                             'data-need-travaux-precisions-non' => MotifCloture::LOGEMENT_MIS_EN_CONFORMITE === $choice ? 'false' : 'true',
+                            'data-need-relance-usager' => in_array($choice, MotifCloture::getListNeedRelanceUsager(), true) ? 'true' : 'false',
                         ];
                     }
 
@@ -57,6 +59,12 @@ class CloseSignalementType extends AbstractType
                 'placeholder' => 'Sélectionner un motif',
                 'data' => null,
             ]);
+        $builder->add('departOccupantAt', DateType::class, [
+            'label' => 'A quelle date l\'occupant a-t-il quitté le logement ? (facultatif)',
+            'widget' => 'single_text',
+            'required' => false,
+            'data' => null,
+        ]);
         $builder->add('travauxMiseEnConformite', null, [
             'label' => 'Les travaux de mise en conformité du logement ont-ils été réalisés ?',
             'choice_label' => static function ($choice) {
