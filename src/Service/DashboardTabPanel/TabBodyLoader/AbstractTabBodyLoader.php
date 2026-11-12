@@ -2,6 +2,7 @@
 
 namespace App\Service\DashboardTabPanel\TabBodyLoader;
 
+use App\Entity\User;
 use App\Security\Voter\TabPanelVoter;
 use App\Service\DashboardTabPanel\TabBody;
 use App\Service\DashboardTabPanel\TabBodyType;
@@ -31,7 +32,12 @@ abstract class AbstractTabBodyLoader implements TabBodyLoaderInterface
         /** @var array<string, mixed> $filters */
         $filters = ['isImported' => 'oui'];
         if (null !== $this->tabQueryParameters->territoireId) {
-            $filters['territoire'] = $this->tabQueryParameters->territoireId;
+            /** @var User $user */
+            $user = $this->security->getUser();
+            $canFilterTerritory = $this->security->isGranted('ROLE_ADMIN') || $user->isMultiTerritoire();
+            if ($canFilterTerritory) {
+                $filters['territoire'] = $this->tabQueryParameters->territoireId;
+            }
         }
         if (null !== $this->tabQueryParameters->sortBy && null !== $this->tabQueryParameters->orderBy) {
             $filters['sortBy'] = $this->tabQueryParameters->sortBy;
