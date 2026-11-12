@@ -1,0 +1,38 @@
+{% set columns = [
+    { class: 'fr-col-md-4', title: 'Référence' },
+    { class: 'fr-col-md-2', title: 'Déposé le' },
+    { class: 'fr-col-md-3', title: 'Déposé par' },
+    { class: 'fr-col-md-2', title: 'Parc' },
+] %}
+<section class="fr-mb-5v">
+    <header class="fr-grid-row fr-grid-row--gutters">
+        <div class="fr-col-12 fr-col-md-9">
+            <h3 class="fr-text-label--blue-france tab-panel-title-with-document-icon">Dossiers déposés depuis un formulaire service secours ({{ count }})</h3>
+            <div class="fr-text--sm fr-mb-3v">Aperçu des 5 derniers dossiers déposés depuis un formulaire service secours</div>
+        </div>
+        {% include 'back/dashboard/components/_select_sort_dossiers_nouveaux.html.twig' with {
+            data_sort_body: 'dossiers-form-service-secours'
+        } %}
+    </header>
+    <hr class="hr--blue-france">
+    <section class="fr-container--fluid">
+        {% for item in items %}
+            {% set occupantInfo = item.reference ~ ' - ' ~ item.nomOccupant|upper ~ ' ' ~ item.prenomOccupant|capitalize %}
+            {% include 'back/dashboard/components/_card.html.twig' with {
+                data: [
+                    '<div class="fr-text-label--blue-france">
+                        <div><strong class="fr-text--lg">' ~ occupantInfo ~ '</strong></div>
+                        <div>' ~ item.adresse ~ '</div>
+                    </div>',
+                    '<div>' ~ item.depotAt|date('d/m/Y') ~ '</div>',
+                    '<div><strong>' ~ item.depotBy ~ '</strong><br>' ~ item.depotPartenaireBy ~' </div>',
+                    '<span class="fr-badge fr-badge--info fr-badge--no-icon">' ~ item.parc ~ '</span>'
+                ],
+                link: path('back_signalement_view', {'uuid' : item.uuid})
+            } %}
+        {% else %}
+            <p>Aucun dossier trouvé.</p>
+        {% endfor %}
+        {% include 'back/dashboard/components/_footer_link.html.twig' %}
+    </section>
+</section>

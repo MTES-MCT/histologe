@@ -41,6 +41,31 @@ class DashboardTabPanelControllerTest extends WebTestCase
         $this->assertResponseStatusCodeSame(403, sprintf('Accès interdit pour la section "%s".', $tabBodyType));
     }
 
+    #[DataProvider('provideServiceSecoursAccess')]
+    public function testAccessServiceSecoursTabDependsOnTerritoryRoutes(string $email, int $expectedStatusCode): void
+    {
+        self::ensureKernelShutdown();
+        $client = static::createClient();
+        $router = static::getContainer()->get('router');
+        /** @var UserRepository $userRepository */
+        $userRepository = static::getContainer()->get(UserRepository::class);
+        $user = $userRepository->findOneBy(['email' => $email]);
+        $client->loginUser($user);
+        $url = $router->generate('back_tab_panel_body', [
+            'tabBodyType' => TabBodyType::TAB_DATA_TYPE_DOSSIERS_FORM_SERVICE_SECOURS,
+        ]);
+
+        $client->request('GET', $url);
+        $this->assertResponseStatusCodeSame($expectedStatusCode);
+    }
+
+    public static function provideServiceSecoursAccess(): \Generator
+    {
+        yield 'RT with service secours routes on territory' => ['admin-territoire-13-01@signal-logement.fr', 200];
+        yield 'RT without service secours route on territory' => ['admin-territoire-44-01@signal-logement.fr', 403];
+        yield 'Super admin (not allowed on this panel)' => ['admin-01@signal-logement.fr', 403];
+    }
+
     public static function provideAuthorizedTabBodyType(): \Generator
     {
         yield 'with derniers-dossiers' => [TabBodyType::TAB_DATA_TYPE_DERNIER_ACTION_DOSSIERS];
@@ -59,6 +84,7 @@ class DashboardTabPanelControllerTest extends WebTestCase
     public static function provideUnauthorizedTabBodyType(): \Generator
     {
         yield 'with dossiers-form-pro' => [TabBodyType::TAB_DATA_TYPE_DOSSIERS_FORM_PRO];
+        yield 'with dossiers-form-service-secours' => [TabBodyType::TAB_DATA_TYPE_DOSSIERS_FORM_SERVICE_SECOURS];
         yield 'with dossiers-form-usager' => [TabBodyType::TAB_DATA_TYPE_DOSSIERS_FORM_USAGER];
         yield 'with dossiers-ferme-partenaire-tous' => [TabBodyType::TAB_DATA_TYPE_DOSSIERS_FERME_PARTENAIRE_TOUS];
         yield 'with dossiers-demandes-fermeture-usager' => [TabBodyType::TAB_DATA_TYPE_DOSSIERS_DEMANDE_FERMETURE_USAGER];

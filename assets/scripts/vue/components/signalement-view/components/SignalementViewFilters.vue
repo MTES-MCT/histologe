@@ -401,16 +401,19 @@
           <template #label>Motif de clôture</template>
         </HistoSelect>
       </div>
-      <div v-if="sharedState.user.isAdmin" :class="[defineCssBlocMultiTerritoire(3,3), 'grey-background']">
+      <div
+        v-if="sharedState.user.isAdmin || sharedState.user.isResponsableTerritoire"
+        :class="[defineCssBlocMultiTerritoire(3,3), 'grey-background']"
+      >
         <HistoSelect
           id="filter-created-from"
           v-model="sharedState.input.filters.createdFrom"
           @update:modelValue="onChange(false)"
-          :option-items=createdFromList
+          :option-items="sharedState.user.isAdmin ? createdFromList : createdFromListRT"
           title="Rechercher par provenance"
           :placeholder="'Tous'"
           >
-          <template #label>Provenance (SA)</template>
+          <template #label>Provenance</template>
         </HistoSelect>
       </div>
     </div>
@@ -454,6 +457,12 @@ export default defineComponent({
   computed: {
     filtersSanitized () {
       return sanitizeFilters(this.sharedState.input.filters)
+    },
+    createdFromListRT () {
+      if (this.sharedState.user.hasServiceSecours) {
+        return store.state.createdFromListRT
+      }
+      return store.state.createdFromListRT.filter(item => item.Id !== 'FORM_SERVICE_SECOURS')
     }
   },
   watch: {

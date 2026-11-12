@@ -40,6 +40,7 @@ abstract class AbstractTabBodyLoader implements TabBodyLoaderInterface
             if (in_array($this->tabBodyType, [
                 TabBodyType::TAB_DATA_TYPE_DOSSIERS_FORM_USAGER,
                 TabBodyType::TAB_DATA_TYPE_DOSSIERS_FORM_PRO,
+                TabBodyType::TAB_DATA_TYPE_DOSSIERS_FORM_SERVICE_SECOURS,
                 TabBodyType::TAB_DATA_TYPE_DOSSIERS_NON_AFFECTATION,
             ])) {
                 $this->tabQueryParameters->sortBy = $filters['sortBy'] = 'createdAt';

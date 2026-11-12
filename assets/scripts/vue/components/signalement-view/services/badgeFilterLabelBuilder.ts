@@ -83,7 +83,8 @@ export function buildBadge (key: string, value: any): string | undefined | null 
       var re = /-/gi;
       return  `Signalement(s) créé(s) depuis le ${value.replace(re, ' ')}`
     } else {
-      const item = store.state.createdFromList.find(item => item.Id === value)
+      const createdFromList = store.state.user.isAdmin ? store.state.createdFromList : store.state.createdFromListRT
+      const item = createdFromList.find(item => item.Id === value)
       if (item != null && item !== undefined) {
         value = item.Text
       }

@@ -4,6 +4,7 @@ namespace App\Service\DashboardTabPanel\TabBodyLoader;
 
 use App\Entity\Enum\CreationSource;
 use App\Entity\Enum\SignalementStatus;
+use App\Entity\User;
 use App\Service\DashboardTabPanel\TabBody;
 use App\Service\DashboardTabPanel\TabBodyType;
 use App\Service\DashboardTabPanel\TabDataManager;
@@ -26,8 +27,14 @@ class DossiersFormProTabBodyLoader extends AbstractTabBodyLoader
      */
     public function load(TabBody $tabBody): void
     {
+        /** @var User $user */
+        $user = $this->security->getUser();
         parent::load($tabBody);
-        $this->tabQueryParameters->createdFrom = CreationSource::CREATED_FROM_FORMULAIRE_PRO;
+        if ($user->isSuperAdmin()) {
+            $this->tabQueryParameters->createdFrom = CreationSource::CREATED_FROM_FORMULAIRE_PRO;
+        } else {
+            $this->tabQueryParameters->createdFrom = CreationSource::CREATED_FROM_FORMULAIRE_PRO_BO_API;
+        }
 
         $result = $this->tabDataManager->getNouveauxDossiersWithCount(
             signalementStatus: SignalementStatus::NEED_VALIDATION,
@@ -41,7 +48,7 @@ class DossiersFormProTabBodyLoader extends AbstractTabBodyLoader
         $filters = [
             ...$tabBody->getFilters(),
             'status' => SignalementStatus::NEED_VALIDATION->label(),
-            'createdFrom' => CreationSource::CREATED_FROM_FORMULAIRE_PRO,
+            'createdFrom' => $user->isSuperAdmin() ? CreationSource::CREATED_FROM_FORMULAIRE_PRO : CreationSource::CREATED_FROM_FORMULAIRE_PRO_BO_API,
         ];
 
         $tabBody->setFilters($filters);
