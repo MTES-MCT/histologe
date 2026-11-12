@@ -113,6 +113,17 @@
                             </a>
                         </li>
                     {% endif %}
+                    {% if is_granted('SIGN_INJONCTION_PROCEDURE_BASCULE', signalement) %}
+                        <li>
+                            <button
+                                type="button"
+                                class="fr-nav__link fr-btn--icon-left fr-icon-refresh-line"
+                                data-panel-open="panel-bascule-procedure"
+                                aria-controls="panel-bascule-procedure"
+                                data-fr-opened="false"
+                                >Basculer en procédure administrative</button>
+                        </li>
+                    {% endif %}
                     <li>
                         <a href="{{ path('back_history_entry_diff', {entity_id: signalement.id, entity_name: 'Signalement'}) }}"
                             class="fr-nav__link fr-btn--icon-left fr-icon-stack-line"

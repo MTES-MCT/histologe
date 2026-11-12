@@ -34,6 +34,7 @@ class SignalementVoter extends Voter
     public const string SIGN_VIEW = 'SIGN_VIEW';
     public const string SIGN_VIEW_INJONCTION_COURRIER = 'SIGN_VIEW_INJONCTION_COURRIER';
     public const string SIGN_SEND_MAIL_BAILLEUR = 'SIGN_SEND_MAIL_BAILLEUR';
+    public const string SIGN_INJONCTION_PROCEDURE_BASCULE = 'SIGN_INJONCTION_PROCEDURE_BASCULE';
     public const string SIGN_SUBSCRIBE = 'SIGN_SUBSCRIBE';
     public const string SIGN_SEE_VISITE_GRID = 'SIGN_SEE_VISITE_GRID';
     public const string SIGN_ADD_VISITE = 'SIGN_ADD_VISITE';
@@ -67,6 +68,7 @@ class SignalementVoter extends Voter
                 self::SIGN_VIEW,
                 self::SIGN_VIEW_INJONCTION_COURRIER,
                 self::SIGN_SEND_MAIL_BAILLEUR,
+                self::SIGN_INJONCTION_PROCEDURE_BASCULE,
                 self::SIGN_SUBSCRIBE,
                 self::SIGN_DELETE,
                 self::SIGN_VALIDATE,
@@ -119,6 +121,7 @@ class SignalementVoter extends Voter
             self::SIGN_VIEW => $this->canView($subject, $user),
             self::SIGN_VIEW_INJONCTION_COURRIER => $this->canViewInjonctionCourrier($subject, $user),
             self::SIGN_SEND_MAIL_BAILLEUR => $this->canSendMailBailleur($subject, $user),
+            self::SIGN_INJONCTION_PROCEDURE_BASCULE => $this->canSwitchInjonctionToProcedure($subject, $user),
             self::SIGN_SUBSCRIBE => $this->canSubscribe($subject, $user),
             self::SIGN_EDIT_DRAFT, self::SIGN_DELETE_DRAFT => $this->canEditDraft($subject, $user),
             self::SIGN_CREATE_SUIVI => $this->canCreateSuivi($subject, $user, $vote),
@@ -209,6 +212,12 @@ class SignalementVoter extends Voter
             && $this->canEditStatus($signalement, $user, SignalementStatus::INJONCTION_BAILLEUR)
             && null !== $signalement->getMailProprio()
             && null === $signalement->getSuiviReponseBailleur();
+    }
+
+    private function canSwitchInjonctionToProcedure(Signalement $signalement, User $user): bool
+    {
+        return $this->security->isGranted('ROLE_ADMIN')
+            && in_array($signalement->getStatut(), [SignalementStatus::INJONCTION_BAILLEUR, SignalementStatus::INJONCTION_CLOSED], true);
     }
 
     private function canEditClosed(Signalement $signalement, User $user): bool

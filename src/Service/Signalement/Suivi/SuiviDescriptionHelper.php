@@ -49,6 +49,9 @@ class SuiviDescriptionHelper
         SuiviCategory::SIGNALEMENT_IS_INJONCTION->value => [
             SuiviRecipient::DEFAULT->value => 'suivi/signalement_is_injonction.html.twig',
         ],
+        SuiviCategory::INJONCTION_BAILLEUR_BASCULE_PROCEDURE_PAR_ADMIN->value => [
+            SuiviRecipient::DEFAULT->value => 'suivi/injonction_bailleur_bascule_procedure_par_admin.html.twig',
+        ],
     ];
 
     /**

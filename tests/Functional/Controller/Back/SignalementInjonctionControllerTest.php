@@ -180,4 +180,94 @@ class SignalementInjonctionControllerTest extends WebTestCase
         $signalement = $signalementRepository->findOneBy(['uuid' => '00000000-0000-0000-2025-000000000012']);
         $this->assertEquals(SignalementStatus::INJONCTION_BAILLEUR, $signalement->getStatut());
     }
+
+    public function testAdminBasculeProcedureSuccessfully(): void
+    {
+        /** @var Signalement $signalement */
+        $signalement = $this->signalementRepository->findOneBy(['uuid' => '00000000-0000-0000-2025-000000000012']);
+        $this->assertEquals(SignalementStatus::INJONCTION_BAILLEUR, $signalement->getStatut());
+        $previousReference = $signalement->getReference();
+        $viewRoute = $this->router->generate('back_signalement_view', ['uuid' => $signalement->getUuid()]);
+
+        $this->client->request('GET', $viewRoute);
+        $this->assertSelectorExists('#panel-bascule-procedure');
+        $this->client->submitForm('Confirmer la bascule');
+
+        $this->assertResponseRedirects($viewRoute);
+
+        /** @var Signalement $signalement */
+        $signalement = $this->signalementRepository->findOneBy(['uuid' => '00000000-0000-0000-2025-000000000012']);
+        $this->assertNotEquals(SignalementStatus::INJONCTION_BAILLEUR, $signalement->getStatut());
+        $this->assertNotEquals($previousReference, $signalement->getReference());
+
+        /** @var SuiviRepository $suiviRepository */
+        $suiviRepository = static::getContainer()->get(SuiviRepository::class);
+        $suivi = $suiviRepository->findOneBy([
+            'signalement' => $signalement,
+            'category' => SuiviCategory::INJONCTION_BAILLEUR_BASCULE_PROCEDURE_PAR_ADMIN,
+        ]);
+        $this->assertNotNull($suivi);
+        $this->assertTrue($suivi->getIsVisibleForUsager());
+        $this->assertTrue($suivi->getIsVisibleForBailleur());
+    }
+
+    public function testAdminBasculeProcedureWithInvalidCsrfToken(): void
+    {
+        /** @var Signalement $signalement */
+        $signalement = $this->signalementRepository->findOneBy(['uuid' => '00000000-0000-0000-2025-000000000012']);
+
+        $this->client->request(
+            'POST',
+            $this->router->generate('back_injonction_procedure_bascule', ['uuid' => $signalement->getUuid()]),
+            ['_token' => 'invalid']
+        );
+
+        $this->assertResponseRedirects($this->router->generate('back_signalement_view', ['uuid' => $signalement->getUuid()]));
+
+        /** @var Signalement $signalement */
+        $signalement = $this->signalementRepository->findOneBy(['uuid' => '00000000-0000-0000-2025-000000000012']);
+        $this->assertEquals(SignalementStatus::INJONCTION_BAILLEUR, $signalement->getStatut());
+    }
+
+    public function testBasculeProcedureNotAllowedWithGet(): void
+    {
+        $this->client->request(
+            'GET',
+            $this->router->generate('back_injonction_procedure_bascule', ['uuid' => '00000000-0000-0000-2025-000000000012'])
+        );
+
+        $this->assertResponseStatusCodeSame(Response::HTTP_METHOD_NOT_ALLOWED);
+    }
+
+    public function testBasculeProcedureDeniedWhenSignalementIsNotInjonction(): void
+    {
+        $uuid = '00000000-0000-0000-2022-000000000001';
+        /** @var Signalement $signalement */
+        $signalement = $this->signalementRepository->findOneBy(['uuid' => $uuid]);
+        $this->assertEquals(SignalementStatus::ACTIVE, $signalement->getStatut());
+
+        $this->client->request(
+            'POST',
+            $this->router->generate('back_injonction_procedure_bascule', ['uuid' => $uuid]),
+            ['_token' => $this->generateCsrfToken($this->client, 'signalement_procedure_bascule_'.$signalement->getId())]
+        );
+
+        $this->assertResponseStatusCodeSame(Response::HTTP_FORBIDDEN);
+    }
+
+    public function testBasculeProcedureDeniedForNonSuperAdmin(): void
+    {
+        $user = $this->userRepository->findOneBy(['email' => 'user-13-01@signal-logement.fr']);
+        $this->client->loginUser($user);
+        /** @var Signalement $signalement */
+        $signalement = $this->signalementRepository->findOneBy(['uuid' => '00000000-0000-0000-2025-000000000012']);
+
+        $this->client->request(
+            'POST',
+            $this->router->generate('back_injonction_procedure_bascule', ['uuid' => $signalement->getUuid()]),
+            ['_token' => $this->generateCsrfToken($this->client, 'signalement_procedure_bascule_'.$signalement->getId())]
+        );
+
+        $this->assertResponseStatusCodeSame(Response::HTTP_FORBIDDEN);
+    }
 }

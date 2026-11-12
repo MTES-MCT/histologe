@@ -7,6 +7,7 @@ use App\Dto\RefusAffectation;
 use App\Dto\RefusSignalement;
 use App\Entity\Enum\DocumentType;
 use App\Entity\Enum\SignalementStatus;
+use App\Entity\Enum\SuiviCategory;
 use App\Entity\Enum\TiersInvitationStatus;
 use App\Entity\Intervention;
 use App\Entity\Signalement;
@@ -23,6 +24,7 @@ use App\Form\ProcedureEngageeType;
 use App\Form\RefusAffectationType;
 use App\Form\RefusSignalementType;
 use App\Manager\SignalementManager;
+use App\Manager\SuiviManager;
 use App\Repository\CritereRepository;
 use App\Repository\DesordreCategorieRepository;
 use App\Repository\DesordreCritereRepository;
@@ -42,8 +44,10 @@ use App\Security\Voter\AffectationVoter;
 use App\Security\Voter\SignalementVoter;
 use App\Service\EmailAlert\EmailAlertChecker;
 use App\Service\Gouv\Rial\RialService;
+use App\Service\InjonctionBailleur\InjonctionBailleurService;
 use App\Service\MessageHelper;
 use App\Service\Notification\NotificationAndMailSender;
+use App\Service\Signalement\AutoAssigner;
 use App\Service\Signalement\PhotoHelper;
 use App\Service\Signalement\SignalementDesordresProcessor;
 use App\Service\Signalement\SignalementQualificationNde;
@@ -54,6 +58,7 @@ use App\Service\SignalementAddressContentService;
 use Doctrine\DBAL\Exception;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ManagerRegistry;
+use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
@@ -437,6 +442,60 @@ class SignalementController extends AbstractController
             'success',
             'Le mail au bailleur a bien été envoyé.',
         );
+
+        return $this->redirect($this->generateUrl('back_signalement_view', ['uuid' => $signalement->getUuid()]));
+    }
+
+    #[Route('/{uuid:signalement}/procedure/bascule', name: 'back_injonction_procedure_bascule', methods: ['POST'])]
+    public function suiviSignalementProcedureBascule(
+        Signalement $signalement,
+        Request $request,
+        SuiviManager $suiviManager,
+        AutoAssigner $autoAssigner,
+        InjonctionBailleurService $injonctionBailleurService,
+        EntityManagerInterface $entityManager,
+        LoggerInterface $logger,
+    ): Response {
+        $this->denyAccessUnlessGranted(SignalementVoter::SIGN_INJONCTION_PROCEDURE_BASCULE, $signalement);
+        if (!$this->isCsrfTokenValid(
+            'signalement_procedure_bascule_'.$signalement->getId(),
+            (string) $request->request->get('_token')
+        )) {
+            $this->addFlash('error', 'Le jeton de sécurité est invalide, veuillez réessayer.');
+
+            return $this->redirect($this->generateUrl('back_signalement_view', ['uuid' => $signalement->getUuid()]));
+        }
+        /** @var User $user */
+        $user = $this->getUser();
+
+        $category = SuiviCategory::INJONCTION_BAILLEUR_BASCULE_PROCEDURE_PAR_ADMIN;
+        $entityManager->beginTransaction();
+        try {
+            $suiviManager->createSuivi(
+                signalement: $signalement,
+                description: '',
+                category: $category,
+                user: $user,
+                isVisibleForUsager: true,
+                isVisibleForBailleur: true,
+            );
+
+            $injonctionBailleurService->switchFromInjonctionToProcedure($signalement);
+            $entityManager->flush();
+            $entityManager->commit();
+        } catch (\Exception $e) {
+            $entityManager->rollback();
+            $logger->error($e->getMessage());
+            $this->addFlash('error', 'Une erreur est survenue veuillez réessayer.');
+
+            return $this->redirect($this->generateUrl('back_signalement_view', ['uuid' => $signalement->getUuid()]));
+        }
+        $autoAssigner->assignOrSendNewSignalementNotification($signalement);
+        $entityManager->flush();
+
+        $this->addFlash('success', ['title' => 'Signalement modifié',
+            'message' => 'Le dossier a été basculé en procédure administrative.',
+        ]);
 
         return $this->redirect($this->generateUrl('back_signalement_view', ['uuid' => $signalement->getUuid()]));
     }
