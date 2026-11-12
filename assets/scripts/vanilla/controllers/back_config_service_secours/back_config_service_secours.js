@@ -1,4 +1,4 @@
-document.addEventListener('click', (evt) => {
+document.getElementById('title-and-table-list-results')?.addEventListener('click', (evt) => {
   const target = evt.target.closest('.btn-delete-config-service-secours-route');
   if (target) {
     document.querySelector('.fr-modal-config-service-secours-route-delete-name').textContent =

@@ -1,3 +1,6 @@
+// État par widget : valeurs cochées à la dernière fermeture et écouteur "clic en dehors" actif
+const searchCheckboxStates = new WeakMap();
+
 window.addEventListener('refreshSearchCheckboxContainerEvent', () => {
   initSearchCheckboxWidgets();
 });
@@ -8,6 +11,10 @@ export function initSearchCheckboxWidgets() {
     // Vérifier si l'élément a déjà été initialisé
     if (element.dataset.searchCheckboxInitialized === 'true') {
       searchCheckboxCompleteInputValue(element);
+      const state = searchCheckboxStates.get(element);
+      if (state) {
+        state.values = getCheckedValues(element.querySelector('.search-checkbox'));
+      }
       return;
     }
 
@@ -21,16 +28,26 @@ export function initSearchCheckboxWidgets() {
       const checkboxesContainer = element.querySelector('.search-checkbox');
       const closeBtn = element.querySelector('.fr-btn--close');
       // init values
-      const initialValues = [];
-      checkboxesContainer.querySelectorAll('input[type="checkbox"]:checked').forEach((checkbox) => {
-        initialValues.push(checkbox.value);
-      });
+      const state = { values: getCheckedValues(checkboxesContainer), outsideClickController: null };
+      searchCheckboxStates.set(element, state);
       // init order
       checkboxesContainer.querySelectorAll('.fr-fieldset__element').forEach((checkbox, index) => {
         checkbox.setAttribute('data-order', index);
       });
       // show choices on focus
       input.addEventListener('focus', function () {
+        // hide choices on click outside, listener retiré à la fermeture
+        state.outsideClickController?.abort();
+        state.outsideClickController = new AbortController();
+        document.addEventListener(
+          'click',
+          (event) => {
+            if (!element.contains(event.target)) {
+              searchCheckboxHideChoices(element, checkboxesContainer, closeBtn);
+            }
+          },
+          { signal: state.outsideClickController.signal }
+        );
         const elements = checkboxesContainer.querySelectorAll('.fr-fieldset__element');
         if (!elements.length) {
           checkboxesContainer.style.display = 'block';
@@ -111,17 +128,9 @@ export function initSearchCheckboxWidgets() {
           mainGroup.style.display = mainGroupHasMatch ? '' : 'none';
         }
       });
-      // hide choices on click outside and on close button
-      document.addEventListener('click', function (event) {
-        if (!input.contains(event.target) && !checkboxesContainer.contains(event.target)) {
-          searchCheckboxHideChoices(element, checkboxesContainer, closeBtn, initialValues);
-        }
-      });
-      element.addEventListener('click', function (event) {
-        event.stopPropagation();
-      });
+      // hide choices on close button
       closeBtn.addEventListener('click', function () {
-        searchCheckboxHideChoices(element, checkboxesContainer, closeBtn, initialValues);
+        searchCheckboxHideChoices(element, checkboxesContainer, closeBtn);
       });
       // Gérer la navigation au clavier dans l'input
       input.addEventListener('keydown', function (event) {
@@ -142,11 +151,11 @@ export function initSearchCheckboxWidgets() {
           checkboxesContainer.style.display === 'block'
         ) {
           // Shift+Tab depuis l'input quand dropdown ouvert : laisser le comportement natif pour sortir du composant
-          searchCheckboxHideChoices(element, checkboxesContainer, closeBtn, initialValues);
+          searchCheckboxHideChoices(element, checkboxesContainer, closeBtn);
         } else if (event.key === 'Escape' && checkboxesContainer.style.display === 'block') {
           // Escape : fermer le dropdown
           event.preventDefault();
-          searchCheckboxHideChoices(element, checkboxesContainer, closeBtn, initialValues);
+          searchCheckboxHideChoices(element, checkboxesContainer, closeBtn);
           input.focus();
         }
       });
@@ -162,10 +171,10 @@ export function initSearchCheckboxWidgets() {
               if (document.activeElement !== nextFocusable) {
                 nextFocusable.focus();
               }
-              searchCheckboxHideChoices(element, checkboxesContainer, closeBtn, initialValues);
+              searchCheckboxHideChoices(element, checkboxesContainer, closeBtn);
             }, 10);
           } else {
-            searchCheckboxHideChoices(element, checkboxesContainer, closeBtn, initialValues);
+            searchCheckboxHideChoices(element, checkboxesContainer, closeBtn);
           }
         } else if (event.key === 'Tab' && event.shiftKey) {
           event.preventDefault();
@@ -175,7 +184,7 @@ export function initSearchCheckboxWidgets() {
           }
         } else if (event.key === 'Escape') {
           event.preventDefault();
-          searchCheckboxHideChoices(element, checkboxesContainer, closeBtn, initialValues);
+          searchCheckboxHideChoices(element, checkboxesContainer, closeBtn);
           input.focus();
         }
       });
@@ -258,21 +267,32 @@ function searchCheckboxOrderCheckboxes(element) {
   });
 }
 
-function searchCheckboxTriggerChange(element, initialValues) {
+function getCheckedValues(checkboxesContainer) {
+  return Array.from(checkboxesContainer.querySelectorAll('input[type="checkbox"]:checked')).map(
+    (checkbox) => checkbox.value
+  );
+}
+
+function searchCheckboxTriggerChange(element, state) {
   const checkboxesContainer = element.querySelector('.search-checkbox');
-  const currentValues = [];
-  checkboxesContainer.querySelectorAll('input[type="checkbox"]:checked').forEach((checkbox) => {
-    currentValues.push(checkbox.value);
-  });
-  if (JSON.stringify(currentValues) !== JSON.stringify(initialValues)) {
+  const currentValues = getCheckedValues(checkboxesContainer);
+  if (JSON.stringify(currentValues) !== JSON.stringify(state.values)) {
+    state.values = currentValues;
     element.dispatchEvent(new CustomEvent('searchCheckboxChange'));
   }
 }
 
-function searchCheckboxHideChoices(element, checkboxesContainer, closeBtn, initialValues) {
+function searchCheckboxHideChoices(element, checkboxesContainer, closeBtn) {
+  const state = searchCheckboxStates.get(element);
+  state?.outsideClickController?.abort();
+  if (state) {
+    state.outsideClickController = null;
+  }
   checkboxesContainer.style.display = 'none';
   searchCheckboxCompleteInputValue(element);
-  searchCheckboxTriggerChange(element, initialValues);
+  if (state) {
+    searchCheckboxTriggerChange(element, state);
+  }
   closeBtn.classList.add('fr-hidden');
   // Retirer l'accessibilité au clavier des checkboxes
   disableCheckboxesKeyboardAccess(checkboxesContainer);
@@ -327,11 +347,7 @@ function handleCheckboxKeydown(event) {
     const container = checkboxesContainer.closest('.search-checkbox-container');
     const input = container.querySelector('input[type="text"]');
     const closeBtn = container.querySelector('.fr-btn--close');
-    const initialValues = [];
-    checkboxesContainer.querySelectorAll('input[type="checkbox"]:checked').forEach((cb) => {
-      initialValues.push(cb.value);
-    });
-    searchCheckboxHideChoices(container, checkboxesContainer, closeBtn, initialValues);
+    searchCheckboxHideChoices(container, checkboxesContainer, closeBtn);
     if (input) {
       input.focus();
     }

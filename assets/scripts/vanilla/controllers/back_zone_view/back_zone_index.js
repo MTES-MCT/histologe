@@ -6,7 +6,7 @@ import {
 const searchZoneForm = document.getElementById('search-zone-form');
 
 if (searchZoneForm) {
-  document.addEventListener('click', (e) => {
+  document.getElementById('table-list-results')?.addEventListener('click', (e) => {
     const button = e.target.closest('.open-modal-zone-delete');
     if (!button) return;
     document.getElementById('fr-modal-zone-delete-zone-name').textContent = button.dataset.name;

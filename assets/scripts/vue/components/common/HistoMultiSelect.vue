@@ -76,8 +76,14 @@ export default defineComponent({
     }
   },
   emits: ['update:modelValue'],
-  mounted () {
-    document.addEventListener('click', this.handleClickOutside)
+  watch: {
+    isExpanded (expanded: boolean) {
+      if (expanded) {
+        document.addEventListener('click', this.handleClickOutside)
+      } else {
+        document.removeEventListener('click', this.handleClickOutside)
+      }
+    }
   },
   beforeUnmount () {
     document.removeEventListener('click', this.handleClickOutside)
