@@ -65,20 +65,18 @@ function initCloseSignalementForm() {
     '#close_signalement_withoutProcedure'
   );
 
-  function updateDepartOccupantVisibilitySignalement() {
+  function updateMotifClotureSubFields() {
+    if (!motifClotureSelectSignalement || !travauxContainerSignalement) return;
+
     departOccupantContainerSignalement?.classList.toggle(
       'fr-hidden',
-      motifClotureSelectSignalement?.value !== 'DEPART_OCCUPANT'
+      motifClotureSelectSignalement.value !== 'DEPART_OCCUPANT'
     );
-  }
-
-  function updateTravauxVisibilitySignalement() {
-    if (!motifClotureSelectSignalement || !travauxContainerSignalement) return;
     const selectedOption =
       motifClotureSelectSignalement.options[motifClotureSelectSignalement.selectedIndex];
     const needTravaux = selectedOption?.hasAttribute('data-need-travaux-precisions');
     travauxContainerSignalement.classList.toggle('fr-hidden', !needTravaux);
-    if (needTravaux && travauxContainerSignalement) {
+    if (needTravaux) {
       const needTravauxNon = selectedOption?.getAttribute('data-need-travaux-precisions-non');
       const travauxRadioNon = travauxContainerSignalement.querySelector('input[value="NON"]');
       if (travauxRadioNon) {
@@ -115,15 +113,13 @@ function initCloseSignalementForm() {
     window.dispatchEvent(new Event('refreshSearchCheckboxContainerEvent'));
   }
 
-  motifClotureSelectSignalement?.addEventListener('change', updateDepartOccupantVisibilitySignalement);
-  motifClotureSelectSignalement?.addEventListener('change', updateTravauxVisibilitySignalement);
+  motifClotureSelectSignalement?.addEventListener('change', updateMotifClotureSubFields);
   motifClotureSelectSignalement?.addEventListener('change', updateTravauxWarningSignalement);
   travauxRadioButtonsSignalement.forEach((radioButton) => {
     radioButton.addEventListener('change', updateTravauxWarningSignalement);
   });
   withoutProcedureCheckboxSignalement?.addEventListener('change', updateProceduresStateSignalement);
-  updateDepartOccupantVisibilitySignalement();
-  updateTravauxVisibilitySignalement();
+  updateMotifClotureSubFields();
   updateTravauxWarningSignalement();
   updateProceduresStateSignalement();
 }

@@ -11,7 +11,7 @@
     <p><i>Sauf mention contraire, tous les champs sont obligatoires.</i></p>
     {% include "back/signalement/view/_destinataires-du-message.html.twig" with {'form': closeSignalementForm, 'signalement': signalement} %}
     {{ form_row(closeSignalementForm.motifCloture) }}
-    <div id="close_signalement_departOccupantAt_container" class="fr-hidden">
+    <div id="close_signalement_departOccupantAt_container" class="fr-hidden fr-input-group">
         {{ form_row(closeSignalementForm.departOccupantAt) }}
     </div>
     <div id="close_signalement_travauxMiseEnConformite_container">
