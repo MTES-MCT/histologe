@@ -6,6 +6,7 @@ use App\Entity\Signalement;
 use App\Exception\Address\CityNotFoundException;
 use App\Factory\AddressFactory;
 use App\Repository\AddressRepository;
+use App\Repository\CommuneRepository;
 use App\Service\Gouv\Ban\AddressService;
 use App\Service\Gouv\Ban\Response\BanAddress;
 use App\Service\Gouv\Rial\RialService;
@@ -19,6 +20,7 @@ class SignalementAddressUpdater
 {
     public function __construct(
         private readonly AddressRepository $addressRepository,
+        private readonly CommuneRepository $communeRepository,
         private readonly AddressService $addressService,
         private readonly AddressFactory $addressFactory,
         private readonly EntityManagerInterface $entityManager,
@@ -74,23 +76,34 @@ class SignalementAddressUpdater
 
     public function attachAddressToSignalementFromManualAddress(Signalement $signalement, string $numberAndStreet, string $postCode, string $city): bool
     {
-        $addressResult = $this->addressService->getAddressForCityAndPostCode(city: $city, postcode: $postCode);
-        if (!$addressResult->getCity() || $addressResult->getZipCode() !== $postCode) {
+        $commune = $this->communeRepository->findOneBy(['codePostal' => $postCode, 'nom' => $city]);
+        if ($commune) {
+            $cityVerified = $commune->getNom();
+            $zipCodeVerified = $commune->getCodePostal();
+            $inseeCodeVerified = $commune->getCodeInsee();
+        } else {
+            $addressResult = $this->addressService->getAddressForCityAndPostCode(city: $city, postcode: $postCode);
+            $cityVerified = $addressResult->getCity();
+            $zipCodeVerified = $addressResult->getZipCode();
+            $inseeCodeVerified = $addressResult->getInseeCode();
+        }
+
+        if (!$cityVerified || $zipCodeVerified !== $postCode) {
             return false;
         }
 
         $parsedAddress = AddressParser::parse($numberAndStreet);
         $houseNumber = $parsedAddress['numberAndSuffix'];
         $street = mb_trim($parsedAddress['street']);
-        $address = $this->addressRepository->findForManualAddress($houseNumber, $street, $addressResult->getZipCode(), $addressResult->getInseeCode());
+        $address = $this->addressRepository->findForManualAddress($houseNumber, $street, $zipCodeVerified, $inseeCodeVerified);
 
         if (!$address) {
             $address = $this->addressFactory->createInstance(
                 $houseNumber,
                 $street,
-                $addressResult->getZipCode(),
-                $addressResult->getCity(),
-                $addressResult->getInseeCode(),
+                $zipCodeVerified,
+                $cityVerified,
+                $inseeCodeVerified,
             );
             $this->entityManager->persist($address);
         }
