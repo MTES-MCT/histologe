@@ -5,6 +5,7 @@ DOCKER_COMP   = docker compose
 DOCKER_COMP_FILE_TOOLS   = docker-compose.tools.yml
 DATABASE_USER = signal_logement
 DATABASE_NAME = signal_logement_db
+DATABASE_URL_POSTGRES = postgresql://signal_logement:signal_logement@signal_logement_postgres:5432/signal_logement_db?serverVersion=18.6&charset=utf8
 PATH_DUMP_SQL = data/dump.sql
 PATH_MB_DUMP_SQL = data/dump.pgsql
 PATH_MB_REPORT_SQL = .docker/metabase/resources-report.sql
@@ -43,12 +44,19 @@ run: ## Start containers
 
 run-min: ## Minimum profile environment
 	@echo -e '\e[1;32mStart containers with all services\032'
-	@bash -l -c '$(DOCKER_COMP) up -d'
+	@bash -l -c '$(DOCKER_COMP) --profile mysql up -d'
 	@echo -e '\e[1;32mContainers running with all services\032'
+
+run-pg: ## Minimum profile environment with PostgreSQL (without MySQL)
+	@echo -e '\e[1;32mStart containers with PostgreSQL environment\032'
+	@bash -l -c '$(DOCKER_COMP) --profile postgres up -d'
+	@echo -e '\e[1;32mContainers running with PostgreSQL environment\032'
+
+run-postgres: run-pg ## Alias for run-pg
 
 down: ## Shutdown containers
 	@echo -e '\e[1;32mStop containers\032'
-	@bash -l -c '$(DOCKER_COMP) --profile full down'
+	@bash -l -c '$(DOCKER_COMP) --profile "*" down'
 	@echo -e '\e[1;32mContainers stopped\032'
 
 sh: ## Log to phpfpm container
@@ -62,6 +70,10 @@ worker: ## Log to php-worker container
 mysql: ## Log to mysql container
 	@echo -e '\e[1;32mLog to mysql container\032[0m'
 	@bash -l -c '$(DOCKER_COMP) exec -it signal_logement_mysql mysql -u signal_logement -psignal_logement signal_logement_db'
+
+postgres: ## Log to postgres container
+	@echo -e '\e[1;32mLog to postgres container\032[0m'
+	@bash -l -c '$(DOCKER_COMP) exec -it signal_logement_postgres psql -U $(DATABASE_USER) -d $(DATABASE_NAME)'
 
 redis: ## Log to redis container
 	@echo -e '\e[1;32mLog to redis container\032[0m'
@@ -145,6 +157,34 @@ create-db: ## Create database
 	@$(DOCKER_COMP) exec signal_logement_phpfpm sh -c "$(SYMFONY) --env=dev messenger:setup-transports --no-interaction"
 	@$(DOCKER_COMP) exec signal_logement_phpfpm sh -c "$(SYMFONY) --env=dev doctrine:migrations:migrate --no-interaction"
 	@$(DOCKER_COMP) exec signal_logement_phpfpm sh -c "$(SYMFONY) --env=dev doctrine:fixtures:load --no-interaction"
+
+create-db-postgres: ## Reset PostgreSQL database and reload fixtures from Doctrine entities
+	@echo "\033[33mResetting PostgreSQL schema...\033[0m"
+	@$(DOCKER_COMP) exec signal_logement_postgres psql -v ON_ERROR_STOP=1 -U $(DATABASE_USER) -d $(DATABASE_NAME) -c "DROP SCHEMA public CASCADE; CREATE SCHEMA public;"
+	@$(DOCKER_COMP) exec -T signal_logement_postgres psql -v ON_ERROR_STOP=1 -U $(DATABASE_USER) -d $(DATABASE_NAME) < .docker/postgres/extensions.sql
+	@$(DOCKER_COMP) exec -T signal_logement_postgres psql -v ON_ERROR_STOP=1 -U $(DATABASE_USER) -d $(DATABASE_NAME) < .docker/postgres/init.sql
+	@echo "\033[33mCreating PostgreSQL schema from Doctrine entities...\033[0m"
+	@$(DOCKER_COMP) exec -e DATABASE_URL="$(DATABASE_URL_POSTGRES)" signal_logement_phpfpm sh -c "$(SYMFONY) --env=dev doctrine:schema:create --no-interaction"
+	@$(DOCKER_COMP) exec -T signal_logement_postgres psql -v ON_ERROR_STOP=1 -U $(DATABASE_USER) -d $(DATABASE_NAME) < .docker/postgres/indexes.sql
+	@echo "\033[33mLoading fixtures into PostgreSQL...\033[0m"
+	@$(DOCKER_COMP) exec -e DATABASE_URL="$(DATABASE_URL_POSTGRES)" signal_logement_phpfpm sh -c "$(SYMFONY) --env=dev doctrine:fixtures:load --no-interaction"
+	@echo "\033[32mPostgreSQL database reset successfully.\033[0m"
+
+
+anonymize-db-postgres: ## Anonymize PostgreSQL database
+	@echo "\033[33mLoading PostgreSQL anonymization rules...\033[0m"
+	@$(DOCKER_COMP) exec -T signal_logement_postgres \
+		psql -v ON_ERROR_STOP=1 \
+		-U $(DATABASE_USER) \
+		-d $(DATABASE_NAME) \
+		< .docker/postgres/anonymization.sql
+	@echo "\033[33mRunning PostgreSQL anonymization...\033[0m"
+	@$(DOCKER_COMP) exec signal_logement_postgres \
+		psql -v ON_ERROR_STOP=1 \
+		-U $(DATABASE_USER) \
+		-d $(DATABASE_NAME) \
+		-c "SET anon.nosuperuser = off; SELECT anon.anonymize_database();"
+	@echo "\033[32mPostgreSQL anonymization completed.\033[0m"
 
 create-db-test: ## Create test database
 	@$(DOCKER_COMP) exec signal_logement_phpfpm sh -c "$(SYMFONY) --env=test doctrine:database:drop --force --no-interaction || true"

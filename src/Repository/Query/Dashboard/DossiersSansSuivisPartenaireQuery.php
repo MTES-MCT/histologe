@@ -60,8 +60,9 @@ class DossiersSansSuivisPartenaireQuery
             INNER JOIN suivi s ON s.signalement_id = si.id
         SQL;
         if ($withJoins) {
+            $userTable = $this->entityManager->getConnection()->getDatabasePlatform()->quoteSingleIdentifier('user');
             $sql .= <<<SQL
-                LEFT JOIN user u ON u.id = s.created_by_id
+                LEFT JOIN {$userTable} u ON u.id = s.created_by_id
                 LEFT JOIN user_partner up ON up.user_id = u.id
                 LEFT JOIN partner p ON p.id = up.partner_id
             SQL;
@@ -94,10 +95,11 @@ class DossiersSansSuivisPartenaireQuery
             $types['partners'] = ArrayParameterType::INTEGER;
         }
 
+        $territoryIds = array_keys($user->getPartnersTerritories());
         if ($params->territoireId) {
             $sql .= ' AND address.territory_id = '.$params->territoireId;
         } elseif (!$user->isSuperAdmin()) {
-            $sql .= ' AND address.territory_id IN ('.implode(',', array_keys($user->getPartnersTerritories())).')';
+            $sql .= ' AND address.territory_id IN ('.(!empty($territoryIds) ? implode(',', $territoryIds) : '0').')';
         }
 
         if ($params->mesDossiersAverifier && '1' === $params->mesDossiersAverifier) {
@@ -177,17 +179,17 @@ class DossiersSansSuivisPartenaireQuery
         $sql = <<<SQL
         SELECT
             si.id,
-            si.uuid AS uuid,
-            si.reference AS reference,
-            si.nom_occupant AS nomOccupant,
-            si.prenom_occupant AS prenomOccupant,
-            CONCAT_WS(', ', CONCAT_WS(' ', address.housenumber, address.street), CONCAT_WS(' ', address.post_code, address.city)) AS adresse,
-            MAX(s.created_at) AS dernierSuiviAt,
-            DATEDIFF(CURRENT_DATE(), MAX(s.created_at)) AS nbJoursDepuisDernierSuivi,
-            MAX(s.category) AS suiviCategory,
-            MAX(p.nom) AS derniereActionPartenaireNom,
-            MAX(u.nom) AS derniereActionPartenaireNomAgent,
-            MAX(u.prenom) AS derniereActionPartenairePrenomAgent
+            si.uuid AS "uuid",
+            si.reference AS "reference",
+            si.nom_occupant AS "nomOccupant",
+            si.prenom_occupant AS "prenomOccupant",
+            CONCAT_WS(', ', CONCAT_WS(' ', address.housenumber, address.street), CONCAT_WS(' ', address.post_code, address.city)) AS "adresse",
+            MAX(s.created_at) AS "dernierSuiviAt",
+            DATEDIFF(CURRENT_DATE, MAX(s.created_at)) AS "nbJoursDepuisDernierSuivi",
+            MAX(s.category) AS "suiviCategory",
+            MAX(p.nom) AS "derniereActionPartenaireNom",
+            MAX(u.nom) AS "derniereActionPartenaireNomAgent",
+            MAX(u.prenom) AS "derniereActionPartenairePrenomAgent"
         SQL;
         /** @var string $sqlPrincipal */
         /** @var array<mixed> $paramsToBind */

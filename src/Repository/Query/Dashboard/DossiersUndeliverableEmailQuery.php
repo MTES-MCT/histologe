@@ -132,6 +132,7 @@ class DossiersUndeliverableEmailQuery
 
         $qb->setMaxResults(TabDossier::MAX_ITEMS_LIST);
         $qb->groupBy('s.id');
+        $qb->addGroupBy('address.id');
 
         return $qb->getQuery()->getArrayResult();
     }

@@ -15,7 +15,7 @@ use App\Entity\UserPartner;
 use App\Repository\Query\EmailDeliveryIssueExistsQuery;
 use App\Service\DashboardTabPanel\TabQueryParameters;
 use Doctrine\ORM\EntityManagerInterface;
-use Doctrine\ORM\NonUniqueResultException;
+use Doctrine\ORM\NoResultException;
 
 class KpiQuery
 {
@@ -130,10 +130,10 @@ class KpiQuery
     {
         $queryBuilder = $this->entityManager->createQueryBuilder()
             ->from(Partner::class, 'p')
-            ->select('p.id');
+            ->select('COUNT(p.id)');
 
         // Filtre sur les partenaires non notifiables
-        $queryBuilder->addSelect(
+        $queryBuilder->andWhere(
             '(CASE
                 WHEN (p.email IS NOT NULL AND p.email != \'\' AND p.emailNotifiable = 1) THEN 1
                 WHEN EXISTS (
@@ -146,9 +146,8 @@ class KpiQuery
                     AND u2.isMailingActive = 1
                 ) THEN 1
                 ELSE 0
-            END) AS isNotifiable'
+            END) = 0'
         );
-        $queryBuilder->andHaving('isNotifiable = 0');
 
         $queryBuilder->andWhere('p.isArchive = 0');
 
@@ -159,12 +158,12 @@ class KpiQuery
                 ->setParameter('territories', $territories);
         }
         try {
-            $count = count($queryBuilder->getQuery()->getSingleColumnResult());
-        } catch (NonUniqueResultException) {
+            $count = (int) $queryBuilder->getQuery()->getSingleScalarResult();
+        } catch (NoResultException) {
             $count = 0;
         }
 
-        return new CountPartner((int) $count);
+        return new CountPartner($count);
     }
 
     /**

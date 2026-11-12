@@ -114,7 +114,7 @@ class DossiersActiviteRecenteQuery
             MAX(p.nom) AS derniereActionPartenaireNom,
             u.nom AS derniereActionPartenaireNomAgent,
             u.prenom AS derniereActionPartenairePrenomAgent
-        ')->groupBy('signalement.id, suivi.id');
+        ')->groupBy('signalement.id, suivi.id, address.id, u.id');
 
         $qb->orderBy('suivi.createdAt', 'DESC')
         ->setMaxResults($limit);

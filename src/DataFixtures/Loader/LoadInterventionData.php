@@ -57,9 +57,9 @@ class LoadInterventionData extends Fixture implements OrderedFixtureInterface
             ->setProprietairePresent($row['proprietaire_present'] ?? null)
             ->setStatus($row['status'] ?? Intervention::STATUS_PLANNED);
         if (isset($row['external_operator']) && $row['external_operator']) {
-            $intervention->setExternalOperator(externalOperator: $row['partner']);
+            $intervention->setExternalOperator(externalOperator: trim($row['partner']));
         } else {
-            $intervention->setPartner($this->partnerRepository->findOneBy(['email' => $row['partner']]));
+            $intervention->setPartner($this->partnerRepository->findOneBy(['email' => trim($row['partner'])]));
         }
 
         if (isset($row['additional_information'])) {

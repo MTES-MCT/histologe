@@ -1447,7 +1447,7 @@ class SignalementManager
         $maxListPagination = $options['maxItemsPerPage'] ?? SignalementAffectationListView::MAX_LIST_PAGINATION;
         $signalementAffectationList = [];
 
-        $total = $this->queryBuilderFactory->create($user, $options)->select('COUNT(DISTINCT s.id)')->resetDQLPart('groupBy')->getQuery()->getSingleScalarResult();
+        $total = $this->queryBuilderFactory->create($user, $options)->select('COUNT(DISTINCT s.id)')->resetDQLPart('groupBy')->resetDQLPart('orderBy')->getQuery()->getSingleScalarResult();
         if ($count) {
             return (int) $total;
         }

@@ -47,6 +47,7 @@ class LoadJobEventData extends Fixture implements OrderedFixtureInterface
             ->setStatus($row['status'])
             ->setCodeStatus($row['code_status'])
             ->setAction($row['action'])
+            ->setResponse($row['response'] ?? '{"mock": true}')
             ->setPartnerType(PartnerType::tryFrom($row['partner_type']));
         $manager->persist($jobEvent);
     }
