@@ -179,6 +179,7 @@ class UsagerSituationFoyerType extends AbstractType
                 'choices' => [
                     'Oui' => 'oui',
                     'Non' => 'non',
+                    'Je ne sais pas' => 'nsp',
                 ],
                 'expanded' => true,
                 'multiple' => false,
@@ -192,6 +193,7 @@ class UsagerSituationFoyerType extends AbstractType
                 'choices' => [
                     'Oui' => 'oui',
                     'Non' => 'non',
+                    'Je ne sais pas' => 'nsp',
                 ],
                 'expanded' => true,
                 'multiple' => false,
@@ -205,6 +207,7 @@ class UsagerSituationFoyerType extends AbstractType
                 'choices' => [
                     'Oui' => 'oui',
                     'Non' => 'non',
+                    'Je ne sais pas' => 'nsp',
                 ],
                 'expanded' => true,
                 'multiple' => false,
@@ -308,6 +311,7 @@ class UsagerSituationFoyerType extends AbstractType
                 'choices' => [
                     'Oui' => 'oui',
                     'Non' => 'non',
+                    'Je ne sais pas' => 'nsp',
                 ],
                 'expanded' => true,
                 'multiple' => false,
