@@ -167,7 +167,8 @@ class InformationsGeneralesType extends AbstractType
                 ],
             ])
             ->add('classeEnergetique', ChoiceType::class, [
-                'label' => 'Classe énergétique du logement (obligatoire si DPE présent)',
+                'label' => 'Classe énergétique du logement <span class="text-required">*</span>',
+                'label_html' => true,
                 'choices' => [
                     'A' => 'A',
                     'B' => 'B',

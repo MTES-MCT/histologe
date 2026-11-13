@@ -950,7 +950,7 @@ class SignalementEditControllerTest extends WebTestCase
         $client = static::createClient();
         [$crawler, $signalement] = $this->requestInformationsGeneralesForm($client, ProfileDeclarant::LOCATAIRE);
 
-        $this->assertSelectorTextContains('label[for="informations_generales_classeEnergetique"]', '(obligatoire si DPE présent)');
+        $this->assertCount(1, $crawler->filter('label[for="informations_generales_classeEnergetique"] .text-required'));
 
         // DPE présent : la classe énergétique est obligatoire
         $form = $this->fillInformationsGeneralesForm($crawler, [
@@ -1086,6 +1086,7 @@ class SignalementEditControllerTest extends WebTestCase
             'type_composition[cuisine]' => 'oui',
             'type_composition[salleDeBain]' => 'oui',
             'type_composition[wc]' => 'oui',
+            'type_composition[wcCuisine]' => 'non',
         ]);
 
         $client->submit($form);
@@ -1106,6 +1107,158 @@ class SignalementEditControllerTest extends WebTestCase
         $this->assertEquals(SuiviDelayedType::FO_EDIT_TYPE_COMPOSITION, $suiviDelayed->getSuiviDelayedType());
         $changes = $suiviDelayed->getChanges();
         $this->assertEquals(2, count($changes));
+    }
+
+    public static function provideInvalidTypeComposition(): \Generator
+    {
+        yield 'Nature "autre" sans précision' => [
+            ['type_composition[natureLogement]' => 'autre', 'type_composition[natureAutrePrecision]' => ''],
+            [],
+            'Veuillez indiquer des précisions sur la nature du logement.',
+        ];
+        yield 'Appartement sans localisation' => [
+            ['type_composition[natureLogement]' => 'appartement', 'type_composition[appartementAvecFenetres]' => 'oui'],
+            ['appartementEtage'],
+            'Veuillez indiquer la localisation de l\'appartement.',
+        ];
+        yield 'Pas de cuisine, cuisine collective non renseignée' => [
+            ['type_composition[cuisine]' => 'non'],
+            ['cuisineCollective'],
+            'Veuillez indiquer si le logement a une cuisine collective.',
+        ];
+        yield 'Pas de salle de bain, salle de bain collective non renseignée' => [
+            ['type_composition[salleDeBain]' => 'non'],
+            ['salleDeBainCollective'],
+            'Veuillez indiquer si le logement a une salle de bain collective.',
+        ];
+        yield 'Pas de toilettes, toilettes collectives non renseignées' => [
+            ['type_composition[wc]' => 'non'],
+            ['wcCollective'],
+            'Veuillez indiquer si le logement a des toilettes collectives.',
+        ];
+        yield 'Cuisine et toilettes, même pièce non renseignée' => [
+            ['type_composition[cuisine]' => 'oui', 'type_composition[wc]' => 'oui'],
+            ['wcCuisine'],
+            'Veuillez indiquer si la cuisine et les toilettes sont dans la même pièce.',
+        ];
+    }
+
+    /**
+     * @param array<string, string> $values
+     * @param array<string>         $fieldsToRemove
+     */
+    #[DataProvider('provideInvalidTypeComposition')]
+    public function testSubmitSuiviSignalementCompleteTypeCompositionInvalid(array $values, array $fieldsToRemove, string $expectedError): void
+    {
+        self::ensureKernelShutdown();
+        $client = static::createClient();
+        $crawler = $this->requestTypeCompositionForm($client);
+
+        $form = $this->fillTypeCompositionForm($crawler, $values);
+        $this->submitFormWithoutFields($client, $form, 'type_composition', $fieldsToRemove);
+
+        $this->assertResponseStatusCodeSame(Response::HTTP_UNPROCESSABLE_ENTITY);
+        $this->assertAnySelectorTextContains('.fr-error-text', $expectedError);
+    }
+
+    public static function provideValidConditionalTypeComposition(): \Generator
+    {
+        yield 'Nature "autre" avec précision' => [
+            ['type_composition[natureLogement]' => 'autre', 'type_composition[natureAutrePrecision]' => 'Péniche'],
+            [],
+        ];
+        yield 'Appartement avec localisation' => [
+            ['type_composition[natureLogement]' => 'appartement', 'type_composition[appartementEtage]' => 'RDC', 'type_composition[appartementAvecFenetres]' => 'oui'],
+            [],
+        ];
+        yield 'Maison sans localisation ni précision' => [
+            ['type_composition[natureLogement]' => 'maison', 'type_composition[natureAutrePrecision]' => ''],
+            ['appartementEtage'],
+        ];
+        yield 'Pas de cuisine, de salle de bain ni de toilettes, accès collectifs renseignés' => [
+            [
+                'type_composition[cuisine]' => 'non',
+                'type_composition[cuisineCollective]' => 'oui',
+                'type_composition[salleDeBain]' => 'non',
+                'type_composition[salleDeBainCollective]' => 'non',
+                'type_composition[wc]' => 'non',
+                'type_composition[wcCollective]' => 'oui',
+            ],
+            ['wcCuisine'],
+        ];
+        yield 'Équipements présents, accès collectifs non renseignés' => [
+            ['type_composition[cuisine]' => 'oui', 'type_composition[salleDeBain]' => 'oui', 'type_composition[wc]' => 'oui'],
+            ['cuisineCollective', 'salleDeBainCollective', 'wcCollective'],
+        ];
+        yield 'Cuisine sans toilettes, même pièce non renseignée' => [
+            ['type_composition[cuisine]' => 'oui', 'type_composition[wc]' => 'non', 'type_composition[wcCollective]' => 'oui'],
+            ['wcCuisine'],
+        ];
+    }
+
+    /**
+     * @param array<string, string> $values
+     * @param array<string>         $fieldsToRemove
+     */
+    #[DataProvider('provideValidConditionalTypeComposition')]
+    public function testSubmitSuiviSignalementCompleteTypeCompositionConditionalFieldsValid(array $values, array $fieldsToRemove): void
+    {
+        self::ensureKernelShutdown();
+        $client = static::createClient();
+        $crawler = $this->requestTypeCompositionForm($client);
+
+        $form = $this->fillTypeCompositionForm($crawler, $values);
+        $this->submitFormWithoutFields($client, $form, 'type_composition', $fieldsToRemove);
+
+        $this->assertResponseRedirects();
+    }
+
+    public function testDisplaySuiviSignalementCompleteTypeCompositionRequiredLabels(): void
+    {
+        self::ensureKernelShutdown();
+        $client = static::createClient();
+        $crawler = $this->requestTypeCompositionForm($client);
+
+        $this->assertCount(1, $crawler->filter('label[for="type_composition_natureAutrePrecision"] .text-required'));
+        $this->assertCount(1, $crawler->filter('label[for="type_composition_appartementEtagePrecision"] .text-required'));
+        $this->assertCount(1, $crawler->filter('#type_composition_appartementEtage')->closest('fieldset')->filter('legend .text-required'));
+    }
+
+    private function requestTypeCompositionForm(KernelBrowser $client): Crawler
+    {
+        /** @var EntityManagerInterface $entityManager */
+        $entityManager = static::getContainer()->get('doctrine')->getManager();
+        /** @var Signalement $signalement */
+        $signalement = $entityManager->getRepository(Signalement::class)->findOneBy(['reference' => '2022-14']);
+        $client->loginUser($this->getSignalementUser($signalement, UserManager::DECLARANT), 'code_suivi');
+
+        /** @var RouterInterface $router */
+        $router = static::getContainer()->get(RouterInterface::class);
+        $url = $router->generate('front_suivi_signalement_complete_type_composition', ['code' => $signalement->getCodeSuivi()]);
+
+        $crawler = $client->request('GET', $url);
+        $this->assertResponseIsSuccessful();
+
+        return $crawler;
+    }
+
+    /**
+     * Remplit les champs obligatoires du formulaire de type et composition du logement (maison, équipements présents).
+     *
+     * @param array<string, string> $overrides
+     */
+    private function fillTypeCompositionForm(Crawler $crawler, array $overrides = []): Form
+    {
+        return $crawler->selectButton('Enregistrer')->form(array_merge([
+            'type_composition[natureLogement]' => 'maison',
+            'type_composition[superficie]' => '123',
+            'type_composition[pieceUnique]' => 'piece_unique',
+            'type_composition[pieceAVivre9m]' => 'oui',
+            'type_composition[cuisine]' => 'oui',
+            'type_composition[salleDeBain]' => 'oui',
+            'type_composition[wc]' => 'oui',
+            'type_composition[wcCuisine]' => 'non',
+        ], $overrides));
     }
 
     public function testCompleteTravauxMiseEnConformiteAccess(): void
