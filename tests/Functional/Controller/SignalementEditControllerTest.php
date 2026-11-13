@@ -3,12 +3,14 @@
 namespace App\Tests\Functional\Controller;
 
 use App\Entity\Enum\ProfileDeclarant;
+use App\Entity\Enum\ProfileOccupant;
 use App\Entity\Enum\SignalementStatus;
 use App\Entity\Enum\SuiviCategory;
 use App\Entity\Enum\SuiviDelayedType;
 use App\Entity\Enum\TravauxMiseEnConformite;
 use App\Entity\Model\InformationProcedure;
 use App\Entity\Model\SituationFoyer;
+use App\Entity\Model\TypeCompositionLogement;
 use App\Entity\Signalement;
 use App\Entity\Suivi;
 use App\Entity\SuiviDelayed;
@@ -21,6 +23,7 @@ use Psr\Clock\ClockInterface;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\Clock\MockClock;
+use Symfony\Component\DomCrawler\Crawler;
 use Symfony\Component\DomCrawler\Form;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\RouterInterface;
@@ -781,7 +784,11 @@ class SignalementEditControllerTest extends WebTestCase
 
         $form = $crawler->selectButton('Enregistrer')->form([
             'informations_generales[nbOccupantsLogement]' => '12',
+            'informations_generales[nbEnfantsDansLogement]' => '0',
             'informations_generales[dpe]' => 'oui',
+            'informations_generales[classeEnergetique]' => 'C',
+            'informations_generales[bail]' => 'non',
+            'informations_generales[etatDesLieux]' => 'nsp',
         ]);
 
         $client->submit($form);
@@ -791,6 +798,265 @@ class SignalementEditControllerTest extends WebTestCase
         $this->assertEquals('12', $signalement->getNbOccupantsLogement());
         $typeCompositionLogement = $signalement->getTypeCompositionLogement();
         $this->assertEquals('oui', $typeCompositionLogement->getBailDpeDpe());
+        $this->assertEquals('C', $typeCompositionLogement->getBailDpeClasseEnergetique());
+        $this->assertEquals('non', $typeCompositionLogement->getBailDpeBail());
+        $this->assertEquals('nsp', $typeCompositionLogement->getBailDpeEtatDesLieux());
+    }
+
+    public static function provideProfilesForInformationsGeneralesBailEtatDesLieux(): \Generator
+    {
+        yield 'Déclarant locataire' => [ProfileDeclarant::LOCATAIRE, ProfileOccupant::LOCATAIRE, true];
+        yield 'Déclarant tiers, occupant locataire' => [ProfileDeclarant::TIERS_PARTICULIER, ProfileOccupant::LOCATAIRE, true];
+        yield 'Déclarant tiers pro, sans profil occupant' => [ProfileDeclarant::TIERS_PRO, null, true];
+        yield 'Déclarant bailleur' => [ProfileDeclarant::BAILLEUR, ProfileOccupant::LOCATAIRE, true];
+        yield 'Déclarant bailleur occupant' => [ProfileDeclarant::BAILLEUR_OCCUPANT, null, false];
+        yield 'Déclarant tiers, occupant bailleur occupant' => [ProfileDeclarant::TIERS_PARTICULIER, ProfileOccupant::BAILLEUR_OCCUPANT, false];
+        yield 'Déclarant tiers pro, occupant bailleur occupant' => [ProfileDeclarant::TIERS_PRO, ProfileOccupant::BAILLEUR_OCCUPANT, false];
+    }
+
+    #[DataProvider('provideProfilesForInformationsGeneralesBailEtatDesLieux')]
+    public function testSubmitSuiviSignalementCompleteInformationsGeneralesBailEtatDesLieuxByProfile(
+        ProfileDeclarant $profileDeclarant,
+        ?ProfileOccupant $profileOccupant,
+        bool $isDisplayedAndRequired,
+    ): void {
+        self::ensureKernelShutdown();
+        $client = static::createClient();
+
+        /** @var EntityManagerInterface $entityManager */
+        $entityManager = static::getContainer()->get('doctrine')->getManager();
+        /** @var Signalement $signalement */
+        $signalement = $entityManager->getRepository(Signalement::class)->findOneBy(['reference' => '2022-14']);
+        $signalement->setProfileDeclarant($profileDeclarant);
+        $signalement->setProfileOccupant($profileOccupant);
+        $typeCompositionLogement = $signalement->getTypeCompositionLogement() ? clone $signalement->getTypeCompositionLogement() : new TypeCompositionLogement();
+        $typeCompositionLogement->setBailDpeBail(null)->setBailDpeEtatDesLieux(null);
+        $signalement->setTypeCompositionLogement($typeCompositionLogement);
+        $entityManager->flush();
+        $client->loginUser($this->getSignalementUser($signalement, UserManager::DECLARANT), 'code_suivi');
+
+        /** @var RouterInterface $router */
+        $router = static::getContainer()->get(RouterInterface::class);
+        $url = $router->generate('front_suivi_signalement_complete_informations_generales', ['code' => $signalement->getCodeSuivi()]);
+
+        $crawler = $client->request('GET', $url);
+        $this->assertResponseIsSuccessful();
+
+        foreach (['bail', 'etatDesLieux'] as $fieldName) {
+            $field = $crawler->filter('#informations_generales_'.$fieldName);
+            $this->assertSame($isDisplayedAndRequired ? 1 : 0, $field->count(), $fieldName);
+            if ($isDisplayedAndRequired) {
+                $this->assertCount(1, $field->closest('fieldset')->filter('legend .text-required'), $fieldName);
+            }
+        }
+
+        $form = $crawler->selectButton('Enregistrer')->form([
+            'informations_generales[dateEntree]' => '2020-01-15',
+            'informations_generales[nbOccupantsLogement]' => '2',
+            'informations_generales[nbEnfantsDansLogement]' => '0',
+            'informations_generales[dpe]' => 'oui',
+            'informations_generales[classeEnergetique]' => 'C',
+        ]);
+        $client->submit($form);
+
+        if ($isDisplayedAndRequired) {
+            $this->assertResponseStatusCodeSame(Response::HTTP_UNPROCESSABLE_ENTITY);
+            $this->assertAnySelectorTextContains('.fr-error-text', 'Veuillez indiquer si un contrat de location (bail) existe.');
+            $this->assertAnySelectorTextContains('.fr-error-text', 'Veuillez indiquer si un état des lieux a été réalisé.');
+
+            return;
+        }
+
+        $this->assertResponseRedirects('/suivre-mon-signalement/'.$signalement->getCodeSuivi().'/dossier');
+    }
+
+    public function testSubmitSuiviSignalementCompleteInformationsGeneralesKeepsBailEtatDesLieuxForBailleurOccupant(): void
+    {
+        self::ensureKernelShutdown();
+        $client = static::createClient();
+
+        /** @var EntityManagerInterface $entityManager */
+        $entityManager = static::getContainer()->get('doctrine')->getManager();
+        /** @var Signalement $signalement */
+        $signalement = $entityManager->getRepository(Signalement::class)->findOneBy(['reference' => '2022-14']);
+        $signalement->setProfileDeclarant(ProfileDeclarant::BAILLEUR_OCCUPANT);
+        $typeCompositionLogement = $signalement->getTypeCompositionLogement() ? clone $signalement->getTypeCompositionLogement() : new TypeCompositionLogement();
+        $typeCompositionLogement->setBailDpeBail('oui')->setBailDpeEtatDesLieux('non');
+        $signalement->setTypeCompositionLogement($typeCompositionLogement);
+        $entityManager->flush();
+        $client->loginUser($this->getSignalementUser($signalement, UserManager::DECLARANT), 'code_suivi');
+
+        /** @var RouterInterface $router */
+        $router = static::getContainer()->get(RouterInterface::class);
+        $url = $router->generate('front_suivi_signalement_complete_informations_generales', ['code' => $signalement->getCodeSuivi()]);
+
+        $crawler = $client->request('GET', $url);
+        $form = $crawler->selectButton('Enregistrer')->form([
+            'informations_generales[dateEntree]' => '2020-01-15',
+            'informations_generales[nbOccupantsLogement]' => '2',
+            'informations_generales[nbEnfantsDansLogement]' => '0',
+            'informations_generales[dpe]' => 'oui',
+            'informations_generales[classeEnergetique]' => 'C',
+        ]);
+        $client->submit($form);
+
+        $this->assertResponseRedirects('/suivre-mon-signalement/'.$signalement->getCodeSuivi().'/dossier');
+        $signalement = $entityManager->getRepository(Signalement::class)->find($signalement->getId());
+        // Les champs n'étant pas affichés, les valeurs existantes ne doivent pas être écrasées
+        $this->assertEquals('oui', $signalement->getTypeCompositionLogement()->getBailDpeBail());
+        $this->assertEquals('non', $signalement->getTypeCompositionLogement()->getBailDpeEtatDesLieux());
+    }
+
+    public static function provideProfilesForInformationsGeneralesDateEntree(): \Generator
+    {
+        yield 'LOCATAIRE' => [ProfileDeclarant::LOCATAIRE, true];
+        yield 'BAILLEUR_OCCUPANT' => [ProfileDeclarant::BAILLEUR_OCCUPANT, true];
+        yield 'BAILLEUR' => [ProfileDeclarant::BAILLEUR, false];
+        yield 'TIERS_PARTICULIER' => [ProfileDeclarant::TIERS_PARTICULIER, false];
+        yield 'TIERS_PRO' => [ProfileDeclarant::TIERS_PRO, false];
+    }
+
+    #[DataProvider('provideProfilesForInformationsGeneralesDateEntree')]
+    public function testSubmitSuiviSignalementCompleteInformationsGeneralesDateEntreeByProfile(
+        ProfileDeclarant $profileDeclarant,
+        bool $isRequired,
+    ): void {
+        self::ensureKernelShutdown();
+        $client = static::createClient();
+        [$crawler, $signalement] = $this->requestInformationsGeneralesForm($client, $profileDeclarant);
+
+        $labelDateEntree = $crawler->filter('label[for="informations_generales_dateEntree"]');
+        $this->assertSame($isRequired, $labelDateEntree->filter('.text-required')->count() > 0);
+        $this->assertSame(!$isRequired, str_contains($labelDateEntree->text(), '(facultatif)'));
+
+        $form = $this->fillInformationsGeneralesForm($crawler, [
+            'informations_generales[dateEntree]' => '',
+        ]);
+        $client->submit($form);
+
+        if ($isRequired) {
+            $this->assertResponseStatusCodeSame(Response::HTTP_UNPROCESSABLE_ENTITY);
+            $this->assertAnySelectorTextContains('.fr-error-text', 'Veuillez préciser la date d\'entrée dans le logement.');
+
+            return;
+        }
+
+        $this->assertResponseRedirects('/suivre-mon-signalement/'.$signalement->getCodeSuivi().'/dossier');
+    }
+
+    public function testSubmitSuiviSignalementCompleteInformationsGeneralesClasseEnergetique(): void
+    {
+        self::ensureKernelShutdown();
+        $client = static::createClient();
+        [$crawler, $signalement] = $this->requestInformationsGeneralesForm($client, ProfileDeclarant::LOCATAIRE);
+
+        $this->assertSelectorTextContains('label[for="informations_generales_classeEnergetique"]', '(obligatoire si DPE présent)');
+
+        // DPE présent : la classe énergétique est obligatoire
+        $form = $this->fillInformationsGeneralesForm($crawler, [
+            'informations_generales[dpe]' => 'oui',
+            'informations_generales[classeEnergetique]' => '',
+        ]);
+        $client->submit($form);
+
+        $this->assertResponseStatusCodeSame(Response::HTTP_UNPROCESSABLE_ENTITY);
+        $this->assertAnySelectorTextContains('.fr-error-text', 'Veuillez indiquer la classe énergétique du logement si un DPE est présent.');
+
+        // Pas de DPE : la classe énergétique reste facultative
+        $form = $this->fillInformationsGeneralesForm($crawler, [
+            'informations_generales[dpe]' => 'non',
+            'informations_generales[classeEnergetique]' => '',
+        ]);
+        $client->submit($form);
+
+        $this->assertResponseRedirects('/suivre-mon-signalement/'.$signalement->getCodeSuivi().'/dossier');
+    }
+
+    public function testSubmitSuiviSignalementCompleteInformationsGeneralesNbEnfants(): void
+    {
+        self::ensureKernelShutdown();
+        $client = static::createClient();
+        [$crawler, $signalement] = $this->requestInformationsGeneralesForm($client, ProfileDeclarant::LOCATAIRE);
+
+        $this->assertCount(1, $crawler->filter('label[for="informations_generales_nbEnfantsDansLogement"] .text-required'));
+
+        // Nombre d'enfants non renseigné
+        $form = $this->fillInformationsGeneralesForm($crawler, [
+            'informations_generales[nbEnfantsDansLogement]' => '',
+        ]);
+        $client->submit($form);
+
+        $this->assertResponseStatusCodeSame(Response::HTTP_UNPROCESSABLE_ENTITY);
+        $this->assertAnySelectorTextContains('.fr-error-text', 'Veuillez saisir le nombre d\'enfants.');
+
+        // Des enfants dans le logement : la présence d'enfants de 6 ans ou moins est obligatoire
+        $form = $this->fillInformationsGeneralesForm($crawler, [
+            'informations_generales[nbEnfantsDansLogement]' => '2',
+        ]);
+        $this->submitFormWithoutFields($client, $form, 'informations_generales', ['enfantsDansLogementMoinsSixAns']);
+
+        $this->assertResponseStatusCodeSame(Response::HTTP_UNPROCESSABLE_ENTITY);
+        $this->assertAnySelectorTextContains('.fr-error-text', 'Veuillez indiquer si des enfants de 6 ans ou moins vivent dans le logement.');
+
+        // Aucun enfant : 0 est accepté et la question sur les enfants de 6 ans ou moins reste facultative
+        $form = $this->fillInformationsGeneralesForm($crawler, [
+            'informations_generales[nbEnfantsDansLogement]' => '0',
+        ]);
+        $this->submitFormWithoutFields($client, $form, 'informations_generales', ['enfantsDansLogementMoinsSixAns']);
+
+        $this->assertResponseRedirects('/suivre-mon-signalement/'.$signalement->getCodeSuivi().'/dossier');
+        $signalement = static::getContainer()->get('doctrine')->getManager()->getRepository(Signalement::class)->find($signalement->getId());
+        $this->assertEquals('0', $signalement->getTypeCompositionLogement()->getCompositionLogementNombreEnfants());
+    }
+
+    /**
+     * Affiche le formulaire des informations générales du signalement 2022-14 pour le profil déclarant donné.
+     *
+     * @return array{0: Crawler, 1: Signalement}
+     */
+    private function requestInformationsGeneralesForm(KernelBrowser $client, ProfileDeclarant $profileDeclarant): array
+    {
+        /** @var EntityManagerInterface $entityManager */
+        $entityManager = static::getContainer()->get('doctrine')->getManager();
+        /** @var Signalement $signalement */
+        $signalement = $entityManager->getRepository(Signalement::class)->findOneBy(['reference' => '2022-14']);
+        $signalement->setProfileDeclarant($profileDeclarant);
+        $signalement->setProfileOccupant(ProfileOccupant::LOCATAIRE);
+        $entityManager->flush();
+        $client->loginUser($this->getSignalementUser($signalement, UserManager::DECLARANT), 'code_suivi');
+
+        /** @var RouterInterface $router */
+        $router = static::getContainer()->get(RouterInterface::class);
+        $url = $router->generate('front_suivi_signalement_complete_informations_generales', ['code' => $signalement->getCodeSuivi()]);
+
+        $crawler = $client->request('GET', $url);
+        $this->assertResponseIsSuccessful();
+
+        return [$crawler, $signalement];
+    }
+
+    /**
+     * Remplit tous les champs obligatoires présents dans le formulaire des informations générales.
+     *
+     * @param array<string, string> $overrides
+     */
+    private function fillInformationsGeneralesForm(Crawler $crawler, array $overrides = []): Form
+    {
+        $values = array_merge([
+            'informations_generales[dateEntree]' => '2020-01-15',
+            'informations_generales[nbOccupantsLogement]' => '2',
+            'informations_generales[nbEnfantsDansLogement]' => '0',
+            'informations_generales[bail]' => 'oui',
+            'informations_generales[etatDesLieux]' => 'oui',
+            'informations_generales[dpe]' => 'oui',
+            'informations_generales[classeEnergetique]' => 'C',
+        ], $overrides);
+
+        $form = $crawler->selectButton('Enregistrer')->form();
+        // Certains champs (bail, état des lieux) ne sont pas affichés selon le profil
+        $form->setValues(array_filter($values, static fn (string $field) => $form->has($field), \ARRAY_FILTER_USE_KEY));
+
+        return $form;
     }
 
     public function testSubmitSuiviSignalementCompleteTypeComposition(): void
