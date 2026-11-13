@@ -4,6 +4,7 @@ import './vue/index';
 import './vue/signalement-list.ts';
 import './vue/signalement-carto.ts';
 import './vue/addresses-history.ts';
+import './vue/calendar.ts';
 
 import './vanilla/services/bo_modales.js';
 import './vanilla/services/component/component_search_checkbox.js';
