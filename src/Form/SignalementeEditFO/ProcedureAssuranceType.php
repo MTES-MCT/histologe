@@ -8,9 +8,6 @@ use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\FormBuilderInterface;
-use Symfony\Component\Form\FormError;
-use Symfony\Component\Form\FormEvent;
-use Symfony\Component\Form\FormEvents;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Validator\Constraints as Assert;
 
@@ -56,6 +53,20 @@ class ProcedureAssuranceType extends AbstractType
                         max: 255,
                         maxMessage: 'La réponse du bailleur doit comporter au maximum {{ limit }} caractères.',
                     ),
+                    new Assert\Callback(
+                        callback: static function ($value, $context) {
+                            $form = $context->getRoot();
+                            $infoProcedureAssuranceContactee = $form->get('infoProcedureAssuranceContactee')->getData();
+
+                            // Ca ne devrait être obligatoire que si le déclarant est locataire, bailleur occupant, bailleur
+                            // mais plus strict ici que dans le formulaire usager pour éviter de complexifier la logique de validation
+                            if ('oui' === $infoProcedureAssuranceContactee && empty($value)) {
+                                $context
+                                    ->buildViolation('Veuillez préciser la réponse de l\'assurance.')
+                                    ->addViolation();
+                            }
+                        },
+                    ),
                 ],
             ])
             ->add('save', SubmitType::class, [
@@ -64,17 +75,6 @@ class ProcedureAssuranceType extends AbstractType
                     'class' => 'fr-btn--primary',
                 ],
             ]);
-
-        $builder->addEventListener(FormEvents::POST_SUBMIT, static function (FormEvent $event) {
-            $form = $event->getForm();
-            $infoProcedureAssuranceContactee = $form->get('infoProcedureAssuranceContactee')->getData();
-            $infoProcedureReponseAssurance = $form->get('infoProcedureReponseAssurance')->getData();
-            // Ca ne devrait être obligatoire que si le déclarant est locataire, bailleur occupant, bailleur
-            // mais plus strict ici que dans le formulaire usager pour éviter de complexifier la logique de validation
-            if ('oui' === $infoProcedureAssuranceContactee && empty($infoProcedureReponseAssurance)) {
-                $form->get('infoProcedureReponseAssurance')->addError(new FormError('Veuillez préciser la réponse de l\'assurance.'));
-            }
-        });
     }
 
     public function configureOptions(OptionsResolver $resolver): void

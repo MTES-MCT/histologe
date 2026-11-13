@@ -13,9 +13,6 @@ use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
-use Symfony\Component\Form\FormError;
-use Symfony\Component\Form\FormEvent;
-use Symfony\Component\Form\FormEvents;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Validator\Constraints as Assert;
@@ -137,6 +134,20 @@ class InformationsGeneralesType extends AbstractType
                 'placeholder' => false,
                 'mapped' => false,
                 'data' => $enfantsDansLogementMoinsSixAns,
+                'constraints' => [
+                    new Assert\Callback(
+                        callback: static function ($value, $context) {
+                            $form = $context->getRoot();
+                            $nbEnfantsDansLogement = $form->get('nbEnfantsDansLogement')->getData();
+
+                            if ($nbEnfantsDansLogement > 0 && null === $value) {
+                                $context
+                                    ->buildViolation('Veuillez indiquer si des enfants de 6 ans ou moins vivent dans le logement.')
+                                    ->addViolation();
+                            }
+                        },
+                    ),
+                ],
             ])
             ->add('autreSituationVulnerabilite', TextareaType::class, [
                 'label' => 'Autre situation de vulnérabilité (facultatif)',
@@ -185,6 +196,20 @@ class InformationsGeneralesType extends AbstractType
                 'placeholder' => 'Sélectionnez la classe énergétique',
                 'mapped' => false,
                 'data' => $classeEnergetique,
+                'constraints' => [
+                    new Assert\Callback(
+                        callback: static function ($value, $context) {
+                            $form = $context->getRoot();
+                            $dpe = $form->get('dpe')->getData();
+
+                            if ('oui' === $dpe && null === $value) {
+                                $context
+                                    ->buildViolation('Veuillez indiquer la classe énergétique du logement si un DPE est présent.')
+                                    ->addViolation();
+                            }
+                        },
+                    ),
+                ],
             ])
             ->add('numeroInvariant', TextType::class, [
                 'label' => 'Invariant fiscal (facultatif)',
@@ -291,21 +316,6 @@ class InformationsGeneralesType extends AbstractType
                 'class' => 'fr-btn--primary',
             ],
         ]);
-
-        $builder->addEventListener(FormEvents::POST_SUBMIT, static function (FormEvent $event) {
-            $form = $event->getForm();
-            $nbEnfantsDansLogement = $form->get('nbEnfantsDansLogement')->getData();
-            $enfantsDansLogementMoinsSixAns = $form->get('enfantsDansLogementMoinsSixAns')->getData();
-            if ($nbEnfantsDansLogement > 0 && null === $enfantsDansLogementMoinsSixAns) {
-                $form->get('enfantsDansLogementMoinsSixAns')->addError(new FormError('Veuillez indiquer si des enfants de 6 ans ou moins vivent dans le logement.'));
-            }
-
-            $dpe = $form->get('dpe')->getData();
-            $classeEnergetique = $form->get('classeEnergetique')->getData();
-            if ('oui' === $dpe && null === $classeEnergetique) {
-                $form->get('classeEnergetique')->addError(new FormError('Veuillez indiquer la classe énergétique du logement si un DPE est présent.'));
-            }
-        });
     }
 
     public static function isBailleurOccupant(Signalement $signalement): bool
