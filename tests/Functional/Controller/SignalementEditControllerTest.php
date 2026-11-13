@@ -228,6 +228,7 @@ class SignalementEditControllerTest extends WebTestCase
             'coordonnees_bailleur[villeProprio]' => 'Paris',
             'coordonnees_bailleur[telProprio]' => '0102030405',
             'coordonnees_bailleur[telProprioSecondaire]' => '0607080910',
+            'coordonnees_bailleur[infoProcedureBailMoyen]' => 'EMAIL',
         ]);
 
         $client->submit($form);
@@ -252,6 +253,102 @@ class SignalementEditControllerTest extends WebTestCase
         $this->assertArrayHasKey('Ville', $changes);
         $this->assertArrayHasKey('Téléphone', $changes);
         $this->assertArrayHasKey('Téléphone secondaire', $changes);
+    }
+
+    public static function provideProfilesForCoordonneesBailleurProprioAverti(): \Generator
+    {
+        yield 'LOCATAIRE' => [ProfileDeclarant::LOCATAIRE, true];
+        yield 'BAILLEUR_OCCUPANT' => [ProfileDeclarant::BAILLEUR_OCCUPANT, false];
+        yield 'TIERS_PARTICULIER' => [ProfileDeclarant::TIERS_PARTICULIER, false];
+        yield 'TIERS_PRO' => [ProfileDeclarant::TIERS_PRO, false];
+    }
+
+    #[DataProvider('provideProfilesForCoordonneesBailleurProprioAverti')]
+    public function testSubmitSuiviSignalementCompleteBailleurProprioAvertiByProfile(
+        ProfileDeclarant $profileDeclarant,
+        bool $isRequired,
+    ): void {
+        self::ensureKernelShutdown();
+        $client = static::createClient();
+        $crawler = $this->requestCoordonneesBailleurForm($client, $profileDeclarant);
+
+        $expectedMention = $isRequired ? '(obligatoire si le propriétaire est averti)' : '(facultatif)';
+        $this->assertSelectorTextContains('label[for="coordonnees_bailleur_proprioAvertiAt"]', $expectedMention);
+        $this->assertSelectorTextContains('label[for="coordonnees_bailleur_infoProcedureBailReponse"]', $expectedMention);
+
+        $form = $crawler->selectButton('Enregistrer')->form([
+            'coordonnees_bailleur[isProprioAverti]' => '1',
+            'coordonnees_bailleur[proprioAvertiAt]' => '',
+            'coordonnees_bailleur[infoProcedureBailReponse]' => '',
+        ]);
+        $client->submit($form);
+
+        $this->assertResponseStatusCodeSame(Response::HTTP_UNPROCESSABLE_ENTITY);
+        // Le moyen de contact reste obligatoire pour tous les profils
+        $this->assertAnySelectorTextContains('.fr-error-text', 'Veuillez indiquer le moyen de contact utilisé pour avertir le propriétaire.');
+        if ($isRequired) {
+            $this->assertAnySelectorTextContains('.fr-error-text', 'Veuillez indiquer la date d\'avertissement du propriétaire.');
+            $this->assertAnySelectorTextContains('.fr-error-text', 'Veuillez indiquer la réponse du propriétaire.');
+        } else {
+            $this->assertAnySelectorTextNotContains('.fr-error-text', 'Veuillez indiquer la date d\'avertissement du propriétaire.');
+            $this->assertAnySelectorTextNotContains('.fr-error-text', 'Veuillez indiquer la réponse du propriétaire.');
+        }
+    }
+
+    public static function provideProprioNonAverti(): \Generator
+    {
+        yield 'Propriétaire non averti' => ['0'];
+        yield 'Ne sait pas si le propriétaire est averti' => ['nsp'];
+    }
+
+    #[DataProvider('provideProprioNonAverti')]
+    public function testSubmitSuiviSignalementCompleteBailleurProprioNonAvertiForLocataire(string $isProprioAverti): void
+    {
+        self::ensureKernelShutdown();
+        $client = static::createClient();
+
+        /** @var EntityManagerInterface $entityManager */
+        $entityManager = static::getContainer()->get('doctrine')->getManager();
+        /** @var Signalement $signalement */
+        $signalement = $entityManager->getRepository(Signalement::class)->findOneBy(['reference' => '2022-14']);
+        // Le choix "Je ne sais pas" n'est proposé que si la valeur n'est pas encore renseignée
+        $signalement->setIsProprioAverti(null);
+        $entityManager->flush();
+
+        $crawler = $this->requestCoordonneesBailleurForm($client, ProfileDeclarant::LOCATAIRE);
+
+        $form = $crawler->selectButton('Enregistrer')->form([
+            'coordonnees_bailleur[isProprioAverti]' => $isProprioAverti,
+            'coordonnees_bailleur[proprioAvertiAt]' => '',
+            'coordonnees_bailleur[infoProcedureBailReponse]' => '',
+        ]);
+        $this->submitFormWithoutFields($client, $form, 'coordonnees_bailleur', ['infoProcedureBailMoyen']);
+
+        // Aucune des informations d'avertissement n'est exigée
+        $errors = $client->getCrawler()->filter('.fr-error-text')->each(static fn (Crawler $node) => $node->text());
+        $this->assertNotContains('Veuillez indiquer le moyen de contact utilisé pour avertir le propriétaire.', $errors);
+        $this->assertNotContains('Veuillez indiquer la date d\'avertissement du propriétaire.', $errors);
+        $this->assertNotContains('Veuillez indiquer la réponse du propriétaire.', $errors);
+    }
+
+    private function requestCoordonneesBailleurForm(KernelBrowser $client, ProfileDeclarant $profileDeclarant): Crawler
+    {
+        /** @var EntityManagerInterface $entityManager */
+        $entityManager = static::getContainer()->get('doctrine')->getManager();
+        /** @var Signalement $signalement */
+        $signalement = $entityManager->getRepository(Signalement::class)->findOneBy(['reference' => '2022-14']);
+        $signalement->setProfileDeclarant($profileDeclarant);
+        $entityManager->flush();
+        $client->loginUser($this->getSignalementUser($signalement, UserManager::DECLARANT), 'code_suivi');
+
+        /** @var RouterInterface $router */
+        $router = static::getContainer()->get(RouterInterface::class);
+        $url = $router->generate('front_suivi_signalement_complete_bailleur', ['code' => $signalement->getCodeSuivi()]);
+
+        $crawler = $client->request('GET', $url);
+        $this->assertResponseIsSuccessful();
+
+        return $crawler;
     }
 
     public function testSubmitSuiviSignalementCompleteOccupantWithEmptyMailOccupant(): void
