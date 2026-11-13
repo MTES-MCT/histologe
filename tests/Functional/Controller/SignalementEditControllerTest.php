@@ -7,6 +7,8 @@ use App\Entity\Enum\SignalementStatus;
 use App\Entity\Enum\SuiviCategory;
 use App\Entity\Enum\SuiviDelayedType;
 use App\Entity\Enum\TravauxMiseEnConformite;
+use App\Entity\Model\InformationProcedure;
+use App\Entity\Model\SituationFoyer;
 use App\Entity\Signalement;
 use App\Entity\Suivi;
 use App\Entity\SuiviDelayed;
@@ -16,8 +18,10 @@ use App\Tests\UserHelper;
 use Doctrine\ORM\EntityManagerInterface;
 use PHPUnit\Framework\Attributes\DataProvider;
 use Psr\Clock\ClockInterface;
+use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\Clock\MockClock;
+use Symfony\Component\DomCrawler\Form;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\RouterInterface;
 
@@ -385,7 +389,7 @@ class SignalementEditControllerTest extends WebTestCase
         $client->submit($form);
         $this->assertResponseStatusCodeSame(Response::HTTP_UNPROCESSABLE_ENTITY);
         $this->assertSelectorExists('.fr-error-text');
-        $this->assertSelectorTextContains('.fr-error-text', 'doit comporter au maximum 25 caractères.');
+        $this->assertAnySelectorTextContains('.fr-error-text', 'doit comporter au maximum 25 caractères.');
 
         $form = $crawler->selectButton('Enregistrer')->form([
             'usager_situation_foyer[isLogementSocial]' => '1',
@@ -393,6 +397,7 @@ class SignalementEditControllerTest extends WebTestCase
             'usager_situation_foyer[numAllocataire]' => '11223344',
             'usager_situation_foyer[allocataire]' => 'oui',
             'usager_situation_foyer[caisseAllocation]' => 'MSA',
+            'usager_situation_foyer[dateNaissanceAllocataire]' => '1985-06-15',
             'usager_situation_foyer[montantAllocation]' => '555',
         ]);
 
@@ -409,13 +414,236 @@ class SignalementEditControllerTest extends WebTestCase
         $this->assertNotNull($suivi);
         $this->assertEquals(SuiviDelayedType::FO_EDIT_SITUATION_FOYER, $suivi->getSuiviDelayedType());
         $changes = $suivi->getChanges();
-        $this->assertEquals(5, count($changes));
+        $this->assertEquals(6, count($changes));
         $this->assertArrayHasKey('Logement social', $changes);
         $this->assertArrayHasKey('Relogement', $changes);
         $this->assertArrayHasKey('Numéro d\'allocataire / de dossier', $changes);
         $this->assertArrayHasKey('Montant de l\'allocation', $changes);
+        $this->assertArrayHasKey('Date de naissance de l\'occupant', $changes);
         $this->assertequals('11223344', $changes['Numéro d\'allocataire / de dossier']);
         $this->assertequals('555', $changes['Montant de l\'allocation']);
+    }
+
+    public function testSubmitSuiviSignalementCompleteSituationFoyerAllocataireRequiresDetails(): void
+    {
+        self::ensureKernelShutdown();
+        $client = static::createClient();
+
+        /** @var EntityManagerInterface $entityManager */
+        $entityManager = static::getContainer()->get('doctrine')->getManager();
+        /** @var Signalement $signalement */
+        $signalement = $entityManager->getRepository(Signalement::class)->findOneBy(['reference' => '2022-14']);
+        $client->loginUser($this->getSignalementUser($signalement, UserManager::DECLARANT), 'code_suivi');
+
+        /** @var RouterInterface $router */
+        $router = static::getContainer()->get(RouterInterface::class);
+        $url = $router->generate('front_suivi_signalement_complete_situation_foyer', ['code' => $signalement->getCodeSuivi()]);
+
+        $crawler = $client->request('GET', $url);
+        $this->assertResponseIsSuccessful();
+
+        $form = $crawler->selectButton('Enregistrer')->form([
+            'usager_situation_foyer[isLogementSocial]' => '1',
+            'usager_situation_foyer[isRelogement]' => '1',
+            'usager_situation_foyer[allocataire]' => 'oui',
+            'usager_situation_foyer[dateNaissanceAllocataire]' => '',
+            'usager_situation_foyer[numAllocataire]' => '',
+        ]);
+        $this->submitFormWithoutFields($client, $form, 'usager_situation_foyer', ['caisseAllocation']);
+
+        $this->assertResponseStatusCodeSame(Response::HTTP_UNPROCESSABLE_ENTITY);
+        $this->assertAnySelectorTextContains('.fr-error-text', 'Veuillez préciser la caisse d\'allocation.');
+        $this->assertAnySelectorTextContains('.fr-error-text', 'Veuillez préciser la date de naissance de l\'occupant.');
+        $this->assertAnySelectorTextContains('.fr-error-text', 'Veuillez préciser le numéro d\'allocataire / de dossier.');
+
+        // Les informations d'allocation ne sont pas exigées si l'occupant n'est pas allocataire
+        $form = $crawler->selectButton('Enregistrer')->form([
+            'usager_situation_foyer[isLogementSocial]' => '1',
+            'usager_situation_foyer[isRelogement]' => '1',
+            'usager_situation_foyer[allocataire]' => 'non',
+            'usager_situation_foyer[dateNaissanceAllocataire]' => '',
+            'usager_situation_foyer[numAllocataire]' => '',
+        ]);
+        $this->submitFormWithoutFields($client, $form, 'usager_situation_foyer', ['caisseAllocation']);
+
+        $this->assertResponseRedirects('/suivre-mon-signalement/'.$signalement->getCodeSuivi().'/dossier');
+    }
+
+    public static function provideProfileDeclarantForSituationFoyerRequiredFields(): \Generator
+    {
+        yield 'LOCATAIRE' => [ProfileDeclarant::LOCATAIRE, true];
+        yield 'BAILLEUR_OCCUPANT' => [ProfileDeclarant::BAILLEUR_OCCUPANT, true];
+        yield 'TIERS_PARTICULIER' => [ProfileDeclarant::TIERS_PARTICULIER, false];
+        yield 'TIERS_PRO' => [ProfileDeclarant::TIERS_PRO, false];
+    }
+
+    #[DataProvider('provideProfileDeclarantForSituationFoyerRequiredFields')]
+    public function testSubmitSuiviSignalementCompleteSituationFoyerRequiredFieldsByProfile(
+        ProfileDeclarant $profileDeclarant,
+        bool $isRequired,
+    ): void {
+        self::ensureKernelShutdown();
+        $client = static::createClient();
+
+        /** @var EntityManagerInterface $entityManager */
+        $entityManager = static::getContainer()->get('doctrine')->getManager();
+        /** @var Signalement $signalement */
+        $signalement = $entityManager->getRepository(Signalement::class)->findOneBy(['reference' => '2022-14']);
+        $signalement->setProfileDeclarant($profileDeclarant);
+        $entityManager->flush();
+        $client->loginUser($this->getSignalementUser($signalement, UserManager::DECLARANT), 'code_suivi');
+
+        /** @var RouterInterface $router */
+        $router = static::getContainer()->get(RouterInterface::class);
+        $url = $router->generate('front_suivi_signalement_complete_situation_foyer', ['code' => $signalement->getCodeSuivi()]);
+
+        $crawler = $client->request('GET', $url);
+        $this->assertResponseIsSuccessful();
+
+        $labelRelogement = $crawler->filter('#usager_situation_foyer_isRelogement')->closest('fieldset')->filter('legend');
+        $labelAllocataire = $crawler->filter('#usager_situation_foyer_allocataire')->closest('fieldset')->filter('legend');
+        $this->assertSame($isRequired, $labelRelogement->filter('.text-required')->count() > 0);
+        $this->assertSame($isRequired, $labelAllocataire->filter('.text-required')->count() > 0);
+        $this->assertSame(!$isRequired, str_contains($labelRelogement->text(), '(facultatif)'));
+        $this->assertSame(!$isRequired, str_contains($labelAllocataire->text(), '(facultatif)'));
+
+        $form = $crawler->selectButton('Enregistrer')->form([
+            'usager_situation_foyer[isLogementSocial]' => '1',
+        ]);
+        $this->submitFormWithoutFields($client, $form, 'usager_situation_foyer', ['isRelogement', 'allocataire', 'caisseAllocation']);
+
+        if ($isRequired) {
+            $this->assertResponseStatusCodeSame(Response::HTTP_UNPROCESSABLE_ENTITY);
+            $this->assertAnySelectorTextContains('.fr-error-text', 'Veuillez préciser si une demande de relogement a été faite.');
+            $this->assertAnySelectorTextContains('.fr-error-text', 'Veuillez préciser si l\'occupant est allocataire.');
+        } else {
+            $this->assertResponseRedirects('/suivre-mon-signalement/'.$signalement->getCodeSuivi().'/dossier');
+        }
+    }
+
+    public static function provideSituationFoyerNspValues(): \Generator
+    {
+        yield 'Valeur nsp : choix "Je ne sais pas" proposé' => ['nsp', true];
+        yield 'Valeur oui : choix "Je ne sais pas" absent' => ['oui', false];
+        yield 'Valeur vide : choix "Je ne sais pas" absent' => [null, false];
+    }
+
+    #[DataProvider('provideSituationFoyerNspValues')]
+    public function testDisplaySuiviSignalementCompleteSituationFoyerNspChoice(?string $value, bool $hasNspChoice): void
+    {
+        self::ensureKernelShutdown();
+        $client = static::createClient();
+
+        /** @var EntityManagerInterface $entityManager */
+        $entityManager = static::getContainer()->get('doctrine')->getManager();
+        /** @var Signalement $signalement */
+        $signalement = $entityManager->getRepository(Signalement::class)->findOneBy(['reference' => '2022-14']);
+        $situationFoyer = $signalement->getSituationFoyer() ? clone $signalement->getSituationFoyer() : new SituationFoyer();
+        $situationFoyer
+            ->setTravailleurSocialQuitteLogement($value)
+            ->setTravailleurSocialPreavisDepart($value)
+            ->setTravailleurSocialAccompagnement($value);
+        $signalement->setSituationFoyer($situationFoyer);
+        $informationProcedure = $signalement->getInformationProcedure() ? clone $signalement->getInformationProcedure() : new InformationProcedure();
+        $informationProcedure->setInfoProcedureDepartApresTravaux($value);
+        $signalement->setInformationProcedure($informationProcedure);
+        $entityManager->flush();
+        $client->loginUser($this->getSignalementUser($signalement, UserManager::DECLARANT), 'code_suivi');
+
+        /** @var RouterInterface $router */
+        $router = static::getContainer()->get(RouterInterface::class);
+        $url = $router->generate('front_suivi_signalement_complete_situation_foyer', ['code' => $signalement->getCodeSuivi()]);
+
+        $crawler = $client->request('GET', $url);
+        $this->assertResponseIsSuccessful();
+
+        foreach (['souhaiteQuitterLogement', 'preavisDepartDepose', 'accompagnementTravailleurSocial', 'departApresTravaux'] as $field) {
+            $nspRadio = $crawler->filter('input[name="usager_situation_foyer['.$field.']"][value="nsp"]');
+            $this->assertSame($hasNspChoice ? 1 : 0, $nspRadio->count(), $field);
+            if ($hasNspChoice) {
+                $this->assertSame('checked', $nspRadio->attr('checked'), $field);
+            }
+        }
+    }
+
+    public static function provideProfileDeclarantForCoordonneesOccupantRequiredFields(): \Generator
+    {
+        yield 'LOCATAIRE' => [ProfileDeclarant::LOCATAIRE, true, true];
+        yield 'BAILLEUR_OCCUPANT' => [ProfileDeclarant::BAILLEUR_OCCUPANT, false, true];
+        yield 'TIERS_PARTICULIER' => [ProfileDeclarant::TIERS_PARTICULIER, false, false];
+        yield 'TIERS_PRO' => [ProfileDeclarant::TIERS_PRO, false, false];
+    }
+
+    #[DataProvider('provideProfileDeclarantForCoordonneesOccupantRequiredFields')]
+    public function testSubmitSuiviSignalementCompleteOccupantRequiredFieldsByProfile(
+        ProfileDeclarant $profileDeclarant,
+        bool $isCiviliteRequired,
+        bool $isTelRequired,
+    ): void {
+        self::ensureKernelShutdown();
+        $client = static::createClient();
+
+        /** @var EntityManagerInterface $entityManager */
+        $entityManager = static::getContainer()->get('doctrine')->getManager();
+        /** @var Signalement $signalement */
+        $signalement = $entityManager->getRepository(Signalement::class)->findOneBy(['reference' => '2022-14']);
+        $signalement->setProfileDeclarant($profileDeclarant);
+        $signalement->setMailOccupant('occupant@example.org');
+        $entityManager->flush();
+        $client->loginUser($this->getSignalementUser($signalement, UserManager::DECLARANT), 'code_suivi');
+
+        /** @var RouterInterface $router */
+        $router = static::getContainer()->get(RouterInterface::class);
+        $url = $router->generate('front_suivi_signalement_complete_occupant', ['code' => $signalement->getCodeSuivi()]);
+
+        $crawler = $client->request('GET', $url);
+        $this->assertResponseIsSuccessful();
+
+        $labelCivilite = $crawler->filter('label[for="coordonnees_occupant_civiliteOccupant"]');
+        $labelTel = $crawler->filter('label[for="coordonnees_occupant_telOccupant"]');
+        $this->assertSame($isCiviliteRequired, $labelCivilite->filter('.text-required')->count() > 0);
+        $this->assertSame($isTelRequired, $labelTel->filter('.text-required')->count() > 0);
+        $this->assertSame(!$isCiviliteRequired, str_contains($labelCivilite->text(), '(facultatif)'));
+        $this->assertSame(!$isTelRequired, str_contains($labelTel->text(), '(facultatif)'));
+
+        $form = $crawler->selectButton('Enregistrer')->form([
+            'coordonnees_occupant[civiliteOccupant]' => '',
+            'coordonnees_occupant[nomOccupant]' => 'NomOccupant',
+            'coordonnees_occupant[prenomOccupant]' => 'PrenomOccupant',
+            'coordonnees_occupant[mailOccupantTemp]' => 'occupant@example.org',
+            'coordonnees_occupant[telOccupant]' => '',
+            'coordonnees_occupant[telOccupantBis]' => '',
+        ]);
+        $client->submit($form);
+
+        if (!$isCiviliteRequired && !$isTelRequired) {
+            $this->assertResponseRedirects('/suivre-mon-signalement/'.$signalement->getCodeSuivi().'/dossier');
+
+            return;
+        }
+
+        $this->assertResponseStatusCodeSame(Response::HTTP_UNPROCESSABLE_ENTITY);
+        if ($isCiviliteRequired) {
+            $this->assertAnySelectorTextContains('.fr-error-text', 'Veuillez préciser la civilité.');
+        } else {
+            $this->assertAnySelectorTextNotContains('.fr-error-text', 'Veuillez préciser la civilité.');
+        }
+        $this->assertAnySelectorTextContains('.fr-error-text', 'Veuillez préciser le numéro de téléphone.');
+    }
+
+    /**
+     * Soumet le formulaire en retirant certains champs de la requête,
+     * pour simuler des boutons radio qu'aucune option ne coche.
+     *
+     * @param array<string> $fieldsToRemove
+     */
+    private function submitFormWithoutFields(KernelBrowser $client, Form $form, string $formName, array $fieldsToRemove): void
+    {
+        $values = $form->getPhpValues();
+        foreach ($fieldsToRemove as $field) {
+            unset($values[$formName][$field]);
+        }
+        $client->request($form->getMethod(), $form->getUri(), $values);
     }
 
     public function testSubmitSuiviSignalementCompleteAssurance(): void
