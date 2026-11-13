@@ -41,7 +41,7 @@ class SignalementReferenceQuery
             ->setParameter('year', $year)
             ->andWhere('address.territory = :territory')
             ->setParameter('territory', $territory)
-            ->orderBy('reference_index', 'DESC')
+            ->orderBy('reference_index', \SortDirection::Descending)
             ->setMaxResults(1);
 
         return $queryBuilder

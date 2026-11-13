@@ -35,10 +35,10 @@ class WorkerMessageEventSubscriberTest extends TestCase
     public function testOnWorkerMessageFailedEvent(): void
     {
         $jobEventManagerMock = $this->createMock(JobEventManager::class);
-        $serializerMock = $this->createMock(SerializerInterface::class);
-        $partnerRepositoryMock = $this->createMock(PartnerRepository::class);
-        $entityManagerMock = $this->createMock(EntityManagerInterface::class);
-        $subscriber = new WorkerMessageEventSubscriber($jobEventManagerMock, $serializerMock, $partnerRepositoryMock, $entityManagerMock);
+        $serializerStub = $this->createStub(SerializerInterface::class);
+        $partnerRepositoryStub = $this->createStub(PartnerRepository::class);
+        $entityManagerStub = $this->createStub(EntityManagerInterface::class);
+        $subscriber = new WorkerMessageEventSubscriber($jobEventManagerMock, $serializerStub, $partnerRepositoryStub, $entityManagerStub);
 
         $dossierMessage = new DossierMessageSCHS();
         $dossierMessage->setAction('push_dossier');

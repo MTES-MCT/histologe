@@ -17,19 +17,18 @@ use Symfony\Component\Validator\Test\ConstraintValidatorTestCase;
 class AdresseOccupantValidatorTest extends ConstraintValidatorTestCase
 {
     private ZipcodeProvider&MockObject $zipcodeProvider;
-    private TerritoryRepository&MockObject $territoryRepository;
 
     protected function createValidator(): AdresseOccupantValidator
     {
         $this->zipcodeProvider = $this->createMock(ZipcodeProvider::class);
-        $this->territoryRepository = $this->createMock(TerritoryRepository::class);
+        $territoryRepository = $this->createStub(TerritoryRepository::class);
 
-        return new AdresseOccupantValidator($this->zipcodeProvider, $this->territoryRepository);
+        return new AdresseOccupantValidator($this->zipcodeProvider, $territoryRepository);
     }
 
     public function testItAddsViolationWhenTerritoryInactive(): void
     {
-        $territoryFromInsee = $this->createMock(Territory::class);
+        $territoryFromInsee = $this->createStub(Territory::class);
         $constraint = new AdresseOccupant();
 
         $form = new FormServiceSecoursStep2();
@@ -97,11 +96,11 @@ class AdresseOccupantValidatorTest extends ConstraintValidatorTestCase
         $form->addressCityCode = '13055';
         $form->territoryZip = '75001';
 
-        $territory = $this->createMock(Territory::class);
+        $territory = $this->createStub(Territory::class);
         $territory->method('isIsActive')->willReturn(true);
         $territory->method('getZip')->willReturn('13002');
 
-        $expectedTerritory = $this->createMock(Territory::class);
+        $expectedTerritory = $this->createStub(Territory::class);
         $expectedTerritory->method('getZip')->willReturn('75001');
         $expectedTerritory->method('getZipAndName')->willReturn('75001 Paris');
 
@@ -115,12 +114,15 @@ class AdresseOccupantValidatorTest extends ConstraintValidatorTestCase
             ->expects($this->never())
             ->method('getTerritoryByPostalCode');
 
-        $this->territoryRepository
+        $territoryRepository = $this->createMock(TerritoryRepository::class);
+        $territoryRepository
             ->expects($this->once())
             ->method('findOneBy')
             ->with(['zip' => '75001'])
             ->willReturn($expectedTerritory);
 
+        $this->validator = new AdresseOccupantValidator($this->zipcodeProvider, $territoryRepository);
+        $this->validator->initialize($this->context);
         $territory->method('getZip')->willReturn('13002');
         $this->validator->validate($form, $constraint);
 

@@ -13,9 +13,9 @@ class FileScannerTest extends TestCase
 {
     public function testIsCleanWithEmptyFilePath(): void
     {
-        $scanner = $this->createMock(Scanner::class);
-        $parameterBag = $this->createMock(ParameterBagInterface::class);
-        $logger = $this->createMock(LoggerInterface::class);
+        $scanner = $this->createStub(Scanner::class);
+        $parameterBag = $this->createStub(ParameterBagInterface::class);
+        $logger = $this->createStub(LoggerInterface::class);
 
         $fileScanner = new FileScanner($scanner, $parameterBag, $logger, true);
         $result = $fileScanner->isClean('');
@@ -28,7 +28,7 @@ class FileScannerTest extends TestCase
         $scanner = $this->createMock(Scanner::class);
         $parameterBag = $this->createMock(ParameterBagInterface::class);
         $scannedFile = $this->createMock(ScannedFile::class);
-        $logger = $this->createMock(LoggerInterface::class);
+        $logger = $this->createStub(LoggerInterface::class);
 
         $parameterBag
             ->expects($this->once())

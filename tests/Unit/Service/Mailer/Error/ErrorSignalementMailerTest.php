@@ -12,7 +12,7 @@ class ErrorSignalementMailerTest extends TestCase
      */
     public function testSanitizeFoundContent(): void
     {
-        $mailer = $this->createMock(ErrorSignalementMailer::class);
+        $mailer = $this->createStub(ErrorSignalementMailer::class);
 
         $reflection = new \ReflectionClass($mailer);
         $method = $reflection->getMethod('sanitizeContent');
@@ -37,7 +37,7 @@ class ErrorSignalementMailerTest extends TestCase
      */
     public function testSanitizeNotFoundContent(): void
     {
-        $mailer = $this->createMock(ErrorSignalementMailer::class);
+        $mailer = $this->createStub(ErrorSignalementMailer::class);
 
         $reflection = new \ReflectionClass($mailer);
         $method = $reflection->getMethod('sanitizeContent');

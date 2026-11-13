@@ -28,7 +28,7 @@ class ArreteDescriptionGeneratorTest extends TestCase
 
     public function testArreteInitialDescriptionOnInterventionCreated(): void
     {
-        $dossierArreteSISH = $this->createMock(DossierArreteSISH::class);
+        $dossierArreteSISH = $this->createStub(DossierArreteSISH::class);
         $dossierArreteSISH->method('getArreteNumero')->willReturn('2023/DD13/00664');
         $dossierArreteSISH->method('getArreteDate')->willReturn('14/06/2023');
         $dossierArreteSISH->method('getDossNum')->willReturn('2023/DD13/0010');
@@ -43,7 +43,7 @@ class ArreteDescriptionGeneratorTest extends TestCase
 
     public function testArreteModificatifDescriptionOnInterventionCreated(): void
     {
-        $dossierArreteSISH = $this->createMock(DossierArreteSISH::class);
+        $dossierArreteSISH = $this->createStub(DossierArreteSISH::class);
         $dossierArreteSISH->method('getArreteNumero')->willReturn('2023/DD13/00664');
         $dossierArreteSISH->method('getArreteDate')->willReturn('14/06/2023');
         $dossierArreteSISH->method('getArreteModificatifNumero')->willReturn('AM001');
@@ -56,7 +56,7 @@ class ArreteDescriptionGeneratorTest extends TestCase
 
     public function testArreteMainLeveeSansModificatifDescriptionOnInterventionCreated(): void
     {
-        $dossierArreteSISH = $this->createMock(DossierArreteSISH::class);
+        $dossierArreteSISH = $this->createStub(DossierArreteSISH::class);
         $dossierArreteSISH->method('getArreteNumero')->willReturn('2023/DD13/00664');
         $dossierArreteSISH->method('getArreteDate')->willReturn('14/06/2023');
         $dossierArreteSISH->method('getArreteMLDate')->willReturn('07/08/2023');
@@ -70,7 +70,7 @@ class ArreteDescriptionGeneratorTest extends TestCase
 
     public function testArreteMainLeveeAvecModificatifDescriptionOnInterventionCreated(): void
     {
-        $dossierArreteSISH = $this->createMock(DossierArreteSISH::class);
+        $dossierArreteSISH = $this->createStub(DossierArreteSISH::class);
         $dossierArreteSISH->method('getArreteNumero')->willReturn('2023/DD13/00664');
         $dossierArreteSISH->method('getArreteDate')->willReturn('14/06/2023');
         $dossierArreteSISH->method('getArreteModificatifNumero')->willReturn('AM001');
@@ -85,7 +85,7 @@ class ArreteDescriptionGeneratorTest extends TestCase
 
     public function testArreteInitialWithModificatifNumeroWithoutDateDescriptionOnInterventionCreated(): void
     {
-        $dossierArreteSISH = $this->createMock(DossierArreteSISH::class);
+        $dossierArreteSISH = $this->createStub(DossierArreteSISH::class);
         $dossierArreteSISH->method('getArreteNumero')->willReturn('2023/DD13/00664');
         $dossierArreteSISH->method('getArreteDate')->willReturn('14/06/2023');
         $dossierArreteSISH->method('getDossNum')->willReturn('2023/DD13/0010');
@@ -101,7 +101,7 @@ class ArreteDescriptionGeneratorTest extends TestCase
 
     public function testArreteMainLeveeAvecModificatifNumeroSansDateDescriptionOnInterventionCreated(): void
     {
-        $dossierArreteSISH = $this->createMock(DossierArreteSISH::class);
+        $dossierArreteSISH = $this->createStub(DossierArreteSISH::class);
         $dossierArreteSISH->method('getArreteNumero')->willReturn('2023/DD13/00664');
         $dossierArreteSISH->method('getArreteDate')->willReturn('14/06/2023');
         $dossierArreteSISH->method('getArreteModificatifNumero')->willReturn('AM001');
@@ -250,7 +250,7 @@ class ArreteDescriptionGeneratorTest extends TestCase
 
     public function testArreteDescriptionOnMainLeveeCreated(): void
     {
-        $dossierArreteSISH = $this->createMock(DossierArreteSISH::class);
+        $dossierArreteSISH = $this->createStub(DossierArreteSISH::class);
         $dossierArreteSISH->method('getArreteNumero')->willReturn('2023/DD13/00664');
         $dossierArreteSISH->method('getArreteDate')->willReturn('14/06/2023');
         $dossierArreteSISH->method('getArreteMLDate')->willReturn('01/02/2026');

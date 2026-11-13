@@ -8,9 +8,9 @@ class Sanitizer
 {
     public static function sanitize(?string $text): string
     {
-        $textSanitized = preg_replace('/<p[^>]*>/', '', $text); // Remove the start <p> or <p attr="">
+        $textSanitized = preg_replace('/<p[^>]*>/', '', (string) $text); // Remove the start <p> or <p attr="">
 
-        return str_replace('</p>', '<br>', $textSanitized); // Replace the end
+        return str_replace('</p>', '<br>', (string) $textSanitized); // Replace the end
     }
 
     public static function tagArchivedEmail(string $email): string

@@ -20,7 +20,7 @@ class TabQueryParameters
         public ?array $partners = null,
         #[Assert\Choice(choices: ['createdAt', 'closedAt', 'nbRelanceFeedbackUsager', 'nbDay', 'nomOccupant', 'demandeFermetureUsagerAt', 'affectedAt'])]
         public ?string $sortBy = null,
-        #[Assert\Choice(choices: ['ASC', 'DESC', 'asc', 'desc'])]
+        #[Assert\Choice(choices: ['ASC', 'DESC'])]
         public ?string $orderBy = null,
         public ?string $mesDossiersMessagesUsagers = null,
         public ?string $mesDossiersAverifier = null,

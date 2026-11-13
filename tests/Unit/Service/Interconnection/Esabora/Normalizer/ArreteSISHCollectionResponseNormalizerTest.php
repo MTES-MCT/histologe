@@ -32,7 +32,7 @@ class ArreteSISHCollectionResponseNormalizerTest extends TestCase
             ],
         ]);
 
-        $response = $this->createMock(DossierArreteSISHCollectionResponse::class);
+        $response = $this->createStub(DossierArreteSISHCollectionResponse::class);
         $response->method('getCollection')->willReturn([$item]);
 
         $normalizer = new ArreteSISHCollectionResponseNormalizer();
@@ -63,7 +63,7 @@ class ArreteSISHCollectionResponseNormalizerTest extends TestCase
             ],
         ]);
 
-        $response = $this->createMock(DossierArreteSISHCollectionResponse::class);
+        $response = $this->createStub(DossierArreteSISHCollectionResponse::class);
         $response->method('getCollection')->willReturn([$item]);
 
         $normalizer = new ArreteSISHCollectionResponseNormalizer();
@@ -108,7 +108,7 @@ class ArreteSISHCollectionResponseNormalizerTest extends TestCase
             ],
         ]);
 
-        $response = $this->createMock(DossierArreteSISHCollectionResponse::class);
+        $response = $this->createStub(DossierArreteSISHCollectionResponse::class);
         $response->method('getCollection')->willReturn([$item]);
 
         $normalizer = new ArreteSISHCollectionResponseNormalizer();
@@ -154,7 +154,7 @@ class ArreteSISHCollectionResponseNormalizerTest extends TestCase
             ],
         ]);
 
-        $response = $this->createMock(DossierArreteSISHCollectionResponse::class);
+        $response = $this->createStub(DossierArreteSISHCollectionResponse::class);
         $response->method('getCollection')->willReturn([$item]);
 
         $normalizer = new ArreteSISHCollectionResponseNormalizer();
@@ -210,7 +210,7 @@ class ArreteSISHCollectionResponseNormalizerTest extends TestCase
             ],
         ]);
 
-        $response = $this->createMock(DossierArreteSISHCollectionResponse::class);
+        $response = $this->createStub(DossierArreteSISHCollectionResponse::class);
         $response->method('getCollection')->willReturn([$item]);
 
         $normalizer = new ArreteSISHCollectionResponseNormalizer();
@@ -245,7 +245,7 @@ class ArreteSISHCollectionResponseNormalizerTest extends TestCase
             ],
         ]);
 
-        $response = $this->createMock(DossierArreteSISHCollectionResponse::class);
+        $response = $this->createStub(DossierArreteSISHCollectionResponse::class);
         $response->method('getCollection')->willReturn([$item]);
 
         $normalizer = new ArreteSISHCollectionResponseNormalizer();

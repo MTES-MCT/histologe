@@ -13,6 +13,7 @@ use App\Service\Gouv\ProConnect\Response\DiscoveryEndpointsResponse;
 use App\Service\Gouv\ProConnect\Response\JWKSResponse;
 use App\Service\Gouv\ProConnect\Response\OAuth2TokenResponse;
 use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\MockObject\Stub;
 use Random\RandomException;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 use Symfony\Component\HttpFoundation\Request;
@@ -31,8 +32,8 @@ class ProConnectAuthenticationTest extends KernelTestCase
 {
     public function testAuthenticateFromCallbackReturnsValidUser(): void
     {
-        /** @var UrlGeneratorInterface&MockObject $urlGenerator */
-        $urlGenerator = $this->createMock(UrlGeneratorInterface::class);
+        /** @var UrlGeneratorInterface&Stub $urlGenerator */
+        $urlGenerator = $this->createStub(UrlGeneratorInterface::class);
         $requestContext = new RequestContext();
 
         $context = new ProConnectContext(
@@ -110,8 +111,8 @@ class ProConnectAuthenticationTest extends KernelTestCase
      */
     public function testGetLogoutUrlReturnsExpectedUrl(): void
     {
-        /** @var UrlGeneratorInterface&MockObject $urlGenerator */
-        $urlGenerator = $this->createMock(UrlGeneratorInterface::class);
+        /** @var UrlGeneratorInterface&Stub $urlGenerator */
+        $urlGenerator = $this->createStub(UrlGeneratorInterface::class);
         $urlGenerator
             ->method('generate')
             ->willReturnCallback(static fn ($routeName) => match ($routeName) {
@@ -143,10 +144,10 @@ class ProConnectAuthenticationTest extends KernelTestCase
             }))
             ->willReturn($expectedUrl);
 
-        /** @var ProConnectJwtValidator&MockObject $jwtValidator */
-        $jwtValidator = $this->createMock(ProConnectJwtValidator::class);
-        /** @var ProConnectJwtParser&MockObject $jwtParser */
-        $jwtParser = $this->createMock(ProConnectJwtParser::class);
+        /** @var ProConnectJwtValidator&Stub $jwtValidator */
+        $jwtValidator = $this->createStub(ProConnectJwtValidator::class);
+        /** @var ProConnectJwtParser&Stub $jwtParser */
+        $jwtParser = $this->createStub(ProConnectJwtParser::class);
         $proConnectAuthentication = new ProConnectAuthentication(
             $httpClient,
             $context,
@@ -175,11 +176,11 @@ class ProConnectAuthenticationTest extends KernelTestCase
         $expectedRedirectUri = 'https://myapp.com/proconnect/login-callback';
         $expectedAuthorizationUrl = $expectedRedirectUri.'?state='.$expectedState.'&nonce='.$expectedNonce;
 
-        /** @var ProConnectContext&MockObject $contextMock */
-        $contextMock = $this->createMock(ProConnectContext::class);
-        $contextMock->method('getRedirectLoginUrl')->willReturn($expectedRedirectUri);
-        $contextMock->method('generateState')->willReturn($expectedState);
-        $contextMock->method('generateNonce')->willReturn($expectedNonce);
+        /** @var ProConnectContext&Stub $contextStub */
+        $contextStub = $this->createStub(ProConnectContext::class);
+        $contextStub->method('getRedirectLoginUrl')->willReturn($expectedRedirectUri);
+        $contextStub->method('generateState')->willReturn($expectedState);
+        $contextStub->method('generateNonce')->willReturn($expectedNonce);
 
         /** @var ProConnectHttpClient&MockObject $httpClientMock */
         $httpClientMock = $this->createMock(ProConnectHttpClient::class);
@@ -193,13 +194,13 @@ class ProConnectAuthenticationTest extends KernelTestCase
             )
             ->willReturn($expectedAuthorizationUrl);
 
-        /** @var ProConnectJwtValidator&MockObject $jwtValidator */
-        $jwtValidator = $this->createMock(ProConnectJwtValidator::class);
-        /** @var ProConnectJwtParser&MockObject $jwtParser */
-        $jwtParser = $this->createMock(ProConnectJwtParser::class);
+        /** @var ProConnectJwtValidator&Stub $jwtValidator */
+        $jwtValidator = $this->createStub(ProConnectJwtValidator::class);
+        /** @var ProConnectJwtParser&Stub $jwtParser */
+        $jwtParser = $this->createStub(ProConnectJwtParser::class);
         $authentication = new ProConnectAuthentication(
             $httpClientMock,
-            $contextMock,
+            $contextStub,
             $jwtValidator,
             $jwtParser,
             'client_id',

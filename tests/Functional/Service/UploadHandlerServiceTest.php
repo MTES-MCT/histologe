@@ -22,11 +22,11 @@ use Symfony\Component\HttpFoundation\File\UploadedFile;
 
 class UploadHandlerServiceTest extends KernelTestCase
 {
-    private MockObject&FilesystemOperator $filesystemOperator;
+    private FilesystemOperator $filesystemOperator;
     private ParameterBagInterface $parameterBag;
-    private MockObject&LoggerInterface $logger;
-    private MockObject&FilenameGenerator $filenameGenerator;
-    private MockObject&FileDeleter $fileDeleter;
+    private LoggerInterface $logger;
+    private FilenameGenerator $filenameGenerator;
+    private FileDeleter $fileDeleter;
     private TmpFileWriter $tmpFileWriter;
 
     private string $projectDir = '';
@@ -47,12 +47,12 @@ class UploadHandlerServiceTest extends KernelTestCase
             $this->projectDir.$this->fixturesPath.$this->targetFilename.$this->extension
         );
 
-        $this->filesystemOperator = $this->createMock(FilesystemOperator::class);
+        $this->filesystemOperator = $this->createStub(FilesystemOperator::class);
         $this->parameterBag = static::getContainer()->get(ParameterBagInterface::class);
-        $this->logger = $this->createMock(LoggerInterface::class);
-        $this->filenameGenerator = $this->createMock(FilenameGenerator::class);
-        $this->tmpFileWriter = $this->createMock(TmpFileWriter::class);
-        $this->fileDeleter = $this->createMock(FileDeleter::class);
+        $this->logger = $this->createStub(LoggerInterface::class);
+        $this->filenameGenerator = $this->createStub(FilenameGenerator::class);
+        $this->tmpFileWriter = $this->createStub(TmpFileWriter::class);
+        $this->fileDeleter = $this->createStub(FileDeleter::class);
     }
 
     private function getUploadHandlerService(): UploadHandlerService
@@ -84,17 +84,19 @@ class UploadHandlerServiceTest extends KernelTestCase
             true
         );
 
-        $this->filenameGenerator
+        $filenameGenerator = $this->createMock(FilenameGenerator::class);
+        $filenameGenerator
             ->expects($this->once())
             ->method('generate')
             ->with($uploadFile)
             ->willReturn('sample-target-649eb0a54a822.png');
 
-        $this->filenameGenerator
+        $filenameGenerator
             ->expects($this->once())
             ->method('getTitle')
             ->willReturn('sample-target.png');
 
+        $this->filenameGenerator = $filenameGenerator;
         $uploadHandlerService = $this->getUploadHandlerService();
 
         $fileResult = $uploadHandlerService->toTempFolder($uploadFile);
@@ -157,11 +159,13 @@ class UploadHandlerServiceTest extends KernelTestCase
             true
         );
 
-        $this->filesystemOperator
+        $filesystemOperator = $this->createMock(FilesystemOperator::class);
+        $filesystemOperator
         ->expects($this->once())
         ->method('writeStream')
         ->willThrowException(new FileException());
 
+        $this->filesystemOperator = $filesystemOperator;
         $uploadHandlerService = $this->getUploadHandlerService();
 
         $uploadHandler = $uploadHandlerService->toTempFolder($uploadFile);

@@ -47,7 +47,7 @@ class PartnerPerimetreType extends AbstractType
                             GROUP BY c2.codeInsee
                         )')
                     ->setParameter('territory', $territory)
-                    ->orderBy('c.nom', 'ASC');
+                    ->orderBy('c.nom', \SortDirection::Ascending);
             },
             'choice_label' => static function (Commune $commune): string {
                 return $commune->getNom(withArrondissement: true);
@@ -67,7 +67,7 @@ class PartnerPerimetreType extends AbstractType
                         ->where('c.territory = :territory')
                         ->setParameter('territory', $territory)
                         ->groupBy('e.id')
-                        ->orderBy('e.nom', 'ASC');
+                        ->orderBy('e.nom', \SortDirection::Ascending);
                 },
                 'choice_label' => 'nom',
                 'help' => 'Sélectionner la ou la liste des EPCI d\'intervention',
@@ -82,7 +82,7 @@ class PartnerPerimetreType extends AbstractType
                 return $zoneRepository->createQueryBuilder('z')
                     ->where('z.territory = :territory')
                     ->setParameter('territory', $territory)
-                    ->orderBy('z.name', 'ASC');
+                    ->orderBy('z.name', \SortDirection::Ascending);
             },
             'choice_label' => 'name',
             'label' => 'Zones',
@@ -96,7 +96,7 @@ class PartnerPerimetreType extends AbstractType
                 return $zoneRepository->createQueryBuilder('z')
                     ->where('z.territory = :territory')
                     ->setParameter('territory', $territory)
-                    ->orderBy('z.name', 'ASC');
+                    ->orderBy('z.name', \SortDirection::Ascending);
             },
             'choice_label' => 'name',
             'label' => 'Zones à exclure',

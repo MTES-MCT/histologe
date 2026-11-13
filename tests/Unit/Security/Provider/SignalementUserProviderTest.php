@@ -9,7 +9,7 @@ use App\Security\Provider\SignalementUserProvider;
 use App\Security\User\SignalementUser;
 use App\Tests\FixturesHelper;
 use Doctrine\ORM\NonUniqueResultException;
-use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\MockObject\Stub;
 use PHPUnit\Framework\TestCase;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Security\Core\Exception\UserNotFoundException;
@@ -19,15 +19,15 @@ class SignalementUserProviderTest extends TestCase
 {
     use FixturesHelper;
 
-    private MockObject&SignalementRepository $signalementRepository;
-    private MockObject&UserRepository $userRepository;
-    private MockObject&LoggerInterface $logger;
+    private Stub&SignalementRepository $signalementRepository;
+    private Stub&UserRepository $userRepository;
+    private Stub&LoggerInterface $logger;
 
     protected function setUp(): void
     {
-        $this->signalementRepository = $this->createMock(SignalementRepository::class);
-        $this->userRepository = $this->createMock(UserRepository::class);
-        $this->logger = $this->createMock(LoggerInterface::class);
+        $this->signalementRepository = $this->createStub(SignalementRepository::class);
+        $this->userRepository = $this->createStub(UserRepository::class);
+        $this->logger = $this->createStub(LoggerInterface::class);
     }
 
     /**
@@ -36,19 +36,22 @@ class SignalementUserProviderTest extends TestCase
     public function testLoadUserByIdentifierReturnsSignalementUser(): void
     {
         $signalement = $this->getSignalementLocataire();
-        $mockUser = $this->createMock(User::class);
-        $this->signalementRepository
+        $mockUser = $this->createStub(User::class);
+        $signalementRepositoryMock = $this->createMock(SignalementRepository::class);
+        $signalementRepositoryMock
+            ->expects($this->once())
             ->method('findOneByCodeForPublic')
             ->with('12345678')
             ->willReturn($signalement);
 
-        $this->userRepository
+        $userRepositoryMock = $this->createMock(UserRepository::class);
+        $userRepositoryMock
             ->expects($this->once())
             ->method('findOneBy')
             ->with(['email' => 'luc.martin@example.com'])
             ->willReturn($mockUser);
 
-        $signalementRepository = new SignalementUserProvider($this->signalementRepository, $this->userRepository, $this->logger);
+        $signalementRepository = new SignalementUserProvider($signalementRepositoryMock, $userRepositoryMock, $this->logger);
         /** @var SignalementUser $user */
         $user = $signalementRepository->loadUserByIdentifier('12345678:occupant');
 
@@ -80,8 +83,8 @@ class SignalementUserProviderTest extends TestCase
     {
         $signalementUserProvider = new SignalementUserProvider($this->signalementRepository, $this->userRepository, $this->logger);
 
-        /** @var MockObject&User $invalidUser */
-        $invalidUser = $this->createMock(UserInterface::class);
+        /** @var Stub&UserInterface $invalidUser */
+        $invalidUser = $this->createStub(UserInterface::class);
         $this->expectException(\InvalidArgumentException::class);
         $this->expectExceptionMessage('Instances de');
 
@@ -95,20 +98,24 @@ class SignalementUserProviderTest extends TestCase
     {
         $signalement = $this->getSignalementLocataire();
 
-        /** @var MockObject&User $mockUserEntity */
-        $mockUserEntity = $this->createMock(User::class);
+        /** @var Stub&User $mockUserEntity */
+        $mockUserEntity = $this->createStub(User::class);
 
-        $this->signalementRepository
+        $signalementRepositoryMock = $this->createMock(SignalementRepository::class);
+        $signalementRepositoryMock
+            ->expects($this->once())
             ->method('findOneByCodeForPublic')
             ->with('12345678')
             ->willReturn($signalement);
 
-        $this->userRepository
+        $userRepositoryMock = $this->createMock(UserRepository::class);
+        $userRepositoryMock
+            ->expects($this->once())
             ->method('findOneBy')
             ->with(['email' => 'luc.martin@example.com'])
             ->willReturn($mockUserEntity);
 
-        $signalementUserProvider = new SignalementUserProvider($this->signalementRepository, $this->userRepository, $this->logger);
+        $signalementUserProvider = new SignalementUserProvider($signalementRepositoryMock, $userRepositoryMock, $this->logger);
 
         $signalementUser = new SignalementUser(
             '12345678:occupant',

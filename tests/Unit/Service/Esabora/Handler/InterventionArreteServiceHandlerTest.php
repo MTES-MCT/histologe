@@ -12,7 +12,7 @@ use App\Service\Interconnection\Esabora\Normalizer\ArreteSISHCollectionResponseN
 use App\Service\Interconnection\Esabora\Response\DossierArreteSISHCollectionResponse;
 use App\Service\Interconnection\Esabora\Response\Model\DossierArreteSISH;
 use App\Tests\FixturesHelper;
-use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\MockObject\Stub;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\DependencyInjection\Attribute\AsTaggedItem;
 
@@ -20,17 +20,17 @@ class InterventionArreteServiceHandlerTest extends TestCase
 {
     use FixturesHelper;
 
-    protected EsaboraSISHService&MockObject $esaboraSISHService;
-    protected EsaboraManager&MockObject $esaboraManager;
-    protected ArreteSISHCollectionResponseNormalizer&MockObject $normalizer;
+    protected EsaboraSISHService&Stub $esaboraSISHService;
+    protected EsaboraManager&Stub $esaboraManager;
+    protected ArreteSISHCollectionResponseNormalizer&Stub $normalizer;
     protected InterventionArreteServiceHandler $handler;
     protected Affectation $affectation;
 
     protected function setUp(): void
     {
-        $this->esaboraSISHService = $this->createMock(EsaboraSISHService::class);
-        $this->esaboraManager = $this->createMock(EsaboraManager::class);
-        $this->normalizer = $this->createMock(ArreteSISHCollectionResponseNormalizer::class);
+        $this->esaboraSISHService = $this->createStub(EsaboraSISHService::class);
+        $this->esaboraManager = $this->createStub(EsaboraManager::class);
+        $this->normalizer = $this->createStub(ArreteSISHCollectionResponseNormalizer::class);
 
         $this->handler = new InterventionArreteServiceHandler(
             $this->esaboraSISHService,
@@ -44,8 +44,8 @@ class InterventionArreteServiceHandlerTest extends TestCase
         $filepath = __DIR__.'/../../../../../tools/wiremock/src/Resources/Esabora/sish/ws_arretes_dossier_sas.json';
         $responseEsabora = json_decode((string) file_get_contents($filepath), true);
 
-        $this->esaboraSISHService = $this->createMock(EsaboraSISHService::class);
-        $this->esaboraSISHService
+        $esaboraSISHService = $this->createMock(EsaboraSISHService::class);
+        $esaboraSISHService
             ->expects($this->once())
             ->method('getArreteDossier')
             ->with($this->affectation = $this->getAffectation(PartnerType::ARS))
@@ -69,8 +69,8 @@ class InterventionArreteServiceHandlerTest extends TestCase
             ],
         ]);
 
-        $this->esaboraManager = $this->createMock(EsaboraManager::class);
-        $this->esaboraManager
+        $esaboraManager = $this->createMock(EsaboraManager::class);
+        $esaboraManager
             ->expects($this->exactly(2))
             ->method('createOrUpdateArrete')
             ->willReturnCallback(static function (Affectation $affectation, DossierArreteSISH $item) use (&$calls) {
@@ -84,16 +84,17 @@ class InterventionArreteServiceHandlerTest extends TestCase
             null
         );
 
-        $this->normalizer
+        $normalizer = $this->createMock(ArreteSISHCollectionResponseNormalizer::class);
+        $normalizer
             ->expects($this->once())
             ->method('normalize')
             ->with($dossierArreteCollection)
             ->willReturn($normalizedResponse);
 
         $this->handler = new InterventionArreteServiceHandler(
-            $this->esaboraSISHService,
-            $this->normalizer,
-            $this->esaboraManager,
+            $esaboraSISHService,
+            $normalizer,
+            $esaboraManager,
         );
 
         $this->handler->handle($this->affectation, $this->affectation->getSignalement()->getUuid());

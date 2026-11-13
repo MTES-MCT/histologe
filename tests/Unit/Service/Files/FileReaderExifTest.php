@@ -9,6 +9,7 @@ use Intervention\Image\ImageManager;
 use Intervention\Image\Interfaces\ImageInterface;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\MockObject\Stub;
 use PHPUnit\Framework\TestCase;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\HttpFoundation\File\File as HttpFile;
@@ -17,16 +18,18 @@ class FileReaderExifTest extends TestCase
 {
     private ImageManager&MockObject $imageManager;
     private ImageVariantProvider&MockObject $imageVariantProvider;
-    private LoggerInterface&MockObject $logger;
-    private FileReaderExif $fileReaderExif;
+    private LoggerInterface&Stub $logger;
 
     protected function setUp(): void
     {
         $this->imageManager = $this->createMock(ImageManager::class);
         $this->imageVariantProvider = $this->createMock(ImageVariantProvider::class);
-        $this->logger = $this->createMock(LoggerInterface::class);
+        $this->logger = $this->createStub(LoggerInterface::class);
+    }
 
-        $this->fileReaderExif = new FileReaderExif(
+    private function getFileReaderExif(): FileReaderExif
+    {
+        return new FileReaderExif(
             $this->imageManager,
             $this->imageVariantProvider,
             $this->logger
@@ -39,7 +42,7 @@ class FileReaderExifTest extends TestCase
         $exifDate = sprintf('%d:10:14 11:03:51', $currentYear);
 
         $file = $this->createFileWithExifData('test.jpg', $exifDate);
-        $this->fileReaderExif->setDatePriseDeVueFromExifData($file);
+        $this->getFileReaderExif()->setDatePriseDeVueFromExifData($file);
 
         $this->assertInstanceOf(\DateTimeImmutable::class, $file->getDatePriseDeVue());
         $this->assertEquals(sprintf('%d-10-14 11:03:51', $currentYear), $file->getDatePriseDeVue()->format('Y-m-d H:i:s'));
@@ -51,7 +54,7 @@ class FileReaderExifTest extends TestCase
         $exifDate = sprintf('%d:10:14 11:03:51.989', $currentYear);
 
         $file = $this->createFileWithExifData('test.jpg', $exifDate);
-        $this->fileReaderExif->setDatePriseDeVueFromExifData($file);
+        $this->getFileReaderExif()->setDatePriseDeVueFromExifData($file);
 
         $this->assertInstanceOf(\DateTimeImmutable::class, $file->getDatePriseDeVue());
         $this->assertEquals(sprintf('%d-10-14 11:03:51.989000', $currentYear), $file->getDatePriseDeVue()->format('Y-m-d H:i:s.u'));
@@ -63,7 +66,7 @@ class FileReaderExifTest extends TestCase
         $exifDate = sprintf('%d:10:14 11:03:51.123456', $currentYear);
 
         $file = $this->createFileWithExifData('test.jpg', $exifDate);
-        $this->fileReaderExif->setDatePriseDeVueFromExifData($file);
+        $this->getFileReaderExif()->setDatePriseDeVueFromExifData($file);
 
         $this->assertInstanceOf(\DateTimeImmutable::class, $file->getDatePriseDeVue());
         $this->assertEquals(sprintf('%d-10-14 11:03:51.123456', $currentYear), $file->getDatePriseDeVue()->format('Y-m-d H:i:s.u'));
@@ -74,7 +77,9 @@ class FileReaderExifTest extends TestCase
     {
         $file = $this->createFileWithExifData('test.jpg', $exifDate);
 
-        $this->logger->expects($this->once())
+        $logger = $this->createMock(LoggerInterface::class);
+        $this->logger = $logger;
+        $logger->expects($this->once())
             ->method('error')
             ->with(
                 $this->stringContains('Impossible de convertir la donnée EXIF DateTimeOriginal'),
@@ -84,7 +89,7 @@ class FileReaderExifTest extends TestCase
                 })
             );
 
-        $this->fileReaderExif->setDatePriseDeVueFromExifData($file);
+        $this->getFileReaderExif()->setDatePriseDeVueFromExifData($file);
 
         $this->assertNull($file->getDatePriseDeVue());
     }
@@ -105,9 +110,11 @@ class FileReaderExifTest extends TestCase
     {
         $file = $this->createFileWithExifData('test.jpg', $exifDate);
 
-        $this->logger->expects($this->never())->method('error');
+        $logger = $this->createMock(LoggerInterface::class);
+        $this->logger = $logger;
+        $logger->expects($this->never())->method('error');
 
-        $this->fileReaderExif->setDatePriseDeVueFromExifData($file);
+        $this->getFileReaderExif()->setDatePriseDeVueFromExifData($file);
 
         $this->assertNull($file->getDatePriseDeVue());
     }
@@ -133,7 +140,7 @@ class FileReaderExifTest extends TestCase
     public function testSetDatePriseDeVueOnImageDecodeFailure(): void
     {
         $file = new File()->setFilename('corrupted.jpg');
-        $httpFile = $this->createMock(HttpFile::class);
+        $httpFile = $this->createStub(HttpFile::class);
 
         $this->imageVariantProvider->expects($this->once())
             ->method('getFileVariant')
@@ -145,13 +152,15 @@ class FileReaderExifTest extends TestCase
             ->with($httpFile)
             ->willThrowException(new \Exception('Decoding failed'));
 
-        $this->logger->expects($this->once())
+        $logger = $this->createMock(LoggerInterface::class);
+        $this->logger = $logger;
+        $logger->expects($this->once())
             ->method('error')
             ->with(
                 $this->stringContains('Impossible de décoder l\'image pour le fichier')
             );
 
-        $this->fileReaderExif->setDatePriseDeVueFromExifData($file);
+        $this->getFileReaderExif()->setDatePriseDeVueFromExifData($file);
 
         $this->assertNull($file->getDatePriseDeVue());
     }
@@ -159,7 +168,7 @@ class FileReaderExifTest extends TestCase
     private function createFileWithExifData(string $filename, mixed $exifDate): File
     {
         $file = new File()->setFilename($filename);
-        $httpFile = $this->createMock(HttpFile::class);
+        $httpFile = $this->createStub(HttpFile::class);
         $image = $this->createMock(ImageInterface::class);
 
         $this->imageVariantProvider->expects($this->once())

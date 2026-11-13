@@ -17,12 +17,12 @@ class EmailAlertCheckerTest extends TestCase
     public function testBuildUserEmailAlertReturnsTrueOnlyForEmailsWithIssue(): void
     {
         $userQuery = $this->createMock(UserQuery::class);
-        $partnerQuery = $this->createMock(PartnerQuery::class);
+        $partnerQuery = $this->createStub(PartnerQuery::class);
         $emailAlertChecker = new EmailAlertChecker($partnerQuery, $userQuery);
 
-        $user1 = $this->createConfiguredMock(User::class, ['getEmail' => self::USER_01]);
-        $user2 = $this->createConfiguredMock(User::class, ['getEmail' => self::USER_02]);
-        $user3 = $this->createConfiguredMock(User::class, ['getEmail' => self::USER_03]);
+        $user1 = $this->createConfiguredStub(User::class, ['getEmail' => self::USER_01]);
+        $user2 = $this->createConfiguredStub(User::class, ['getEmail' => self::USER_02]);
+        $user3 = $this->createConfiguredStub(User::class, ['getEmail' => self::USER_03]);
 
         $users = [$user1, $user2, $user3];
 

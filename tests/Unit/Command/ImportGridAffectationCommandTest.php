@@ -12,6 +12,7 @@ use App\Tests\FixturesHelper;
 use Doctrine\ORM\EntityManagerInterface;
 use League\Flysystem\FilesystemOperator;
 use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\MockObject\Stub;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 use Symfony\Component\Console\Tester\CommandTester;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
@@ -24,24 +25,24 @@ class ImportGridAffectationCommandTest extends KernelTestCase
     private MockObject&FilesystemOperator $fileStorage;
     private ParameterBagInterface $parameterBag;
     private MockObject&TerritoryRepository $territoryRepository;
-    private MockObject&CsvParser $csvParser;
+    private Stub&CsvParser $csvParser;
     private MockObject&GridAffectationLoader $gridAffectationLoader;
-    private MockObject&UploadHandlerService $uploadHandlerServiceMock;
-    private MockObject&NotificationMailerRegistry $notificationMailerRegistryMock;
+    private UploadHandlerService $uploadHandlerServiceMock;
+    private NotificationMailerRegistry $notificationMailerRegistryMock;
     private MockObject&UrlGeneratorInterface $urlGeneratorMock;
-    private MockObject&EntityManagerInterface $entityManagerMock;
+    private Stub&EntityManagerInterface $entityManagerMock;
 
     protected function setUp(): void
     {
         $this->fileStorage = $this->createMock(FilesystemOperator::class);
         $this->parameterBag = static::getContainer()->get(ParameterBagInterface::class);
         $this->territoryRepository = $this->createMock(TerritoryRepository::class);
-        $this->csvParser = $this->createMock(CsvParser::class);
+        $this->csvParser = $this->createStub(CsvParser::class);
         $this->gridAffectationLoader = $this->createMock(GridAffectationLoader::class);
-        $this->uploadHandlerServiceMock = $this->createMock(UploadHandlerService::class);
-        $this->notificationMailerRegistryMock = $this->createMock(NotificationMailerRegistry::class);
+        $this->uploadHandlerServiceMock = $this->createStub(UploadHandlerService::class);
+        $this->notificationMailerRegistryMock = $this->createStub(NotificationMailerRegistry::class);
         $this->urlGeneratorMock = $this->createMock(UrlGeneratorInterface::class);
-        $this->entityManagerMock = $this->createMock(EntityManagerInterface::class);
+        $this->entityManagerMock = $this->createStub(EntityManagerInterface::class);
         $this->urlGeneratorMock
             ->expects($this->once())
             ->method('generate')
@@ -68,15 +69,19 @@ class ImportGridAffectationCommandTest extends KernelTestCase
             ->method('getMetaData')
             ->willReturn(['nb_partners' => 10, 'nb_users_created' => 55, 'nb_users_multi_territory' => 2, 'errors' => []]);
 
-        $this->uploadHandlerServiceMock
+        $uploadHandlerServiceMock = $this->createMock(UploadHandlerService::class);
+        $uploadHandlerServiceMock
             ->expects($this->once())
             ->method('createTmpFileFromBucket');
 
-        $this->notificationMailerRegistryMock
+        $this->uploadHandlerServiceMock = $uploadHandlerServiceMock;
+        $notificationMailerRegistryMock = $this->createMock(NotificationMailerRegistry::class);
+        $notificationMailerRegistryMock
             ->expects($this->once())
             ->method('send')
             ->willReturn(true);
 
+        $this->notificationMailerRegistryMock = $notificationMailerRegistryMock;
         $command = new ImportGridAffectationCommand(
             $this->fileStorage,
             $this->parameterBag,

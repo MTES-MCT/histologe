@@ -80,7 +80,7 @@ class SearchDashboardAverifierType extends AbstractType
                 if ($territory) {
                     $query->where('p.territory = :territory')
                        ->setParameter('territory', $territory)
-                       ->orderBy('p.nom', 'ASC');
+                       ->orderBy('p.nom', \SortDirection::Ascending);
                 } else {
                     $query->where('1 = 0');
                 }

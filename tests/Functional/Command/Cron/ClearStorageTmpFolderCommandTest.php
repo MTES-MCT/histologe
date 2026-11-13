@@ -38,7 +38,7 @@ class ClearStorageTmpFolderCommandTest extends KernelTestCase
      */
     public function testExecuteWithFilesToDelete(): void
     {
-        $storageAttributeMock = $this->createMock(StorageAttributes::class);
+        $storageAttributeMock = $this->createStub(StorageAttributes::class);
         $storageAttributeMock->method('type')->willReturn('file');
         $storageAttributeMock->method('path')->willReturn('tmp/file1.txt');
         $storageAttributeMock->method('lastModified')->willReturn(strtotime('- 7 months'));

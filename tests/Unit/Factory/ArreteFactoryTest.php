@@ -16,30 +16,28 @@ use App\Tests\Fake\AddressServiceFake;
 use App\Tests\Fake\RnbServiceFake;
 use App\Tests\FixturesHelper;
 use LongitudeOne\Spatial\Exception\InvalidValueException;
-use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
 use PHPUnit\Framework\Attributes\DataProvider;
-use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\MockObject\Stub;
 use PHPUnit\Framework\TestCase;
 
-#[AllowMockObjectsWithoutExpectations]
 class ArreteFactoryTest extends TestCase
 {
     use FixturesHelper;
 
     private AddressService $addressService;
     private RnbServiceFake $rnbService;
-    private MockObject|AddressRepository $addressRepository;
-    private MockObject|ZipcodeProvider $zipcodeProvider;
+    private Stub|AddressRepository $addressRepository;
+    private Stub|ZipcodeProvider $zipcodeProvider;
     private ArreteFactory $arreteFactory;
-    private MockObject|AddressFactory $addressFactory;
+    private Stub|AddressFactory $addressFactory;
 
     protected function setUp(): void
     {
         $this->addressService = new AddressServiceFake();
         $this->rnbService = new RnbServiceFake();
-        $this->addressRepository = $this->createMock(AddressRepository::class);
-        $this->zipcodeProvider = $this->createMock(ZipcodeProvider::class);
-        $this->addressFactory = $this->createMock(AddressFactory::class);
+        $this->addressRepository = $this->createStub(AddressRepository::class);
+        $this->zipcodeProvider = $this->createStub(ZipcodeProvider::class);
+        $this->addressFactory = $this->createStub(AddressFactory::class);
 
         $this->arreteFactory = new ArreteFactory(
             $this->addressService,
@@ -73,23 +71,23 @@ class ArreteFactoryTest extends TestCase
         /** @var User|null $currentUser */
         $currentUser = null;
         if ('admin_user_diff_territory' === $user) {
-            /** @var MockObject&User $userMock */
-            $userMock = $this->createMock(User::class);
-            $userMock->expects($this->any())->method('isTerritoryAdmin')->willReturn(true);
+            /** @var Stub&User $userMock */
+            $userMock = $this->createStub(User::class);
+            $userMock->method('isTerritoryAdmin')->willReturn(true);
             $userTerritory = $this->getTerritory(name: 'Autre Territoire', zip: '13');
             $reflectionUserTerritory = new \ReflectionClass($userTerritory);
             $propertyUserTerritory = $reflectionUserTerritory->getProperty('id');
             $propertyUserTerritory->setValue($userTerritory, 13);
-            $userMock->expects($this->any())->method('getFirstTerritory')->willReturn($userTerritory);
+            $userMock->method('getFirstTerritory')->willReturn($userTerritory);
             $currentUser = $userMock;
         } elseif ($user instanceof User) {
             $currentUser = $user;
         }
 
         if ($this->addressService->getAcceptableBanAddress($arreteImportRow->getAddress())) {
-            /** @var MockObject&AddressRepository $addressRepository */
+            /** @var Stub&AddressRepository $addressRepository */
             $addressRepository = $this->addressRepository;
-            $addressRepository->expects($this->any())->method('findOneBy')
+            $addressRepository->method('findOneBy')
                 ->willReturnCallback(static function ($criteria) use ($existingAddressByBanId, $existingAddressByCriteria) {
                     if (isset($criteria['banId'])) {
                         return $existingAddressByBanId;
@@ -98,9 +96,9 @@ class ArreteFactoryTest extends TestCase
                     return $existingAddressByCriteria;
                 });
 
-            /** @var MockObject&ZipcodeProvider $zipcodeProvider */
+            /** @var Stub&ZipcodeProvider $zipcodeProvider */
             $zipcodeProvider = $this->zipcodeProvider;
-            $zipcodeProvider->expects($this->any())->method('getTerritoryByInseeCode')
+            $zipcodeProvider->method('getTerritoryByInseeCode')
                 ->willReturn($territory);
         }
 

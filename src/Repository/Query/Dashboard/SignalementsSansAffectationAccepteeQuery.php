@@ -130,7 +130,7 @@ class SignalementsSansAffectationAccepteeQuery
         ';
 
         if ($params && in_array($params->sortBy, ['affectedAt', 'nomOccupant'], true)
-            && in_array($params->orderBy, ['ASC', 'DESC', 'asc', 'desc'], true)
+            && in_array($params->orderBy, ['ASC', 'DESC'], true)
         ) {
             if ('affectedAt' === $params->sortBy) {
                 $sql .= ' ORDER BY MAX(a.created_at) '.$params->orderBy;

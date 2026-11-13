@@ -13,6 +13,7 @@ use App\Service\DashboardTabPanel\TabDossier;
 use App\Service\DashboardTabPanel\TabDossierResult;
 use App\Service\DashboardTabPanel\TabQueryParameters;
 use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\MockObject\Stub;
 use PHPUnit\Framework\TestCase;
 use Symfony\Bundle\SecurityBundle\Security;
 
@@ -20,12 +21,12 @@ class DossiersFermePartenaireTousTabBodyLoaderTest extends TestCase
 {
     public function testLoadFillsTabBodyWithExpectedData(): void
     {
-        /** @var User&MockObject $user */
-        $user = $this->createMock(User::class);
+        /** @var User&Stub $user */
+        $user = $this->createStub(User::class);
         $user->method('isSuperAdmin')->willReturn(true);
 
-        /** @var Security&MockObject $security */
-        $security = $this->createMock(Security::class);
+        /** @var Security&Stub $security */
+        $security = $this->createStub(Security::class);
         $security->method('isGranted')->willReturn(true);
         $security->method('getUser')->willReturn($user);
 
@@ -63,8 +64,8 @@ class DossiersFermePartenaireTousTabBodyLoaderTest extends TestCase
 
     public function testLoadKeepsExistingOrderBy(): void
     {
-        /** @var Security&MockObject $security */
-        $security = $this->createMock(Security::class);
+        /** @var Security&Stub $security */
+        $security = $this->createStub(Security::class);
         $security->method('isGranted')->willReturn(true);
 
         /** @var TabDataManager&MockObject $tabDataManager */

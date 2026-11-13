@@ -24,21 +24,20 @@ use App\Service\Signalement\ReferenceGenerator;
 use App\Service\UploadHandlerService;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ManagerRegistry;
-use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\MockObject\Stub;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 
 class InjonctionBailleurServiceTest extends KernelTestCase
 {
-    private MockObject&SuiviManager $suiviManager;
-    private MockObject&AutoAssigner $autoAssigner;
+    private Stub&SuiviManager $suiviManager;
+    private Stub&AutoAssigner $autoAssigner;
     private EntityManagerInterface $entityManager;
     private AffectationManager $affectationManager;
     private UserManager $userManager;
     private SignalementManager $signalementManager;
     private PartnerRepository $partnerRepository;
     private ReferenceGenerator $referenceGenerator;
-    private InjonctionBailleurService $service;
     private EngagementTravauxBailleurGenerator $engagementTravauxBailleurGenerator;
     private ParameterBagInterface $parameterBag;
     private UploadHandlerService $uploadHandlerService;
@@ -48,8 +47,8 @@ class InjonctionBailleurServiceTest extends KernelTestCase
     protected function setUp(): void
     {
         $kernel = self::bootKernel();
-        $this->suiviManager = $this->createMock(SuiviManager::class);
-        $this->autoAssigner = $this->createMock(AutoAssigner::class);
+        $this->suiviManager = $this->createStub(SuiviManager::class);
+        $this->autoAssigner = $this->createStub(AutoAssigner::class);
         /** @var ManagerRegistry $doctrine */
         $doctrine = $kernel->getContainer()->get('doctrine');
         /** @var EntityManagerInterface $entityManager */
@@ -65,7 +64,11 @@ class InjonctionBailleurServiceTest extends KernelTestCase
         $this->uploadHandlerService = static::getContainer()->get(UploadHandlerService::class);
         $this->fileManager = static::getContainer()->get(FileManager::class);
         $this->notificationAndMailSender = static::getContainer()->get(NotificationAndMailSender::class);
-        $this->service = new InjonctionBailleurService(
+    }
+
+    private function createService(): InjonctionBailleurService
+    {
+        return new InjonctionBailleurService(
             $this->suiviManager,
             $this->autoAssigner,
             $this->entityManager,
@@ -95,7 +98,9 @@ class InjonctionBailleurServiceTest extends KernelTestCase
 
         // On s'attend à 2 appels à createSuivi
         $callIndex = 0;
-        $this->suiviManager->expects($this->exactly(2))
+        $suiviManager = $this->createMock(SuiviManager::class);
+        $this->suiviManager = $suiviManager;
+        $suiviManager->expects($this->exactly(2))
             ->method('createSuivi')
             ->willReturnCallback(function (...$args) use (&$callIndex) {
                 if (0 === $callIndex) {
@@ -112,9 +117,11 @@ class InjonctionBailleurServiceTest extends KernelTestCase
                 return new Suivi();
             });
 
-        $this->autoAssigner->expects($this->once())->method('assignOrSendNewSignalementNotification')->with($signalement);
+        $autoAssigner = $this->createMock(AutoAssigner::class);
+        $this->autoAssigner = $autoAssigner;
+        $autoAssigner->expects($this->once())->method('assignOrSendNewSignalementNotification')->with($signalement);
         $this->entityManager->beginTransaction();
-        $this->service->handleStopProcedure($stopProcedure);
+        $this->createService()->handleStopProcedure($stopProcedure);
         $this->entityManager->flush();
         $this->entityManager->commit();
 
@@ -137,7 +144,9 @@ class InjonctionBailleurServiceTest extends KernelTestCase
 
         // On s'attend à 2 appels à createSuivi
         $callIndex = 0;
-        $this->suiviManager->expects($this->exactly(2))
+        $suiviManager = $this->createMock(SuiviManager::class);
+        $this->suiviManager = $suiviManager;
+        $suiviManager->expects($this->exactly(2))
             ->method('createSuivi')
             ->willReturnCallback(function (...$args) use (&$callIndex) {
                 if (0 === $callIndex) {
@@ -154,9 +163,11 @@ class InjonctionBailleurServiceTest extends KernelTestCase
                 return new Suivi();
             });
 
-        $this->autoAssigner->expects($this->never())->method('assignOrSendNewSignalementNotification')->with($signalement);
+        $autoAssigner = $this->createMock(AutoAssigner::class);
+        $this->autoAssigner = $autoAssigner;
+        $autoAssigner->expects($this->never())->method('assignOrSendNewSignalementNotification')->with($signalement);
         $this->entityManager->beginTransaction();
-        $this->service->handleStopProcedure($stopProcedure);
+        $this->createService()->handleStopProcedure($stopProcedure);
         $this->entityManager->flush();
         $this->entityManager->commit();
 
@@ -169,7 +180,7 @@ class InjonctionBailleurServiceTest extends KernelTestCase
         /** @var Signalement $signalement */
         $signalement = $signalementRepository->findOneBy(['uuid' => '00000000-0000-0000-2025-000000000012']);
 
-        $this->service->assignHelpingPartners($signalement);
+        $this->createService()->assignHelpingPartners($signalement);
 
         $this->assertCount(1, $signalement->getAffectations());
     }

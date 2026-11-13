@@ -35,7 +35,7 @@ class TerritoryRepository extends ServiceEntityRepository
             $qb->where('t.isActive = 1');
         }
 
-        $qb->orderBy('t.zip', 'ASC');
+        $qb->orderBy('t.zip', \SortDirection::Ascending);
 
         if ($indexById) {
             $qb->indexBy('t', 't.id');
@@ -68,7 +68,7 @@ class TerritoryRepository extends ServiceEntityRepository
         $qb = $this->createQueryBuilder('t')
             ->innerJoin('t.autoAffectationRules', 'aar')
             ->addSelect('aar')
-            ->orderBy('t.zip', 'ASC');
+            ->orderBy('t.zip', \SortDirection::Ascending);
 
         return $qb->getQuery()->getResult();
     }

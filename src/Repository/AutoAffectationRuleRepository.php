@@ -59,9 +59,9 @@ class AutoAffectationRuleRepository extends ServiceEntityRepository
 
         if (!empty($orderType)) {
             [$orderField, $orderDirection] = explode('-', $orderType);
-            $queryBuilder->orderBy($orderField, $orderDirection);
+            $queryBuilder->orderBy($orderField, 'ASC' === $orderDirection ? \SortDirection::Ascending : \SortDirection::Descending);
         } else {
-            $queryBuilder->orderBy('aar.createdAt', 'DESC');
+            $queryBuilder->orderBy('aar.createdAt', \SortDirection::Descending);
         }
 
         return new Paginator($queryBuilder->getQuery(), false);

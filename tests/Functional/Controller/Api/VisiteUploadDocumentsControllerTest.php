@@ -43,10 +43,10 @@ class VisiteUploadDocumentsControllerTest extends WebTestCase
             true
         );
 
-        $imageManipulationHandler = $this->createMock(ImageManipulationHandler::class);
+        $imageManipulationHandler = $this->createStub(ImageManipulationHandler::class);
         static::getContainer()->set(ImageManipulationHandler::class, $imageManipulationHandler);
 
-        $uploadHandlerServiceMock = $this->createMock(UploadHandlerService::class);
+        $uploadHandlerServiceMock = $this->createStub(UploadHandlerService::class);
         $uploadHandlerServiceMock
             ->method('uploadFromFile')
             ->willReturnOnConsecutiveCalls('sample.jpg', '');

@@ -17,7 +17,7 @@ class InterventionEditedListenerTest extends TestCase
      */
     private function createPreUpdateArgs(object $entity, array $changeSet): PreUpdateEventArgs
     {
-        $em = $this->createMock(EntityManagerInterface::class);
+        $em = $this->createStub(EntityManagerInterface::class);
 
         return new PreUpdateEventArgs($entity, $em, $changeSet);
     }

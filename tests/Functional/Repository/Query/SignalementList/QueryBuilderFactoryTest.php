@@ -7,7 +7,7 @@ use App\Entity\User;
 use App\Repository\Query\SignalementList\QueryBuilderFactory;
 use Doctrine\Common\Collections\ArrayCollection;
 use PHPUnit\Framework\Attributes\DataProvider;
-use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\MockObject\Stub;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 
 class QueryBuilderFactoryTest extends KernelTestCase
@@ -23,8 +23,8 @@ class QueryBuilderFactoryTest extends KernelTestCase
         array $options,
         array $expectedParams,
     ): void {
-        /** @var User&MockObject $user */
-        $user = $this->createMock(User::class);
+        /** @var User&Stub $user */
+        $user = $this->createStub(User::class);
         $user->method('isUserPartner')->willReturn($userConfig['isUserPartner']);
         $user->method('isPartnerAdmin')->willReturn($userConfig['isPartnerAdmin']);
         $user->method('isTerritoryAdmin')->willReturn($userConfig['isTerritoryAdmin']);

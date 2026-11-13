@@ -57,19 +57,22 @@ class NotificationRepository extends ServiceEntityRepository
             if ('si.reference' === $orderField) {
                 $qb->orderBy(
                     'SUBSTRING_INDEX(si.reference, \'-\', 1)',
-                    $orderDirection
+                    'ASC' === $orderDirection ? \SortDirection::Ascending : \SortDirection::Descending
                 )
                 ->addOrderBy(
                     'CAST(SUBSTRING_INDEX(si.reference, \'-\', -1) AS UNSIGNED)',
-                    $orderDirection
+                    'ASC' === $orderDirection ? \SortDirection::Ascending : \SortDirection::Descending
                 );
             } elseif ('cb.nom' === $orderField) {
-                $qb->orderBy('CASE WHEN cb.nom IS NOT NULL THEN cb.nom WHEN ab.nom IS NOT NULL THEN ab.nom ELSE si.nomOccupant END', $orderDirection);
+                $qb->orderBy(
+                    'CASE WHEN cb.nom IS NOT NULL THEN cb.nom WHEN ab.nom IS NOT NULL THEN ab.nom ELSE si.nomOccupant END',
+                    'ASC' === $orderDirection ? \SortDirection::Ascending : \SortDirection::Descending
+                );
             } else {
-                $qb->orderBy($orderField, $orderDirection);
+                $qb->orderBy($orderField, 'ASC' === $orderDirection ? \SortDirection::Ascending : \SortDirection::Descending);
             }
         } else {
-            $qb->orderBy('n.createdAt', 'DESC');
+            $qb->orderBy('n.createdAt', \SortDirection::Descending);
         }
 
         $firstResult = ($searchNotification->getPage() - 1) * $maxResult;
@@ -90,7 +93,7 @@ class NotificationRepository extends ServiceEntityRepository
             ->andWhere('n.waitMailingSummary = :waitMailingSummary')
             ->setParameter('user', $user)
             ->setParameter('waitMailingSummary', true)
-            ->addOrderBy('n.createdAt', 'DESC')
+            ->addOrderBy('n.createdAt', \SortDirection::Descending)
             ->getQuery()
             ->getResult();
     }

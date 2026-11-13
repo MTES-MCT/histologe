@@ -197,7 +197,7 @@ class DossiersSansSuivisPartenaireQuery
         $sql .= ' GROUP BY si.id, si.uuid, si.reference, si.nom_occupant, si.prenom_occupant, address.housenumber, address.street, address.post_code, address.city';
 
         if ($params && in_array($params->sortBy, ['createdAt'], true)
-            && in_array($params->orderBy, ['ASC', 'DESC', 'asc', 'desc'], true)
+            && in_array($params->orderBy, ['ASC', 'DESC'], true)
         ) {
             $sql .= ' ORDER BY MAX(s.created_at) '.$params->orderBy;
         } else {

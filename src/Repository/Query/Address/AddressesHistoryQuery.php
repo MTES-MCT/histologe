@@ -39,8 +39,8 @@ class AddressesHistoryQuery
             ->leftJoin('a.arretes', 'ar')
             ->select('a.id, CONCAT_WS(\' \', a.housenumber, a.street) as address, a.city')
             ->groupBy('a.id, a.street, a.housenumber')
-            ->orderBy('a.street', 'ASC')
-            ->addOrderBy('CAST(a.housenumber AS UNSIGNED)', 'ASC');
+            ->orderBy('a.street', \SortDirection::Ascending)
+            ->addOrderBy('CAST(a.housenumber AS UNSIGNED)', \SortDirection::Ascending);
 
         if ($territory) {
             $qb->andWhere('a.territory = :territory')
@@ -105,9 +105,9 @@ class AddressesHistoryQuery
         $qbIds = $this->buildBaseQueryBuilder($user, $addressesHistorySearchQuery);
         $qbIds->select('a.id', 'a.street', 'a.postCode', 'a.city')
             ->groupBy('a.id', 'a.street', 'a.postCode', 'a.city')
-            ->orderBy('a.street', 'ASC')
-            ->addOrderBy('a.postCode', 'ASC')
-            ->addOrderBy('a.city', 'ASC');
+            ->orderBy('a.street', \SortDirection::Ascending)
+            ->addOrderBy('a.postCode', \SortDirection::Ascending)
+            ->addOrderBy('a.city', \SortDirection::Ascending);
 
         return $qbIds;
     }
@@ -204,11 +204,11 @@ class AddressesHistoryQuery
             ->where('a.id IN (:addressIds)')
             ->setParameter('addressIds', $addressIds)
             ->setParameter('statusList', $statusList)
-            ->orderBy('a.street', 'ASC')
-            ->addOrderBy('a.postCode', 'ASC')
-            ->addOrderBy('a.city', 'ASC')
-            ->addOrderBy('s.createdAt', 'ASC')
-            ->addOrderBy('ar.dateArrete', 'ASC');
+            ->orderBy('a.street', \SortDirection::Ascending)
+            ->addOrderBy('a.postCode', \SortDirection::Ascending)
+            ->addOrderBy('a.city', \SortDirection::Ascending)
+            ->addOrderBy('s.createdAt', \SortDirection::Ascending)
+            ->addOrderBy('ar.dateArrete', \SortDirection::Ascending);
 
         return $qb->getQuery()->getArrayResult();
     }

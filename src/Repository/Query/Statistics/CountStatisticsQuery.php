@@ -183,7 +183,7 @@ class CountStatisticsQuery
         }
 
         $qb->groupBy('desordreCriteres.labelCritere')
-            ->orderBy('count', 'DESC')
+            ->orderBy('count', \SortDirection::Descending)
             ->setMaxResults(5);
 
         return $qb->getQuery()->getResult();

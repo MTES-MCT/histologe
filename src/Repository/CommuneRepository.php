@@ -38,7 +38,7 @@ class CommuneRepository extends ServiceEntityRepository
                 GROUP BY c2.codeInsee
             )')
             ->setParameter('codesInsee', $cleanedCodesInsee)
-            ->orderBy('c.nom', 'ASC')
+            ->orderBy('c.nom', \SortDirection::Ascending)
             ->getQuery()
             ->getResult();
     }
@@ -55,9 +55,9 @@ class CommuneRepository extends ServiceEntityRepository
 
         if (!empty($searchCommune->getOrderType())) {
             [$orderField, $orderDirection] = explode('-', $searchCommune->getOrderType());
-            $qb->orderBy($orderField, $orderDirection);
+            $qb->orderBy($orderField, 'DESC' === $orderDirection ? \SortDirection::Descending : \SortDirection::Ascending);
         } else {
-            $qb->orderBy('c.nom', 'ASC');
+            $qb->orderBy('c.nom', \SortDirection::Ascending);
         }
 
         if ($searchCommune->getQueryName()) {

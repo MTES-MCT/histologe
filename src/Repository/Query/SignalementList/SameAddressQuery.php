@@ -48,10 +48,10 @@ class SameAddressQuery
             )
             ->where('s.statut IN (:statusList)')
             ->setParameter('statusList', $statusList)
-            ->orderBy('address.housenumber', 'ASC')
-            ->addOrderBy('address.postCode', 'ASC')
-            ->addOrderBy('address.city', 'ASC')
-            ->addOrderBy('s.createdAt', 'ASC');
+            ->orderBy('address.housenumber', \SortDirection::Ascending)
+            ->addOrderBy('address.postCode', \SortDirection::Ascending)
+            ->addOrderBy('address.city', \SortDirection::Ascending)
+            ->addOrderBy('s.createdAt', \SortDirection::Ascending);
 
         $queryDossiersMultiples = 'SELECT 1 FROM '.Signalement::class.' s2
                 WHERE s2.address = s.address

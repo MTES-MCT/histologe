@@ -38,8 +38,8 @@ class UserApiPermissionType extends AbstractType
                         ->select('p, t')
                         ->innerJoin('p.territory', 't')
                         ->where('p.isArchive = false')
-                        ->orderBy('t.zip', 'ASC')
-                        ->addOrderBy('p.nom', 'ASC');
+                        ->orderBy('t.zip', \SortDirection::Ascending)
+                        ->addOrderBy('p.nom', \SortDirection::Ascending);
                 },
                 'choice_attr' => static function (Partner $partner) {
                     return ['data-territoryid' => $partner->getTerritory()->getId()];
