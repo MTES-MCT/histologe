@@ -194,6 +194,7 @@ class GridAffectationLoader
         Territory $territory,
         array $data,
         array $ignoreNotifPartnerTypes,
+        bool $anonymize = false,
         ?OutputInterface $output = null,
     ): void {
         $countNewUsers = $countUserMultiTerritory = 0;
@@ -244,10 +245,19 @@ class GridAffectationLoader
                     $user = $this->userRepository->findOneBy(['email' => $email]);
                     if (null === $user) {
                         ++$countNewUsers;
+                        $firstname = TrimHelper::safeTrim($item[GridAffectationHeader::USER_FIRSTNAME]);
+                        $lastname = TrimHelper::safeTrim($item[GridAffectationHeader::USER_LASTNAME]);
+                        if ($anonymize) {
+                            $uniqid = uniqid();
+                            $firstname = 'Prénom'.$uniqid;
+                            $lastname = 'Nom'.$uniqid;
+                            $email = 'user-'.$uniqid.'@example.com';
+                            $phone = null;
+                        }
                         $user = $this->userFactory->createInstanceFrom(
                             roleLabel: $roleLabel,
-                            firstname: TrimHelper::safeTrim($item[GridAffectationHeader::USER_FIRSTNAME]),
-                            lastname: TrimHelper::safeTrim($item[GridAffectationHeader::USER_LASTNAME]),
+                            firstname: $firstname,
+                            lastname: $lastname,
                             email: $email,
                             isActivateAccountNotificationEnabled: !\in_array($partnerType->name, $ignoreNotifPartnerTypes),
                             phone: $phone,
