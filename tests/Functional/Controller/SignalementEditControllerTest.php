@@ -665,8 +665,12 @@ class SignalementEditControllerTest extends WebTestCase
         $crawler = $client->request('GET', $url);
         $this->assertResponseIsSuccessful();
 
+        $labelAssuranceContactee = $crawler->filter('#procedure_assurance_infoProcedureAssuranceContactee')->closest('fieldset')->filter('legend');
+        $this->assertCount(1, $labelAssuranceContactee->filter('.text-required'));
+
         $form = $crawler->selectButton('Enregistrer')->form([
             'procedure_assurance[infoProcedureAssuranceContactee]' => 'oui',
+            'procedure_assurance[infoProcedureReponseAssurance]' => 'Prise en charge refusée.',
         ]);
 
         $client->submit($form);
@@ -675,6 +679,85 @@ class SignalementEditControllerTest extends WebTestCase
         $signalement = $entityManager->getRepository(Signalement::class)->find($signalement->getId());
         $informationProcedure = $signalement->getInformationProcedure();
         $this->assertEquals('oui', $informationProcedure->getInfoProcedureAssuranceContactee());
+        $this->assertEquals('Prise en charge refusée.', $informationProcedure->getInfoProcedureReponseAssurance());
+    }
+
+    public static function provideInvalidProcedureAssurance(): \Generator
+    {
+        yield 'Assurance contactée non renseignée' => [null, '', 'Veuillez préciser si l\'assurance a été contactée.'];
+        yield 'Assurance contactée sans réponse' => ['oui', '', 'Veuillez préciser la réponse de l\'assurance.'];
+        yield 'Réponse trop longue' => ['oui', str_repeat('a', 256), 'doit comporter au maximum 255 caractères.'];
+    }
+
+    #[DataProvider('provideInvalidProcedureAssurance')]
+    public function testSubmitSuiviSignalementCompleteAssuranceInvalid(
+        ?string $assuranceContactee,
+        string $reponseAssurance,
+        string $expectedError,
+    ): void {
+        self::ensureKernelShutdown();
+        $client = static::createClient();
+
+        /** @var EntityManagerInterface $entityManager */
+        $entityManager = static::getContainer()->get('doctrine')->getManager();
+        /** @var Signalement $signalement */
+        $signalement = $entityManager->getRepository(Signalement::class)->findOneBy(['reference' => '2022-14']);
+        $client->loginUser($this->getSignalementUser($signalement, UserManager::DECLARANT), 'code_suivi');
+
+        /** @var RouterInterface $router */
+        $router = static::getContainer()->get(RouterInterface::class);
+        $url = $router->generate('front_suivi_signalement_complete_assurance', ['code' => $signalement->getCodeSuivi()]);
+
+        $crawler = $client->request('GET', $url);
+        $this->assertResponseIsSuccessful();
+
+        $values = ['procedure_assurance[infoProcedureReponseAssurance]' => $reponseAssurance];
+        if (null !== $assuranceContactee) {
+            $values['procedure_assurance[infoProcedureAssuranceContactee]'] = $assuranceContactee;
+        }
+        $form = $crawler->selectButton('Enregistrer')->form($values);
+        $fieldsToRemove = null === $assuranceContactee ? ['infoProcedureAssuranceContactee'] : [];
+        $this->submitFormWithoutFields($client, $form, 'procedure_assurance', $fieldsToRemove);
+
+        $this->assertResponseStatusCodeSame(Response::HTTP_UNPROCESSABLE_ENTITY);
+        $this->assertAnySelectorTextContains('.fr-error-text', $expectedError);
+    }
+
+    public static function provideProcedureAssuranceWithoutReponse(): \Generator
+    {
+        yield 'Non' => ['non'];
+        yield 'Pas d\'assurance logement' => ['pas_assurance_logement'];
+        yield 'Ne sait pas' => ['nsp'];
+    }
+
+    #[DataProvider('provideProcedureAssuranceWithoutReponse')]
+    public function testSubmitSuiviSignalementCompleteAssuranceWithoutReponse(string $assuranceContactee): void
+    {
+        self::ensureKernelShutdown();
+        $client = static::createClient();
+
+        /** @var EntityManagerInterface $entityManager */
+        $entityManager = static::getContainer()->get('doctrine')->getManager();
+        /** @var Signalement $signalement */
+        $signalement = $entityManager->getRepository(Signalement::class)->findOneBy(['reference' => '2022-14']);
+        $client->loginUser($this->getSignalementUser($signalement, UserManager::DECLARANT), 'code_suivi');
+
+        /** @var RouterInterface $router */
+        $router = static::getContainer()->get(RouterInterface::class);
+        $url = $router->generate('front_suivi_signalement_complete_assurance', ['code' => $signalement->getCodeSuivi()]);
+
+        $crawler = $client->request('GET', $url);
+        $this->assertResponseIsSuccessful();
+
+        $form = $crawler->selectButton('Enregistrer')->form([
+            'procedure_assurance[infoProcedureAssuranceContactee]' => $assuranceContactee,
+            'procedure_assurance[infoProcedureReponseAssurance]' => '',
+        ]);
+        $client->submit($form);
+
+        $this->assertResponseRedirects('/suivre-mon-signalement/'.$signalement->getCodeSuivi().'/dossier');
+        $signalement = $entityManager->getRepository(Signalement::class)->find($signalement->getId());
+        $this->assertEquals($assuranceContactee, $signalement->getInformationProcedure()->getInfoProcedureAssuranceContactee());
     }
 
     public function testSubmitSuiviSignalementCompleteInformationsGenerales(): void

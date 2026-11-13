@@ -368,7 +368,6 @@ class UsagerSituationFoyerType extends AbstractType
                 ],
             ]);
 
-        // Ajout des contraintes de validation
         $builder->addEventListener(FormEvents::POST_SUBMIT, static function (FormEvent $event) {
             $form = $event->getForm();
             $allocataire = $form->get('allocataire')->getData();
