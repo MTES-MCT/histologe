@@ -10,9 +10,6 @@ use Symfony\Component\Form\Extension\Core\Type\DateType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
-use Symfony\Component\Form\FormError;
-use Symfony\Component\Form\FormEvent;
-use Symfony\Component\Form\FormEvents;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Validator\Constraints as Assert;
@@ -182,6 +179,20 @@ class UsagerSituationFoyerType extends AbstractType
                 'placeholder' => false,
                 'mapped' => false,
                 'data' => $caisseAllocation,
+                'constraints' => [
+                    new Assert\Callback(
+                        callback: static function ($value, $context) {
+                            $form = $context->getRoot();
+                            $allocataire = $form->get('allocataire')->getData();
+
+                            if ('oui' === $allocataire && empty($value)) {
+                                $context
+                                    ->buildViolation('Veuillez préciser la caisse d\'allocation.')
+                                    ->addViolation();
+                            }
+                        },
+                    ),
+                ],
             ])
             ->add('dateNaissanceAllocataire', DateType::class, [
                 'label' => 'Date de naissance de la personne qui occupe le logement (obligatoire si allocataire)',
@@ -189,6 +200,20 @@ class UsagerSituationFoyerType extends AbstractType
                 'placeholder' => false,
                 'mapped' => false,
                 'data' => $signalement->getDateNaissanceOccupant(),
+                'constraints' => [
+                    new Assert\Callback(
+                        callback: static function ($value, $context) {
+                            $form = $context->getRoot();
+                            $allocataire = $form->get('allocataire')->getData();
+
+                            if ('oui' === $allocataire && empty($value)) {
+                                $context
+                                    ->buildViolation('Veuillez préciser la date de naissance de l\'occupant.')
+                                    ->addViolation();
+                            }
+                        },
+                    ),
+                ],
             ])
             ->add('numAllocataire', TextType::class, [
                 'label' => 'Numéro d\'allocataire / de dossier (obligatoire si allocataire)',
@@ -201,6 +226,18 @@ class UsagerSituationFoyerType extends AbstractType
                     new Assert\Length(
                         max: 25,
                         maxMessage: 'Le numéro d\'allocataire doit comporter au maximum {{ limit }} caractères.',
+                    ),
+                    new Assert\Callback(
+                        callback: static function ($value, $context) {
+                            $form = $context->getRoot();
+                            $allocataire = $form->get('allocataire')->getData();
+
+                            if ('oui' === $allocataire && empty($value)) {
+                                $context
+                                    ->buildViolation('Veuillez préciser le numéro d\'allocataire / de dossier.')
+                                    ->addViolation();
+                            }
+                        },
                     ),
                 ],
             ])
@@ -367,23 +404,6 @@ class UsagerSituationFoyerType extends AbstractType
                     'class' => 'fr-btn--primary',
                 ],
             ]);
-
-        $builder->addEventListener(FormEvents::POST_SUBMIT, static function (FormEvent $event) {
-            $form = $event->getForm();
-            $allocataire = $form->get('allocataire')->getData();
-            $caisseAllocation = $form->get('caisseAllocation')->getData();
-            if ('oui' === $allocataire && empty($caisseAllocation)) {
-                $form->get('caisseAllocation')->addError(new FormError('Veuillez préciser la caisse d\'allocation.'));
-            }
-            $dateNaissanceAllocataire = $form->get('dateNaissanceAllocataire')->getData();
-            if ('oui' === $allocataire && empty($dateNaissanceAllocataire)) {
-                $form->get('dateNaissanceAllocataire')->addError(new FormError('Veuillez préciser la date de naissance de l\'occupant.'));
-            }
-            $numAllocataire = $form->get('numAllocataire')->getData();
-            if ('oui' === $allocataire && empty($numAllocataire)) {
-                $form->get('numAllocataire')->addError(new FormError('Veuillez préciser le numéro d\'allocataire / de dossier.'));
-            }
-        });
     }
 
     public function configureOptions(OptionsResolver $resolver): void
