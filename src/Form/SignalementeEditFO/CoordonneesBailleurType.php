@@ -3,6 +3,7 @@
 namespace App\Form\SignalementeEditFO;
 
 use App\Entity\Enum\MoyenContact;
+use App\Entity\Enum\ProfileDeclarant;
 use App\Entity\Signalement;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
@@ -12,6 +13,7 @@ use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\Form\FormInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Validator\Constraints as Assert;
 
@@ -41,6 +43,11 @@ class CoordonneesBailleurType extends AbstractType
         } else {
             $isProprioAverti = $signalement->getIsProprioAverti();
         }
+
+        // Date et réponse du propriétaire obligatoires (si propriétaire averti) uniquement pour un déclarant locataire
+        $mentionSiProprioAverti = ProfileDeclarant::LOCATAIRE === $signalement->getProfileDeclarant()
+            ? ' (obligatoire si le propriétaire est averti)'
+            : ' (facultatif)';
 
         if ($options['extended']) {
             $builder
@@ -124,7 +131,7 @@ class CoordonneesBailleurType extends AbstractType
                     ],
                 ])
                 ->add('infoProcedureBailMoyen', EnumType::class, [
-                    'label' => 'Moyen de contact utilisé pour avertir le propriétaire (facultatif)',
+                    'label' => 'Moyen de contact utilisé pour avertir le propriétaire (obligatoire si le propriétaire est averti)',
                     'class' => MoyenContact::class,
                     'choice_label' => static function ($choice) {
                         return $choice->label();
@@ -133,17 +140,46 @@ class CoordonneesBailleurType extends AbstractType
                     'required' => false,
                     'mapped' => false,
                     'data' => MoyenContact::tryFromString($signalement->getInformationProcedure()?->getInfoProcedureBailMoyen()),
+                    'constraints' => [
+                        new Assert\Callback(
+                            callback: static function ($value, $context) {
+                                $form = $context->getRoot();
+                                $isProprioAverti = $form->get('isProprioAverti')->getData();
+
+                                if (true === $isProprioAverti && null === $value) {
+                                    $context
+                                        ->buildViolation('Veuillez indiquer le moyen de contact utilisé pour avertir le propriétaire.')
+                                        ->addViolation();
+                                }
+                            },
+                        ),
+                    ],
                 ])
                 ->add('proprioAvertiAt', DateType::class, [
-                    'label' => 'Date d\'avertissement du propriétaire (facultatif)',
+                    'label' => 'Date d\'avertissement du propriétaire'.$mentionSiProprioAverti,
                     'help' => 'Format attendu : MM/AAAA',
                     'required' => false,
                     'html5' => false,
                     'input' => 'datetime_immutable',
                     'format' => 'MM/yyyy',
+                    'constraints' => [
+                        new Assert\Callback(
+                            callback: static function ($value, $context) {
+                                $form = $context->getRoot();
+                                $isProprioAverti = $form->get('isProprioAverti')->getData();
+
+                                if (true === $isProprioAverti && null === $value) {
+                                    $context
+                                        ->buildViolation('Veuillez indiquer la date d\'avertissement du propriétaire.')
+                                        ->addViolation();
+                                }
+                            },
+                            groups: ['LOCATAIRE'],
+                        ),
+                    ],
                 ])
                 ->add('infoProcedureBailReponse', TextareaType::class, [
-                    'label' => 'Réponse du propriétaire (facultatif)',
+                    'label' => 'Réponse du propriétaire'.$mentionSiProprioAverti,
                     'help' => 'Format attendu : 255 caractères maximum',
                     'required' => false,
                     'mapped' => false,
@@ -155,6 +191,19 @@ class CoordonneesBailleurType extends AbstractType
                         new Assert\Length(
                             max: 255,
                             maxMessage: 'La réponse du propriétaire ne peut pas dépasser {{ limit }} caractères.',
+                        ),
+                        new Assert\Callback(
+                            callback: static function ($value, $context) {
+                                $form = $context->getRoot();
+                                $isProprioAverti = $form->get('isProprioAverti')->getData();
+
+                                if (true === $isProprioAverti && null === $value) {
+                                    $context
+                                        ->buildViolation('Veuillez indiquer la réponse du propriétaire.')
+                                        ->addViolation();
+                                }
+                            },
+                            groups: ['LOCATAIRE'],
                         ),
                     ],
                 ])
@@ -201,6 +250,16 @@ class CoordonneesBailleurType extends AbstractType
         $resolver->setDefaults([
             'data_class' => Signalement::class,
             'extended' => false,
+            'validation_groups' => static function (FormInterface $form): array {
+                $groups = ['Default'];
+
+                $data = $form->getData();
+                if ($data instanceof Signalement && null !== $data->getProfileDeclarant()) {
+                    $groups[] = $data->getProfileDeclarant()->name;
+                }
+
+                return $groups;
+            },
         ]);
     }
 }

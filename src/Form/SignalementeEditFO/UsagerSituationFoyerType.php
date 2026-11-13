@@ -2,6 +2,7 @@
 
 namespace App\Form\SignalementeEditFO;
 
+use App\Entity\Enum\ProfileDeclarant;
 use App\Entity\Signalement;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
@@ -9,6 +10,7 @@ use Symfony\Component\Form\Extension\Core\Type\DateType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\Form\FormInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Validator\Constraints as Assert;
 
@@ -53,8 +55,35 @@ class UsagerSituationFoyerType extends AbstractType
         }
 
         $souhaiteQuitterLogement = $signalement->getSituationFoyer() ? $signalement->getSituationFoyer()->getTravailleurSocialQuitteLogement() : '';
+        $souhaiteQuitterLogementChoices = [
+            'Oui' => 'oui',
+            'Non' => 'non',
+        ];
+        if ('nsp' === $souhaiteQuitterLogement) {
+            $souhaiteQuitterLogement = 'nsp';
+            // On ajoute le choix "Ne sais pas" uniquement si la valeur est nulle, pour éviter de proposer ce choix si l'utilisateur a déjà renseigné une valeur
+            $souhaiteQuitterLogementChoices['Je ne sais pas'] = 'nsp';
+        }
         $preavisDepartDepose = $signalement->getSituationFoyer() ? $signalement->getSituationFoyer()->getTravailleurSocialPreavisDepart() : '';
+        $preavisDepartDeposeChoices = [
+            'Oui' => 'oui',
+            'Non' => 'non',
+        ];
+        if ('nsp' === $preavisDepartDepose) {
+            $preavisDepartDepose = 'nsp';
+            // On ajoute le choix "Ne sais pas" uniquement si la valeur est nulle, pour éviter de proposer ce choix si l'utilisateur a déjà renseigné une valeur
+            $preavisDepartDeposeChoices['Je ne sais pas'] = 'nsp';
+        }
         $accompagnementTravailleurSocial = $signalement->getSituationFoyer() ? $signalement->getSituationFoyer()->getTravailleurSocialAccompagnement() : '';
+        $accompagnementTravailleurSocialChoices = [
+            'Oui' => 'oui',
+            'Non' => 'non',
+        ];
+        if ('nsp' === $accompagnementTravailleurSocial) {
+            $accompagnementTravailleurSocial = 'nsp';
+            // On ajoute le choix "Ne sais pas" uniquement si la valeur est nulle, pour éviter de proposer ce choix si l'utilisateur a déjà renseigné une valeur
+            $accompagnementTravailleurSocialChoices['Je ne sais pas'] = 'nsp';
+        }
         $structureReferentSocial = $signalement->getSituationFoyer() ? $signalement->getSituationFoyer()->getTravailleurSocialAccompagnementNomStructure() : '';
         $nomReferentSocial = $signalement->getSituationFoyer() ? $signalement->getSituationFoyer()->getTravailleurSocialAccompagnementNomReferent() : '';
         $prenomReferentSocial = $signalement->getSituationFoyer() ? $signalement->getSituationFoyer()->getTravailleurSocialAccompagnementPrenomReferent() : '';
@@ -64,6 +93,24 @@ class UsagerSituationFoyerType extends AbstractType
         $revenuFiscal = $signalement->getInformationComplementaire() ? $signalement->getInformationComplementaire()->getInformationsComplementairesSituationOccupantsRevenuFiscal() : '';
 
         $departApresTravaux = $signalement->getInformationProcedure() ? $signalement->getInformationProcedure()->getInfoProcedureDepartApresTravaux() : '';
+        $departApresTravauxChoices = [
+            'Oui' => 'oui',
+            'Non' => 'non',
+        ];
+        if ('nsp' === $departApresTravaux) {
+            $departApresTravaux = 'nsp';
+            // On ajoute le choix "Ne sais pas" uniquement si la valeur est nulle, pour éviter de proposer ce choix si l'utilisateur a déjà renseigné une valeur
+            $departApresTravauxChoices['Je ne sais pas'] = 'nsp';
+        }
+
+        $facultatifRelogement =
+            (ProfileDeclarant::LOCATAIRE === $signalement->getProfileDeclarant() || ProfileDeclarant::BAILLEUR_OCCUPANT === $signalement->getProfileDeclarant())
+            ? ' <span class="text-required">*</span>'
+            : ' (facultatif)';
+        $facultatifAllocataire =
+            (ProfileDeclarant::LOCATAIRE === $signalement->getProfileDeclarant() || ProfileDeclarant::BAILLEUR_OCCUPANT === $signalement->getProfileDeclarant())
+            ? ' <span class="text-required">*</span>'
+            : ' (facultatif)';
 
         $builder
             ->add('isLogementSocial', ChoiceType::class, [
@@ -83,7 +130,7 @@ class UsagerSituationFoyerType extends AbstractType
                 ],
             ])
             ->add('isRelogement', ChoiceType::class, [
-                'label' => 'Est-ce qu\'une demande de relogement a été faite ? <span class="text-required">*</span>',
+                'label' => 'Est-ce qu\'une demande de relogement a été faite ?'.$facultatifRelogement,
                 'label_html' => true,
                 'choices' => [
                     'Oui' => true,
@@ -101,7 +148,8 @@ class UsagerSituationFoyerType extends AbstractType
                 ],
             ])
             ->add('allocataire', ChoiceType::class, [
-                'label' => 'Est-ce que l\'occupant est allocataire ? (facultatif)',
+                'label' => 'Est-ce que l\'occupant est allocataire ?'.$facultatifAllocataire,
+                'label_html' => true,
                 'choices' => [
                     'Oui' => 'oui',
                     'Non' => 'non',
@@ -112,9 +160,15 @@ class UsagerSituationFoyerType extends AbstractType
                 'placeholder' => false,
                 'mapped' => false,
                 'data' => $allocataire,
+                'constraints' => [
+                    new Assert\NotBlank(
+                        groups: ['LOCATAIRE', 'BAILLEUR_OCCUPANT'],
+                        message: 'Veuillez préciser si l\'occupant est allocataire.',
+                    ),
+                ],
             ])
             ->add('caisseAllocation', ChoiceType::class, [
-                'label' => 'Caisse d\'allocation (facultatif)',
+                'label' => 'Caisse d\'allocation (obligatoire si allocataire)',
                 'choices' => [
                     'CAF' => 'CAF',
                     'MSA' => 'MSA',
@@ -125,16 +179,44 @@ class UsagerSituationFoyerType extends AbstractType
                 'placeholder' => false,
                 'mapped' => false,
                 'data' => $caisseAllocation,
+                'constraints' => [
+                    new Assert\Callback(
+                        callback: static function ($value, $context) {
+                            $form = $context->getRoot();
+                            $allocataire = $form->get('allocataire')->getData();
+
+                            if ('oui' === $allocataire && empty($value)) {
+                                $context
+                                    ->buildViolation('Veuillez préciser la caisse d\'allocation.')
+                                    ->addViolation();
+                            }
+                        },
+                    ),
+                ],
             ])
             ->add('dateNaissanceAllocataire', DateType::class, [
-                'label' => 'Date de naissance de la personne qui occupe le logement (facultatif)',
+                'label' => 'Date de naissance de la personne qui occupe le logement (obligatoire si allocataire)',
                 'required' => false,
                 'placeholder' => false,
                 'mapped' => false,
                 'data' => $signalement->getDateNaissanceOccupant(),
+                'constraints' => [
+                    new Assert\Callback(
+                        callback: static function ($value, $context) {
+                            $form = $context->getRoot();
+                            $allocataire = $form->get('allocataire')->getData();
+
+                            if ('oui' === $allocataire && empty($value)) {
+                                $context
+                                    ->buildViolation('Veuillez préciser la date de naissance de l\'occupant.')
+                                    ->addViolation();
+                            }
+                        },
+                    ),
+                ],
             ])
             ->add('numAllocataire', TextType::class, [
-                'label' => 'Numéro d\'allocataire / de dossier (facultatif)',
+                'label' => 'Numéro d\'allocataire / de dossier (obligatoire si allocataire)',
                 'help' => 'Format attendu : 25 caractères maximum',
                 'required' => false,
                 'attr' => [
@@ -144,6 +226,18 @@ class UsagerSituationFoyerType extends AbstractType
                     new Assert\Length(
                         max: 25,
                         maxMessage: 'Le numéro d\'allocataire doit comporter au maximum {{ limit }} caractères.',
+                    ),
+                    new Assert\Callback(
+                        callback: static function ($value, $context) {
+                            $form = $context->getRoot();
+                            $allocataire = $form->get('allocataire')->getData();
+
+                            if ('oui' === $allocataire && empty($value)) {
+                                $context
+                                    ->buildViolation('Veuillez préciser le numéro d\'allocataire / de dossier.')
+                                    ->addViolation();
+                            }
+                        },
                     ),
                 ],
             ])
@@ -176,10 +270,7 @@ class UsagerSituationFoyerType extends AbstractType
             ])
             ->add('souhaiteQuitterLogement', ChoiceType::class, [
                 'label' => 'Est-ce que le foyer souhaite quitter le logement ? (facultatif)',
-                'choices' => [
-                    'Oui' => 'oui',
-                    'Non' => 'non',
-                ],
+                'choices' => $souhaiteQuitterLogementChoices,
                 'expanded' => true,
                 'multiple' => false,
                 'required' => false,
@@ -189,10 +280,7 @@ class UsagerSituationFoyerType extends AbstractType
             ])
             ->add('preavisDepartDepose', ChoiceType::class, [
                 'label' => 'Est-ce qu\'un préavis de départ a été déposé ? (facultatif)',
-                'choices' => [
-                    'Oui' => 'oui',
-                    'Non' => 'non',
-                ],
+                'choices' => $preavisDepartDeposeChoices,
                 'expanded' => true,
                 'multiple' => false,
                 'required' => false,
@@ -202,10 +290,7 @@ class UsagerSituationFoyerType extends AbstractType
             ])
             ->add('accompagnementTravailleurSocial', ChoiceType::class, [
                 'label' => 'Est-ce que le foyer est accompagné par un ou une travailleuse sociale ? (facultatif)',
-                'choices' => [
-                    'Oui' => 'oui',
-                    'Non' => 'non',
-                ],
+                'choices' => $accompagnementTravailleurSocialChoices,
                 'expanded' => true,
                 'multiple' => false,
                 'required' => false,
@@ -305,10 +390,7 @@ class UsagerSituationFoyerType extends AbstractType
             ])
             ->add('departApresTravaux', ChoiceType::class, [
                 'label' => 'Est-ce que le foyer souhaite rester dans le logement si des travaux sont faits ? (facultatif)',
-                'choices' => [
-                    'Oui' => 'oui',
-                    'Non' => 'non',
-                ],
+                'choices' => $departApresTravauxChoices,
                 'expanded' => true,
                 'multiple' => false,
                 'required' => false,
@@ -328,6 +410,16 @@ class UsagerSituationFoyerType extends AbstractType
     {
         $resolver->setDefaults([
             'data_class' => Signalement::class,
+            'validation_groups' => static function (FormInterface $form): array {
+                $groups = ['Default'];
+
+                $data = $form->getData();
+                if ($data instanceof Signalement && null !== $data->getProfileDeclarant()) {
+                    $groups[] = $data->getProfileDeclarant()->name;
+                }
+
+                return $groups;
+            },
         ]);
     }
 }
