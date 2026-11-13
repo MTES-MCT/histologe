@@ -2,12 +2,14 @@
 
 namespace App\Form\SignalementeEditFO;
 
+use App\Entity\Enum\ProfileDeclarant;
 use App\Entity\Signalement;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\Form\FormInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Validator\Constraints as Assert;
 
@@ -24,14 +26,30 @@ class CoordonneesOccupantType extends AbstractType
         /** @var Signalement $signalement */
         $signalement = $builder->getData();
         $mailOccupant = $signalement->getMailOccupant();
+
+        $facultatifCivilite =
+            (ProfileDeclarant::LOCATAIRE === $signalement->getProfileDeclarant())
+            ? ' <span class="text-required">*</span>'
+            : ' (facultatif)';
+        $facultatifTelOccupant = (ProfileDeclarant::LOCATAIRE === $signalement->getProfileDeclarant() || ProfileDeclarant::BAILLEUR_OCCUPANT === $signalement->getProfileDeclarant())
+            ? ' <span class="text-required">*</span>'
+            : ' (facultatif)';
+
         $builder
             ->add('civiliteOccupant', ChoiceType::class, [
-                'label' => 'Civilité (facultatif)',
+                'label' => 'Civilité'.$facultatifCivilite,
+                'label_html' => true,
                 'choices' => [
                     'M' => 'mr',
                     'Mme' => 'mme',
                 ],
                 'required' => false,
+                'constraints' => [
+                    new Assert\NotBlank(
+                        groups: ['LOCATAIRE'],
+                        message: 'Veuillez préciser la civilité.',
+                    ),
+                ],
             ])
             ->add('nomOccupant', null, [
                 'label' => 'Nom <span class="text-required">*</span>',
@@ -69,9 +87,16 @@ class CoordonneesOccupantType extends AbstractType
             'constraints' => $constraintsMailOccupant,
         ])
         ->add('telOccupant', null, [
-            'label' => 'Numéro de téléphone (facultatif)',
+            'label' => 'Numéro de téléphone'.$facultatifTelOccupant,
+            'label_html' => true,
             'help' => 'Format attendu : 0639987654',
             'required' => false,
+            'constraints' => [
+                new Assert\NotBlank(
+                    groups: ['LOCATAIRE', 'BAILLEUR_OCCUPANT'],
+                    message: 'Veuillez préciser le numéro de téléphone.',
+                ),
+            ],
         ])
         ->add('telOccupantBis', null, [
             'label' => 'Numéro de téléphone secondaire (facultatif)',
@@ -90,7 +115,16 @@ class CoordonneesOccupantType extends AbstractType
     {
         $resolver->setDefaults([
             'data_class' => Signalement::class,
-            'validation_groups' => ['fo_coordonnees_occupant'],
+            'validation_groups' => static function (FormInterface $form): array {
+                $groups = ['fo_coordonnees_occupant'];
+
+                $data = $form->getData();
+                if ($data instanceof Signalement && null !== $data->getProfileDeclarant()) {
+                    $groups[] = $data->getProfileDeclarant()->name;
+                }
+
+                return $groups;
+            },
         ]);
     }
 }
