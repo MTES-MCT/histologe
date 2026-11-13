@@ -8,7 +8,7 @@ use App\Security\User\SignalementUser;
 use App\Service\Gouv\ProConnect\ProConnectAuthentication;
 use App\Service\Gouv\ProConnect\ProConnectContext;
 use App\Tests\UserHelper;
-use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\MockObject\Stub;
 use PHPUnit\Framework\TestCase;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
@@ -24,40 +24,38 @@ class LogoutSubscriberTest extends TestCase
 {
     use UserHelper;
 
-    private ProConnectAuthentication&MockObject $proConnectAuth;
-    private ProConnectContext&MockObject $proConnectContext;
-    private UrlGeneratorInterface&MockObject $urlGenerator;
-    private LoggerInterface&MockObject $logger;
-    private SessionInterface&MockObject $session;
-    private TokenInterface&MockObject $token;
+    private ProConnectAuthentication&Stub $proConnectAuth;
+    private ProConnectContext&Stub $proConnectContext;
+    private UrlGeneratorInterface&Stub $urlGenerator;
+    private LoggerInterface&Stub $logger;
+    private TokenInterface&Stub $token;
     private ?User $user = null;
 
     protected function setUp(): void
     {
-        $this->session = $this->createMock(SessionInterface::class);
-        $this->proConnectAuth = $this->createMock(ProConnectAuthentication::class);
-        $this->proConnectContext = $this->createMock(ProConnectContext::class);
-        $this->urlGenerator = $this->createMock(UrlGeneratorInterface::class);
-        $this->logger = $this->createMock(LoggerInterface::class);
+        $this->proConnectAuth = $this->createStub(ProConnectAuthentication::class);
+        $this->proConnectContext = $this->createStub(ProConnectContext::class);
+        $this->urlGenerator = $this->createStub(UrlGeneratorInterface::class);
+        $this->logger = $this->createStub(LoggerInterface::class);
 
         $this->user = $this->getUserPronnected();
-        $this->token = $this->createMock(TokenInterface::class);
+        $this->token = $this->createStub(TokenInterface::class);
         $this->token->method('getUser')->willReturn($this->user);
     }
 
     public function testLogoutRedirectsToProConnectAndClearsSession(): void
     {
         $request = new Request();
-        $this->session
+        $session = $this->createMock(SessionInterface::class);
+        $session
             ->expects($this->once())
             ->method('has')
             ->with('proconnect_id_token')
             ->willReturn(true);
-        $request->setSession($this->session);
+        $request->setSession($session);
 
         $event = new LogoutEvent($request, $this->token);
 
-        $this->proConnectAuth = $this->createMock(ProConnectAuthentication::class);
         $this->proConnectAuth->method('getLogoutUrl')->willReturn('https://proconnect/logout');
 
         $subscriber = new LogoutSubscriber(
@@ -85,8 +83,8 @@ class LogoutSubscriberTest extends TestCase
             );
 
         $request = new Request();
-        /** @var MockObject&FlashBagAwareSessionInterface $session */
-        $session = $this->createMock(FlashBagAwareSessionInterface::class);
+        /** @var Stub&FlashBagAwareSessionInterface $session */
+        $session = $this->createStub(FlashBagAwareSessionInterface::class);
         $session->method('has')->willReturn(true);
         $session->method('getFlashBag')->willReturn($flashBag);
 
@@ -95,14 +93,11 @@ class LogoutSubscriberTest extends TestCase
 
         $this->proConnectAuth->method('getLogoutUrl')->willThrowException(new \RuntimeException('Network down'));
         $this->urlGenerator->method('generate')->willReturn('/login');
-        /** @var MockObject&LoggerInterface $logger */
-        $logger = $this->createMock(LoggerInterface::class);
-
         $subscriber = new LogoutSubscriber(
             $this->proConnectAuth,
             $this->proConnectContext,
             $this->urlGenerator,
-            $logger,
+            $this->logger,
         );
 
         $subscriber->onLogout($event);
@@ -114,29 +109,32 @@ class LogoutSubscriberTest extends TestCase
 
     public function testLogoutRedirectsForSignalementUser(): void
     {
-        /** @var MockObject&SignalementUser $user */
-        $user = $this->createMock(SignalementUser::class);
+        /** @var Stub&SignalementUser $user */
+        $user = $this->createStub(SignalementUser::class);
         $user->method('getCodeSuivi')->willReturn('123456789');
         $user->method('getUserIdentifier')->willReturn('123456789:occupant');
 
-        /** @var MockObject&TokenInterface $token */
-        $token = $this->createMock(TokenInterface::class);
+        /** @var Stub&TokenInterface $token */
+        $token = $this->createStub(TokenInterface::class);
         $token->method('getUser')->willReturn($user);
 
-        $this->session
+        $session = $this->createMock(SessionInterface::class);
+        $session
             ->expects($this->once())
             ->method('invalidate');
 
         $request = new Request();
-        $request->setSession($this->session);
+        $request->setSession($session);
 
         $event = new LogoutEvent($request, $token);
 
-        $this->proConnectContext
+        $proConnectContext = $this->createMock(ProConnectContext::class);
+        $proConnectContext
             ->expects($this->once())
             ->method('clearSession');
 
-        $this->urlGenerator
+        $urlGenerator = $this->createMock(UrlGeneratorInterface::class);
+        $urlGenerator
             ->expects($this->once())
             ->method('generate')
             ->with($this->equalTo('home'), $this->anything())
@@ -144,8 +142,8 @@ class LogoutSubscriberTest extends TestCase
 
         $subscriber = new LogoutSubscriber(
             $this->proConnectAuth,
-            $this->proConnectContext,
-            $this->urlGenerator,
+            $proConnectContext,
+            $urlGenerator,
             $this->logger,
         );
 

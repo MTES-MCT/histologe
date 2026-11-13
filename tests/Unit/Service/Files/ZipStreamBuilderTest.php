@@ -53,17 +53,16 @@ final class ZipStreamBuilderTest extends TestCase
             ->with('foo.pdf')
             ->willReturn($stream);
 
-        $logger = $this->createMock(LoggerInterface::class);
+        $logger = $this->createStub(LoggerInterface::class);
 
-        $parameterBag = $this->createMock(ParameterBagInterface::class);
+        $parameterBag = $this->createStub(ParameterBagInterface::class);
         $parameterBag
             ->method('get')
-            ->with('uploads_tmp_dir')
-            ->willReturn($this->tmpDir);
+            ->willReturnMap([['uploads_tmp_dir', $this->tmpDir]]);
 
         $builder = new ZipStreamBuilder($uploadHandler, $parameterBag, $logger);
 
-        $file = $this->createMock(File::class);
+        $file = $this->createStub(File::class);
         $file->method('getFilename')->willReturn('foo.pdf');
 
         $zipPath = $builder
@@ -78,14 +77,13 @@ final class ZipStreamBuilderTest extends TestCase
 
     public function testCreateTwiceThrowsLogicException(): void
     {
-        $uploadHandler = $this->createMock(UploadHandlerService::class);
-        $logger = $this->createMock(LoggerInterface::class);
+        $uploadHandler = $this->createStub(UploadHandlerService::class);
+        $logger = $this->createStub(LoggerInterface::class);
 
-        $parameterBag = $this->createMock(ParameterBagInterface::class);
+        $parameterBag = $this->createStub(ParameterBagInterface::class);
         $parameterBag
             ->method('get')
-            ->with('uploads_tmp_dir')
-            ->willReturn($this->tmpDir);
+            ->willReturnMap([['uploads_tmp_dir', $this->tmpDir]]);
 
         $builder = new ZipStreamBuilder($uploadHandler, $parameterBag, $logger);
 
@@ -99,13 +97,13 @@ final class ZipStreamBuilderTest extends TestCase
 
     public function testAddBeforeCreateThrowsLogicException(): void
     {
-        $uploadHandler = $this->createMock(UploadHandlerService::class);
-        $parameterBag = $this->createMock(ParameterBagInterface::class);
-        $logger = $this->createMock(LoggerInterface::class);
+        $uploadHandler = $this->createStub(UploadHandlerService::class);
+        $parameterBag = $this->createStub(ParameterBagInterface::class);
+        $logger = $this->createStub(LoggerInterface::class);
 
         $builder = new ZipStreamBuilder($uploadHandler, $parameterBag, $logger);
 
-        $file = $this->createMock(File::class);
+        $file = $this->createStub(File::class);
         $file->method('getFilename')->willReturn('foo.pdf');
 
         $this->expectException(\LogicException::class);
@@ -119,9 +117,9 @@ final class ZipStreamBuilderTest extends TestCase
      */
     public function testCloseBeforeCreateThrowsLogicException(): void
     {
-        $uploadHandler = $this->createMock(UploadHandlerService::class);
-        $parameterBag = $this->createMock(ParameterBagInterface::class);
-        $logger = $this->createMock(LoggerInterface::class);
+        $uploadHandler = $this->createStub(UploadHandlerService::class);
+        $parameterBag = $this->createStub(ParameterBagInterface::class);
+        $logger = $this->createStub(LoggerInterface::class);
 
         $builder = new ZipStreamBuilder($uploadHandler, $parameterBag, $logger);
 
@@ -143,17 +141,16 @@ final class ZipStreamBuilderTest extends TestCase
             ->with('foo.pdf')
             ->willReturn($stream);
 
-        $parameterBag = $this->createMock(ParameterBagInterface::class);
+        $parameterBag = $this->createStub(ParameterBagInterface::class);
         $parameterBag
             ->method('get')
-            ->with('uploads_tmp_dir')
-            ->willReturn($this->tmpDir);
+            ->willReturnMap([['uploads_tmp_dir', $this->tmpDir]]);
 
-        $logger = $this->createMock(LoggerInterface::class);
+        $logger = $this->createStub(LoggerInterface::class);
 
         $builder = new ZipStreamBuilder($uploadHandler, $parameterBag, $logger);
 
-        $file = $this->createMock(File::class);
+        $file = $this->createStub(File::class);
         $file->method('getFilename')->willReturn('foo.pdf');
 
         $builder
@@ -188,20 +185,19 @@ final class ZipStreamBuilderTest extends TestCase
                 };
             });
 
-        $parameterBag = $this->createMock(ParameterBagInterface::class);
+        $parameterBag = $this->createStub(ParameterBagInterface::class);
         $parameterBag
             ->method('get')
-            ->with('uploads_tmp_dir')
-            ->willReturn($this->tmpDir);
+            ->willReturnMap([['uploads_tmp_dir', $this->tmpDir]]);
 
-        $logger = $this->createMock(LoggerInterface::class);
+        $logger = $this->createStub(LoggerInterface::class);
 
         $builder = new ZipStreamBuilder($uploadHandler, $parameterBag, $logger);
 
-        $fileA = $this->createMock(File::class);
+        $fileA = $this->createStub(File::class);
         $fileA->method('getFilename')->willReturn('a.pdf');
 
-        $fileB = $this->createMock(File::class);
+        $fileB = $this->createStub(File::class);
         $fileB->method('getFilename')->willReturn('b.pdf');
 
         $zipPath = $builder
@@ -239,13 +235,12 @@ final class ZipStreamBuilderTest extends TestCase
             ->with('foo.pdf')
             ->willReturnOnConsecutiveCalls($stream1, $stream2);
 
-        $parameterBag = $this->createMock(ParameterBagInterface::class);
+        $parameterBag = $this->createStub(ParameterBagInterface::class);
         $parameterBag
             ->method('get')
-            ->with('uploads_tmp_dir')
-            ->willReturn($this->tmpDir);
+            ->willReturnMap([['uploads_tmp_dir', $this->tmpDir]]);
 
-        $logger = $this->createMock(LoggerInterface::class);
+        $logger = $this->createStub(LoggerInterface::class);
 
         $builder = new ZipStreamBuilder($uploadHandler, $parameterBag, $logger);
 

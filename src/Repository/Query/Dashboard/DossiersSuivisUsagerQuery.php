@@ -122,11 +122,11 @@ class DossiersSuivisUsagerQuery
         );
 
         if ($params && in_array($params->sortBy, ['createdAt'], true)
-            && in_array($params->orderBy, ['ASC', 'DESC', 'asc', 'desc'], true)
+            && in_array($params->orderBy, ['ASC', 'DESC'], true)
         ) {
-            $qb->orderBy('messageAt', $params->orderBy);
+            $qb->orderBy('messageAt', 'DESC' === $params->orderBy ? \SortDirection::Descending : \SortDirection::Ascending);
         } else {
-            $qb->orderBy('messageAt', 'ASC');
+            $qb->orderBy('messageAt', \SortDirection::Ascending);
         }
 
         $qb->setMaxResults(TabDossier::MAX_ITEMS_LIST);

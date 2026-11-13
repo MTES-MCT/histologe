@@ -8,20 +8,21 @@ use App\Repository\CommuneRepository;
 use App\Service\Import\CsvParser;
 use Doctrine\ORM\EntityManagerInterface;
 use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\MockObject\Stub;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Console\Style\SymfonyStyle;
 
 class UpdateMergedCommunesCommandTest extends TestCase
 {
     private MockObject&EntityManagerInterface $entityManager;
-    private MockObject&CsvParser $csvParser;
+    private Stub&CsvParser $csvParser;
     private MockObject&CommuneRepository $communeRepository;
     private UpdateMergedCommunesCommand $command;
 
     protected function setUp(): void
     {
         $this->entityManager = $this->createMock(EntityManagerInterface::class);
-        $this->csvParser = $this->createMock(CsvParser::class);
+        $this->csvParser = $this->createStub(CsvParser::class);
         $this->communeRepository = $this->createMock(CommuneRepository::class);
 
         $this->command = new UpdateMergedCommunesCommand(
@@ -34,6 +35,10 @@ class UpdateMergedCommunesCommandTest extends TestCase
 
     public function testProcessCsvRowWithEmptyFields(): void
     {
+        $this->entityManager
+            ->expects($this->never())
+            ->method('persist');
+
         $this->communeRepository
             ->expects($this->never())
             ->method('findBy');
@@ -62,11 +67,12 @@ class UpdateMergedCommunesCommandTest extends TestCase
         $oldCommune = $this->createMock(Commune::class);
         $oldCommune->method('getNom')->willReturn('Les Touches');
         $oldCommune->method('getCommuneMergedInto')->willReturn(null);
-        $newCommune = $this->createMock(Commune::class);
+        $newCommune = $this->createStub(Commune::class);
         $newCommune->method('getNom')->willReturn('Nort-sur-Erdre');
         $oldCommune->expects($this->once())->method('setCommuneMergedInto')->with($newCommune);
 
         $this->communeRepository
+            ->expects($this->once())
             ->method('findBy')
             ->willReturnOnConsecutiveCalls(
                 [$oldCommune], // Pour l'ancien code Insee
@@ -82,7 +88,7 @@ class UpdateMergedCommunesCommandTest extends TestCase
 
         // Simuler SymfonyStyle pour éviter l'erreur lors de l'appel à info()
         $ioProperty = new \ReflectionProperty($this->command, 'io');
-        $ioProperty->setValue($this->command, $this->createMock(SymfonyStyle::class));
+        $ioProperty->setValue($this->command, $this->createStub(SymfonyStyle::class));
 
         $this->command->processCsvRow([null, '44110', 'Nort-sur-Erdre', '44205']);
 
@@ -96,7 +102,7 @@ class UpdateMergedCommunesCommandTest extends TestCase
     {
         $oldCommune = $this->createMock(Commune::class);
         $oldCommune->method('getNom')->willReturn('Les Touches');
-        $oldCommune->method('getCommuneMergedInto')->willReturn($this->createMock(Commune::class));
+        $oldCommune->method('getCommuneMergedInto')->willReturn($this->createStub(Commune::class));
         $oldCommune->expects($this->never())->method('setCommuneMergedInto');
 
         $this->communeRepository
@@ -112,7 +118,7 @@ class UpdateMergedCommunesCommandTest extends TestCase
             ->method('persist');
 
         $ioProperty = new \ReflectionProperty($this->command, 'io');
-        $ioProperty->setValue($this->command, $this->createMock(SymfonyStyle::class));
+        $ioProperty->setValue($this->command, $this->createStub(SymfonyStyle::class));
 
         $this->command->processCsvRow([null, '44205', 'Nort-sur-Erdre', '44110']);
 
@@ -141,7 +147,7 @@ class UpdateMergedCommunesCommandTest extends TestCase
             ->method('persist');
 
         $ioProperty = new \ReflectionProperty($this->command, 'io');
-        $ioProperty->setValue($this->command, $this->createMock(SymfonyStyle::class));
+        $ioProperty->setValue($this->command, $this->createStub(SymfonyStyle::class));
 
         $this->command->processCsvRow([null, '44110', 'Nort-sur-Erdre', '44205']);
 
@@ -169,7 +175,7 @@ class UpdateMergedCommunesCommandTest extends TestCase
             ->with($newCommune);
 
         $ioProperty = new \ReflectionProperty($this->command, 'io');
-        $ioProperty->setValue($this->command, $this->createMock(SymfonyStyle::class));
+        $ioProperty->setValue($this->command, $this->createStub(SymfonyStyle::class));
 
         $this->command->processCsvRow([null, '44110', 'Nort-sur-Erdros', '44110']);
 
@@ -196,7 +202,7 @@ class UpdateMergedCommunesCommandTest extends TestCase
             ->method('persist');
 
         $ioProperty = new \ReflectionProperty($this->command, 'io');
-        $ioProperty->setValue($this->command, $this->createMock(SymfonyStyle::class));
+        $ioProperty->setValue($this->command, $this->createStub(SymfonyStyle::class));
 
         $this->command->processCsvRow([null, '44110', 'Nort-sur-Erdre', '44110']);
 
@@ -208,6 +214,10 @@ class UpdateMergedCommunesCommandTest extends TestCase
 
     public function testProcessCsvRowCleansInseeCode(): void
     {
+        $this->entityManager
+            ->expects($this->never())
+            ->method('persist');
+
         // Test que les codes INSEE à 4 chiffres sont bien complétés avec un 0
         $this->communeRepository
             ->expects($this->once())
@@ -216,7 +226,7 @@ class UpdateMergedCommunesCommandTest extends TestCase
             ->willReturn([]);
 
         $ioProperty = new \ReflectionProperty($this->command, 'io');
-        $ioProperty->setValue($this->command, $this->createMock(SymfonyStyle::class));
+        $ioProperty->setValue($this->command, $this->createStub(SymfonyStyle::class));
 
         // Test avec un code Insee à 4 chiffres pour newCommuneInsee et oldCommuneInsee
         $this->command->processCsvRow([null, '1234', 'Test', '5678']);
@@ -244,7 +254,7 @@ class UpdateMergedCommunesCommandTest extends TestCase
             ->method('persist');
 
         $ioProperty = new \ReflectionProperty($this->command, 'io');
-        $ioProperty->setValue($this->command, $this->createMock(SymfonyStyle::class));
+        $ioProperty->setValue($this->command, $this->createStub(SymfonyStyle::class));
 
         // Test avec des espaces multiples et des * - codes INSEE identiques pour tester le renommage
         $this->command->processCsvRow([null, '44205', '  Test*  Commune  ', '44205']);
@@ -258,7 +268,7 @@ class UpdateMergedCommunesCommandTest extends TestCase
     public function testProcessCsvRowHandlesMultipleCommunesWithSameInsee(): void
     {
         // Teste la dépréciation de multiples communes avec le même code INSEE ancien
-        $newCommune = $this->createMock(Commune::class);
+        $newCommune = $this->createStub(Commune::class);
         $newCommune->method('getNom')->willReturn('Nouvelle Commune');
 
         $oldCommune1 = $this->createMock(Commune::class);
@@ -282,7 +292,7 @@ class UpdateMergedCommunesCommandTest extends TestCase
             ->method('persist');
 
         $ioProperty = new \ReflectionProperty($this->command, 'io');
-        $ioProperty->setValue($this->command, $this->createMock(SymfonyStyle::class));
+        $ioProperty->setValue($this->command, $this->createStub(SymfonyStyle::class));
 
         $this->command->processCsvRow([null, '44205', 'Nouvelle Commune', '44999']);
 

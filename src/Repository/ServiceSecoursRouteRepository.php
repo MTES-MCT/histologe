@@ -29,9 +29,9 @@ class ServiceSecoursRouteRepository extends ServiceEntityRepository
 
         if (!empty($searchServiceSecoursRoute->getOrderType())) {
             [$orderField, $orderDirection] = explode('-', $searchServiceSecoursRoute->getOrderType());
-            $qb->orderBy($orderField, $orderDirection);
+            $qb->orderBy($orderField, 'DESC' === $orderDirection ? \SortDirection::Descending : \SortDirection::Ascending);
         } else {
-            $qb->orderBy('ssr.name', 'ASC');
+            $qb->orderBy('ssr.name', \SortDirection::Ascending);
         }
 
         if ($searchServiceSecoursRoute->getTerritory()) {

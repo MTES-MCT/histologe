@@ -3,7 +3,7 @@
 namespace App\Tests\Unit\Service\Gouv\DocumentIA;
 
 use App\Service\Gouv\DocumentIA\DocumentIAService;
-use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\MockObject\Stub;
 use PHPUnit\Framework\TestCase;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Cache\Adapter\ArrayAdapter;
@@ -20,12 +20,11 @@ class DocumentIAServiceTest extends TestCase
     private const API_KEY = 'secret-api-key';
     private const WORKFLOW_ID = 'document-extraction-v2';
 
-    /** @var MockObject&LoggerInterface */
-    private MockObject $logger;
+    private Stub&LoggerInterface $logger;
 
     protected function setUp(): void
     {
-        $this->logger = $this->createMock(LoggerInterface::class);
+        $this->logger = $this->createStub(LoggerInterface::class);
     }
 
     public function testListWorkflowsSuccess(): void
@@ -44,8 +43,10 @@ class DocumentIAServiceTest extends TestCase
             ]));
         });
 
-        $this->logger->expects($this->never())->method('warning');
-        $this->logger->expects($this->never())->method('error');
+        $logger = $this->createMock(LoggerInterface::class);
+        $this->logger = $logger;
+        $logger->expects($this->never())->method('warning');
+        $logger->expects($this->never())->method('error');
 
         $workflows = $this->createService($mockHttpClient)->listWorkflows();
 
@@ -61,7 +62,9 @@ class DocumentIAServiceTest extends TestCase
             'message' => 'Something went wrong',
         ])));
 
-        $this->logger->expects($this->once())->method('warning')
+        $logger = $this->createMock(LoggerInterface::class);
+        $this->logger = $logger;
+        $logger->expects($this->once())->method('warning')
             ->with('Document IA workflow list failed: Something went wrong');
 
         $this->assertSame([], $this->createService($mockHttpClient)->listWorkflows());
@@ -71,8 +74,10 @@ class DocumentIAServiceTest extends TestCase
     {
         $mockHttpClient = new MockHttpClient(new MockResponse('{}', ['http_code' => 401]));
 
-        $this->logger->expects($this->once())->method('error');
-        $this->logger->expects($this->never())->method('warning');
+        $logger = $this->createMock(LoggerInterface::class);
+        $this->logger = $logger;
+        $logger->expects($this->once())->method('error');
+        $logger->expects($this->never())->method('warning');
 
         $this->assertNull($this->createService($mockHttpClient)->listWorkflows());
     }
@@ -81,8 +86,10 @@ class DocumentIAServiceTest extends TestCase
     {
         $mockHttpClient = new MockHttpClient(new MockResponse('{}', ['http_code' => 500]));
 
-        $this->logger->expects($this->once())->method('warning');
-        $this->logger->expects($this->never())->method('error');
+        $logger = $this->createMock(LoggerInterface::class);
+        $this->logger = $logger;
+        $logger->expects($this->once())->method('warning');
+        $logger->expects($this->never())->method('error');
 
         $this->assertNull($this->createService($mockHttpClient)->listWorkflows());
     }
@@ -166,7 +173,9 @@ class DocumentIAServiceTest extends TestCase
             new MockResponse((string) json_encode([['document_type' => 'cni', 'model' => []]])),
         ]);
 
-        $this->logger->expects($this->once())->method('error');
+        $logger = $this->createMock(LoggerInterface::class);
+        $this->logger = $logger;
+        $logger->expects($this->once())->method('error');
 
         $service = $this->createService($mockHttpClient);
 
@@ -240,8 +249,10 @@ class DocumentIAServiceTest extends TestCase
             ]));
         });
 
-        $this->logger->expects($this->never())->method('warning');
-        $this->logger->expects($this->never())->method('error');
+        $logger = $this->createMock(LoggerInterface::class);
+        $this->logger = $logger;
+        $logger->expects($this->never())->method('warning');
+        $logger->expects($this->never())->method('error');
 
         $result = $this->createService($mockHttpClient)->executeWorkflow(self::WORKFLOW_ID, $this->getUploadedFile());
 
@@ -261,7 +272,9 @@ class DocumentIAServiceTest extends TestCase
             ],
         ])));
 
-        $this->logger->expects($this->once())->method('warning')
+        $logger = $this->createMock(LoggerInterface::class);
+        $this->logger = $logger;
+        $logger->expects($this->once())->method('warning')
             ->with('Document IA workflow execution failed: LLM timeout');
 
         $result = $this->createService($mockHttpClient)->executeWorkflow(self::WORKFLOW_ID, $this->getUploadedFile());
@@ -285,11 +298,13 @@ class DocumentIAServiceTest extends TestCase
             'response_headers' => ['content-type: application/problem+json'],
         ]));
 
-        $this->logger->expects($this->once())->method('error')
+        $logger = $this->createMock(LoggerInterface::class);
+        $this->logger = $logger;
+        $logger->expects($this->once())->method('error')
             ->with("Bad Request\n\nInvalid file", $this->callback(
                 static fn (array $context): bool => $body === $context['response']
             ));
-        $this->logger->expects($this->never())->method('warning');
+        $logger->expects($this->never())->method('warning');
 
         $service = $this->createService($mockHttpClient);
 
@@ -313,7 +328,9 @@ class DocumentIAServiceTest extends TestCase
             'response_headers' => ['content-type: text/html'],
         ]));
 
-        $this->logger->expects($this->once())->method('error');
+        $logger = $this->createMock(LoggerInterface::class);
+        $this->logger = $logger;
+        $logger->expects($this->once())->method('error');
 
         $service = $this->createService($mockHttpClient);
 
@@ -339,7 +356,9 @@ class DocumentIAServiceTest extends TestCase
             throw new TransportException('Connection refused');
         });
 
-        $this->logger->expects($this->once())->method('error')
+        $logger = $this->createMock(LoggerInterface::class);
+        $this->logger = $logger;
+        $logger->expects($this->once())->method('error')
             ->with('Connection refused', $this->arrayHasKey('workflow_id'));
 
         $this->expectException(TransportException::class);

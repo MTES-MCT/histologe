@@ -32,10 +32,10 @@ class EntityComparatorTest extends TestCase
      */
     public function testProcessValueWithObjectHavingGetId(): void
     {
-        $mock = $this->createMock(EntityHistoryInterface::class);
-        $mock->method('getId')->willReturn(123);
+        $stub = $this->createStub(EntityHistoryInterface::class);
+        $stub->method('getId')->willReturn(123);
 
-        $result = $this->entityComparator->processValue($mock);
+        $result = $this->entityComparator->processValue($stub);
 
         $this->assertSame(123, $result);
     }
@@ -45,10 +45,10 @@ class EntityComparatorTest extends TestCase
      */
     public function testProcessValueWithObjectHavingToArray(): void
     {
-        $mock = $this->createMock(SituationFoyer::class);
-        $mock->method('toArray')->willReturn(['key' => 'value']);
+        $stub = $this->createStub(SituationFoyer::class);
+        $stub->method('toArray')->willReturn(['key' => 'value']);
 
-        $result = $this->entityComparator->processValue($mock);
+        $result = $this->entityComparator->processValue($stub);
 
         $this->assertSame(['key' => 'value'], $result);
     }

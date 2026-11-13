@@ -6,7 +6,7 @@ use App\Entity\ApiUserToken;
 use App\Entity\User;
 use App\Repository\ApiUserTokenRepository;
 use App\Security\Authenticator\TokenAuthenticator;
-use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\MockObject\Stub;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -23,10 +23,10 @@ class TokenAuthenticatorTest extends TestCase
 
     protected function setUp(): void
     {
-        /** @var MockObject&ApiUserTokenRepository $apiUserTokenRepository */
-        $apiUserTokenRepository = $this->createMock(ApiUserTokenRepository::class);
-        /** @var MockObject&TranslatorInterface $translator */
-        $translator = $this->createMock(TranslatorInterface::class);
+        /** @var Stub&ApiUserTokenRepository $apiUserTokenRepository */
+        $apiUserTokenRepository = $this->createStub(ApiUserTokenRepository::class);
+        /** @var Stub&TranslatorInterface $translator */
+        $translator = $this->createStub(TranslatorInterface::class);
         $translator->method('trans')
             ->willReturnCallback(static function ($key) {
                 $translations = [
@@ -80,8 +80,8 @@ class TokenAuthenticatorTest extends TestCase
     public function testOnAuthenticationSuccess(): void
     {
         $request = new Request();
-        /** @var MockObject&TokenInterface $token */
-        $token = $this->createMock(TokenInterface::class);
+        /** @var Stub&TokenInterface $token */
+        $token = $this->createStub(TokenInterface::class);
 
         $response = $this->authenticator->onAuthenticationSuccess($request, $token, 'api');
         $this->assertNull($response);

@@ -5,7 +5,7 @@ namespace App\Tests\Unit\Validator;
 use App\Entity\User;
 use App\Validator\DifferentFromCurrentPassword;
 use App\Validator\DifferentFromCurrentPasswordValidator;
-use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\MockObject\Stub;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Validator\Test\ConstraintValidatorTestCase;
 
@@ -14,11 +14,11 @@ use Symfony\Component\Validator\Test\ConstraintValidatorTestCase;
  */
 class DifferentFromCurrentPasswordValidatorTest extends ConstraintValidatorTestCase
 {
-    private UserPasswordHasherInterface&MockObject $passwordHasher;
+    private UserPasswordHasherInterface&Stub $passwordHasher;
 
     protected function setUp(): void
     {
-        $this->passwordHasher = $this->createMock(UserPasswordHasherInterface::class);
+        $this->passwordHasher = $this->createStub(UserPasswordHasherInterface::class);
 
         parent::setUp();
     }
@@ -57,11 +57,14 @@ class DifferentFromCurrentPasswordValidatorTest extends ConstraintValidatorTestC
         $user = new User();
         $user->setPassword('$2y$13$hashedPassword');
 
-        $this->passwordHasher->expects($this->once())
+        $passwordHasher = $this->createMock(UserPasswordHasherInterface::class);
+        $passwordHasher->expects($this->once())
             ->method('isPasswordValid')
             ->with($user, 'NewPassword!123')
             ->willReturn(false);
 
+        $this->validator = new DifferentFromCurrentPasswordValidator($passwordHasher);
+        $this->validator->initialize($this->context);
         $this->setProperty($user, 'plainPassword');
         $this->validator->validate('NewPassword!123', $constraint);
         $this->assertNoViolation();
@@ -73,11 +76,14 @@ class DifferentFromCurrentPasswordValidatorTest extends ConstraintValidatorTestC
         $user = new User();
         $user->setPassword('$2y$13$hashedPassword');
 
-        $this->passwordHasher->expects($this->once())
+        $passwordHasher = $this->createMock(UserPasswordHasherInterface::class);
+        $passwordHasher->expects($this->once())
             ->method('isPasswordValid')
             ->with($user, 'OldPassword!123')
             ->willReturn(true);
 
+        $this->validator = new DifferentFromCurrentPasswordValidator($passwordHasher);
+        $this->validator->initialize($this->context);
         $this->setProperty($user, 'plainPassword');
         $this->validator->validate('OldPassword!123', $constraint);
 

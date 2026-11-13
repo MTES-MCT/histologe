@@ -24,8 +24,8 @@ class InterventionVisiteServiceHandlerTest extends TestCase
 
     protected function setUp(): void
     {
-        $this->esaboraSISHService = $this->createMock(EsaboraSISHService::class);
-        $this->esaboraManager = $this->createMock(EsaboraManager::class);
+        $this->esaboraSISHService = $this->createStub(EsaboraSISHService::class);
+        $this->esaboraManager = $this->createStub(EsaboraManager::class);
 
         $this->handler = new InterventionVisiteServiceHandler(
             $this->esaboraSISHService,
@@ -41,8 +41,8 @@ class InterventionVisiteServiceHandlerTest extends TestCase
         $filepath = __DIR__.'/../../../../../tools/wiremock/src/Resources/Esabora/sish/ws_visites_dossier_sas.json';
         $responseEsabora = json_decode((string) file_get_contents($filepath), true);
 
-        $this->esaboraSISHService = $this->createMock(EsaboraSISHService::class);
-        $this->esaboraSISHService
+        $esaboraSISHService = $this->createMock(EsaboraSISHService::class);
+        $esaboraSISHService
             ->expects($this->exactly(1))
             ->method('getVisiteDossier')
             ->with($this->affectation = $this->getAffectation(PartnerType::ARS))
@@ -53,8 +53,8 @@ class InterventionVisiteServiceHandlerTest extends TestCase
                 )
             );
 
-        $this->esaboraManager = $this->createMock(EsaboraManager::class);
-        $this->esaboraManager
+        $esaboraManager = $this->createMock(EsaboraManager::class);
+        $esaboraManager
             ->expects($matcher = $this->exactly(2))
             ->method('createOrUpdateVisite')
             ->willReturnCallback(
@@ -78,8 +78,8 @@ class InterventionVisiteServiceHandlerTest extends TestCase
             );
 
         $this->handler = new InterventionVisiteServiceHandler(
-            $this->esaboraSISHService,
-            $this->esaboraManager,
+            $esaboraSISHService,
+            $esaboraManager,
         );
 
         $this->handler->handle($this->affectation, $this->affectation->getSignalement()->getUuid());

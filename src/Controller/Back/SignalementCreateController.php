@@ -261,6 +261,7 @@ class SignalementCreateController extends AbstractController
                 return $this->json(['redirect' => true, 'url' => $url, 'tabContent' => $tabContent]);
             }
         }
+        $this->entityManager->rollback();
 
         $tabContent = $this->renderView('back/signalement_create/tabs/tab-adresse.html.twig', ['form' => $form]);
 

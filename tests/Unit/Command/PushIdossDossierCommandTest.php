@@ -87,6 +87,14 @@ class PushIdossDossierCommandTest extends TestCase
 
     public function testExecuteWithoutUuidArgument(): void
     {
+        $this->affectationRepository
+            ->expects($this->never())
+            ->method('findAffectationSubscribedToIdoss');
+
+        $this->interconnectionBus
+            ->expects($this->never())
+            ->method('dispatch');
+
         $command = new PushIdossDossierCommand(
             $this->affectationRepository,
             $this->interconnectionBus

@@ -5,7 +5,7 @@ namespace App\Tests\Unit\Validator;
 use App\Dto\Request\Signalement\SignalementDraftRequest;
 use App\Validator\ValueLessThanOtherValue;
 use App\Validator\ValueLessThanOtherValueValidator;
-use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\MockObject\Stub;
 use Symfony\Component\Validator\ConstraintValidatorInterface;
 use Symfony\Component\Validator\Test\ConstraintValidatorTestCase;
 
@@ -74,14 +74,11 @@ class ValueLessThanOtherValueValidatorTest extends ConstraintValidatorTestCase
     }
 
     /**
-     * @return SignalementDraftRequest&MockObject
+     * @return SignalementDraftRequest&Stub
      */
     private function createDto(?string $children, ?string $people)
     {
-        $dto = $this->getMockBuilder(SignalementDraftRequest::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods(['getCompositionLogementNombreEnfants', 'getCompositionLogementNombrePersonnes'])
-            ->getMock();
+        $dto = $this->createStub(SignalementDraftRequest::class);
         $dto->method('getCompositionLogementNombreEnfants')->willReturn($children);
         $dto->method('getCompositionLogementNombrePersonnes')->willReturn($people);
 

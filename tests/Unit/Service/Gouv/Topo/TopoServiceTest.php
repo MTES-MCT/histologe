@@ -40,7 +40,7 @@ class TopoServiceTest extends TestCase
         ]);
 
         $httpClient = new MockHttpClient($mockResponse);
-        $logger = $this->createMock(LoggerInterface::class);
+        $logger = $this->createStub(LoggerInterface::class);
         $topoService = new TopoService($httpClient, $logger);
 
         $results = $topoService->searchVoies('63', '214', 'LOUBRETTE');

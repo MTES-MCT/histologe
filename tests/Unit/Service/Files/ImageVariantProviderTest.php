@@ -7,15 +7,15 @@ use App\Service\Files\ImageVariantProvider;
 use App\Service\Files\TmpFileWriter;
 use League\Flysystem\FilesystemOperator;
 use PHPUnit\Framework\Attributes\DataProvider;
-use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\MockObject\Stub;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 use Symfony\Component\Filesystem\Filesystem;
 
 class ImageVariantProviderTest extends KernelTestCase
 {
-    private FilesystemOperator&MockObject $fileStorageMock;
-    private TmpFileWriter&MockObject $tmpFileWriterMock;
+    private Stub&FilesystemOperator $fileStorageMock;
+    private TmpFileWriter $tmpFileWriterMock;
     private ImageVariantProvider $provider;
     private Filesystem $filesystem;
 
@@ -26,8 +26,8 @@ class ImageVariantProviderTest extends KernelTestCase
     {
         self::bootKernel();
 
-        $this->fileStorageMock = $this->createMock(FilesystemOperator::class);
-        $this->tmpFileWriterMock = $this->createMock(TmpFileWriter::class);
+        $this->fileStorageMock = $this->createStub(FilesystemOperator::class);
+        $this->tmpFileWriterMock = $this->createStub(TmpFileWriter::class);
         $this->tmpFileWriterMock
             ->method('putContents')
             ->willReturnCallback(static function (string $path, string $content): void {

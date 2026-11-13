@@ -140,9 +140,9 @@ class JobEventQuery
 
         if (!empty($searchInterconnexion->getOrderType())) {
             [$orderField, $orderDirection] = explode('-', $searchInterconnexion->getOrderType());
-            $qb->orderBy($orderField, $orderDirection);
+            $qb->orderBy($orderField, 'ASC' === $orderDirection ? \SortDirection::Ascending : \SortDirection::Descending);
         } else {
-            $qb->orderBy('j.createdAt', 'DESC');
+            $qb->orderBy('j.createdAt', \SortDirection::Descending);
         }
 
         $qb->setMaxResults($limit)->setFirstResult($offset);

@@ -9,7 +9,7 @@ use App\Service\Interconnection\Esabora\Response\DossierStateSCHSResponse;
 use App\Service\UploadHandlerService;
 use App\Tests\FileHelper;
 use App\Tests\FixturesHelper;
-use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\MockObject\Stub;
 use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 use Symfony\Component\HttpClient\Exception\TransportException;
@@ -25,17 +25,17 @@ class EsaboraSCHSServiceTest extends KernelTestCase
 
     public const PATH_RESOURCE_JSON = '/../../../../tools/wiremock/src/Resources/Esabora/schs/';
 
-    private MockObject&UploadHandlerService $uploadHandlerService;
-    private MockObject&LoggerInterface $logger;
-    private MockObject&EsaboraTokenProvider $esaboraTokenProvider;
+    private Stub&UploadHandlerService $uploadHandlerService;
+    private Stub&LoggerInterface $logger;
+    private Stub&EsaboraTokenProvider $esaboraTokenProvider;
     private ?string $tempFilepath;
 
     protected function setUp(): void
     {
         $this->tempFilepath = $this->getTempFilepath();
-        $this->uploadHandlerService = $this->createMock(UploadHandlerService::class);
-        $this->logger = $this->createMock(LoggerInterface::class);
-        $this->esaboraTokenProvider = $this->createMock(EsaboraTokenProvider::class);
+        $this->uploadHandlerService = $this->createStub(UploadHandlerService::class);
+        $this->logger = $this->createStub(LoggerInterface::class);
+        $this->esaboraTokenProvider = $this->createStub(EsaboraTokenProvider::class);
         $this->esaboraTokenProvider->method('getToken')->willReturn('test-token');
     }
 
@@ -45,7 +45,9 @@ class EsaboraSCHSServiceTest extends KernelTestCase
         $mockResponse = new MockResponse((string) file_get_contents($filepath));
 
         $mockHttpClient = new MockHttpClient($mockResponse);
-        $this->uploadHandlerService
+        $uploadHandlerService = $this->createMock(UploadHandlerService::class);
+        $this->uploadHandlerService = $uploadHandlerService;
+        $uploadHandlerService
             ->expects($this->atLeast(1))
             ->method('getTmpFilepath')
             ->willReturn($this->tempFilepath);
@@ -64,7 +66,9 @@ class EsaboraSCHSServiceTest extends KernelTestCase
     {
         $mockResponse = new MockResponse([], ['http_code' => Response::HTTP_INTERNAL_SERVER_ERROR]);
         $mockHttpClient = new MockHttpClient($mockResponse);
-        $this->uploadHandlerService
+        $uploadHandlerService = $this->createMock(UploadHandlerService::class);
+        $this->uploadHandlerService = $uploadHandlerService;
+        $uploadHandlerService
             ->expects($this->atLeast(1))
             ->method('getTmpFilepath')
             ->willReturn($this->tempFilepath);
@@ -120,7 +124,9 @@ class EsaboraSCHSServiceTest extends KernelTestCase
             throw new TransportException();
         });
 
-        $this->uploadHandlerService
+        $uploadHandlerService = $this->createMock(UploadHandlerService::class);
+        $this->uploadHandlerService = $uploadHandlerService;
+        $uploadHandlerService
             ->expects($this->atLeast(1))
             ->method('getTmpFilepath')
             ->willReturn($this->tempFilepath);

@@ -8,6 +8,9 @@ class DateHelper
 
     public static function isValidDate(?string $date, string $format = 'Y-m-d H:i:s'): bool
     {
+        if (!$date) {
+            return false;
+        }
         $datetime = \DateTimeImmutable::createFromFormat($format, $date);
 
         return $datetime && $datetime->format($format) === $date;

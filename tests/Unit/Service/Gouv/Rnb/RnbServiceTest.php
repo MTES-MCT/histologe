@@ -3,7 +3,7 @@
 namespace App\Tests\Unit\Service\Gouv\Rnb;
 
 use App\Service\Gouv\Rnb\RnbService;
-use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\MockObject\Stub;
 use PHPUnit\Framework\TestCase;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\HttpClient\MockHttpClient;
@@ -21,8 +21,8 @@ class RnbServiceTest extends TestCase
             (string) file_get_contents(__DIR__.'/../../../../files/betagouv/get_api_rnb_buildings_response.json')
         );
         $mockHttpClient = new MockHttpClient($mockResponse);
-        /** @var MockObject&LoggerInterface $logger */
-        $logger = $this->createMock(LoggerInterface::class);
+        /** @var Stub&LoggerInterface $logger */
+        $logger = $this->createStub(LoggerInterface::class);
         $this->rnbService = new RnbService($mockHttpClient, $logger);
     }
 

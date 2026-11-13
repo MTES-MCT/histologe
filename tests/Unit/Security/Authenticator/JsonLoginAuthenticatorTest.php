@@ -8,7 +8,7 @@ use App\Entity\User;
 use App\Repository\UserRepository;
 use App\Security\Authenticator\JsonLoginAuthenticator;
 use Doctrine\ORM\EntityManagerInterface;
-use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\MockObject\Stub;
 use PHPUnit\Framework\TestCase;
 use Random\RandomException;
 use Symfony\Component\HttpFoundation\Request;
@@ -27,12 +27,12 @@ class JsonLoginAuthenticatorTest extends TestCase
 
     protected function setUp(): void
     {
-        /** @var MockObject&UserRepository $userRepository */
-        $userRepository = $this->createMock(UserRepository::class);
-        /** @var MockObject&EntityManagerInterface $entityManager */
-        $entityManager = $this->createMock(EntityManagerInterface::class);
-        /** @var MockObject&TranslatorInterface $translator */
-        $translator = $this->createMock(TranslatorInterface::class);
+        /** @var Stub&UserRepository $userRepository */
+        $userRepository = $this->createStub(UserRepository::class);
+        /** @var Stub&EntityManagerInterface $entityManager */
+        $entityManager = $this->createStub(EntityManagerInterface::class);
+        /** @var Stub&TranslatorInterface $translator */
+        $translator = $this->createStub(TranslatorInterface::class);
         $this->authenticator = new JsonLoginAuthenticator($userRepository, $entityManager, $translator);
 
         $translator->method('trans')
@@ -82,8 +82,8 @@ class JsonLoginAuthenticatorTest extends TestCase
 
         $apiUserToken = new ApiUserToken();
         $user->addApiUserToken($apiUserToken);
-        /** @var MockObject&TokenInterface $token */
-        $token = $this->createMock(TokenInterface::class);
+        /** @var Stub&TokenInterface $token */
+        $token = $this->createStub(TokenInterface::class);
         $token->method('getUser')
             ->willReturn($user);
 

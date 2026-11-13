@@ -33,7 +33,7 @@ class NotificationSuiviQuery
                 ->andWhere('u.id IN (:usager_ids)')
                 ->setParameter('signalement', $signalement)
                 ->setParameter('usager_ids', $signalement->getUsagerIds())
-                ->orderBy('s.createdAt', 'DESC')
+                ->orderBy('s.createdAt', \SortDirection::Descending)
                 ->getQuery()
                 ->getArrayResult()
         );

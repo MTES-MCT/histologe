@@ -322,7 +322,7 @@ class Signalement implements EntityHistoryInterface, EntityHistoryCollectionInte
 
     /** @var Collection<int, Suivi> $suivis */
     #[ORM\OneToMany(mappedBy: 'signalement', targetEntity: Suivi::class, orphanRemoval: true, cascade: ['persist'])]
-    #[ORM\OrderBy(['createdAt' => 'ASC'])]
+    #[ORM\OrderBy(['createdAt' => \SortDirection::Ascending])]
     private Collection $suivis;
 
     #[ORM\Column(nullable: true)]

@@ -33,7 +33,7 @@ class SearchCommuneType extends AbstractType
         $builder->add('epci', EntityType::class, [
             'class' => Epci::class,
             'query_builder' => static function (EntityRepository $er) {
-                return $er->createQueryBuilder('e')->orderBy('e.nom', 'ASC');
+                return $er->createQueryBuilder('e')->orderBy('e.nom', \SortDirection::Ascending);
             },
             'choice_label' => 'nom',
             'required' => false,

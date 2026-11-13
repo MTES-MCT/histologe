@@ -101,11 +101,11 @@ class ImportSignalementCommandTest extends KernelTestCase
             ->with(['zip' => '999'])
             ->willReturn(null);
 
-        $uploadHandlerService = $this->createMock(UploadHandlerService::class);
-        $signalementImportLoader = $this->createMock(SignalementImportLoader::class);
-        $csvParser = $this->createMock(CsvParser::class);
-        $fileStorage = $this->createMock(FilesystemOperator::class);
-        $parameterBag = $this->createMock(ParameterBagInterface::class);
+        $uploadHandlerService = $this->createStub(UploadHandlerService::class);
+        $signalementImportLoader = $this->createStub(SignalementImportLoader::class);
+        $csvParser = $this->createStub(CsvParser::class);
+        $fileStorage = $this->createStub(FilesystemOperator::class);
+        $parameterBag = $this->createStub(ParameterBagInterface::class);
 
         $command = new ImportSignalementCommand(
             $csvParser,
@@ -141,10 +141,10 @@ class ImportSignalementCommandTest extends KernelTestCase
                     ->setIsActive(true)
             );
 
-        $uploadHandlerService = $this->createMock(UploadHandlerService::class);
-        $signalementImportLoader = $this->createMock(SignalementImportLoader::class);
-        $csvParser = $this->createMock(CsvParser::class);
-        $fileStorage = $this->createMock(FilesystemOperator::class);
+        $uploadHandlerService = $this->createStub(UploadHandlerService::class);
+        $signalementImportLoader = $this->createStub(SignalementImportLoader::class);
+        $csvParser = $this->createStub(CsvParser::class);
+        $fileStorage = $this->createStub(FilesystemOperator::class);
 
         $parameterBag = $this->createMock(ParameterBagInterface::class);
         $parameterBag->expects($this->once())

@@ -11,55 +11,55 @@ class AndSpecificationTest extends TestCase
 {
     public function testAllSpecificationsSatisfied(): void
     {
-        $spec1 = $this->createMock(SpecificationInterface::class);
+        $spec1 = $this->createStub(SpecificationInterface::class);
         $spec1->method('isSatisfiedBy')->willReturn(true);
 
-        $spec2 = $this->createMock(SpecificationInterface::class);
+        $spec2 = $this->createStub(SpecificationInterface::class);
         $spec2->method('isSatisfiedBy')->willReturn(true);
 
-        $spec3 = $this->createMock(SpecificationInterface::class);
+        $spec3 = $this->createStub(SpecificationInterface::class);
         $spec3->method('isSatisfiedBy')->willReturn(true);
 
-        $spec4 = $this->createMock(SpecificationInterface::class);
+        $spec4 = $this->createStub(SpecificationInterface::class);
         $spec4->method('isSatisfiedBy')->willReturn(true);
 
         $andSpec = new AndSpecification($spec1, $spec2, $spec3, $spec4);
 
-        $context = $this->createMock(SpecificationContextInterface::class);
+        $context = $this->createStub(SpecificationContextInterface::class);
         $this->assertTrue($andSpec->isSatisfiedBy($context));
     }
 
     public function testOneSpecificationNotSatisfied(): void
     {
-        $spec1 = $this->createMock(SpecificationInterface::class);
+        $spec1 = $this->createStub(SpecificationInterface::class);
         $spec1->method('isSatisfiedBy')->willReturn(true);
 
-        $spec2 = $this->createMock(SpecificationInterface::class);
+        $spec2 = $this->createStub(SpecificationInterface::class);
         $spec2->method('isSatisfiedBy')->willReturn(false);
 
-        $spec3 = $this->createMock(SpecificationInterface::class);
+        $spec3 = $this->createStub(SpecificationInterface::class);
         $spec3->method('isSatisfiedBy')->willReturn(true);
 
-        $spec4 = $this->createMock(SpecificationInterface::class);
+        $spec4 = $this->createStub(SpecificationInterface::class);
         $spec4->method('isSatisfiedBy')->willReturn(true);
 
         $andSpec = new AndSpecification($spec1, $spec2, $spec3, $spec4);
 
-        $context = $this->createMock(SpecificationContextInterface::class);
+        $context = $this->createStub(SpecificationContextInterface::class);
         $this->assertFalse($andSpec->isSatisfiedBy($context));
     }
 
     public function testBothSpecificationNotSatisfied(): void
     {
-        $spec1 = $this->createMock(SpecificationInterface::class);
+        $spec1 = $this->createStub(SpecificationInterface::class);
         $spec1->method('isSatisfiedBy')->willReturn(false);
 
-        $spec2 = $this->createMock(SpecificationInterface::class);
+        $spec2 = $this->createStub(SpecificationInterface::class);
         $spec2->method('isSatisfiedBy')->willReturn(false);
 
         $andSpec = new AndSpecification($spec1, $spec2);
 
-        $context = $this->createMock(SpecificationContextInterface::class);
+        $context = $this->createStub(SpecificationContextInterface::class);
         $this->assertFalse($andSpec->isSatisfiedBy($context));
     }
 
@@ -67,7 +67,7 @@ class AndSpecificationTest extends TestCase
     {
         $andSpec = new AndSpecification();
 
-        $context = $this->createMock(SpecificationContextInterface::class);
+        $context = $this->createStub(SpecificationContextInterface::class);
         $this->assertTrue($andSpec->isSatisfiedBy($context));
     }
 }

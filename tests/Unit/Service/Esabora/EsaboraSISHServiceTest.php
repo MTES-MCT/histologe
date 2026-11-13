@@ -9,7 +9,7 @@ use App\Service\Interconnection\Esabora\EsaboraTokenProvider;
 use App\Service\UploadHandlerService;
 use App\Tests\FileHelper;
 use App\Tests\FixturesHelper;
-use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\MockObject\Stub;
 use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 use Symfony\Component\HttpClient\MockHttpClient;
@@ -23,17 +23,17 @@ class EsaboraSISHServiceTest extends KernelTestCase
 
     public const string PATH_RESOURCE_JSON = '/../../../../tools/wiremock/src/Resources/Esabora/sish/';
 
-    private MockObject&UploadHandlerService $uploadHandlerService;
-    private MockObject&LoggerInterface $logger;
-    private MockObject&EsaboraTokenProvider $esaboraTokenProvider;
+    private Stub&UploadHandlerService $uploadHandlerService;
+    private Stub&LoggerInterface $logger;
+    private Stub&EsaboraTokenProvider $esaboraTokenProvider;
     private string $tempFilepath;
 
     protected function setUp(): void
     {
         $this->tempFilepath = $this->getTempFilepath();
-        $this->uploadHandlerService = $this->createMock(UploadHandlerService::class);
-        $this->logger = $this->createMock(LoggerInterface::class);
-        $this->esaboraTokenProvider = $this->createMock(EsaboraTokenProvider::class);
+        $this->uploadHandlerService = $this->createStub(UploadHandlerService::class);
+        $this->logger = $this->createStub(LoggerInterface::class);
+        $this->esaboraTokenProvider = $this->createStub(EsaboraTokenProvider::class);
         $this->esaboraTokenProvider->method('getToken')->willReturn('test-token');
     }
 
@@ -50,6 +50,10 @@ class EsaboraSISHServiceTest extends KernelTestCase
 
     public function testPushDossierToEsaboraSasSuccess(): void
     {
+        $uploadHandlerService = $this->createMock(UploadHandlerService::class);
+        $uploadHandlerService->expects($this->exactly(2))->method('getTmpFilepath');
+        $this->uploadHandlerService = $uploadHandlerService;
+
         $filepath = __DIR__.self::PATH_RESOURCE_JSON.'ws_dossier.json';
         $esaboraService = $this->getEsaboraSISHService($filepath);
         $response = $esaboraService->pushDossier($this->getDossierMessageSISH(AbstractEsaboraService::ACTION_PUSH_DOSSIER));
@@ -118,7 +122,6 @@ class EsaboraSISHServiceTest extends KernelTestCase
         $mockResponse = new MockResponse((string) file_get_contents($filepath));
         $mockHttpClient = new MockHttpClient($mockResponse);
         $this->uploadHandlerService
-            ->expects($this->atLeast(str_contains('ws_dossier', $filepath) ? 1 : 0))
             ->method('getTmpFilepath')
             ->willReturn($this->tempFilepath);
 

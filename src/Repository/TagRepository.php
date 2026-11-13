@@ -32,7 +32,7 @@ class TagRepository extends ServiceEntityRepository
     ): mixed {
         $qb = $this->createQueryBuilder('t');
         $qb->andWhere('t.isArchive != 1')
-            ->orderBy('t.label', 'ASC')
+            ->orderBy('t.label', \SortDirection::Ascending)
             ->indexBy('t', 't.id');
         if ($user && !$user->isSuperAdmin()) {
             $qb->andWhere('t.territory IN (:territories)')->setParameter('territories', $user->getPartnersTerritories());
@@ -59,9 +59,9 @@ class TagRepository extends ServiceEntityRepository
 
         if (!empty($searchTag->getOrderType())) {
             [$orderField, $orderDirection] = explode('-', $searchTag->getOrderType());
-            $qb->orderBy($orderField, $orderDirection);
+            $qb->orderBy($orderField, 'DESC' === $orderDirection ? \SortDirection::Descending : \SortDirection::Ascending);
         } else {
-            $qb->orderBy('t.label', 'ASC');
+            $qb->orderBy('t.label', \SortDirection::Ascending);
         }
 
         $qb->indexBy('t', 't.id');

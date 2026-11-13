@@ -25,13 +25,14 @@ class EsaboraTokenProviderTest extends TestCase
     {
         $this->cache = new ArrayAdapter();
         $this->loggedErrors = [];
-        $this->logger = $this->createMock(LoggerInterface::class);
-        $this->logger->method('error')->willReturnCallback(function ($message, $context = []) {
+        $logger = $this->createStub(LoggerInterface::class);
+        $logger->method('error')->willReturnCallback(function ($message, $context = []) {
             $this->loggedErrors[] = [
                 'message' => (string) $message,
                 'context' => $context,
             ];
         });
+        $this->logger = $logger;
     }
 
     public function testStaticTokenSuccess(): void

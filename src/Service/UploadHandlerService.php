@@ -367,7 +367,7 @@ class UploadHandlerService
             $tmpFilepath = $this->parameterBag->get('uploads_tmp_dir').$filename;
             $bucketFilepath = $this->parameterBag->get('url_bucket').'/'.$filename;
 
-            $content = file_get_contents($bucketFilepath);
+            $content = @file_get_contents($bucketFilepath);
             if (false === $content) {
                 $this->logger->error('Impossible de récupérer le contenu du fichier');
 
