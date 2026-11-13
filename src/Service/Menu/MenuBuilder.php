@@ -15,6 +15,8 @@ readonly class MenuBuilder
         private readonly bool $featureMetabaseStats,
         #[Autowire(env: 'FEATURE_HISTO_ADDRESS')]
         private readonly bool $featureAddressesHistory,
+        #[Autowire(env: 'FEATURE_CALENDAR')]
+        private readonly bool $featureCalendar,
     ) {
     }
 
@@ -111,7 +113,12 @@ readonly class MenuBuilder
 
         $menu = (new MenuItem(label: 'root', route: ''))
             ->addChild(new MenuItem(label: 'Tableau de bord', route: 'back_dashboard', routeParameters: $listRouteBOParameters, icon: 'fr-icon-home-4-fill', roleGranted: User::ROLE_USER))
-            ->addChild($signalementsSubMenu)
+            ->addChild($signalementsSubMenu);
+        if ($this->featureCalendar) {
+            $menu
+                ->addChild(new MenuItem(label: 'Calendrier', route: 'back_calendar', roleGranted: User::ROLE_USER));
+        }
+        $menu
             ->addChild($donneesChiffreesSubMenu)
             ->addChild($mesOutilsSubMenu)
             ->addChild($superAdminToolsSubItem)
