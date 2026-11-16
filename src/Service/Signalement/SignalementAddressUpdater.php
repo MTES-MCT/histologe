@@ -78,7 +78,7 @@ class SignalementAddressUpdater
     {
         $commune = $this->communeRepository->findOneByNomAndCodePostal($city, $postCode);
         if ($commune) {
-            $cityVerified = $commune->getNom();
+            $cityVerified = $commune->getNom(true);
             $zipCodeVerified = $commune->getCodePostal();
             $inseeCodeVerified = $commune->getCodeInsee();
         } else {
