@@ -32,7 +32,7 @@ class ClubEventRepository extends ServiceEntityRepository
             ->andWhere('c.dateEvent BETWEEN :startOfDay AND :endOfDay')
             ->setParameter('startOfDay', $targetDate->setTime(0, 0, 0))
             ->setParameter('endOfDay', $targetDate->setTime(23, 59, 59))
-            ->orderBy('c.dateEvent', 'ASC');
+            ->orderBy('c.dateEvent', \SortDirection::Ascending);
 
         return $qb->getQuery()->getResult();
     }
@@ -45,7 +45,7 @@ class ClubEventRepository extends ServiceEntityRepository
         $qb = $this->createQueryBuilder('c')
             ->andWhere('c.dateEvent >= :now')
             ->setParameter('now', $this->clock->now()->setTime(0, 0, 0))
-            ->orderBy('c.dateEvent', 'ASC');
+            ->orderBy('c.dateEvent', \SortDirection::Ascending);
 
         return $qb->getQuery()->getResult();
     }
@@ -59,9 +59,9 @@ class ClubEventRepository extends ServiceEntityRepository
 
         if (!empty($searchClubEvent->getOrderType())) {
             [$orderField, $orderDirection] = explode('-', $searchClubEvent->getOrderType());
-            $qb->orderBy($orderField, $orderDirection);
+            $qb->orderBy($orderField, 'DESC' === $orderDirection ? \SortDirection::Descending : \SortDirection::Ascending);
         } else {
-            $qb->orderBy('c.dateEvent', 'ASC');
+            $qb->orderBy('c.dateEvent', \SortDirection::Ascending);
         }
 
         if (true === $searchClubEvent->getIsInFuture()) {

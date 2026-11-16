@@ -4,6 +4,7 @@ namespace App\Tests\Unit\Service\Gouv\Rial;
 
 use App\Service\Gouv\Rial\RialService;
 use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\MockObject\Stub;
 use PHPUnit\Framework\TestCase;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\HttpClient\MockHttpClient;
@@ -97,8 +98,8 @@ class RialServiceTest extends TestCase
     {
         /** @var string $responseFile */
         $responseFile = (string) file_get_contents($file);
-        /** @var LoggerInterface&MockObject $logger */
-        $logger = $this->createMock(LoggerInterface::class);
+        /** @var LoggerInterface&Stub $logger */
+        $logger = $this->createStub(LoggerInterface::class);
         $mockResponse = new MockResponse($responseFile);
         $mockHttpClient = new MockHttpClient($mockResponse);
 

@@ -20,9 +20,9 @@ class HistoryEntryBufferTest extends KernelTestCase
         private readonly UserRepository $userRepository,
         */
         $entityManager = $this->createMock(EntityManagerInterface::class);
-        $signalementRepository = $this->createMock(SignalementRepository::class);
-        $userRepository = $this->createMock(UserRepository::class);
-        $logger = $this->createMock(LoggerInterface::class);
+        $signalementRepository = $this->createStub(SignalementRepository::class);
+        $userRepository = $this->createStub(UserRepository::class);
+        $logger = $this->createStub(LoggerInterface::class);
 
         $entityManager->expects($this->never())->method('clear');
         $historyEntryBuffer = new HistoryEntryBuffer($entityManager, $signalementRepository, $userRepository, $logger);
@@ -33,9 +33,9 @@ class HistoryEntryBufferTest extends KernelTestCase
     public function testFlushNotEmpty(): void
     {
         $entityManager = $this->createMock(EntityManagerInterface::class);
-        $signalementRepository = $this->createMock(SignalementRepository::class);
-        $userRepository = $this->createMock(UserRepository::class);
-        $logger = $this->createMock(LoggerInterface::class);
+        $signalementRepository = $this->createStub(SignalementRepository::class);
+        $userRepository = $this->createStub(UserRepository::class);
+        $logger = $this->createStub(LoggerInterface::class);
 
         $entityManager->method('isOpen')->willReturn(true);
         $entityManager->expects($this->once())->method('clear');
@@ -57,9 +57,9 @@ class HistoryEntryBufferTest extends KernelTestCase
     public function testExistAndUpdate(): void
     {
         $entityManager = $this->createMock(EntityManagerInterface::class);
-        $signalementRepository = $this->createMock(SignalementRepository::class);
-        $userRepository = $this->createMock(UserRepository::class);
-        $logger = $this->createMock(LoggerInterface::class);
+        $signalementRepository = $this->createStub(SignalementRepository::class);
+        $userRepository = $this->createStub(UserRepository::class);
+        $logger = $this->createStub(LoggerInterface::class);
 
         $entityManager->method('isOpen')->willReturn(true);
         $entityManager->expects($this->once())->method('clear');

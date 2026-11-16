@@ -27,9 +27,9 @@ class ZonePaginatorQuery
 
         if (!empty($searchZone->getOrderType())) {
             [$orderField, $orderDirection] = explode('-', $searchZone->getOrderType());
-            $qb->orderBy($orderField, $orderDirection);
+            $qb->orderBy($orderField, 'DESC' === $orderDirection ? \SortDirection::Descending : \SortDirection::Ascending);
         } else {
-            $qb->orderBy('z.name', 'ASC');
+            $qb->orderBy('z.name', \SortDirection::Ascending);
         }
 
         if ($searchZone->getQueryName()) {

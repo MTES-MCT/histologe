@@ -40,7 +40,7 @@ class CommuneType extends AbstractType
             ->add('epci', EntityType::class, [
                 'class' => Epci::class,
                 'query_builder' => static function (EntityRepository $er) {
-                    return $er->createQueryBuilder('e')->orderBy('e.nom', 'ASC');
+                    return $er->createQueryBuilder('e')->orderBy('e.nom', \SortDirection::Ascending);
                 },
                 'choice_label' => 'nom',
                 'label' => 'EPCI (facultatif)',

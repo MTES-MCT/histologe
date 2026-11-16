@@ -11,7 +11,6 @@ use App\Repository\UserRepository;
 use App\Service\History\HistoryEntryBuffer;
 use App\Service\Security\NewLoginNotifier;
 use Doctrine\ORM\EntityManagerInterface;
-use PHPUnit\Framework\MockObject\MockObject;
 use Psr\Log\LoggerInterface;
 use Scheb\TwoFactorBundle\Security\TwoFactor\Event\TwoFactorAuthenticationEvent;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
@@ -26,8 +25,7 @@ class AuthentificationSuccessListenerTest extends WebTestCase
     private ?KernelBrowser $client = null;
     private HistoryEntryRepository $historyEntryRepository;
     private UrlGeneratorInterface $urlGenerator;
-    private MockObject&LoggerInterface $logger;
-    private MockObject&TokenInterface $token;
+    private LoggerInterface $logger;
 
     protected function setUp(): void
     {
@@ -35,8 +33,7 @@ class AuthentificationSuccessListenerTest extends WebTestCase
         $this->client = static::createClient();
         $this->urlGenerator = static::getContainer()->get(UrlGeneratorInterface::class);
         $this->historyEntryRepository = static::getContainer()->get(HistoryEntryRepository::class);
-        $this->logger = $this->createMock(LoggerInterface::class);
-        $this->token = $this->createMock(TokenInterface::class);
+        $this->logger = $this->createStub(LoggerInterface::class);
     }
 
     public function testInteractiveLogin(): void
@@ -88,7 +85,8 @@ class AuthentificationSuccessListenerTest extends WebTestCase
         $this->assertNull($user->getLastLoginAt(), 'lastLoginAt doit être null avant 2FA');
         $user->setLastLoginFingerprint(hash('sha256', 'environnement précédent'));
         $entityManager->flush();
-        $this->token
+        $token = $this->createMock(TokenInterface::class);
+        $token
             ->expects($this->once())
             ->method('getUser')
             ->willReturn($user);
@@ -101,7 +99,7 @@ class AuthentificationSuccessListenerTest extends WebTestCase
                 Request::METHOD_POST,
                 ['_auth_code' => 1234]
             ),
-            $this->token
+            $token
         );
 
         $authentificationSuccessListener->onSchebTwoFactorAuthenticationSuccess($event);

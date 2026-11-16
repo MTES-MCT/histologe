@@ -59,7 +59,7 @@ class SignalementServiceSecoursFileMessageHandlerTest extends TestCase
             ->expects($this->once())
             ->method('flush');
 
-        $logger = $this->createMock(LoggerInterface::class);
+        $logger = $this->createStub(LoggerInterface::class);
         $expectedFiles = $uploadedFiles;
         $callIndex = 0;
         $signalementFileAttacher = $this->createMock(SignalementFileAttacher::class);

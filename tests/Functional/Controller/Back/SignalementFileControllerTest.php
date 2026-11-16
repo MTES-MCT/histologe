@@ -9,7 +9,7 @@ use App\Repository\SignalementRepository;
 use App\Repository\UserRepository;
 use App\Service\Signalement\SignalementFileProcessor;
 use App\Tests\SessionHelper;
-use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\MockObject\Stub;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
@@ -25,7 +25,7 @@ class SignalementFileControllerTest extends WebTestCase
     private RouterInterface $router;
     private ?User $user = null;
     private ?Signalement $signalement = null;
-    private SignalementFileProcessor&MockObject $signalementFileProcessorMock;
+    private Stub&SignalementFileProcessor $signalementFileProcessor;
 
     protected function setUp(): void
     {
@@ -34,7 +34,7 @@ class SignalementFileControllerTest extends WebTestCase
         $this->router = static::getContainer()->get(RouterInterface::class);
         $this->userRepository = static::getContainer()->get(UserRepository::class);
         $this->signalementRepository = static::getContainer()->get(SignalementRepository::class);
-        $this->signalementFileProcessorMock = $this->createMock(SignalementFileProcessor::class);
+        $this->signalementFileProcessor = $this->createStub(SignalementFileProcessor::class);
 
         $this->user = $this->userRepository->findOneBy(['email' => 'admin-01@signal-logement.fr']);
         $this->client->loginUser($this->user);
@@ -61,8 +61,8 @@ class SignalementFileControllerTest extends WebTestCase
 
         $this->client->loginUser($this->user);
 
-        $this->signalementFileProcessorMock->method('isValid')->willReturn(true);
-        static::getContainer()->set(SignalementFileProcessor::class, $this->signalementFileProcessorMock);
+        $this->signalementFileProcessor->method('isValid')->willReturn(true);
+        static::getContainer()->set(SignalementFileProcessor::class, $this->signalementFileProcessor);
 
         $route = $this->router->generate('back_signalement_add_file', ['uuid' => $this->signalement->getUuid()]);
         $this->client->request('POST', $route,

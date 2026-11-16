@@ -20,11 +20,9 @@ class DossiersMessagesUsagersSansReponseTabBodyLoaderTest extends TestCase
 {
     public function testLoadFillsTabBodyWithExpectedData(): void
     {
-        /** @var User&MockObject $user */
-        $user = $this->createMock(User::class);
+        $user = $this->createStub(User::class);
         $user->method('isSuperAdmin')->willReturn(true);
-        /** @var Security&MockObject $security */
-        $security = $this->createMock(Security::class);
+        $security = $this->createStub(Security::class);
         $security->method('isGranted')->willReturn(true);
         $security->method('getUser')->willReturn($user);
 

@@ -78,7 +78,7 @@ class SearchAnnuaireAgentType extends AbstractType
                         ->setParameter('territory', $territory);
                 }
 
-                $query->orderBy('LOWER(p.nom)', 'ASC');
+                $query->orderBy('LOWER(p.nom)', \SortDirection::Ascending);
 
                 return $query;
             },

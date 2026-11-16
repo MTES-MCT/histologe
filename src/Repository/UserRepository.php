@@ -248,9 +248,9 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
 
         if (!empty($searchArchivedUser->getOrderType())) {
             [$orderField, $orderDirection] = explode('-', $searchArchivedUser->getOrderType());
-            $queryBuilder->orderBy($orderField, $orderDirection);
+            $queryBuilder->orderBy($orderField, 'DESC' === $orderDirection ? \SortDirection::Descending : \SortDirection::Ascending);
         } else {
-            $queryBuilder->orderBy('u.nom', 'ASC');
+            $queryBuilder->orderBy('u.nom', \SortDirection::Ascending);
         }
 
         $firstResult = ($searchArchivedUser->getPage() - 1) * $maxResult;
@@ -340,7 +340,7 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
 
             return (int) $qb->getQuery()->getSingleScalarResult();
         }
-        $qb->orderBy('u.nom', 'ASC');
+        $qb->orderBy('u.nom', \SortDirection::Ascending);
 
         return $qb->getQuery()->execute();
     }
@@ -372,9 +372,9 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
 
         if (!empty($searchUser->getOrderType())) {
             [$orderField, $orderDirection] = explode('-', $searchUser->getOrderType());
-            $qb->orderBy($orderField, $orderDirection);
+            $qb->orderBy($orderField, 'DESC' === $orderDirection ? \SortDirection::Descending : \SortDirection::Ascending);
         } else {
-            $qb->orderBy('u.nom', 'ASC');
+            $qb->orderBy('u.nom', \SortDirection::Ascending);
         }
 
         $qb->andWhere('u.statut != :statutArchive')->setParameter('statutArchive', UserStatus::ARCHIVE);

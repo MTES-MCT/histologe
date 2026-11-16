@@ -231,9 +231,9 @@ class SignalementRepository extends ServiceEntityRepository
 
         if (!empty($searchDraft->getOrderType())) {
             [$orderField, $orderDirection] = explode('-', $searchDraft->getOrderType());
-            $queryBuilder->orderBy($orderField, $orderDirection);
+            $queryBuilder->orderBy($orderField, 'ASC' === $orderDirection ? \SortDirection::Ascending : \SortDirection::Descending);
         } else {
-            $queryBuilder->orderBy('s.createdAt', 'DESC');
+            $queryBuilder->orderBy('s.createdAt', \SortDirection::Descending);
         }
 
         $firstResult = ($searchDraft->getPage() - 1) * $maxResult;
@@ -289,9 +289,9 @@ class SignalementRepository extends ServiceEntityRepository
 
         if (!empty($searchArchivedSignalement) && !empty($searchArchivedSignalement->getOrderType())) {
             [$orderField, $orderDirection] = explode('-', $searchArchivedSignalement->getOrderType());
-            $queryBuilder->orderBy($orderField, $orderDirection);
+            $queryBuilder->orderBy($orderField, 'DESC' === $orderDirection ? \SortDirection::Descending : \SortDirection::Ascending);
         } else {
-            $queryBuilder->orderBy('s.createdAt', 'ASC');
+            $queryBuilder->orderBy('s.createdAt', \SortDirection::Ascending);
         }
 
         $firstResult = ($page - 1) * $maxResult;
@@ -359,7 +359,7 @@ class SignalementRepository extends ServiceEntityRepository
                 ->setParameter('codeInsee', $signalementListQueryParams->codeInsee);
         }
 
-        $ids = array_column($idsQb->orderBy('s.createdAt', 'DESC')->setFirstResult($offset)->setMaxResults($limit)->getQuery()->getArrayResult(), 'id');
+        $ids = array_column($idsQb->orderBy('s.createdAt', \SortDirection::Descending)->setFirstResult($offset)->setMaxResults($limit)->getQuery()->getArrayResult(), 'id');
 
         if (empty($ids)) {
             return [];
@@ -369,7 +369,7 @@ class SignalementRepository extends ServiceEntityRepository
         return $this->findForAPIQueryBuilder($user)
             ->andWhere('s.id IN (:ids)')
             ->setParameter('ids', $ids)
-            ->orderBy('s.createdAt', 'DESC')
+            ->orderBy('s.createdAt', \SortDirection::Descending)
             ->getQuery()
             ->getResult();
     }
@@ -573,7 +573,7 @@ class SignalementRepository extends ServiceEntityRepository
             [$orderField, $orderDirection] = explode('-', $searchSignalementInjonction->getOrderType());
             $queryBuilder->orderBy($orderField, $orderDirection);
         } else {
-            $queryBuilder->orderBy('s.id', 'DESC');
+            $queryBuilder->orderBy('s.id', \SortDirection::Descending);
         }
 
         $firstResult = ($searchSignalementInjonction->getPage() - 1) * $maxResult;
@@ -611,7 +611,7 @@ class SignalementRepository extends ServiceEntityRepository
 
         $qb->setParameter('statut', SignalementStatus::INJONCTION_BAILLEUR)
             ->setParameter('date', $beforeDate)
-            ->orderBy('s.createdAt', 'DESC');
+            ->orderBy('s.createdAt', \SortDirection::Descending);
 
         return $qb->getQuery()->getResult();
     }
@@ -648,7 +648,7 @@ class SignalementRepository extends ServiceEntityRepository
 
         $qb->setParameter('statut', SignalementStatus::INJONCTION_BAILLEUR)
             ->setParameter('date', $beforeDate)
-            ->orderBy('s.createdAt', 'DESC');
+            ->orderBy('s.createdAt', \SortDirection::Descending);
 
         return $qb->getQuery()->getResult();
     }
@@ -719,7 +719,7 @@ class SignalementRepository extends ServiceEntityRepository
 
         $qb->setParameter('statut', SignalementStatus::INJONCTION_BAILLEUR)
             ->setParameter('date', $beforeDate)
-            ->orderBy('s.createdAt', 'DESC');
+            ->orderBy('s.createdAt', \SortDirection::Descending);
 
         return $qb->getQuery()->getResult();
     }
@@ -770,7 +770,7 @@ class SignalementRepository extends ServiceEntityRepository
             ->setParameter('category_relance', SuiviCategory::INJONCTION_BAILLEUR_RELANCE_USAGER_CLOTURE)
             ->setParameter('statut', SignalementStatus::INJONCTION_BAILLEUR)
             ->setParameter('date', $beforeDate)
-            ->orderBy('s.createdAt', 'DESC');
+            ->orderBy('s.createdAt', \SortDirection::Descending);
 
         return $qb->getQuery()->getResult();
     }
@@ -806,7 +806,7 @@ class SignalementRepository extends ServiceEntityRepository
         $qb->setParameter('category_relance', SuiviCategory::INJONCTION_BAILLEUR_RELANCE_USAGER_CLOTURE)
             ->setParameter('statut', SignalementStatus::INJONCTION_BAILLEUR)
             ->setParameter('date', $beforeDate)
-            ->orderBy('s.createdAt', 'DESC');
+            ->orderBy('s.createdAt', \SortDirection::Descending);
 
         return $qb->getQuery()->getResult();
     }

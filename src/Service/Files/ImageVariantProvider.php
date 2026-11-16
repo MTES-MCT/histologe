@@ -34,7 +34,7 @@ class ImageVariantProvider
         }
         $tmpFilepath = $this->parameterBag->get('uploads_tmp_dir').$filename;
         $bucketFilepath = $this->parameterBag->get('url_bucket').'/'.$filename;
-        $content = file_get_contents($bucketFilepath);
+        $content = @file_get_contents($bucketFilepath);
 
         if (false === $content) {
             throw new \Exception(sprintf('Impossible de lire le contenu du fichier distant "%s" (filename: "%s").', $bucketFilepath, $filename));

@@ -196,9 +196,9 @@ class AffectationRepository extends ServiceEntityRepository
 
         if (!empty($searchAffectation->getOrderType())) {
             [$orderField, $orderDirection] = explode('-', $searchAffectation->getOrderType());
-            $qb->orderBy($orderField, $orderDirection);
+            $qb->orderBy($orderField, 'ASC' === $orderDirection ? \SortDirection::Ascending : \SortDirection::Descending);
         } else {
-            $qb->orderBy('a.createdAt', 'DESC');
+            $qb->orderBy('a.createdAt', \SortDirection::Descending);
         }
 
         if (null !== $searchAffectation->getTerritory()) {

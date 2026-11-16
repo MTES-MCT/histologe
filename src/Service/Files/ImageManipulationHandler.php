@@ -130,7 +130,7 @@ class ImageManipulationHandler
         $ext = \array_key_exists('extension', $pathInfo) ? '.'.$pathInfo['extension'] : '';
         $newName = $dirname.$pathInfo['filename'].$suffix.$ext;
         $newPath = $newName;
-        if ($this->useTmpDir && !str_starts_with($newName, $this->parameterBag->get('bucket_tmp_dir'))) {
+        if ($this->useTmpDir && !str_starts_with($newName, (string) $this->parameterBag->get('bucket_tmp_dir'))) {
             $newPath = $this->parameterBag->get('bucket_tmp_dir').$newName;
         }
 

@@ -32,7 +32,7 @@ class UserSearchFilterQuery
             ->select('uss.id, uss.name, uss.params, uss.createdAt, uss.updatedAt')
             ->where('uss.user = :user')
             ->setParameter('user', $user)
-            ->orderBy('uss.createdAt', 'DESC');
+            ->orderBy('uss.createdAt', \SortDirection::Descending);
 
         $results = $qb->getQuery()->getArrayResult();
 

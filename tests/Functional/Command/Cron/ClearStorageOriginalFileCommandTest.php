@@ -8,7 +8,6 @@ use App\Repository\FileRepository;
 use App\Service\Mailer\NotificationMailerRegistry;
 use Doctrine\ORM\EntityManagerInterface;
 use League\Flysystem\FilesystemOperator;
-use PHPUnit\Framework\MockObject\MockObject;
 use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 use Symfony\Component\Console\Command\Command;
@@ -19,7 +18,7 @@ class ClearStorageOriginalFileCommandTest extends KernelTestCase
 {
     private ParameterBagInterface $parameterBag;
     private FileRepository $fileRepository;
-    private MockObject&FilesystemOperator $fileStorage;
+    private FilesystemOperator $fileStorage;
     private NotificationMailerRegistry $mailerRegistry;
     private FileUpdater $fileUpdater;
 
@@ -27,7 +26,7 @@ class ClearStorageOriginalFileCommandTest extends KernelTestCase
     {
         $this->parameterBag = static::getContainer()->get(ParameterBagInterface::class);
         $this->fileRepository = static::getContainer()->get(FileRepository::class);
-        $this->fileStorage = $this->createMock(FilesystemOperator::class);
+        $this->fileStorage = $this->createStub(FilesystemOperator::class);
         $this->mailerRegistry = static::getContainer()->get(NotificationMailerRegistry::class);
         /** @var EntityManagerInterface $entityManager */
         $entityManager = static::getContainer()->get(EntityManagerInterface::class);

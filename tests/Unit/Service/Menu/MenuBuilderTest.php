@@ -5,7 +5,7 @@ namespace App\Tests\Unit\Service\Menu;
 use App\Entity\User;
 use App\Service\Menu\MenuBuilder;
 use App\Tests\FixturesHelper;
-use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\MockObject\Stub;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 use Symfony\Bundle\SecurityBundle\Security;
 
@@ -21,8 +21,8 @@ class MenuBuilderTest extends KernelTestCase
     public function testBuild(): void
     {
         $user = $this->getUser([User::ROLE_ADMIN]);
-        /** @var MockObject&Security $security */
-        $security = $this->createMock(Security::class);
+        /** @var Stub&Security $security */
+        $security = $this->createStub(Security::class);
         $security->method('getUser')->willReturn($user);
 
         $menuBuilder = new MenuBuilder($security, true, false);

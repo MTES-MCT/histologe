@@ -123,11 +123,11 @@ class DossiersUndeliverableEmailQuery
         );
 
         if ($params && in_array($params->sortBy, ['createdAt', 'nomOccupant'], true)
-            && in_array($params->orderBy, ['ASC', 'DESC', 'asc', 'desc'], true)
+            && in_array($params->orderBy, ['ASC', 'DESC'], true)
         ) {
-            $qb->orderBy($params->sortBy, $params->orderBy);
+            $qb->orderBy($params->sortBy, 'ASC' === $params->orderBy ? \SortDirection::Ascending : \SortDirection::Descending);
         } else {
-            $qb->orderBy('createdAt', 'DESC');
+            $qb->orderBy('createdAt', \SortDirection::Descending);
         }
 
         $qb->setMaxResults(TabDossier::MAX_ITEMS_LIST);

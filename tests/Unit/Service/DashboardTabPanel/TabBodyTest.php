@@ -13,8 +13,8 @@ class TabBodyTest extends TestCase
 {
     public function testTabBodyInitialization(): void
     {
-        $territoryMock = $this->createMock(Territory::class);
-        $territories = [$territoryMock];
+        $territoryStub = $this->createStub(Territory::class);
+        $territories = [$territoryStub];
 
         $tabQueryParameters = new TabQueryParameters(
             territoireId: 1,

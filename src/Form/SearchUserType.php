@@ -160,7 +160,7 @@ class SearchUserType extends AbstractType
                     $query->andWhere('p.type = :partnerType')
                     ->setParameter('partnerType', $partnerType);
                 }
-                $query->orderBy('p.nom', 'ASC');
+                $query->orderBy('p.nom', \SortDirection::Ascending);
 
                 return $query;
             },

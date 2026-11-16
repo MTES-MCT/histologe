@@ -11,19 +11,20 @@ use App\Service\DashboardTabPanel\Kpi\TabCountKpiBuilder;
 use App\Service\DashboardTabPanel\Kpi\TabCountKpiCalculatorInterface;
 use App\Service\DashboardTabPanel\TabQueryParameters;
 use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\MockObject\Stub;
 use PHPUnit\Framework\TestCase;
 use Symfony\Bundle\SecurityBundle\Security;
 
 class TabCountKpiBuilderTest extends TestCase
 {
     protected MockObject&TabCountKpiCalculatorInterface $tabCountKpiCalculator;
-    protected MockObject&Security $security;
+    protected Stub&Security $security;
     protected TabCountKpiBuilder $tabCountKpiBuilder;
 
     protected function setUp(): void
     {
         $this->tabCountKpiCalculator = $this->createMock(TabCountKpiCalculatorInterface::class);
-        $this->security = $this->createMock(Security::class);
+        $this->security = $this->createStub(Security::class);
 
         $this->tabCountKpiBuilder = new TabCountKpiBuilder(
             $this->tabCountKpiCalculator,
@@ -48,10 +49,6 @@ class TabCountKpiBuilderTest extends TestCase
         $this->security
             ->method('getUser')
             ->willReturn($user);
-        $this->security
-            ->method('isGranted')
-            ->with('ROLE_ADMIN_TERRITORY')
-            ->willReturn(true);
 
         $countNouveaux = new CountNouveauxDossiers(1, 2, 3, 4);
         $countMessages = new CountDossiersMessagesUsagers(1, 2, 3);
@@ -101,10 +98,6 @@ class TabCountKpiBuilderTest extends TestCase
         $this->security
             ->method('getUser')
             ->willReturn($user);
-        $this->security
-            ->method('isGranted')
-            ->with('ROLE_ADMIN_TERRITORY')
-            ->willReturn(false);
 
         $countNouveaux = new CountNouveauxDossiers(1, 2, 1, 2);
         $countMessages = new CountDossiersMessagesUsagers(1, 2, 2);

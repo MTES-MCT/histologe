@@ -7,25 +7,25 @@ use App\Service\Import\Bailleur\BailleurLoader;
 use App\Service\Import\CsvParser;
 use App\Service\UploadHandlerService;
 use League\Flysystem\FilesystemOperator;
-use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\MockObject\Stub;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 use Symfony\Component\Console\Tester\CommandTester;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 
 class ImportBailleurCommandTest extends KernelTestCase
 {
-    private MockObject&CsvParser $csvParser;
-    private MockObject&BailleurLoader $bailleurLoader;
-    private MockObject&UploadHandlerService $uploadHandlerServiceMock;
-    private MockObject&FilesystemOperator $fileStorage;
+    private Stub&CsvParser $csvParser;
+    private BailleurLoader $bailleurLoader;
+    private UploadHandlerService $uploadHandlerServiceMock;
+    private FilesystemOperator $fileStorage;
     private ParameterBagInterface $parameterBag;
 
     protected function setUp(): void
     {
-        $this->csvParser = $this->createMock(CsvParser::class);
-        $this->bailleurLoader = $this->createMock(BailleurLoader::class);
-        $this->uploadHandlerServiceMock = $this->createMock(UploadHandlerService::class);
-        $this->fileStorage = $this->createMock(FilesystemOperator::class);
+        $this->csvParser = $this->createStub(CsvParser::class);
+        $this->bailleurLoader = $this->createStub(BailleurLoader::class);
+        $this->uploadHandlerServiceMock = $this->createStub(UploadHandlerService::class);
+        $this->fileStorage = $this->createStub(FilesystemOperator::class);
         $this->parameterBag = static::getContainer()->get(ParameterBagInterface::class);
     }
 
@@ -50,17 +50,22 @@ class ImportBailleurCommandTest extends KernelTestCase
     {
         self::bootKernel();
 
-        $this->fileStorage
+        $fileStorage = $this->createMock(FilesystemOperator::class);
+        $fileStorage
             ->expects($this->once())
             ->method('fileExists')
             ->with('csv/bailleurs.csv')
             ->willReturn(true);
 
-        $this->uploadHandlerServiceMock
+        $this->fileStorage = $fileStorage;
+        $uploadHandlerServiceMock = $this->createMock(UploadHandlerService::class);
+        $uploadHandlerServiceMock
             ->expects($this->once())
             ->method('createTmpFileFromBucket');
 
-        $this->bailleurLoader
+        $this->uploadHandlerServiceMock = $uploadHandlerServiceMock;
+        $bailleurLoader = $this->createMock(BailleurLoader::class);
+        $bailleurLoader
             ->expects($this->once())
             ->method('getMetadata')
             ->willReturn([
@@ -70,6 +75,7 @@ class ImportBailleurCommandTest extends KernelTestCase
                 'errors' => ['[125] ligne 2 - Le territoire n\'existe pas'],
             ]);
 
+        $this->bailleurLoader = $bailleurLoader;
         $command = new ImportBailleurCommand(
             $this->csvParser,
             $this->bailleurLoader,

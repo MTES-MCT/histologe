@@ -222,7 +222,7 @@ class SignalementEditControllerTest extends WebTestCase
     public function testEditSignalementSuccess(string $routeName, array $payload, string $token): void
     {
         $addressResult = json_decode((string) file_get_contents(__DIR__.'/../../../files/datagouv/get_api_ban_item_response_13202.json'), true);
-        $addressMock = $this->createMock(AddressService::class);
+        $addressMock = $this->createStub(AddressService::class);
         $addressMock->method('getAddress')->willReturn(new BanAddress($addressResult));
         $this->client->getContainer()->set(AddressService::class, $addressMock);
         $route = $this->router->generate(

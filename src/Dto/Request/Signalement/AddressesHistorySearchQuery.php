@@ -30,7 +30,7 @@ class AddressesHistorySearchQuery
         /*
         #[Assert\Choice(choices: ['reference', 'nomOccupant', 'lastSuiviAt', 'villeOccupant', 'createdAt'], message: 'Champ de tri invalide')]
         private readonly string $sortBy = 'reference',
-        #[Assert\Choice(choices: ['ASC', 'DESC', 'asc', 'desc'], message: 'Direction de tri invalide')]
+        #[Assert\Choice(choices: ['ASC', 'DESC'], message: 'Direction de tri invalide')]
         private readonly string $direction = 'DESC',
         */
     ) {

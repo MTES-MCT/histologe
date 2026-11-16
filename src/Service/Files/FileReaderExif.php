@@ -24,7 +24,7 @@ class FileReaderExif
                 'file_id' => $file->getId(),
             ]);
         }
-        $datePriseDeVue = isset($image) ? trim($image->exif('EXIF.DateTimeOriginal')) : null;
+        $datePriseDeVue = isset($image) ? trim((string) $image->exif('EXIF.DateTimeOriginal')) : null;
         if (!$datePriseDeVue) {
             return;
         }

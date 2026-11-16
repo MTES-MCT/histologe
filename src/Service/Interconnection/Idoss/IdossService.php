@@ -306,7 +306,7 @@ class IdossService
         string $requestMethod = 'POST',
         string $contentType = 'application/json',
     ): ResponseInterface {
-        if (str_contains($this->params->get('host_url'), 'localhost')) {
+        if (str_contains((string) $this->params->get('host_url'), 'localhost')) {
             if (!str_contains($url, 'signal_logement_wiremock')) {
                 throw new \LogicException('url must contain "signal_logement_wiremock" when on localhost.');
             }

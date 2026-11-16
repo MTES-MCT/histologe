@@ -10,7 +10,7 @@ use App\Service\Signalement\Qualification\QualificationStatusService;
 use App\Service\Signalement\Qualification\SignalementQualificationUpdater;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ManagerRegistry;
-use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\MockObject\Stub;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 
 class SignalementQualificationUpdaterTest extends KernelTestCase
@@ -32,12 +32,12 @@ class SignalementQualificationUpdaterTest extends KernelTestCase
 
     public function testUpdateFromProcedureInsalubrite(): void
     {
-        /** @var MockObject&SignalementQualificationFactory $signalementQualificationFactory */
-        $signalementQualificationFactory = $this->createMock(SignalementQualificationFactory::class);
-        /** @var MockObject&EntityManagerInterface $entityManager */
-        $entityManager = $this->createMock(EntityManagerInterface::class);
-        /** @var MockObject&QualificationStatusService $qualificationStatusService */
-        $qualificationStatusService = $this->createMock(QualificationStatusService::class);
+        /** @var Stub&SignalementQualificationFactory $signalementQualificationFactory */
+        $signalementQualificationFactory = $this->createStub(SignalementQualificationFactory::class);
+        /** @var Stub&EntityManagerInterface $entityManager */
+        $entityManager = $this->createStub(EntityManagerInterface::class);
+        /** @var Stub&QualificationStatusService $qualificationStatusService */
+        $qualificationStatusService = $this->createStub(QualificationStatusService::class);
 
         /** @var SignalementRepository $signalementRepository */
         $signalementRepository = $this->entityManager->getRepository(Signalement::class);
@@ -56,12 +56,12 @@ class SignalementQualificationUpdaterTest extends KernelTestCase
 
     public function testUpdateFromProcedureAutre(): void
     {
-        /** @var MockObject&SignalementQualificationFactory $signalementQualificationFactory */
-        $signalementQualificationFactory = $this->createMock(SignalementQualificationFactory::class);
-        /** @var MockObject&EntityManagerInterface $entityManager */
-        $entityManager = $this->createMock(EntityManagerInterface::class);
-        /** @var MockObject&QualificationStatusService $qualificationStatusService */
-        $qualificationStatusService = $this->createMock(QualificationStatusService::class);
+        /** @var Stub&SignalementQualificationFactory $signalementQualificationFactory */
+        $signalementQualificationFactory = $this->createStub(SignalementQualificationFactory::class);
+        /** @var Stub&EntityManagerInterface $entityManager */
+        $entityManager = $this->createStub(EntityManagerInterface::class);
+        /** @var Stub&QualificationStatusService $qualificationStatusService */
+        $qualificationStatusService = $this->createStub(QualificationStatusService::class);
 
         /** @var SignalementRepository $signalementRepository */
         $signalementRepository = $this->entityManager->getRepository(Signalement::class);

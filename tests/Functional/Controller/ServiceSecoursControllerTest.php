@@ -163,7 +163,7 @@ class ServiceSecoursControllerTest extends WebTestCase
         $tokenJsonPath = __DIR__.'/../../../tools/wiremock/src/Resources/Oauth2/token.json';
         $tokenData = json_decode((string) file_get_contents($tokenJsonPath), true);
 
-        $esaboraTokenProviderMock = $this->createMock(EsaboraTokenProvider::class);
+        $esaboraTokenProviderMock = $this->createStub(EsaboraTokenProvider::class);
         $esaboraTokenProviderMock->method('getToken')->willReturn($tokenData['access_token']);
         static::getContainer()->set(EsaboraTokenProvider::class, $esaboraTokenProviderMock);
 

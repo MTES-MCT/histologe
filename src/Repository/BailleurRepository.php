@@ -42,7 +42,7 @@ class BailleurRepository extends ServiceEntityRepository
                 $queryBuilder->andWhere('bt.territory = :territory')->setParameter('territory', $territory);
             }
         }
-        $queryBuilder->orderBy('b.name', 'ASC');
+        $queryBuilder->orderBy('b.name', \SortDirection::Ascending);
 
         return $queryBuilder->getQuery()->getResult();
     }
@@ -55,7 +55,7 @@ class BailleurRepository extends ServiceEntityRepository
         ->innerJoin('bt.territory', 't')
         ->where('t.zip = :zip')
         ->setParameter('zip', $zip);
-        $queryBuilder->orderBy('b.name', 'ASC');
+        $queryBuilder->orderBy('b.name', \SortDirection::Ascending);
 
         return $queryBuilder;
     }
@@ -140,9 +140,9 @@ class BailleurRepository extends ServiceEntityRepository
 
         if (!empty($searchBailleur->getOrderType())) {
             [$orderField, $orderDirection] = explode('-', $searchBailleur->getOrderType());
-            $qb->orderBy($orderField, $orderDirection);
+            $qb->orderBy($orderField, 'DESC' === $orderDirection ? \SortDirection::Descending : \SortDirection::Ascending);
         } else {
-            $qb->orderBy('b.name', 'ASC');
+            $qb->orderBy('b.name', \SortDirection::Ascending);
         }
 
         if ($searchBailleur->getQueryName()) {

@@ -119,9 +119,9 @@ class PartnerRepository extends ServiceEntityRepository
 
         if (!empty($searchPartner->getOrderType())) {
             [$orderField, $orderDirection] = explode('-', $searchPartner->getOrderType());
-            $queryBuilder->orderBy($orderField, $orderDirection);
+            $queryBuilder->orderBy($orderField, 'DESC' === $orderDirection ? \SortDirection::Descending : \SortDirection::Ascending);
         } else {
-            $queryBuilder->orderBy('p.nom', 'ASC');
+            $queryBuilder->orderBy('p.nom', \SortDirection::Ascending);
         }
 
         $firstResult = ($searchPartner->getPage() - 1) * $maxResult;
@@ -139,7 +139,7 @@ class PartnerRepository extends ServiceEntityRepository
     {
         $qb = $this->createQueryBuilder('p')
             ->where('p.isArchive != 1')
-            ->orderBy('p.nom', 'ASC');
+            ->orderBy('p.nom', \SortDirection::Ascending);
         if ($user && !$user->isSuperAdmin()) {
             $qb->andWhere('p.territory IN (:territories)')->setParameter('territories', $user->getPartnersTerritories());
         }
@@ -197,9 +197,9 @@ class PartnerRepository extends ServiceEntityRepository
 
         if (!empty($searchArchivedPartner->getOrderType())) {
             [$orderField, $orderDirection] = explode('-', $searchArchivedPartner->getOrderType());
-            $queryBuilder->orderBy($orderField, $orderDirection);
+            $queryBuilder->orderBy($orderField, 'DESC' === $orderDirection ? \SortDirection::Descending : \SortDirection::Ascending);
         } else {
-            $queryBuilder->orderBy('p.nom', 'ASC');
+            $queryBuilder->orderBy('p.nom', \SortDirection::Ascending);
         }
 
         $firstResult = ($searchArchivedPartner->getPage() - 1) * $maxResult;
@@ -256,7 +256,7 @@ class PartnerRepository extends ServiceEntityRepository
         $qb = $this->createQueryBuilder('p', 'p.id')
             ->andWhere('p.id IN (:ids)')
             ->setParameter('ids', $partnerIds)
-            ->orderBy('p.nom', 'ASC');
+            ->orderBy('p.nom', \SortDirection::Ascending);
 
         if ([] !== $types) {
             $qb->andWhere('p.type IN (:types)')

@@ -110,8 +110,8 @@ class BackStatistiquesController extends AbstractController
     private function createFilters(Request $request, ?Territory $territory, ArrayCollection $partners): StatisticsFilters
     {
         $requestData = $request->request->all();
-        $communes = json_decode(RequestDataExtractor::getString($requestData, 'communes'));
-        $epcis = json_decode(RequestDataExtractor::getString($requestData, 'epcis'));
+        $communes = json_decode(RequestDataExtractor::getString($requestData, 'communes') ?? '[]');
+        $epcis = json_decode(RequestDataExtractor::getString($requestData, 'epcis') ?? '[]');
         $statut = RequestDataExtractor::getString($requestData, 'statut');
         $strEtiquettes = json_decode(RequestDataExtractor::getString($requestData, 'etiquettes') ?? '[]');
         $etiquettes = array_map(static fn ($value): int => $value * 1, $strEtiquettes);

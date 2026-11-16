@@ -4,7 +4,7 @@ namespace App\Tests\Unit\Command\Cron;
 
 use App\Command\Cron\MonitorMessengerQueuesCommand;
 use Doctrine\DBAL\Connection;
-use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\MockObject\Stub;
 use PHPUnit\Framework\TestCase;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Console\Tester\CommandTester;
@@ -14,26 +14,26 @@ use Symfony\Component\Serializer\SerializerInterface;
 
 final class MonitorMessengerQueuesCommandTest extends TestCase
 {
-    /** @var Connection&MockObject */
+    /** @var Connection&Stub */
     private Connection $connection;
 
-    /** @var MessengerSerializerInterface&MockObject */
+    /** @var MessengerSerializerInterface&Stub */
     private MessengerSerializerInterface $messengerSerializer;
 
-    /** @var SerializerInterface&MockObject */
+    /** @var SerializerInterface&Stub */
     private SerializerInterface $serializer;
 
-    /* @var LoggerInterface&MockObject */
+    /** @var LoggerInterface&Stub */
     private LoggerInterface $logger;
 
     protected function setUp(): void
     {
         parent::setUp();
 
-        $this->connection = $this->createMock(Connection::class);
-        $this->messengerSerializer = $this->createMock(MessengerSerializerInterface::class);
-        $this->serializer = $this->createMock(SerializerInterface::class);
-        $this->logger = $this->createMock(LoggerInterface::class);
+        $this->connection = $this->createStub(Connection::class);
+        $this->messengerSerializer = $this->createStub(MessengerSerializerInterface::class);
+        $this->serializer = $this->createStub(SerializerInterface::class);
+        $this->logger = $this->createStub(LoggerInterface::class);
     }
 
     public function testDisplaysOkMessageWhenNoOldMessagesFound(): void

@@ -61,7 +61,7 @@ class SignalementLocalisationQuery
 
         return $qb
             ->groupBy($field)
-            ->orderBy($field, 'ASC')
+            ->orderBy($field, \SortDirection::Ascending)
             ->getQuery()
             ->getResult();
     }

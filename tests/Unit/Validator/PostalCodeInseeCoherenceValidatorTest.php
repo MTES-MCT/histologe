@@ -8,9 +8,7 @@ use App\Repository\CommuneRepository;
 use App\Service\Signalement\PostalCodeHomeChecker;
 use App\Validator\PostalCodeInseeCoherence;
 use App\Validator\PostalCodeInseeCoherenceValidator;
-use Doctrine\ORM\EntityManagerInterface;
 use PHPUnit\Framework\Attributes\DataProvider;
-use PHPUnit\Framework\MockObject\MockObject;
 use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\ConstraintValidatorInterface;
 use Symfony\Component\Validator\Exception\UnexpectedValueException;
@@ -21,21 +19,12 @@ use Symfony\Component\Validator\Test\ConstraintValidatorTestCase;
  */
 class PostalCodeInseeCoherenceValidatorTest extends ConstraintValidatorTestCase
 {
-    private CommuneRepository&MockObject $communeRepository;
-    private PostalCodeHomeChecker&MockObject $postalCodeHomeChecker;
-
     protected function createValidator(): ConstraintValidatorInterface
     {
-        $entityManager = $this->createMock(EntityManagerInterface::class);
-        $this->communeRepository = $this->createMock(CommuneRepository::class);
-        $this->postalCodeHomeChecker = $this->createMock(PostalCodeHomeChecker::class);
-
-        $entityManager
-            ->method('getRepository')
-            ->with(Commune::class)
-            ->willReturn($this->communeRepository);
-
-        return new PostalCodeInseeCoherenceValidator($this->postalCodeHomeChecker, $this->communeRepository);
+        return new PostalCodeInseeCoherenceValidator(
+            $this->createStub(PostalCodeHomeChecker::class),
+            $this->createStub(CommuneRepository::class),
+        );
     }
 
     #[DataProvider('provideCoherenceCases')]
@@ -46,25 +35,29 @@ class PostalCodeInseeCoherenceValidatorTest extends ConstraintValidatorTestCase
         bool $communeExists,
         ?string $expectedViolationMessage,
     ): void {
-        $request = $this->createMock(SignalementDraftRequest::class);
+        $request = $this->createStub(SignalementDraftRequest::class);
         $request->method('getAdresseLogementAdresseDetailCodePostal')->willReturn($postalCode);
         $request->method('getAdresseLogementAdresseDetailInsee')->willReturn($rawInseeCode);
 
-        $this->postalCodeHomeChecker
+        $postalCodeHomeChecker = $this->createMock(PostalCodeHomeChecker::class);
+        $postalCodeHomeChecker
             ->expects($this->once())
             ->method('normalizeInseeCode')
             ->with($postalCode, $rawInseeCode)
             ->willReturn($normalizedInseeCode);
 
-        $this->communeRepository
+        $communeRepository = $this->createMock(CommuneRepository::class);
+        $communeRepository
             ->expects($this->once())
             ->method('findOneBy')
             ->with([
                 'codePostal' => $postalCode,
                 'codeInsee' => $normalizedInseeCode,
             ])
-            ->willReturn($communeExists ? $this->createMock(Commune::class) : null);
+            ->willReturn($communeExists ? $this->createStub(Commune::class) : null);
 
+        $this->validator = new PostalCodeInseeCoherenceValidator($postalCodeHomeChecker, $communeRepository);
+        $this->validator->initialize($this->context);
         $this->validator->validate($request, new PostalCodeInseeCoherence());
 
         if (null !== $expectedViolationMessage) {
@@ -111,8 +104,8 @@ class PostalCodeInseeCoherenceValidatorTest extends ConstraintValidatorTestCase
     {
         $this->expectException(UnexpectedValueException::class);
 
-        $request = $this->createMock(SignalementDraftRequest::class);
-        $wrongConstraint = $this->createMock(Constraint::class);
+        $request = $this->createStub(SignalementDraftRequest::class);
+        $wrongConstraint = $this->createStub(Constraint::class);
 
         $this->validator->validate($request, $wrongConstraint);
     }

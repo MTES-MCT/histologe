@@ -32,7 +32,7 @@ use App\Service\TimezoneProvider;
 use App\Service\UploadHandlerService;
 use App\Tests\FixturesHelper;
 use Doctrine\ORM\EntityManager;
-use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\MockObject\Stub;
 use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 use Symfony\Component\EventDispatcher\EventDispatcher;
@@ -44,46 +44,46 @@ class EsaboraManagerTest extends KernelTestCase
     protected const string CREATE_ACTION = 'create';
     protected const string UPDATE_ACTION = 'update';
 
-    protected MockObject&AffectationManager $affectationManager;
-    protected MockObject&SuiviManager $suiviManager;
-    protected MockObject&SuiviRepository $suiviRepository;
-    protected MockObject&InterventionRepository $interventionRepository;
-    protected MockObject&ArreteRepository $arreteRepository;
-    protected MockObject&InterventionFactory $interventionFactory;
-    protected MockObject&ArreteManager $arreteManager;
+    protected Stub&AffectationManager $affectationManager;
+    protected Stub&SuiviManager $suiviManager;
+    protected Stub&SuiviRepository $suiviRepository;
+    protected Stub&InterventionRepository $interventionRepository;
+    protected Stub&ArreteRepository $arreteRepository;
+    protected Stub&InterventionFactory $interventionFactory;
+    protected Stub&ArreteManager $arreteManager;
     protected EventDispatcher $eventDispatcher;
-    protected MockObject&UserManager $userManager;
-    private MockObject&LoggerInterface $logger;
-    private MockObject&EntityManager $entityManager;
-    private MockObject&ZipHelper $zipHelper;
-    private MockObject&FileScanner $fileScanner;
-    private MockObject&UploadHandlerService $uploadHandler;
-    private MockObject&ImageManipulationHandler $imageManipulationHandler;
-    private MockObject&FileFactory $fileFactory;
+    protected Stub&UserManager $userManager;
+    private Stub&LoggerInterface $logger;
+    private Stub&EntityManager $entityManager;
+    private Stub&ZipHelper $zipHelper;
+    private Stub&FileScanner $fileScanner;
+    private Stub&UploadHandlerService $uploadHandler;
+    private Stub&ImageManipulationHandler $imageManipulationHandler;
+    private Stub&FileFactory $fileFactory;
     private WorkflowInterface $workflow;
-    private MockObject&UserSignalementSubscriptionManager $userSignalementSubscriptionManager;
+    private Stub&UserSignalementSubscriptionManager $userSignalementSubscriptionManager;
     private SuiviDescriptionHelper $suiviDescriptionHelper;
 
     protected function setUp(): void
     {
-        $this->affectationManager = $this->createMock(AffectationManager::class);
-        $this->suiviManager = $this->createMock(SuiviManager::class);
-        $this->suiviRepository = $this->createMock(SuiviRepository::class);
-        $this->interventionRepository = $this->createMock(InterventionRepository::class);
-        $this->arreteRepository = $this->createMock(ArreteRepository::class);
-        $this->interventionFactory = $this->createMock(InterventionFactory::class);
-        $this->arreteManager = $this->createMock(ArreteManager::class);
-        $this->userManager = $this->createMock(UserManager::class);
+        $this->affectationManager = $this->createStub(AffectationManager::class);
+        $this->suiviManager = $this->createStub(SuiviManager::class);
+        $this->suiviRepository = $this->createStub(SuiviRepository::class);
+        $this->interventionRepository = $this->createStub(InterventionRepository::class);
+        $this->arreteRepository = $this->createStub(ArreteRepository::class);
+        $this->interventionFactory = $this->createStub(InterventionFactory::class);
+        $this->arreteManager = $this->createStub(ArreteManager::class);
+        $this->userManager = $this->createStub(UserManager::class);
         $this->eventDispatcher = new EventDispatcher();
-        $this->logger = $this->createMock(LoggerInterface::class);
-        $this->entityManager = $this->createMock(EntityManager::class);
-        $this->zipHelper = $this->createMock(ZipHelper::class);
-        $this->fileScanner = $this->createMock(FileScanner::class);
-        $this->uploadHandler = $this->createMock(UploadHandlerService::class);
-        $this->imageManipulationHandler = $this->createMock(ImageManipulationHandler::class);
-        $this->fileFactory = $this->createMock(FileFactory::class);
+        $this->logger = $this->createStub(LoggerInterface::class);
+        $this->entityManager = $this->createStub(EntityManager::class);
+        $this->zipHelper = $this->createStub(ZipHelper::class);
+        $this->fileScanner = $this->createStub(FileScanner::class);
+        $this->uploadHandler = $this->createStub(UploadHandlerService::class);
+        $this->imageManipulationHandler = $this->createStub(ImageManipulationHandler::class);
+        $this->fileFactory = $this->createStub(FileFactory::class);
         $this->workflow = static::getContainer()->get('state_machine.intervention_planning');
-        $this->userSignalementSubscriptionManager = $this->createMock(UserSignalementSubscriptionManager::class);
+        $this->userSignalementSubscriptionManager = $this->createStub(UserSignalementSubscriptionManager::class);
         $this->suiviDescriptionHelper = static::getContainer()->get(SuiviDescriptionHelper::class);
     }
 
@@ -105,16 +105,22 @@ class EsaboraManagerTest extends KernelTestCase
     {
         $dossierVisiteCollection = $this->getDossierVisiteSISHCollectionWithDossierResponse()->getCollection();
         $dossierVisite = $dossierVisiteCollection[0];
-        $this->interventionRepository
+        $interventionRepository = $this->createMock(InterventionRepository::class);
+        $this->interventionRepository = $interventionRepository;
+        $interventionRepository
             ->expects($this->once())
             ->method('findOneBy')
             ->willReturn(null);
 
-        $this->interventionFactory
+        $interventionFactory = $this->createMock(InterventionFactory::class);
+        $this->interventionFactory = $interventionFactory;
+        $interventionFactory
             ->expects($this->never())
             ->method('createInstanceFrom');
 
-        $this->logger
+        $logger = $this->createMock(LoggerInterface::class);
+        $this->logger = $logger;
+        $logger
             ->expects($this->once())
             ->method('error');
 
@@ -162,18 +168,24 @@ class EsaboraManagerTest extends KernelTestCase
         $dossierArrete = $this->getDossierArreteSISHCollectionResponse()->getCollection()[0];
         $affectation = $this->getAffectation(PartnerType::ARS);
 
-        $this->arreteRepository
+        $arreteRepository = $this->createMock(ArreteRepository::class);
+        $this->arreteRepository = $arreteRepository;
+        $arreteRepository
             ->expects($this->once())
             ->method('findOneBy')
             ->willReturn(null);
-        $this->arreteManager
+        $arreteManager = $this->createMock(ArreteManager::class);
+        $this->arreteManager = $arreteManager;
+        $arreteManager
             ->expects($this->once())
             ->method('createArreteFromDossierArreteSISH')
             ->with($dossierArrete, $affectation);
-        $this->arreteManager
+        $arreteManager
             ->expects($this->never())
             ->method('updateFromDossierArreteSISH');
-        $this->entityManager
+        $entityManager = $this->createMock(EntityManager::class);
+        $this->entityManager = $entityManager;
+        $entityManager
             ->expects($this->once())
             ->method('flush');
 
@@ -189,18 +201,24 @@ class EsaboraManagerTest extends KernelTestCase
         $affectation = $this->getAffectation(PartnerType::ARS);
         $arrete = new Arrete();
 
-        $this->arreteRepository
+        $arreteRepository = $this->createMock(ArreteRepository::class);
+        $this->arreteRepository = $arreteRepository;
+        $arreteRepository
             ->expects($this->once())
             ->method('findOneBy')
             ->willReturn($arrete);
-        $this->arreteManager
+        $arreteManager = $this->createMock(ArreteManager::class);
+        $this->arreteManager = $arreteManager;
+        $arreteManager
             ->expects($this->once())
             ->method('updateFromDossierArreteSISH')
             ->with($arrete, $dossierArrete, $affectation);
-        $this->arreteManager
+        $arreteManager
             ->expects($this->never())
             ->method('createArreteFromDossierArreteSISH');
-        $this->entityManager
+        $entityManager = $this->createMock(EntityManager::class);
+        $this->entityManager = $entityManager;
+        $entityManager
             ->expects($this->once())
             ->method('flush');
 
@@ -212,18 +230,26 @@ class EsaboraManagerTest extends KernelTestCase
         $dossierArrete = $this->getDossierArreteSISHCollectionResponse()->getCollection()[0];
         $affectation = $this->getAffectation(PartnerType::ARS);
 
-        $this->arreteRepository
+        $arreteRepository = $this->createMock(ArreteRepository::class);
+        $this->arreteRepository = $arreteRepository;
+        $arreteRepository
             ->expects($this->once())
             ->method('findOneBy')
             ->willReturn(null);
-        $this->arreteManager
+        $arreteManager = $this->createMock(ArreteManager::class);
+        $this->arreteManager = $arreteManager;
+        $arreteManager
             ->expects($this->once())
             ->method('createArreteFromDossierArreteSISH')
             ->willThrowException(new \InvalidArgumentException('Date Esabora invalide'));
-        $this->entityManager
+        $entityManager = $this->createMock(EntityManager::class);
+        $this->entityManager = $entityManager;
+        $entityManager
             ->expects($this->never())
             ->method('flush');
-        $this->logger
+        $logger = $this->createMock(LoggerInterface::class);
+        $this->logger = $logger;
+        $logger
             ->expects($this->once())
             ->method('error');
 
@@ -258,7 +284,9 @@ class EsaboraManagerTest extends KernelTestCase
 
     private function provideEsaboraManagerForIntervention(string $action, InterventionType $interventionType): EsaboraManager
     {
-        $this->interventionRepository
+        $interventionRepository = $this->createMock(InterventionRepository::class);
+        $this->interventionRepository = $interventionRepository;
+        $interventionRepository
             ->expects($this->once())
             ->method('findOneBy')
             ->willReturn(self::CREATE_ACTION === $action
@@ -270,12 +298,16 @@ class EsaboraManagerTest extends KernelTestCase
             );
 
         if (self::CREATE_ACTION === $action) {
-            $this->interventionFactory
+            $interventionFactory = $this->createMock(InterventionFactory::class);
+            $this->interventionFactory = $interventionFactory;
+            $interventionFactory
                 ->expects($this->once())
                 ->method('createInstanceFrom');
         }
 
-        $this->userManager
+        $userManager = $this->createMock(UserManager::class);
+        $this->userManager = $userManager;
+        $userManager
             ->expects($this->once())
             ->method('getSystemUser')
             ->willReturn($this->getUser([User::ROLE_ADMIN]));
@@ -433,7 +465,7 @@ class EsaboraManagerTest extends KernelTestCase
         $affectation->setStatut(AffectationStatus::WAIT);
         $user = $this->getUser([User::ROLE_ADMIN]);
 
-        $dossierResponse = $this->createMock(DossierResponseInterface::class);
+        $dossierResponse = $this->createStub(DossierResponseInterface::class);
         $dossierResponse->method('getSasEtat')->willReturn(EsaboraStatus::ESABORA_ACCEPTED->value);
         $dossierResponse->method('getEtat')->willReturn(EsaboraStatus::ESABORA_IN_PROGRESS->value);
         $dossierResponse->method('getNameSI')->willReturn('SISH');

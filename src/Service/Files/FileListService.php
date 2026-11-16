@@ -62,7 +62,7 @@ class FileListService
             ->andWhere('f.territory = :territory OR f.territory IS NULL')
             ->setParameter('isStandalone', true)
             ->setParameter('territory', $signalement->getAddress()->getTerritory())
-            ->orderBy('f.title', 'ASC')
+            ->orderBy('f.title', \SortDirection::Ascending)
             ->getQuery()
             ->getResult();
 

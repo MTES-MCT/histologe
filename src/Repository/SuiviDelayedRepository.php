@@ -38,7 +38,7 @@ class SuiviDelayedRepository extends ServiceEntityRepository
                 AND sd2.createdAt < :limit
             )')
             ->setParameter('limit', $limit)
-            ->orderBy('sd.createdAt', 'ASC')
+            ->orderBy('sd.createdAt', \SortDirection::Ascending)
             ->getQuery()
             ->getResult();
     }

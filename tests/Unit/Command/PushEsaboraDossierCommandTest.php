@@ -88,6 +88,10 @@ class PushEsaboraDossierCommandTest extends TestCase
 
     public function testExecuteWithUuidOption(): void
     {
+        $this->territoryRepository
+            ->expects($this->never())
+            ->method('findOneBy');
+
         $affectation = $this->getAffectation(PartnerType::ARS);
         $affectations = [
             ['affectation' => $affectation, 'signalement_uuid' => $affectation->getUuid()],

@@ -17,10 +17,9 @@ use App\Repository\UserRepository;
 use App\Service\Signalement\Suivi\SuiviDescriptionHelper;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ManagerRegistry;
-use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\MockObject\Stub;
 use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
-use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 
 class NewSignalementCheckFileMessageHandlerTest extends KernelTestCase
@@ -132,19 +131,17 @@ class NewSignalementCheckFileMessageHandlerTest extends KernelTestCase
         $userRepository = $this->entityManager->getRepository(User::class);
         /** @var DesordreCritereRepository $desordreCritereRepository */
         $desordreCritereRepository = $this->entityManager->getRepository(DesordreCritere::class);
-        /** @var LoggerInterface&MockObject $loggerMock */
-        $loggerMock = $this->createMock(LoggerInterface::class);
-        /** @var SuiviManager&MockObject $suiviManager */
-        $suiviManager = $this->createMock(SuiviManager::class);
-        /** @var Security&MockObject $security */
-        $security = $this->createMock(Security::class);
-        /** @var ParameterBagInterface&MockObject $parameterBag */
-        $parameterBag = $this->createMock(ParameterBagInterface::class);
+        /** @var LoggerInterface&Stub $loggerStub */
+        $loggerStub = $this->createStub(LoggerInterface::class);
+        /** @var SuiviManager&Stub $suiviManager */
+        $suiviManager = $this->createStub(SuiviManager::class);
+        /** @var ParameterBagInterface&Stub $parameterBag */
+        $parameterBag = $this->createStub(ParameterBagInterface::class);
         $handler = new NewSignalementCheckFileMessageHandler(
             $signalementRepository,
             $userRepository,
             $desordreCritereRepository,
-            $loggerMock,
+            $loggerStub,
             $suiviManager,
             $parameterBag,
             $this->entityManager,

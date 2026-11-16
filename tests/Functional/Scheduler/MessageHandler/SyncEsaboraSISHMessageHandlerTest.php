@@ -27,7 +27,7 @@ class SyncEsaboraSISHMessageHandlerTest extends KernelTestCase
         $filepath = __DIR__.'/../../../../tools/wiremock/src/Resources/Esabora/sish/ws_etat_dossier_sas/etat_importe.json';
         $responseEsabora = json_decode((string) file_get_contents($filepath), true);
 
-        $esaboraService = $this->createMock(EsaboraSISHService::class);
+        $esaboraService = $this->createStub(EsaboraSISHService::class);
 
         $esaboraService
             ->method('getStateDossier')

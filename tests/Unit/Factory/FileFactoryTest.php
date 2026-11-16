@@ -17,7 +17,7 @@ class FileFactoryTest extends TestCase
 
     public function testCreateInstance(): void
     {
-        $file = (new FileFactory($this->createMock(FileReaderExif::class)))
+        $file = (new FileFactory($this->createStub(FileReaderExif::class)))
         ->createInstanceFrom(
             'sample-123.jpg',
             'sample.jpg',
@@ -45,7 +45,7 @@ class FileFactoryTest extends TestCase
         DocumentType $documentType,
     ): void {
         $signalement = $this->getSignalement();
-        $file = (new FileFactory($this->createMock(FileReaderExif::class)))
+        $file = (new FileFactory($this->createStub(FileReaderExif::class)))
         ->createFromFileArray($dataItem, $signalement);
 
         $this->assertEquals($isTypeDocument, $file->isTypeDocument());

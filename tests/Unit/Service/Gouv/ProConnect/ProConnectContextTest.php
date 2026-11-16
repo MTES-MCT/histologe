@@ -21,7 +21,7 @@ class ProConnectContextTest extends TestCase
     {
         $requestStack = new RequestStack();
         $this->session = new Session(new MockArraySessionStorage());
-        $urlGenerator = $this->createMock(UrlGeneratorInterface::class);
+        $urlGenerator = $this->createStub(UrlGeneratorInterface::class);
         $request = new Request();
         $request->setSession($this->session);
         $requestStack->push($request);

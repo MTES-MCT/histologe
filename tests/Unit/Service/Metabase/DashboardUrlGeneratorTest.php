@@ -27,7 +27,7 @@ class DashboardUrlGeneratorTest extends TestCase
         $ttlInMinutes = '10';
 
         $clock = new MockClock(new \DateTimeImmutable('2025-01-01T10:00:00+00:00'));
-        $logger = $this->createMock(LoggerInterface::class);
+        $logger = $this->createStub(LoggerInterface::class);
 
         $dashboardUrlGenerator = new DashboardUrlGenerator(
             $siteUrl,

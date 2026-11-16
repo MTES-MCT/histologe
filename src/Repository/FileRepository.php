@@ -135,9 +135,9 @@ class FileRepository extends ServiceEntityRepository
         }
         if ($searchTerritoryFiles->getOrderType()) {
             [$field, $direction] = explode('-', $searchTerritoryFiles->getOrderType());
-            $qb->orderBy($field, $direction);
+            $qb->orderBy($field, 'DESC' === $direction ? \SortDirection::Descending : \SortDirection::Ascending);
         } else {
-            $qb->orderBy('f.title', 'ASC');
+            $qb->orderBy('f.title', \SortDirection::Ascending);
         }
 
         if (null === $user) {

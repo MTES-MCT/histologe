@@ -33,7 +33,7 @@ class HistoryEntryRepository extends ServiceEntityRepository
             ->setParameter('entityName', $entityName)
             ->setParameter('event', HistoryEntryEvent::UPDATE)
             ->setParameter('date', $afterDate)
-            ->orderBy('h.createdAt', 'ASC')
+            ->orderBy('h.createdAt', \SortDirection::Ascending)
             ->setMaxResults(1)
             ->getQuery()
             ->getOneOrNullResult();

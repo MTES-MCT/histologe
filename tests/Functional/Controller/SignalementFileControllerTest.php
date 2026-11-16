@@ -13,6 +13,7 @@ use App\Service\Signalement\SignalementFileProcessor;
 use App\Service\UploadHandlerService;
 use App\Tests\SessionHelper;
 use App\Tests\UserHelper;
+use PHPUnit\Framework\MockObject\Stub;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\DomCrawler\Crawler;
@@ -62,7 +63,8 @@ class SignalementFileControllerTest extends WebTestCase
 
         $this->client->loginUser($this->signalementUser, 'code_suivi');
 
-        $signalementFileProcessor = $this->createMock(SignalementFileProcessor::class);
+        /** @var Stub&SignalementFileProcessor $signalementFileProcessor */
+        $signalementFileProcessor = $this->createStub(SignalementFileProcessor::class);
         $signalementFileProcessor
             ->method('process')
             ->willReturn([
@@ -131,7 +133,7 @@ class SignalementFileControllerTest extends WebTestCase
         /** @var File $file */
         $file = $signalement->getFiles()->last();
 
-        $uploadHandlerServiceMock = $this->createMock(UploadHandlerService::class);
+        $uploadHandlerServiceMock = $this->createStub(UploadHandlerService::class);
         $uploadHandlerServiceMock
             ->method('deleteFile')
             ->willReturn(true);

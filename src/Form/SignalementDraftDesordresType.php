@@ -141,7 +141,7 @@ class SignalementDraftDesordresType extends AbstractType
                             ->andWhere('c.labelCategorie = :labelCategorie')
                             ->setParameter('zone', $zone)
                             ->setParameter('labelCategorie', $labelCategorie)
-                            ->orderBy('c.labelCritere', 'ASC');
+                            ->orderBy('c.labelCritere', \SortDirection::Ascending);
                     },
                     'label' => $labelCategorie,
                     'choice_label' => static function (DesordreCritere $critere) {

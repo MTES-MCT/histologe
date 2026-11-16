@@ -190,26 +190,26 @@ readonly class QueryBuilderFactory
             switch ($options['sortBy']) {
                 case 'reference':
                     $qb
-                        ->orderBy('CAST(SUBSTRING_INDEX(s.reference, \'-\', 1) AS UNSIGNED)', $options['orderBy'])
-                        ->addOrderBy('CAST(SUBSTRING_INDEX(s.reference, \'-\', -1) AS UNSIGNED)', $options['orderBy']);
+                        ->orderBy('CAST(SUBSTRING_INDEX(s.reference, \'-\', 1) AS UNSIGNED)', 'DESC' === $options['orderBy'] ? \SortDirection::Descending : \SortDirection::Ascending)
+                        ->addOrderBy('CAST(SUBSTRING_INDEX(s.reference, \'-\', -1) AS UNSIGNED)', 'DESC' === $options['orderBy'] ? \SortDirection::Descending : \SortDirection::Ascending);
                     break;
                 case 'nomOccupant':
-                    $qb->orderBy('s.nomOccupant', $options['orderBy']);
+                    $qb->orderBy('s.nomOccupant', 'DESC' === $options['orderBy'] ? \SortDirection::Descending : \SortDirection::Ascending);
                     break;
                 case 'createdAt':
-                    $qb->orderBy('s.createdAt', $options['orderBy']);
+                    $qb->orderBy('s.createdAt', 'DESC' === $options['orderBy'] ? \SortDirection::Descending : \SortDirection::Ascending);
                     break;
                 case 'lastSuiviAt':
-                    $qb->orderBy('s.lastSuiviAt', $options['orderBy']);
+                    $qb->orderBy('s.lastSuiviAt', 'DESC' === $options['orderBy'] ? \SortDirection::Descending : \SortDirection::Ascending);
                     break;
                 case 'addressCity':
-                    $qb->orderBy('address.city', $options['orderBy']);
+                    $qb->orderBy('address.city', 'DESC' === $options['orderBy'] ? \SortDirection::Descending : \SortDirection::Ascending);
                     break;
                 default:
-                    $qb->orderBy('s.createdAt', 'DESC');
+                    $qb->orderBy('s.createdAt', \SortDirection::Descending);
             }
         } else {
-            $qb->orderBy('s.createdAt', 'DESC');
+            $qb->orderBy('s.createdAt', \SortDirection::Descending);
         }
     }
 }

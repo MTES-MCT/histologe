@@ -63,7 +63,7 @@ class SuiviRepository extends ServiceEntityRepository
         $qb = $this->createQueryBuilder('s');
         $qb->where('s.signalement = :signalement')
             ->andWhere('s.type = :type')
-            ->orderBy('s.createdAt', 'ASC')
+            ->orderBy('s.createdAt', \SortDirection::Ascending)
             ->setParameter('signalement', $signalement)
             ->setParameter('type', $typeSuivi);
 
@@ -104,7 +104,7 @@ class SuiviRepository extends ServiceEntityRepository
             ->andWhere('s.waitingNotification = 0')
         ;
 
-        $qb->orderBy('s.createdAt', 'DESC')->setMaxResults(1);
+        $qb->orderBy('s.createdAt', \SortDirection::Descending)->setMaxResults(1);
 
         return $qb->getQuery()->getOneOrNullResult();
     }

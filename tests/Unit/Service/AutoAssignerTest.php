@@ -23,7 +23,7 @@ use App\Service\Notification\NotificationAndMailSender;
 use App\Service\Signalement\AutoAssigner;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ManagerRegistry;
-use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\MockObject\Stub;
 use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 
@@ -46,9 +46,9 @@ class AutoAssignerTest extends KernelTestCase
 
         $tokenJsonPath = __DIR__.'/../../../tools/wiremock/src/Resources/Oauth2/token.json';
         $tokenData = json_decode((string) file_get_contents($tokenJsonPath), true);
-        $esaboraTokenProviderMock = $this->createMock(EsaboraTokenProvider::class);
-        $esaboraTokenProviderMock->method('getToken')->willReturn($tokenData['access_token']);
-        static::getContainer()->set(EsaboraTokenProvider::class, $esaboraTokenProviderMock);
+        $esaboraTokenProviderStub = $this->createStub(EsaboraTokenProvider::class);
+        $esaboraTokenProviderStub->method('getToken')->willReturn($tokenData['access_token']);
+        static::getContainer()->set(EsaboraTokenProvider::class, $esaboraTokenProviderStub);
 
         /** @var ManagerRegistry $doctrine */
         $doctrine = $kernel->getContainer()->get('doctrine');
@@ -316,8 +316,8 @@ class AutoAssignerTest extends KernelTestCase
             $signalement->removeAffectation($affectation);
         }
 
-        /** @var LoggerInterface&MockObject $logger */
-        $logger = $this->createMock(LoggerInterface::class);
+        /** @var LoggerInterface&Stub $logger */
+        $logger = $this->createStub(LoggerInterface::class);
         $autoAssigner = new AutoAssigner(
             $this->signalementManager,
             $this->affectationManager,

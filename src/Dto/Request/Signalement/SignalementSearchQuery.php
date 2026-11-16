@@ -98,7 +98,7 @@ class SignalementSearchQuery
         private readonly ?bool $usagerAbandonProcedure = false,
         #[Assert\Choice(choices: ['reference', 'nomOccupant', 'lastSuiviAt', 'addressCity', 'createdAt'], message: 'Champ de tri invalide')]
         private readonly string $sortBy = 'reference',
-        #[Assert\Choice(choices: ['ASC', 'DESC', 'asc', 'desc'], message: 'Direction de tri invalide')]
+        #[Assert\Choice(choices: ['ASC', 'DESC'], message: 'Direction de tri invalide')]
         private readonly string $direction = 'DESC',
         #[Assert\Choice(choices: [
             'abandon_de_procedure_absence_de_reponse',

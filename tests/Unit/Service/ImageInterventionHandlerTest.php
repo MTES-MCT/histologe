@@ -8,27 +8,20 @@ use Intervention\Image\Interfaces\EncodedImageInterface;
 use Intervention\Image\Interfaces\ImageInterface;
 use League\Flysystem\FilesystemOperator;
 use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\MockObject\Stub;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 
 class ImageInterventionHandlerTest extends TestCase
 {
-    private MockObject&ParameterBagInterface $parameterBag;
-    private MockObject&FilesystemOperator $fileStorage;
+    private Stub&ParameterBagInterface $parameterBag;
+    private Stub&FilesystemOperator $fileStorage;
     private MockObject&ImageManager $imageManager;
 
     protected function setUp(): void
     {
-        $this->parameterBag = $this->createMock(ParameterBagInterface::class);
-        $this->fileStorage = $this->createMock(FilesystemOperator::class);
-        $this->fileStorage
-            ->expects($this->atLeast(0))
-            ->method('write');
-
-        $this->fileStorage
-            ->expects($this->atLeast(0))
-            ->method('readStream')
-            ->willReturn(__DIR__.'/../../files/sample.jpg');
+        $this->parameterBag = $this->createStub(ParameterBagInterface::class);
+        $this->fileStorage = $this->createStub(FilesystemOperator::class);
 
         $this->imageManager = $this->createMock(ImageManager::class);
     }
@@ -38,8 +31,8 @@ class ImageInterventionHandlerTest extends TestCase
      */
     public function testResize(): void
     {
-        $encodedMock = $this->createMock(EncodedImageInterface::class);
-        $encodedMock->method('__toString')->willReturn('encoded-content');
+        $encodedStub = $this->createStub(EncodedImageInterface::class);
+        $encodedStub->method('__toString')->willReturn('encoded-content');
 
         $imageMock = $this->createMock(ImageInterface::class);
         $imageMock->expects($this->once())
@@ -48,7 +41,7 @@ class ImageInterventionHandlerTest extends TestCase
             ->willReturnSelf();
         $imageMock->expects($this->once())
             ->method('encode')
-            ->willReturn($encodedMock);
+            ->willReturn($encodedStub);
 
         $this->imageManager
             ->expects($this->once())
@@ -71,8 +64,8 @@ class ImageInterventionHandlerTest extends TestCase
      */
     public function testThumbnail(): void
     {
-        $encodedMock = $this->createMock(EncodedImageInterface::class);
-        $encodedMock->method('__toString')->willReturn('encoded-content');
+        $encodedStub = $this->createStub(EncodedImageInterface::class);
+        $encodedStub->method('__toString')->willReturn('encoded-content');
 
         $imageMock = $this->createMock(ImageInterface::class);
         $imageMock->expects($this->once())
@@ -81,7 +74,7 @@ class ImageInterventionHandlerTest extends TestCase
             ->willReturnSelf();
         $imageMock->expects($this->once())
             ->method('encode')
-            ->willReturn($encodedMock);
+            ->willReturn($encodedStub);
 
         $this->imageManager
             ->expects($this->once())

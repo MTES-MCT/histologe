@@ -45,19 +45,19 @@ class ProConnectControllerTest extends WebTestCase
             ->setStatut(UserStatus::ACTIVE);
         $em->persist($user);
 
-        $userRepositoryMock = $this->createMock(UserRepository::class);
+        $userRepositoryMock = $this->createStub(UserRepository::class);
         $userRepositoryMock
             ->method('findByProConnectUser')
             ->willReturn($user);
         static::getContainer()->set(UserRepository::class, $userRepositoryMock);
 
-        $mockAuth = $this->createMock(ProConnectAuthentication::class);
+        $mockAuth = $this->createStub(ProConnectAuthentication::class);
         $mockAuth
             ->method('authenticateFromCallback')
             ->willReturn($proConnectUser);
         $container->set(ProConnectAuthentication::class, $mockAuth);
 
-        $mockContext = $this->createMock(ProConnectContext::class);
+        $mockContext = $this->createStub(ProConnectContext::class);
         $mockContext->method('clearSession');
         $container->set(ProConnectContext::class, $mockContext);
 
@@ -83,7 +83,7 @@ class ProConnectControllerTest extends WebTestCase
         $client = static::createClient();
         $container = static::getContainer();
 
-        $mockAuth = $this->createMock(ProConnectAuthentication::class);
+        $mockAuth = $this->createStub(ProConnectAuthentication::class);
         $mockAuth
             ->method('getAuthorizationUrl')
             ->willReturn('https://auth.proconnect.fake/authorize');
@@ -101,7 +101,7 @@ class ProConnectControllerTest extends WebTestCase
         $client = static::createClient();
         $container = static::getContainer();
 
-        $mockAuth = $this->createMock(ProConnectAuthentication::class);
+        $mockAuth = $this->createStub(ProConnectAuthentication::class);
         $mockAuth
             ->method('getAuthorizationUrl')
             ->willThrowException(new \RuntimeException('Erreur fake'));

@@ -54,8 +54,8 @@ class DossierMessageSCHSFactoryTest extends TestCase
             ->method('getTmpFilepath')
             ->willReturn(self::FILE);
 
-        $esaboraTokenProviderMock = $this->createMock(EsaboraTokenProvider::class);
-        $dossierMessageFactory = new DossierMessageSCHSFactory($uploadHandlerServiceMock, $esaboraTokenProviderMock, true);
+        $esaboraTokenProviderStub = $this->createStub(EsaboraTokenProvider::class);
+        $dossierMessageFactory = new DossierMessageSCHSFactory($uploadHandlerServiceMock, $esaboraTokenProviderStub, true);
         $signalement = (new Signalement())->setNbEnfantsM6($nbEnfantsM6)->setNbEnfantsP6($nbEnfantsP6);
 
         $buildNbEnfantsMethod = new \ReflectionMethod(DossierMessageSCHSFactory::class, 'buildNbEnfants');
@@ -79,10 +79,10 @@ class DossierMessageSCHSFactoryTest extends TestCase
 
     public function testWithLithuanianPhoneNumber(): void
     {
-        $uploadHandlerServiceMock = $this->createMock(UploadHandlerService::class);
+        $uploadHandlerServiceStub = $this->createStub(UploadHandlerService::class);
 
-        $esaboraTokenProviderMock = $this->createMock(EsaboraTokenProvider::class);
-        $dossierMessageFactory = new DossierMessageSCHSFactory($uploadHandlerServiceMock, $esaboraTokenProviderMock, true);
+        $esaboraTokenProviderStub = $this->createStub(EsaboraTokenProvider::class);
+        $dossierMessageFactory = new DossierMessageSCHSFactory($uploadHandlerServiceStub, $esaboraTokenProviderStub, true);
 
         $affectation = $this->getSignalementAffectation(PartnerType::COMMUNE_SCHS);
         $signalement = $affectation->getSignalement();

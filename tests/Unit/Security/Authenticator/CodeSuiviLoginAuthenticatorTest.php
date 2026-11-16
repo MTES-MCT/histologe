@@ -12,7 +12,7 @@ use App\Security\Provider\SignalementUserProvider;
 use App\Security\User\SignalementUser;
 use App\Tests\FixturesHelper;
 use PHPUnit\Framework\Attributes\DataProvider;
-use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\MockObject\Stub;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
@@ -22,15 +22,15 @@ class CodeSuiviLoginAuthenticatorTest extends TestCase
 {
     use FixturesHelper;
 
-    private MockObject&SignalementRepository $signalementRepository;
-    private MockObject&SignalementUserProvider $signalementUserProvider;
-    private MockObject&UrlGeneratorInterface $urlGenerator;
+    private Stub&SignalementRepository $signalementRepository;
+    private Stub&SignalementUserProvider $signalementUserProvider;
+    private Stub&UrlGeneratorInterface $urlGenerator;
 
     protected function setUp(): void
     {
-        $this->signalementRepository = $this->createMock(SignalementRepository::class);
-        $this->signalementUserProvider = $this->createMock(SignalementUserProvider::class);
-        $this->urlGenerator = $this->createMock(UrlGeneratorInterface::class);
+        $this->signalementRepository = $this->createStub(SignalementRepository::class);
+        $this->signalementUserProvider = $this->createStub(SignalementUserProvider::class);
+        $this->urlGenerator = $this->createStub(UrlGeneratorInterface::class);
     }
 
     /**

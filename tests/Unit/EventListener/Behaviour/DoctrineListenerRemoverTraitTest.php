@@ -18,7 +18,7 @@ class DoctrineListenerRemoverTraitTest extends TestCase
 
     public function testRemoveListenerWhenClassUsingTrait(): void
     {
-        $listener = $this->createMock(ListenerToRemove::class);
+        $listener = $this->createStub(ListenerToRemove::class);
 
         $this->eventManagerMock
             ->expects($this->once())
@@ -44,7 +44,7 @@ class DoctrineListenerRemoverTraitTest extends TestCase
 
     public function testDoNotRemoveListenerWhenClassNotUsingTrait(): void
     {
-        $listener = $this->createMock(Listener::class);
+        $listener = $this->createStub(Listener::class);
 
         $this->eventManagerMock
             ->expects($this->once())

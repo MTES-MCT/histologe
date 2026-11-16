@@ -60,9 +60,9 @@ class ArreteRepository extends ServiceEntityRepository
 
         if ($searchArrete->getOrderType()) {
             [$orderField, $orderDirection] = explode('-', $searchArrete->getOrderType());
-            $qb->orderBy($orderField, $orderDirection);
+            $qb->orderBy($orderField, 'DESC' === $orderDirection ? \SortDirection::Descending : \SortDirection::Ascending);
         } else {
-            $qb->orderBy('a.dateArrete', 'ASC');
+            $qb->orderBy('a.dateArrete', \SortDirection::Ascending);
         }
 
         $firstResult = ($searchArrete->getPage() - 1) * $maxResult;

@@ -11,6 +11,7 @@ use App\Entity\UserPartner;
 use App\Service\Files\UserAvatar;
 use League\Flysystem\FilesystemOperator;
 use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\MockObject\Stub;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 
@@ -39,8 +40,8 @@ class UserAvatarTest extends WebTestCase
         $outputSpan = $userAvatar->userAvatarOrPlaceHolder($user);
         $this->assertEquals('<span aria-hidden="true" class="avatar-histologe avatar-placeholder avatar-74">44</span>', $outputSpan);
 
-        /** @var ParameterBagInterface&MockObject $parameterBag */
-        $parameterBag = $this->createMock(ParameterBagInterface::class);
+        /** @var ParameterBagInterface&Stub $parameterBag */
+        $parameterBag = $this->createStub(ParameterBagInterface::class);
         /** @var FilesystemOperator&MockObject $fileStorage */
         $fileStorage = $this->createMock(FilesystemOperator::class);
         $fileStorage->expects($this->exactly(2))

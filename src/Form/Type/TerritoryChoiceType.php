@@ -33,7 +33,7 @@ class TerritoryChoiceType extends AbstractType
                 $user = $this->security->getUser();
                 $qb = $territoryRepository->createQueryBuilder('t')
                     ->andWhere('t.isActive = 1')
-                    ->orderBy('t.zip', 'ASC');
+                    ->orderBy('t.zip', \SortDirection::Ascending);
 
                 if (!$this->security->isGranted('ROLE_ADMIN')) {
                     $territoryIds = array_keys($user->getPartnersTerritories());

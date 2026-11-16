@@ -7,9 +7,9 @@ use App\Manager\JobEventManager;
 use App\Service\Interconnection\JobEventHttpClient;
 use App\Service\Interconnection\JobEventMetaData;
 use Doctrine\ORM\EntityManagerInterface;
-use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\MockObject\Stub;
 use PHPUnit\Framework\TestCase;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\HttpClient\MockHttpClient;
@@ -81,14 +81,14 @@ class JobEventHttpClientTest extends TestCase
         $loggerMock->expects($this->exactly(1))
             ->method('info');
 
-        /** @var MockObject&EntityManagerInterface $entityManagerMock */
-        $entityManagerMock = $this->createMock(EntityManagerInterface::class);
+        /** @var Stub&EntityManagerInterface $entityManagerStub */
+        $entityManagerStub = $this->createStub(EntityManagerInterface::class);
 
         $jobEventHttpClient = new JobEventHttpClient(
             $mockHttpClient,
             $jobEventManagerMock,
             $loggerMock,
-            $entityManagerMock,
+            $entityManagerStub,
             self::HISTOLOGE_LOCAL_URL,
         );
 
@@ -108,18 +108,15 @@ class JobEventHttpClientTest extends TestCase
 
         $mockHttpClient = new MockHttpClient();
 
-        /** @var MockObject&JobEventManager $jobEventManagerMock */
-        $jobEventManagerMock = $this->createMock(JobEventManager::class);
-        /** @var MockObject&LoggerInterface $loggerMock */
-        $loggerMock = $this->createMock(LoggerInterface::class);
-        /** @var MockObject&EntityManagerInterface $entityManagerMock */
-        $entityManagerMock = $this->createMock(EntityManagerInterface::class);
+        $jobEventManagerStub = $this->createStub(JobEventManager::class);
+        $loggerStub = $this->createStub(LoggerInterface::class);
+        $entityManagerStub = $this->createStub(EntityManagerInterface::class);
 
         $jobEventHttpClient = new JobEventHttpClient(
             $mockHttpClient,
-            $jobEventManagerMock,
-            $loggerMock,
-            $entityManagerMock,
+            $jobEventManagerStub,
+            $loggerStub,
+            $entityManagerStub,
             self::HISTOLOGE_LOCAL_URL,
         );
 
@@ -140,18 +137,15 @@ class JobEventHttpClientTest extends TestCase
         );
         $mockHttpClient = new MockHttpClient($mockResponse);
 
-        /** @var MockObject&JobEventManager $jobEventManagerMock */
-        $jobEventManagerMock = $this->createMock(JobEventManager::class);
-        /** @var MockObject&LoggerInterface $loggerMock */
-        $loggerMock = $this->createMock(LoggerInterface::class);
-        /** @var MockObject&EntityManagerInterface $entityManagerMock */
-        $entityManagerMock = $this->createMock(EntityManagerInterface::class);
+        $jobEventManagerStub = $this->createStub(JobEventManager::class);
+        $loggerStub = $this->createStub(LoggerInterface::class);
+        $entityManagerStub = $this->createStub(EntityManagerInterface::class);
 
         $jobEventHttpClient = new JobEventHttpClient(
             $mockHttpClient,
-            $jobEventManagerMock,
-            $loggerMock,
-            $entityManagerMock,
+            $jobEventManagerStub,
+            $loggerStub,
+            $entityManagerStub,
             self::HISTOLOGE_LOCAL_URL
         );
         $options['extra']['job_event_metadata'] = new JobEventMetaData(
@@ -184,18 +178,15 @@ class JobEventHttpClientTest extends TestCase
             'http_code' => Response::HTTP_OK,
         ]);
         $mockHttpClient = new MockHttpClient($mockResponse);
-        /** @var MockObject&JobEventManager $jobEventManagerMock */
-        $jobEventManagerMock = $this->createMock(JobEventManager::class);
-        /** @var MockObject&LoggerInterface $loggerMock */
-        $loggerMock = $this->createMock(LoggerInterface::class);
-        /** @var MockObject&EntityManagerInterface $entityManagerMock */
-        $entityManagerMock = $this->createMock(EntityManagerInterface::class);
+        $jobEventManagerStub = $this->createStub(JobEventManager::class);
+        $loggerStub = $this->createStub(LoggerInterface::class);
+        $entityManagerStub = $this->createStub(EntityManagerInterface::class);
 
         $jobEventHttpClient = new JobEventHttpClient(
             $mockHttpClient,
-            $jobEventManagerMock,
-            $loggerMock,
-            $entityManagerMock,
+            $jobEventManagerStub,
+            $loggerStub,
+            $entityManagerStub,
             self::HISTOLOGE_LOCAL_URL,
         );
 
@@ -211,19 +202,18 @@ class JobEventHttpClientTest extends TestCase
      * @throws \ReflectionException
      */
     #[DataProvider('provideOperationalErrors')]
-    #[AllowMockObjectsWithoutExpectations]
     public function testHasOperationalError(string $responseContent, bool $expectedResult): void
     {
-        $mockHttpClient = $this->createMock(HttpClientInterface::class);
-        $jobEventManagerMock = $this->createMock(JobEventManager::class);
-        $loggerMock = $this->createMock(LoggerInterface::class);
-        $entityManagerMock = $this->createMock(EntityManagerInterface::class);
+        $httpClientStub = $this->createStub(HttpClientInterface::class);
+        $jobEventManagerStub = $this->createStub(JobEventManager::class);
+        $loggerStub = $this->createStub(LoggerInterface::class);
+        $entityManagerStub = $this->createStub(EntityManagerInterface::class);
 
         $jobEventHttpClient = new JobEventHttpClient(
-            $mockHttpClient,
-            $jobEventManagerMock,
-            $loggerMock,
-            $entityManagerMock,
+            $httpClientStub,
+            $jobEventManagerStub,
+            $loggerStub,
+            $entityManagerStub,
             self::HISTOLOGE_LOCAL_URL
         );
 

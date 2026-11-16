@@ -25,9 +25,9 @@ class TimezoneProviderTest extends KernelTestCase
         $user = $entityManager->getRepository(User::class)->findOneBy([
             'email' => $userEmail,
         ]);
-        $securityMock = $this->createMock(Security::class);
-        $securityMock->method('getUser')->willReturn($user);
-        $timezoneProvider = new TimezoneProvider($securityMock);
+        $securityStub = $this->createStub(Security::class);
+        $securityStub->method('getUser')->willReturn($user);
+        $timezoneProvider = new TimezoneProvider($securityStub);
 
         $this->assertEquals($timezone, $timezoneProvider->getTimezone());
         $this->assertEquals(new \DateTimeZone($timezone), $timezoneProvider->getDateTimezone());

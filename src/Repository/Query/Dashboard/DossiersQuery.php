@@ -171,11 +171,11 @@ class DossiersQuery
 
         if (null !== $tabQueryParameters
             && in_array($tabQueryParameters->sortBy, ['createdAt', 'nomOccupant'], true)
-            && in_array($tabQueryParameters->orderBy, ['ASC', 'DESC', 'asc', 'desc'], true)
+            && in_array($tabQueryParameters->orderBy, ['ASC', 'DESC'], true)
         ) {
-            $qb->orderBy('s.'.$tabQueryParameters->sortBy, $tabQueryParameters->orderBy);
+            $qb->orderBy('s.'.$tabQueryParameters->sortBy, 'ASC' === $tabQueryParameters->orderBy ? \SortDirection::Ascending : \SortDirection::Descending);
         } else {
-            $qb->orderBy('s.createdAt', 'DESC');
+            $qb->orderBy('s.createdAt', \SortDirection::Descending);
         }
 
         $qb->setMaxResults(TabDossier::MAX_ITEMS_LIST);
@@ -248,11 +248,11 @@ class DossiersQuery
 
         if (null !== $tabQueryParameters
             && in_array($tabQueryParameters->sortBy, ['createdAt', 'nomOccupant'], true)
-            && in_array($tabQueryParameters->orderBy, ['ASC', 'DESC', 'asc', 'desc'], true)
+            && in_array($tabQueryParameters->orderBy, ['ASC', 'DESC'], true)
         ) {
-            $qb->orderBy('s.'.$tabQueryParameters->sortBy, $tabQueryParameters->orderBy);
+            $qb->orderBy('s.'.$tabQueryParameters->sortBy, 'ASC' === $tabQueryParameters->orderBy ? \SortDirection::Ascending : \SortDirection::Descending);
         } else {
-            $qb->orderBy('s.createdAt', 'DESC');
+            $qb->orderBy('s.createdAt', \SortDirection::Descending);
         }
 
         if ($isLimitApplied) {
@@ -339,11 +339,11 @@ class DossiersQuery
 
         if (null !== $tabQueryParameters
             && 'closedAt' === $tabQueryParameters->sortBy
-            && in_array($tabQueryParameters->orderBy, ['ASC', 'DESC', 'asc', 'desc'], true)
+            && in_array($tabQueryParameters->orderBy, ['ASC', 'DESC'], true)
         ) {
-            $qb->orderBy('MAX(a.answeredAt)', $tabQueryParameters->orderBy);
+            $qb->orderBy('MAX(a.answeredAt)', 'DESC' === $tabQueryParameters->orderBy ? \SortDirection::Descending : \SortDirection::Ascending);
         } else {
-            $qb->orderBy('MAX(a.answeredAt)', 'ASC');
+            $qb->orderBy('MAX(a.answeredAt)', \SortDirection::Ascending);
         }
 
         $qb->setMaxResults(TabDossier::MAX_ITEMS_LIST);
@@ -430,11 +430,11 @@ class DossiersQuery
 
         if (null !== $tabQueryParameters
             && 'closedAt' === $tabQueryParameters->sortBy
-            && in_array($tabQueryParameters->orderBy, ['ASC', 'DESC', 'asc', 'desc'], true)
+            && in_array($tabQueryParameters->orderBy, ['ASC', 'DESC'], true)
         ) {
-            $qb->orderBy('MAX(a.answeredAt)', $tabQueryParameters->orderBy);
+            $qb->orderBy('MAX(a.answeredAt)', 'DESC' === $tabQueryParameters->orderBy ? \SortDirection::Descending : \SortDirection::Ascending);
         } else {
-            $qb->orderBy('MAX(a.answeredAt)', 'ASC');
+            $qb->orderBy('MAX(a.answeredAt)', \SortDirection::Ascending);
         }
 
         $qb->setMaxResults(TabDossier::MAX_ITEMS_LIST);
@@ -516,11 +516,11 @@ class DossiersQuery
 
         if (null !== $tabQueryParameters
             && 'demandeFermetureUsagerAt' === $tabQueryParameters->sortBy
-            && in_array($tabQueryParameters->orderBy, ['ASC', 'DESC', 'asc', 'desc'], true)
+            && in_array($tabQueryParameters->orderBy, ['ASC', 'DESC'], true)
         ) {
-            $qb->orderBy('MAX(su.createdAt)', $tabQueryParameters->orderBy);
+            $qb->orderBy('MAX(su.createdAt)', 'DESC' === $tabQueryParameters->orderBy ? \SortDirection::Descending : \SortDirection::Ascending);
         } else {
-            $qb->orderBy('MAX(su.createdAt)', 'ASC');
+            $qb->orderBy('MAX(su.createdAt)', \SortDirection::Ascending);
         }
 
         $qb->setMaxResults($tabQueryParameters->limit ?? TabDossier::MAX_ITEMS_LIST);

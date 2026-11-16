@@ -15,6 +15,7 @@ use App\Service\UploadHandlerService;
 use Doctrine\ORM\EntityManagerInterface;
 use League\Flysystem\FilesystemOperator;
 use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\MockObject\Stub;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Console\Tester\CommandTester;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
@@ -22,25 +23,25 @@ use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 class UpdateSignalementDocumentFieldsCommandTest extends TestCase
 {
     private MockObject&TerritoryRepository $territoryRepository;
-    private MockObject&SignalementRepository $signalementRepository;
-    private MockObject&CsvParser $csvParser;
-    private MockObject&ParameterBagInterface $parameterBag;
-    private MockObject&FilesystemOperator $fileStorage;
-    private MockObject&UploadHandlerService $uploadHandlerService;
-    private MockObject&FileManager $fileManager;
-    private MockObject&EntityManagerInterface $entityManager;
+    private Stub&SignalementRepository $signalementRepository;
+    private Stub&CsvParser $csvParser;
+    private Stub&ParameterBagInterface $parameterBag;
+    private Stub&FilesystemOperator $fileStorage;
+    private Stub&UploadHandlerService $uploadHandlerService;
+    private Stub&FileManager $fileManager;
+    private Stub&EntityManagerInterface $entityManager;
     private Territory $territory;
 
     protected function setUp(): void
     {
         $this->territoryRepository = $this->createMock(TerritoryRepository::class);
-        $this->signalementRepository = $this->createMock(SignalementRepository::class);
-        $this->csvParser = $this->createMock(CsvParser::class);
-        $this->parameterBag = $this->createMock(ParameterBagInterface::class);
-        $this->fileStorage = $this->createMock(FilesystemOperator::class);
-        $this->uploadHandlerService = $this->createMock(UploadHandlerService::class);
-        $this->fileManager = $this->createMock(FileManager::class);
-        $this->entityManager = $this->createMock(EntityManagerInterface::class);
+        $this->signalementRepository = $this->createStub(SignalementRepository::class);
+        $this->csvParser = $this->createStub(CsvParser::class);
+        $this->parameterBag = $this->createStub(ParameterBagInterface::class);
+        $this->fileStorage = $this->createStub(FilesystemOperator::class);
+        $this->uploadHandlerService = $this->createStub(UploadHandlerService::class);
+        $this->fileManager = $this->createStub(FileManager::class);
+        $this->entityManager = $this->createStub(EntityManagerInterface::class);
         $this->territory = (new Territory())->setZip('01')->setName('Ain');
     }
 
@@ -75,16 +76,19 @@ class UpdateSignalementDocumentFieldsCommandTest extends TestCase
         $fromFile = 'csv/'.SlugifyDocumentSignalementCommand::PREFIX_FILENAME_STORAGE_MAPPING_SLUGGED.'01.csv';
         $toFile = $this->parameterBag->get('uploads_tmp_dir').'mapping_doc_signalement_01.csv';
 
-        $this->fileStorage->expects($this->once())
+        $fileStorage = $this->createMock(FilesystemOperator::class);
+        $fileStorage->expects($this->once())
             ->method('fileExists')
             ->with($fromFile)
             ->willReturn(true);
 
-        $this->uploadHandlerService->expects($this->once())
+        $uploadHandlerService = $this->createMock(UploadHandlerService::class);
+        $uploadHandlerService->expects($this->once())
             ->method('createTmpFileFromBucket')
             ->with($fromFile, $toFile);
 
-        $this->csvParser->expects($this->once())
+        $csvParser = $this->createMock(CsvParser::class);
+        $csvParser->expects($this->once())
             ->method('parseAsDict')
             ->with($toFile)
             ->willReturn([
@@ -118,10 +122,10 @@ class UpdateSignalementDocumentFieldsCommandTest extends TestCase
         $command = new UpdateSignalementDocumentFieldsCommand(
             $this->territoryRepository,
             $signalementRepositoryMock,
-            $this->csvParser,
+            $csvParser,
             $this->parameterBag,
-            $this->fileStorage,
-            $this->uploadHandlerService,
+            $fileStorage,
+            $uploadHandlerService,
             $this->fileManager,
             $this->entityManager,
         );
@@ -172,7 +176,8 @@ class UpdateSignalementDocumentFieldsCommandTest extends TestCase
 
         $fromFile = 'csv/'.SlugifyDocumentSignalementCommand::PREFIX_FILENAME_STORAGE_MAPPING_SLUGGED.'99.csv';
 
-        $this->fileStorage->expects($this->once())
+        $fileStorage = $this->createMock(FilesystemOperator::class);
+        $fileStorage->expects($this->once())
             ->method('fileExists')
             ->with($fromFile)
             ->willReturn(false);
@@ -182,7 +187,7 @@ class UpdateSignalementDocumentFieldsCommandTest extends TestCase
             $this->signalementRepository,
             $this->csvParser,
             $this->parameterBag,
-            $this->fileStorage,
+            $fileStorage,
             $this->uploadHandlerService,
             $this->fileManager,
             $this->entityManager,

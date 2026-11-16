@@ -22,8 +22,11 @@ class ImageBase64Encoder implements RuntimeExtensionInterface
             $type = pathinfo($bucketFilepath, \PATHINFO_EXTENSION);
 
             try {
-                $data = file_get_contents($bucketFilepath);
-                $data64 = base64_encode((string) $data);
+                $data = @file_get_contents($bucketFilepath);
+                if (false === $data) {
+                    throw new \RuntimeException(sprintf('Impossible de lire le fichier image "%s".', $bucketFilepath));
+                }
+                $data64 = base64_encode($data);
 
                 return "data:image/$type;base64,$data64";
             } catch (\Throwable $exception) {

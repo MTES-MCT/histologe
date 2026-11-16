@@ -116,7 +116,7 @@ class DossiersActiviteRecenteQuery
             u.prenom AS derniereActionPartenairePrenomAgent
         ')->groupBy('signalement.id, suivi.id');
 
-        $qb->orderBy('suivi.createdAt', 'DESC')
+        $qb->orderBy('suivi.createdAt', \SortDirection::Descending)
         ->setMaxResults($limit);
 
         return $qb->getQuery()->getArrayResult();
@@ -165,7 +165,7 @@ class DossiersActiviteRecenteQuery
         $offset = ($page - 1) * $maxResult;
 
         $qb = $this->getBaseQBUserActivity($user, $territory);
-        $qb->orderBy('suivi.createdAt', 'DESC')
+        $qb->orderBy('suivi.createdAt', \SortDirection::Descending)
             ->setFirstResult($offset)
             ->setMaxResults($maxResult);
 

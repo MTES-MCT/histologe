@@ -29,9 +29,9 @@ class InAppCommunicationRepository extends ServiceEntityRepository
 
         if (!empty($searchInAppCommunication->getOrderType())) {
             [$orderField, $orderDirection] = explode('-', $searchInAppCommunication->getOrderType());
-            $qb->orderBy($orderField, $orderDirection);
+            $qb->orderBy($orderField, 'DESC' === $orderDirection ? \SortDirection::Descending : \SortDirection::Ascending);
         } else {
-            $qb->orderBy('i.id', 'ASC');
+            $qb->orderBy('i.id', \SortDirection::Ascending);
         }
 
         if ($searchInAppCommunication->getQueryTitleOrDescription()) {

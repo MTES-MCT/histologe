@@ -18,8 +18,8 @@ class TabCountKpiCacheHelperTest extends TestCase
 
     protected function setUp(): void
     {
-        $cache = $this->createMock(TagAwareCacheInterface::class);
-        $parameterBag = $this->createMock(ParameterBagInterface::class);
+        $cache = $this->createStub(TagAwareCacheInterface::class);
+        $parameterBag = $this->createStub(ParameterBagInterface::class);
         $this->cacheHelper = new TabCountKpiCacheHelper($cache, $parameterBag);
     }
 

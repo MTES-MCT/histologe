@@ -77,7 +77,7 @@ class ZoneSignalementQuery
         if ($territory) {
             $qb->andWhere('z.territory = :territory')->setParameter('territory', $territory);
         }
-        $qb->orderBy('z.name', 'ASC');
+        $qb->orderBy('z.name', \SortDirection::Ascending);
 
         return $qb->getQuery()->getResult();
     }

@@ -10,6 +10,7 @@ use App\Service\Signalement\SignalementFileProcessor;
 use App\Service\UploadHandlerService;
 use App\Tests\FixturesHelper;
 use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\MockObject\Stub;
 use PHPUnit\Framework\TestCase;
 use Psr\Log\LoggerInterface;
 
@@ -29,20 +30,20 @@ class SignalementFileProcessorTest extends TestCase
     ];
 
     private MockObject&UploadHandlerService $uploadHandlerService;
-    private MockObject&LoggerInterface $logger;
-    private MockObject&FilenameGenerator $filenameGenerator;
-    private MockObject&FileFactory $fileFactory;
-    private MockObject&ImageManipulationHandler $imageManipulationHandler;
-    private MockObject&FileScanner $fileScanner;
+    private Stub&LoggerInterface $logger;
+    private Stub&FilenameGenerator $filenameGenerator;
+    private Stub&FileFactory $fileFactory;
+    private Stub&ImageManipulationHandler $imageManipulationHandler;
+    private Stub&FileScanner $fileScanner;
 
     protected function setUp(): void
     {
         $this->uploadHandlerService = $this->createMock(UploadHandlerService::class);
-        $this->logger = $this->createMock(LoggerInterface::class);
-        $this->filenameGenerator = $this->createMock(FilenameGenerator::class);
-        $this->fileFactory = $this->createMock(FileFactory::class);
-        $this->imageManipulationHandler = $this->createMock(ImageManipulationHandler::class);
-        $this->fileScanner = $this->createMock(FileScanner::class);
+        $this->logger = $this->createStub(LoggerInterface::class);
+        $this->filenameGenerator = $this->createStub(FilenameGenerator::class);
+        $this->fileFactory = $this->createStub(FileFactory::class);
+        $this->imageManipulationHandler = $this->createStub(ImageManipulationHandler::class);
+        $this->fileScanner = $this->createStub(FileScanner::class);
     }
 
     public function testProcessUsagerDocument(): void
@@ -83,7 +84,9 @@ class SignalementFileProcessorTest extends TestCase
             ->method('moveFromBucketTempFolder')
             ->willReturn('sample-'.uniqid().'.pdf');
 
-        $this->fileFactory
+        $fileFactory = $this->createMock(FileFactory::class);
+        $this->fileFactory = $fileFactory;
+        $fileFactory
             ->expects($this->atLeast(1))
             ->method('createInstanceFrom')
             ->willReturn($this->getPhotoFile());

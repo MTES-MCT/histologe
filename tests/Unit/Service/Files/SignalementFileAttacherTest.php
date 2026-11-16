@@ -16,7 +16,7 @@ class SignalementFileAttacherTest extends TestCase
     public function testCreateAndAttachAttachesFileAndHydratesMetadata(): void
     {
         $signalement = $this->createMock(Signalement::class);
-        $user = $this->createMock(User::class);
+        $user = $this->createStub(User::class);
         $file = $this->createMock(File::class);
 
         $fileData = [
@@ -27,7 +27,7 @@ class SignalementFileAttacherTest extends TestCase
 
         $fileFactory = $this->createMock(FileFactory::class);
         $uploadHandlerService = $this->createMock(UploadHandlerService::class);
-        $fileScanner = $this->createMock(FileScanner::class);
+        $fileScanner = $this->createStub(FileScanner::class);
 
         $fileFactory
             ->expects($this->once())

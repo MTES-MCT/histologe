@@ -9,7 +9,7 @@ use App\Entity\Partner;
 use App\Entity\Territory;
 use App\Entity\User;
 use App\Service\Files\FileVisibilityService;
-use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\MockObject\Stub;
 use PHPUnit\Framework\TestCase;
 
 class FileVisibilityServiceTest extends TestCase
@@ -23,13 +23,13 @@ class FileVisibilityServiceTest extends TestCase
 
     public function testReturnsAllFilesForSuperAdmin(): void
     {
-        /** @var MockObject&File $file1 */
-        $file1 = $this->createMock(File::class);
-        /** @var MockObject&File $file2 */
-        $file2 = $this->createMock(File::class);
+        /** @var Stub&File $file1 */
+        $file1 = $this->createStub(File::class);
+        /** @var Stub&File $file2 */
+        $file2 = $this->createStub(File::class);
 
-        /** @var MockObject&User $user */
-        $user = $this->createMock(User::class);
+        /** @var Stub&User $user */
+        $user = $this->createStub(User::class);
         $user->method('isSuperAdmin')->willReturn(true);
         $user->method('isTerritoryAdmin')->willReturn(false);
 
@@ -41,11 +41,11 @@ class FileVisibilityServiceTest extends TestCase
 
     public function testReturnsAllFilesForTerritoryAdmin(): void
     {
-        /** @var MockObject&File $file */
-        $file = $this->createMock(File::class);
+        /** @var Stub&File $file */
+        $file = $this->createStub(File::class);
 
-        /** @var MockObject&User $user */
-        $user = $this->createMock(User::class);
+        /** @var Stub&User $user */
+        $user = $this->createStub(User::class);
         $user->method('isSuperAdmin')->willReturn(false);
         $user->method('isTerritoryAdmin')->willReturn(true);
 
@@ -56,8 +56,8 @@ class FileVisibilityServiceTest extends TestCase
 
     public function testReturnsAllFilesForNullUser(): void
     {
-        /** @var MockObject&File $file */
-        $file = $this->createMock(File::class);
+        /** @var Stub&File $file */
+        $file = $this->createStub(File::class);
 
         $result = $this->service->filterFilesForUser([$file], null);
 
@@ -67,19 +67,19 @@ class FileVisibilityServiceTest extends TestCase
     public function testReturnsFileWithoutPartnerRestrictions(): void
     {
         $territory = new Territory();
-        /** @var MockObject&File $file */
-        $file = $this->createMock(File::class);
+        /** @var Stub&File $file */
+        $file = $this->createStub(File::class);
         $file->method('getPartnerType')->willReturn([]);
         $file->method('getPartnerCompetence')->willReturn([]);
         $file->method('getTerritory')->willReturn($territory);
 
         $partner = new Partner();
 
-        /** @var MockObject&User $user */
-        $user = $this->createMock(User::class);
+        /** @var Stub&User $user */
+        $user = $this->createStub(User::class);
         $user->method('isSuperAdmin')->willReturn(false);
         $user->method('isTerritoryAdmin')->willReturn(false);
-        $user->method('getPartnerInTerritory')->with($territory)->willReturn($partner);
+        $user->method('getPartnerInTerritory')->willReturnMap([[$territory, $partner]]);
 
         $result = $this->service->filterFilesForUser([$file], $user);
 
@@ -90,19 +90,19 @@ class FileVisibilityServiceTest extends TestCase
     {
         $territory = new Territory();
 
-        /** @var MockObject&File $file */
-        $file = $this->createMock(File::class);
+        /** @var Stub&File $file */
+        $file = $this->createStub(File::class);
         $file->method('getPartnerType')->willReturn([]);
         $file->method('getPartnerCompetence')->willReturn([Qualification::VISITES]);
         $file->method('getTerritory')->willReturn($territory);
 
         $partner = new Partner();
 
-        /** @var MockObject&User $user */
-        $user = $this->createMock(User::class);
+        /** @var Stub&User $user */
+        $user = $this->createStub(User::class);
         $user->method('isSuperAdmin')->willReturn(false);
         $user->method('isTerritoryAdmin')->willReturn(false);
-        $user->method('getPartnerInTerritory')->with($territory)->willReturn($partner);
+        $user->method('getPartnerInTerritory')->willReturnMap([[$territory, $partner]]);
 
         $result = $this->service->filterFilesForUser([$file], $user);
 
@@ -112,8 +112,8 @@ class FileVisibilityServiceTest extends TestCase
     public function testReturnsFileIfPartnerMatches(): void
     {
         $territory = new Territory();
-        /** @var MockObject&File $file */
-        $file = $this->createMock(File::class);
+        /** @var Stub&File $file */
+        $file = $this->createStub(File::class);
         $file->method('getPartnerType')->willReturn([PartnerType::ARS]);
         $file->method('getPartnerCompetence')->willReturn([Qualification::VISITES]);
         $file->method('getTerritory')->willReturn($territory);
@@ -122,11 +122,11 @@ class FileVisibilityServiceTest extends TestCase
         $partner->setType(PartnerType::ARS);
         $partner->setCompetence([Qualification::VISITES, Qualification::ACCOMPAGNEMENT_JURIDIQUE]);
 
-        /** @var MockObject&User $user */
-        $user = $this->createMock(User::class);
+        /** @var Stub&User $user */
+        $user = $this->createStub(User::class);
         $user->method('isSuperAdmin')->willReturn(false);
         $user->method('isTerritoryAdmin')->willReturn(false);
-        $user->method('getPartnerInTerritory')->with($territory)->willReturn($partner);
+        $user->method('getPartnerInTerritory')->willReturnMap([[$territory, $partner]]);
 
         $result = $this->service->filterFilesForUser([$file], $user);
 

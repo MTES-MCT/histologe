@@ -49,9 +49,9 @@ class SignalementAddressUpdateAndAutoAssignMessageHandlerTest extends WebTestCas
 
         $tokenJsonPath = __DIR__.'/../../../../tools/wiremock/src/Resources/Oauth2/token.json';
         $tokenData = json_decode((string) file_get_contents($tokenJsonPath), true);
-        $esaboraTokenProviderMock = $this->createMock(EsaboraTokenProvider::class);
-        $esaboraTokenProviderMock->method('getToken')->willReturn($tokenData['access_token']);
-        $container->set(EsaboraTokenProvider::class, $esaboraTokenProviderMock);
+        $esaboraTokenProviderStub = $this->createStub(EsaboraTokenProvider::class);
+        $esaboraTokenProviderStub->method('getToken')->willReturn($tokenData['access_token']);
+        $container->set(EsaboraTokenProvider::class, $esaboraTokenProviderStub);
 
         $messageBus = $container->get(MessageBusInterface::class);
         $signalementRepository = static::getContainer()->get(SignalementRepository::class);

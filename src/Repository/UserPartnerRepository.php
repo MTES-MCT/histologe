@@ -72,9 +72,9 @@ class UserPartnerRepository extends ServiceEntityRepository
         }
         if (!empty($search->getOrderType())) {
             [$orderField, $orderDirection] = explode('-', $search->getOrderType());
-            $qb->orderBy($orderField, $orderDirection);
+            $qb->orderBy($orderField, 'DESC' === $orderDirection ? \SortDirection::Descending : \SortDirection::Ascending);
         } else {
-            $qb->orderBy('u.nom', 'ASC');
+            $qb->orderBy('u.nom', \SortDirection::Ascending);
         }
 
         return $qb;
