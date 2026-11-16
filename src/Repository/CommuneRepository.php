@@ -4,6 +4,7 @@ namespace App\Repository;
 
 use App\Entity\Commune;
 use App\Service\ListFilters\SearchCommune;
+use App\Utils\Address\CommuneHelper;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\Tools\Pagination\Paginator;
 use Doctrine\Persistence\ManagerRegistry;
@@ -16,6 +17,29 @@ class CommuneRepository extends ServiceEntityRepository
     public function __construct(ManagerRegistry $registry)
     {
         parent::__construct($registry, Commune::class);
+    }
+
+    public function findOneByNomAndCodePostal(string $nom, string $codePostal): ?Commune
+    {
+        $result = $this->findOneBy(['nom' => $nom, 'codePostal' => $codePostal]);
+
+        if ($result) {
+            return $result;
+        }
+
+        // gestion des ville avec arrondissements
+        $nomStandardized = ucfirst(mb_strtolower($nom));
+        if (isset(CommuneHelper::COMMUNES_ARRONDISSEMENTS[$nomStandardized])) {
+            return $this->createQueryBuilder('c')
+                ->where('c.nom LIKE :nom')
+                ->andWhere('c.codePostal = :codePostal')
+                ->setParameter('nom', $nomStandardized.'%')
+                ->setParameter('codePostal', $codePostal)
+                ->getQuery()
+                ->getOneOrNullResult();
+        }
+
+        return null;
     }
 
     /**
