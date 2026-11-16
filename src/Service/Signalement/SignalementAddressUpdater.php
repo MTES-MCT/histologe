@@ -76,7 +76,7 @@ class SignalementAddressUpdater
 
     public function attachAddressToSignalementFromManualAddress(Signalement $signalement, string $numberAndStreet, string $postCode, string $city): bool
     {
-        $commune = $this->communeRepository->findOneBy(['codePostal' => $postCode, 'nom' => $city]);
+        $commune = $this->communeRepository->findOneByNomAndCodePostal($city, $postCode);
         if ($commune) {
             $cityVerified = $commune->getNom();
             $zipCodeVerified = $commune->getCodePostal();
