@@ -211,8 +211,14 @@ Le thème empile le contenu de l'en-tête en colonne : on le remet en ligne (jou
   min-width: 0;
 }
 
-/* Couleurs des événements selon leur type (pastille, ou fond pour les événements "journée") */
-.calendar-app {
+/*
+ * Événements : les règles ci-dessous valent aussi dans la popup "+ x autres",
+ * que FullCalendar insère dans <body>, hors de .calendar-app
+ */
+
+/* Couleurs des événements selon leur type (trait, ou fond pour les événements "journée") */
+.calendar-app,
+.calendar-app__popover {
   --calendar-event-club: var(--blue-france-sun-113-625);
   --calendar-event-club-contrast: var(--text-inverted-blue-france);
   --calendar-event-visite: var(--orange-terre-battue-main-645);
@@ -220,13 +226,13 @@ Le thème empile le contenu de l'en-tête en colonne : on le remet en ligne (jou
 }
 
 /* Textes des événements (12px dans le thème classic) */
-.calendar-app .calendar-app__event-inner {
+:is(.calendar-app, .calendar-app__popover) .calendar-app__event-inner {
   font-size: 0.875rem;
   line-height: 1.5rem;
 }
 
 /* Marqueur de couleur : petit trait vertical à la place du rond */
-.calendar-app .calendar-app__event-marker {
+:is(.calendar-app, .calendar-app__popover) .calendar-app__event-marker {
   flex-shrink: 0;
   width: 0.25rem;
   height: 1rem;
@@ -235,24 +241,74 @@ Le thème empile le contenu de l'en-tête en colonne : on le remet en ligne (jou
   background-color: var(--fc-event-color);
 }
 
+/* Vue semaine : trait sur toute la hauteur de l'événement */
+:is(.calendar-app, .calendar-app__popover) .calendar-app__event-marker--full-height {
+  align-self: stretch;
+  height: auto;
+}
+
 /* Vue liste : trait avant l'heure plutôt qu'entre l'heure et le titre */
-.calendar-app .calendar-app__event-marker--before-time {
+:is(.calendar-app, .calendar-app__popover) .calendar-app__event-marker--before-time {
   order: -1;
 }
 
 /* Vues mois et semaine : titre tronqué si besoin, heure poussée à droite */
-.calendar-app .calendar-app__event-title {
+:is(.calendar-app, .calendar-app__popover) .calendar-app__event-title {
   flex: 1;
   min-width: 0;
   overflow: hidden;
   text-overflow: ellipsis;
 }
 
-.calendar-app .calendar-app__event-time {
+:is(.calendar-app, .calendar-app__popover) .calendar-app__event-time {
   order: 1;
   flex-shrink: 0;
   margin-inline-start: auto;
   padding-inline-start: 0.5rem;
+}
+
+/* Vue semaine : titre (et occupant) sur plusieurs lignes, heure en haut à droite */
+.calendar-app .calendar-app__event-title--multiline {
+  display: flex;
+  flex-direction: column;
+  font-weight: 700;
+  white-space: normal;
+  overflow: visible;
+}
+
+.calendar-app .calendar-app__event-title--multiline ~ .calendar-app__event-time {
+  align-self: flex-start;
+}
+
+/* Vue liste : séparation entre les jours (thème classic) mais pas entre les événements d'un même jour */
+.calendar-app .calendar-app__list-event {
+  border-width: 0;
+}
+
+/* Vue liste : heure, titre puis lien poussé à droite */
+.calendar-app .calendar-app__list-event-inner {
+  display: flex;
+  flex: 1;
+  align-items: center;
+  gap: 1rem;
+  min-width: 0;
+}
+
+.calendar-app .calendar-app__list-event-time {
+  flex-shrink: 0;
+}
+
+.calendar-app .calendar-app__list-event-title {
+  flex: 1;
+  min-width: 0;
+  margin: 0;
+  font-size: 1rem;
+  line-height: 1.5rem;
+}
+
+.calendar-app .calendar-app__event-link {
+  flex-shrink: 0;
+  margin-inline-start: auto;
 }
 
 /* Message "Aucun évènement à afficher" (semaine entièrement vide) */
@@ -260,4 +316,51 @@ Le thème empile le contenu de l'en-tête en colonne : on le remet en ligne (jou
   font-style: italic;
   color: var(--text-mention-grey);
   background-color: var(--background-default-grey);
+}
+
+/* Lien "+ x autres" de la vue mois */
+.calendar-app .calendar-app__more-link {
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--text-action-high-blue-france);
+}
+
+/* Popup "+ x autres" */
+.calendar-app__popover {
+  min-width: 16rem;
+  background-color: var(--background-default-grey);
+  border: 1px solid var(--border-default-grey);
+  box-shadow: var(--overlap-shadow);
+}
+
+.calendar-app__popover .calendar-app__popover-header {
+  background-color: var(--background-alt-grey);
+  border-bottom: 1px solid var(--border-default-grey);
+}
+
+.calendar-app__popover .calendar-app__popover-header-inner {
+  flex-direction: column;
+  align-items: flex-start;
+  padding: 0.75rem 1rem;
+  color: var(--text-title-grey);
+}
+
+.calendar-app__popover .calendar-app__popover-weekday {
+  font-size: 1.125rem;
+  font-weight: 700;
+  line-height: 1.75rem;
+  text-transform: capitalize;
+}
+
+.calendar-app__popover .calendar-app__popover-date {
+  font-size: 1rem;
+  line-height: 1.5rem;
+}
+
+.calendar-app__popover .calendar-app__popover-close {
+  color: var(--text-action-high-blue-france);
+}
+
+.calendar-app__popover .calendar-app__event-title {
+  font-weight: 700;
 }

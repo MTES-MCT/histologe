@@ -4,11 +4,14 @@ import type {
   CalendarOptions,
   DayCellInfo,
   DayHeaderInfo,
+  EventDisplayInfo,
   EventInput,
   InlineWeekNumberInfo,
   ListDayHeaderInnerInfo,
   ListDayInfo,
 } from '@fullcalendar/vue3'
+
+import type { CalendarEventProps } from '../types'
 
 import '@fullcalendar/vue3/skeleton.css'
 import '@fullcalendar/vue3/themes/classic/theme.css'
@@ -130,6 +133,101 @@ const applyEventColors = (event: EventInput): EventInput => {
 }
 
 /**
+ * En-tête de jour : dans la popup "+ x autres", jour de la semaine puis date complète
+ */
+const getDayHeaderContent = (info: DayHeaderInfo): { html: string } | true => {
+  if (!info.inPopover) {
+    return true
+  }
+
+  const calendar = info.view.calendar
+  const weekday = calendar.formatDate(info.date, { weekday: 'long' })
+  const date = calendar.formatDate(info.date, { day: 'numeric', month: 'long', year: 'numeric' })
+  return {
+    html: `<span class="calendar-app__popover-weekday">${weekday}</span><span class="calendar-app__popover-date">${date}</span>`,
+  }
+}
+
+/**
+ * Classes de l'en-tête de jour (en-tête de la popup "+ x autres" à part)
+ */
+const getDayHeaderClass = (info: DayHeaderInfo): string => {
+  return info.inPopover ? 'calendar-app__popover-header' : ''
+}
+
+const getDayHeaderInnerClass = (info: DayHeaderInfo): string => {
+  return info.inPopover ? 'calendar-app__popover-header-inner' : 'calendar-app__day-header'
+}
+
+/**
+ * Lien de la vue mois quand une journée a trop d'événements : "+ 1 autre", "+ 3 autres"
+ */
+const getMoreLinkText = (num: number): string => {
+  return num > 1 ? `+ ${num} autres` : `+ ${num} autre`
+}
+
+/**
+ * Crée un élément HTML (texte inséré tel quel, sans interprétation HTML)
+ */
+const createElement = (tag: string, className: string, text: string = ''): HTMLElement => {
+  const element = document.createElement(tag)
+  element.className = className
+  element.textContent = text
+  return element
+}
+
+/**
+ * Événement de la vue semaine : titre sur plusieurs lignes,
+ * suivi du nom de l'occupant entre parenthèses pour une visite, puis heure à droite
+ */
+const getWeekEventContent = (info: EventDisplayInfo): { domNodes: Node[] } => {
+  const eventProps = info.event.extendedProps as CalendarEventProps
+
+  const title = createElement('span', 'calendar-app__event-title calendar-app__event-title--multiline')
+  title.append(createElement('span', '', info.event.title))
+  if (eventProps.occupant) {
+    title.append(createElement('span', '', `(${eventProps.occupant})`))
+  }
+
+  const nodes: Node[] = [title]
+  if (info.timeText) {
+    nodes.push(createElement('span', 'calendar-app__event-time', info.timeText))
+  }
+  return { domNodes: nodes }
+}
+
+/**
+ * Événement de la vue liste : heure, titre et occupant en gras, opérateur,
+ * puis lien vers le dossier (visite) ou l'inscription (club) à droite
+ */
+const getListEventContent = (info: EventDisplayInfo): { domNodes: Node[] } => {
+  const eventProps = info.event.extendedProps as CalendarEventProps
+
+  const title = createElement('p', 'calendar-app__list-event-title')
+  const occupant = eventProps.occupant ? ` (${eventProps.occupant})` : ''
+  title.append(createElement('strong', '', `${info.event.title}${occupant}`))
+  if (eventProps.operator) {
+    title.append(` ${eventProps.operator}`)
+  }
+
+  const link = createElement(
+    'a',
+    'fr-link fr-icon-arrow-right-line fr-link--icon-right calendar-app__event-link',
+    eventProps.type === 'club' ? "S'inscrire" : 'Voir le dossier'
+  ) as HTMLAnchorElement
+  link.href = eventProps.link
+  if (eventProps.type === 'club') {
+    link.target = '_blank'
+    link.rel = 'noopener'
+    link.title = "S'inscrire - nouvelle fenêtre"
+  }
+
+  return {
+    domNodes: [createElement('span', 'calendar-app__list-event-time', info.timeText), title, link],
+  }
+}
+
+/**
  * Numéro de jour : mois abrégé pour les jours des mois voisins ("1 déc.")
  */
 const getDayCellTopContent = (info: DayCellInfo): string | true => {
@@ -151,15 +249,23 @@ export const dsfrOptions: CalendarOptions = {
     // Numéro de semaine dans la première cellule de chaque ligne (le lundi)
     dayGridMonth: {
       weekNumbers: true,
+      // Au-delà, lien "+ x autres" qui ouvre une popup avec tous les événements du jour
+      dayMaxEvents: 2,
     },
     // En-têtes avec la date : "Lundi 2"
     dayGridWeek: {
       dayHeaderFormat: { weekday: 'long', day: 'numeric' },
       dayHeaderContent: getWeekDayHeaderContent,
+      eventContent: getWeekEventContent,
+      // Trait de couleur sur toute la hauteur de l'événement (titre sur plusieurs lignes)
+      listItemEventBeforeClass: 'calendar-app__event-marker calendar-app__event-marker--full-height',
     },
-    // Vue liste : marqueur de couleur placé avant l'heure
+    // Vue liste : marqueur de couleur placé avant l'heure, contenu sur toute la largeur
     list: {
       listItemEventBeforeClass: 'calendar-app__event-marker calendar-app__event-marker--before-time',
+      listItemEventClass: 'calendar-app__list-event',
+      listItemEventInnerClass: 'calendar-app__list-event-inner',
+      eventContent: getListEventContent,
     },
     // Colonne de gauche : "Lundi" puis "2 novembre 2026"
     listWeek: {
@@ -170,6 +276,8 @@ export const dsfrOptions: CalendarOptions = {
   },
   // Noms des jours en entier dans l'en-tête ("lundi")
   dayHeaderFormat: { weekday: 'long' },
+  dayHeaderContent: getDayHeaderContent,
+  moreLinkText: getMoreLinkText,
   eventDataTransform: applyEventColors,
   inlineWeekNumberContent: getInlineWeekNumberContent,
   dayCellTopContent: getDayCellTopContent,
@@ -179,7 +287,8 @@ export const dsfrOptions: CalendarOptions = {
   toolbarTitleClass: 'calendar-app__toolbar-title',
   buttonClass: getButtonClass,
   buttonGroupClass: getButtonGroupClass,
-  dayHeaderInnerClass: 'calendar-app__day-header',
+  dayHeaderClass: getDayHeaderClass,
+  dayHeaderInnerClass: getDayHeaderInnerClass,
   dayCellClass: getDayCellClass,
   dayCellTopInnerClass: getDayNumberClass,
   inlineWeekNumberClass: 'fr-badge calendar-app__week-badge calendar-app__week-badge--inline',
@@ -191,6 +300,11 @@ export const dsfrOptions: CalendarOptions = {
   eventInnerClass: 'calendar-app__event-inner',
   // Marqueur de couleur à gauche des événements avec heure (rond dans le thème classic)
   listItemEventBeforeClass: 'calendar-app__event-marker',
+  moreLinkClass: 'calendar-app__more-link',
+  // Popup "+ x autres" (insérée dans <body>, hors de .calendar-app)
+  popoverClass: 'calendar-app__popover',
+  popoverCloseClass: 'calendar-app__popover-close',
+  popoverCloseContent: { html: '<span class="fr-icon-close-line fr-icon--sm" aria-hidden="true"></span>' },
   buttons: {
     prev: {
       class: 'calendar-app__nav-button',
