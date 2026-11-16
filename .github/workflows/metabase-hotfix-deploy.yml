@@ -1,0 +1,294 @@
+name: Metabase Hotfix Deploy
+
+# Déploie automatiquement sur Scalingo le dernier hotfix Metabase (v0.X.Y.Z)
+# de la version actuellement en production (v0.X.Y).
+# Les montées de version mineures et majeures restent manuelles.
+
+on:
+  schedule:
+    # Une fois par jour, en heure creuse, après le Metabase Watch
+    # Cron GitHub Actions en UTC
+    - cron: '17 3 * * *'
+
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: 'Simulation : détecter le hotfix sans déployer'
+        type: boolean
+        default: true
+
+permissions:
+  contents: read
+
+concurrency:
+  group: metabase-hotfix-deploy
+  cancel-in-progress: false
+
+jobs:
+  metabase-hotfix-deploy:
+    name: Deploy latest Metabase hotfix
+    runs-on: ubuntu-latest
+    timeout-minutes: 150
+    # Environnement GitHub contenant le secret SCALINGO_API_TOKEN
+    # (token du collaborateur Scalingo dédié)
+    environment: metabase-production
+
+    env:
+      SCALINGO_APP: signal-logement-metabase
+      SCALINGO_API_URL: https://api.osc-fr1.scalingo.com/v1
+      SCALINGO_AUTH_URL: https://auth.scalingo.com/v1
+      # Délai minimum entre la sortie d'un hotfix et son déploiement
+      MIN_HOTFIX_AGE_HOURS: 24
+      MAX_ATTEMPTS: 3
+      RETRY_DELAY_SECONDS: 300
+      # Code déployé (le buildpack télécharge le jar Metabase indiqué par METABASE_VERSION)
+      SOURCE_REPO: Scalingo/metabase-scalingo
+      SOURCE_REF: master
+      DRY_RUN: ${{ github.event_name == 'workflow_dispatch' && inputs.dry_run || false }}
+      SMTP_HOST: ${{ secrets.SMTP_HOST }}
+
+    steps:
+      - name: Detect hotfix to deploy
+        id: detect
+        env:
+          SCALINGO_API_TOKEN: ${{ secrets.SCALINGO_API_TOKEN }}
+        run: |
+          set -euo pipefail
+
+          if [ -z "${SCALINGO_API_TOKEN}" ]; then
+            echo "::error::Le secret SCALINGO_API_TOKEN n'est pas défini dans l'environnement metabase-production."
+            exit 1
+          fi
+
+          BEARER=$(curl -fsS --retry 3 -X POST -u ":${SCALINGO_API_TOKEN}" \
+            "${SCALINGO_AUTH_URL}/tokens/exchange" | jq -r '.token')
+          echo "::add-mask::${BEARER}"
+
+          # ------------------------------------------------------------
+          # Version actuellement configurée sur Scalingo
+          # ------------------------------------------------------------
+          CURRENT=$(curl -fsS --retry 3 -H "Authorization: Bearer ${BEARER}" \
+            "${SCALINGO_API_URL}/apps/${SCALINGO_APP}/variables" \
+            | jq -r '.variables[] | select(.name == "METABASE_VERSION") | .value')
+
+          echo "current=${CURRENT}" >> "$GITHUB_OUTPUT"
+
+          if [[ ! "${CURRENT}" =~ ^v0\.([0-9]+)\.([0-9]+)(\.([0-9]+))?$ ]]; then
+            echo "::warning::METABASE_VERSION='${CURRENT}' n'est pas au format v0.X.Y ou v0.X.Y.Z : aucun déploiement automatique."
+            echo "reason=Version actuelle non reconnue (${CURRENT})" >> "$GITHUB_OUTPUT"
+            echo "should_deploy=false" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+
+          BASE="v0.${BASH_REMATCH[1]}.${BASH_REMATCH[2]}"
+          CURRENT_HOTFIX="${BASH_REMATCH[4]:-0}"
+
+          # ------------------------------------------------------------
+          # Hotfixes de la même version v0.X.Y, sortis depuis au moins
+          # MIN_HOTFIX_AGE_HOURS heures
+          # ------------------------------------------------------------
+          git clone --quiet --bare --filter=tree:0 \
+            https://github.com/metabase/metabase.git /tmp/metabase
+
+          LIMIT=$(( $(date -u +%s) - MIN_HOTFIX_AGE_HOURS * 3600 ))
+          # Regex passée par l'environnement : awk -v interpréterait les « \. »
+          export TAG_REGEX="^${BASE//./\\.}\\.[0-9]+$"
+
+          TARGET=$(git -C /tmp/metabase for-each-ref \
+            --format='%(refname:short) %(creatordate:unix)' \
+            "refs/tags/${BASE}.*" \
+            | awk -v limit="${LIMIT}" \
+                '$1 ~ ENVIRON["TAG_REGEX"] && $2 <= limit { print $1 }' \
+            | sort -V | tail -1)
+
+          if [ -z "${TARGET}" ] || [ "${TARGET##*.}" -le "${CURRENT_HOTFIX}" ]; then
+            echo "Aucun nouveau hotfix pour ${BASE} (actuelle : ${CURRENT})."
+            echo "reason=Aucun nouveau hotfix de plus de ${MIN_HOTFIX_AGE_HOURS}h pour ${BASE}" >> "$GITHUB_OUTPUT"
+            echo "should_deploy=false" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+
+          # Le jar doit être téléchargeable, sinon le build échouera
+          JAR_URL="https://downloads.metabase.com/${TARGET}/metabase.jar"
+          if ! curl -fsSIL --retry 3 -o /dev/null "${JAR_URL}"; then
+            echo "::warning::Hotfix ${TARGET} détecté mais jar indisponible (${JAR_URL})."
+            echo "reason=Jar ${TARGET} indisponible sur downloads.metabase.com" >> "$GITHUB_OUTPUT"
+            echo "should_deploy=false" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+
+          echo "Hotfix à déployer : ${CURRENT} -> ${TARGET}"
+          echo "target=${TARGET}" >> "$GITHUB_OUTPUT"
+          echo "reason=Nouveau hotfix ${TARGET} disponible" >> "$GITHUB_OUTPUT"
+          echo "should_deploy=true" >> "$GITHUB_OUTPUT"
+
+      - name: Deploy hotfix on Scalingo
+        id: deploy
+        if: ${{ steps.detect.outputs.should_deploy == 'true' && env.DRY_RUN != 'true' }}
+        env:
+          SCALINGO_API_TOKEN: ${{ secrets.SCALINGO_API_TOKEN }}
+          GH_TOKEN: ${{ github.token }}
+          CURRENT: ${{ steps.detect.outputs.current }}
+          TARGET: ${{ steps.detect.outputs.target }}
+        run: |
+          set -euo pipefail
+
+          # Le bearer Scalingo expire au bout d'une heure : on le renouvelle à chaque appel
+          scalingo_api() {
+            local method="$1" path="$2"
+            local bearer
+            local args=(-fsS --retry 3 -X "${method}" -H "Content-Type: application/json")
+            if [ -n "${3:-}" ]; then
+              args+=(--data "$3")
+            fi
+            bearer=$(curl -fsS --retry 3 -X POST -u ":${SCALINGO_API_TOKEN}" \
+              "${SCALINGO_AUTH_URL}/tokens/exchange" | jq -r '.token')
+            curl "${args[@]}" -H "Authorization: Bearer ${bearer}" "${SCALINGO_API_URL}${path}"
+          }
+
+          set_metabase_version() {
+            scalingo_api PUT "/apps/${SCALINGO_APP}/variables" \
+              "$(jq -nc --arg v "$1" '{variables: [{name: "METABASE_VERSION", value: $v}]}')" \
+              > /dev/null
+          }
+
+          # Commit précis du code à déployer (Scalingo exige un git_ref)
+          SOURCE_SHA=$(curl -fsSL --retry 3 \
+            -H "Accept: application/vnd.github+json" \
+            -H "Authorization: Bearer ${GH_TOKEN}" \
+            "https://api.github.com/repos/${SOURCE_REPO}/commits/${SOURCE_REF}" | jq -r '.sha')
+          SOURCE_URL="https://github.com/${SOURCE_REPO}/archive/${SOURCE_SHA}.tar.gz"
+
+          echo "Mise à jour de METABASE_VERSION : ${CURRENT} -> ${TARGET}"
+          set_metabase_version "${TARGET}"
+
+          STATUS="not-started"
+          ATTEMPT=0
+
+          while [ "${ATTEMPT}" -lt "${MAX_ATTEMPTS}" ]; do
+            ATTEMPT=$((ATTEMPT + 1))
+            echo "::group::Tentative ${ATTEMPT}/${MAX_ATTEMPTS}"
+
+            if DEPLOYMENT_ID=$(scalingo_api POST "/apps/${SCALINGO_APP}/deployments" \
+                "$(jq -nc --arg url "${SOURCE_URL}" --arg ref "${SOURCE_SHA}" \
+                  '{deployment: {git_ref: $ref, source_url: $url}}')" \
+                | jq -r '.deployment.id'); then
+              echo "Déploiement ${DEPLOYMENT_ID} lancé"
+
+              # Suivi du déploiement (30 minutes maximum)
+              STATUS="unknown"
+              for _ in $(seq 1 90); do
+                sleep 20
+                STATUS=$(scalingo_api GET "/apps/${SCALINGO_APP}/deployments/${DEPLOYMENT_ID}" \
+                  | jq -r '.deployment.status') || STATUS="unknown"
+                echo "Statut : ${STATUS}"
+                case "${STATUS}" in
+                  success|aborted|*-error) break ;;
+                esac
+              done
+            else
+              STATUS="api-error"
+              echo "Impossible de lancer le déploiement"
+            fi
+
+            echo "::endgroup::"
+
+            if [ "${STATUS}" = "success" ]; then
+              break
+            fi
+
+            echo "::warning::Tentative ${ATTEMPT}/${MAX_ATTEMPTS} en échec (statut : ${STATUS})"
+
+            if [ "${ATTEMPT}" -lt "${MAX_ATTEMPTS}" ]; then
+              sleep "${RETRY_DELAY_SECONDS}"
+            fi
+          done
+
+          echo "attempts=${ATTEMPT}" >> "$GITHUB_OUTPUT"
+          echo "status=${STATUS}" >> "$GITHUB_OUTPUT"
+
+          if [ "${STATUS}" != "success" ]; then
+            # Les anciens conteneurs tournent toujours (déploiement sans interruption) :
+            # on remet l'ancienne version pour qu'un futur build reparte sur une version saine.
+            echo "::error::Échec du déploiement de ${TARGET} après ${ATTEMPT} tentatives. Retour à METABASE_VERSION=${CURRENT}."
+            set_metabase_version "${CURRENT}"
+            exit 1
+          fi
+
+          echo "Metabase ${TARGET} déployé avec succès."
+
+      - name: Generate report
+        if: ${{ always() }}
+        env:
+          CURRENT: ${{ steps.detect.outputs.current }}
+          TARGET: ${{ steps.detect.outputs.target }}
+          REASON: ${{ steps.detect.outputs.reason }}
+          SHOULD_DEPLOY: ${{ steps.detect.outputs.should_deploy }}
+          DETECT_OUTCOME: ${{ steps.detect.outcome }}
+          DEPLOY_OUTCOME: ${{ steps.deploy.outcome }}
+          DEPLOY_STATUS: ${{ steps.deploy.outputs.status }}
+          ATTEMPTS: ${{ steps.deploy.outputs.attempts }}
+          RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+        run: |
+          # SUBJECT reste en ASCII pour l'en-tête du mail
+          if [ "${DETECT_OUTCOME}" != "success" ]; then
+            RESULT="❌ Erreur lors de la détection du hotfix"
+            SUBJECT="Erreur de detection"
+          elif [ "${SHOULD_DEPLOY}" != "true" ]; then
+            RESULT="✅ Rien à déployer : ${REASON}"
+            SUBJECT="Rien a deployer"
+          elif [ "${DRY_RUN}" = "true" ]; then
+            RESULT="🧪 Simulation : ${CURRENT} -> ${TARGET} serait déployé"
+            SUBJECT="Simulation ${TARGET}"
+          elif [ "${DEPLOY_OUTCOME}" = "success" ]; then
+            RESULT="✅ Metabase ${TARGET} déployé (précédente : ${CURRENT}, ${ATTEMPTS} tentative(s))"
+            SUBJECT="Succes - ${TARGET} deploye"
+          else
+            RESULT="❌ Échec du déploiement de ${TARGET} (statut : ${DEPLOY_STATUS:-inconnu}, ${ATTEMPTS:-0} tentative(s)). METABASE_VERSION remise à ${CURRENT}."
+            SUBJECT="Echec - ${TARGET} non deploye"
+          fi
+
+          {
+            echo "# 🚀 Metabase Hotfix Deploy"
+            echo ""
+            echo "- Application : ${SCALINGO_APP}"
+            echo "- Version configurée avant le job : ${CURRENT:-inconnue}"
+            echo "- Résultat : ${RESULT}"
+          } >> "$GITHUB_STEP_SUMMARY"
+
+          {
+            echo "${RESULT}"
+            echo ""
+            echo "Application : ${SCALINGO_APP}"
+            echo "Version configurée avant le job : ${CURRENT:-inconnue}"
+            echo "Détail : ${RUN_URL}"
+          } > /tmp/report.txt
+
+          echo "SUBJECT=${SUBJECT}" >> "$GITHUB_ENV"
+
+      # Notification uniquement si un déploiement a été tenté ou si le job a échoué
+      - name: Notify team by email
+        if: ${{ always() && env.SMTP_HOST != '' && (failure() || steps.deploy.outcome == 'success') }}
+        env:
+          SMTP_PORT: ${{ secrets.SMTP_PORT }}
+          SMTP_USERNAME: ${{ secrets.SMTP_USERNAME }}
+          SMTP_PASSWORD: ${{ secrets.SMTP_PASSWORD }}
+        run: |
+          {
+            echo "From: Metabase Hotfix Deploy <${SMTP_USERNAME}>"
+            echo "To: support@signal-logement.beta.gouv.fr"
+            echo "Subject: [Metabase Hotfix Deploy] ${SUBJECT}"
+            echo "Content-Type: text/plain; charset=UTF-8"
+            echo ""
+            cat /tmp/report.txt
+            echo ""
+            echo "Ce rapport est généré automatiquement par GitHub Actions."
+          } > /tmp/email.txt
+
+          curl --fail --show-error --silent \
+            --ssl-reqd \
+            --url "smtp://${SMTP_HOST}:${SMTP_PORT}" \
+            --user "${SMTP_USERNAME}:${SMTP_PASSWORD}" \
+            --mail-from "${SMTP_USERNAME}" \
+            --mail-rcpt "support@signal-logement.beta.gouv.fr" \
+            --upload-file /tmp/email.txt
