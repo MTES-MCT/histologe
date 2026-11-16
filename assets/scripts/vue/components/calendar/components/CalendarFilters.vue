@@ -6,7 +6,7 @@
       <label class="fr-label" for="calendar-filter-territory">Territoire</label>
       <HistoSelect
         id="calendar-filter-territory"
-        :model-value="modelValue.territoryId"
+        :model-value="modelValue.territoire"
         :option-items="territoryItems"
         @update:model-value="onTerritoryChange"
       />
@@ -23,7 +23,7 @@
       <span id="calendar-filter-operators-label" class="fr-label">Opérateur</span>
       <AppListCheckboxes
         id="calendar-filter-operators"
-        :model-value="modelValue.operatorIds"
+        :model-value="modelValue.operateurs"
         :option-groups="operatorGroups"
         placeholder="Tous les opérateurs"
         @update:model-value="onOperatorsChange"
@@ -33,8 +33,8 @@
     <button
       type="button"
       class="fr-tag"
-      :aria-pressed="modelValue.onlyMySignalements ? 'true' : 'false'"
-      @click="toggleOnlyMySignalements"
+      :aria-pressed="initialUniquementMesDossiers ? 'true' : 'false'"
+      @click="toggleUniquementMesDossiers"
     >
       Afficher uniquement mes dossiers
     </button>
@@ -58,10 +58,13 @@ interface Props {
 }
 const props: Props = defineProps<Props>()
 
+// Valeur initiale seulement : ensuite, le JS du DSFR inverse lui-même aria-pressed au clic
+// (une liaison réactive ferait double bascule avec celle du DSFR)
+const initialUniquementMesDossiers = props.modelValue.uniquementMesDossiers
+
 // Émissions
 const emit = defineEmits<{
   'update:modelValue': [filters: CalendarFilters]
-  change: []
 }>()
 
 // Options au format attendu par HistoSelect, avec "Tous les territoires" en premier
@@ -77,26 +80,25 @@ const operatorGroups = computed<CheckboxGroup[]>(() => {
 })
 
 /**
- * Met à jour les filtres puis notifie le parent
+ * Met à jour les filtres (le calendrier recharge ses événements en conséquence)
  */
 const updateFilters = (changes: Partial<CalendarFilters>): void => {
   emit('update:modelValue', { ...props.modelValue, ...changes })
-  emit('change')
 }
 
-const onTerritoryChange = (territoryId: string): void => {
-  updateFilters({ territoryId })
+const onTerritoryChange = (territoire: string): void => {
+  updateFilters({ territoire })
 }
 
-const onOperatorsChange = (operatorIds: string[]): void => {
-  updateFilters({ operatorIds })
+const onOperatorsChange = (operateurs: string[]): void => {
+  updateFilters({ operateurs })
 }
 
 /**
  * Le JS du DSFR inverse aussi aria-pressed au clic : l'état Vue suit la même bascule
  */
-const toggleOnlyMySignalements = (): void => {
-  updateFilters({ onlyMySignalements: !props.modelValue.onlyMySignalements })
+const toggleUniquementMesDossiers = (): void => {
+  updateFilters({ uniquementMesDossiers: !props.modelValue.uniquementMesDossiers })
 }
 </script>
 

@@ -6,7 +6,25 @@ export interface CalendarFilterOption {
 
 export interface CalendarFilters {
   // Vide : tous les territoires
-  territoryId: string
-  operatorIds: string[]
-  onlyMySignalements: boolean
+  territoire: string
+  operateurs: string[]
+  uniquementMesDossiers: boolean
+}
+
+// Période affichée par le calendrier (Y-m-d), fin exclue
+export interface CalendarPeriod {
+  dateDebut: string
+  dateFin: string
+}
+
+export interface StoreState {
+  territories: CalendarFilterOption[]
+  operators: CalendarFilterOption[]
+  filters: CalendarFilters
+  loadingInit: boolean
+  hasErrorLoading: boolean
+}
+
+export interface StoreProps {
+  ajaxurl: string
 }

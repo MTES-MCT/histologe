@@ -16,7 +16,7 @@
             data-ajaxurl="{{ path('back_calendar_events') }}"
             data-operators="{{ operators|json_encode }}"
             data-territories="{{ territories|json_encode }}"
-            data-only-my-signalements="{{ is_granted('ROLE_ADMIN_TERRITORY') ? '0' : '1' }}"
+            data-uniquement-mes-dossiers="{{ is_granted('ROLE_ADMIN_TERRITORY') ? '0' : '1' }}"
         ></div>
     </section>
 {% endblock %}
