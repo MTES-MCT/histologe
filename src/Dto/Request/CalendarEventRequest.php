@@ -11,8 +11,8 @@ class CalendarEventRequest
 
     public const int MAX_LIST_PAGINATION = 25;
 
-    /**
-     * @param array<mixed> $arreteTypes
+    /** 
+     * @param array<string, mixed>|null $operateurs
      */
     public function __construct(
         private readonly ?string $territoire = null,
@@ -24,8 +24,6 @@ class CalendarEventRequest
         public ?string $uniquementMesDossiers = null,
     ) {
     }
-
-        // TODO : en entrée : filtres territoire, opérateur, uniquement mes signalements (si pas SA), date de début, date de fin
 
     public function getTerritoire(): ?string
     {
@@ -80,6 +78,7 @@ class CalendarEventRequest
                 $params[$key] = $value;
             }
         }
+
         return UrlHelper::arrayToQueryString($params);
     }
 

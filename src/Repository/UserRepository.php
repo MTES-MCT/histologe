@@ -550,7 +550,7 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
     /**
      * @return array<int, User>
      *
-     * Attention : Une modification sur cette méthode doit être répercutée dans la méthode isUserEligibleForClubEvent du ClubEventService
+     * Attention : Une modification sur cette méthode doit être répercutée dans la méthode restrictToUser du ClubEventRepository
      */
     public function findUsersToNotifyForClubEvent(ClubEvent $clubEvent): array
     {

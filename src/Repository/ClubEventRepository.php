@@ -7,6 +7,7 @@ use App\Entity\ClubEvent;
 use App\Entity\User;
 use App\Service\ListFilters\SearchClubEvent;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\ORM\QueryBuilder;
 use Doctrine\ORM\Tools\Pagination\Paginator;
 use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Component\Clock\ClockInterface;
@@ -39,45 +40,92 @@ class ClubEventRepository extends ServiceEntityRepository
         return $qb->getQuery()->getResult();
     }
 
-    /**
-     * @return array<ClubEvent>
-     */
-    public function findInFuture(): array
+    public function findNextForUser(User $user): ?ClubEvent
     {
         $qb = $this->createQueryBuilder('c')
             ->andWhere('c.dateEvent >= :now')
             ->setParameter('now', $this->clock->now()->setTime(0, 0, 0))
-            ->orderBy('c.dateEvent', \SortDirection::Ascending);
+            ->orderBy('c.dateEvent', \SortDirection::Ascending)
+            ->setMaxResults(1);
 
-        return $qb->getQuery()->getResult();
+        $this->restrictToUser($qb, $user);
+
+        return $qb->getQuery()->getOneOrNullResult();
     }
-
 
     /**
      * @return array<ClubEvent>
      */
     public function findAllFilteredForUser(
         User $user,
-        ?CalendarEventRequest $calendarEventRequest
-    ): array
-    {
+        ?CalendarEventRequest $calendarEventRequest = null,
+    ): array {
         $qb = $this->createQueryBuilder('c')
-            ->andWhere('c.dateEvent BETWEEN :start AND :end')
-            ->setParameter('start', (new \DateTimeImmutable($calendarEventRequest->getDateDebut()))->setTime(0, 0, 0))
-            ->setParameter('end', (new \DateTimeImmutable($calendarEventRequest->getDateFin()))->setTime(23, 59, 59));
+            // Fin exclue : dateFin est le lendemain du dernier jour affiché
+            ->andWhere('c.dateEvent >= :start AND c.dateEvent < :end')
+            ->setParameter('start', new \DateTimeImmutable($calendarEventRequest?->getDateDebut() ?? 'today'))
+            ->setParameter('end', new \DateTimeImmutable($calendarEventRequest?->getDateFin() ?? 'tomorrow'))
+            ->orderBy('c.dateEvent', \SortDirection::Ascending);
 
-
-        // if ($user->isSuperAdmin()) {
-        //     // pas de restrictions pour les SA
-        //     if (null !== $calendarEventRequest && !empty($calendarEventRequest->getTerritoire())) {
-        //         $qb->andWhere('c.territory IN (:territories)')
-        //             ->setParameter('territories', $calendarEventRequest->getTerritoire());
-        //     }
-        // }
-
-        $qb->orderBy('c.dateEvent', 'ASC');
+        $this->restrictToUser($qb, $user);
 
         return $qb->getQuery()->getResult();
+    }
+
+    /**
+     * Limite aux événements auxquels l'utilisateur est invité :
+     * - SA : tous les événements
+     * - RT : événements correspondant à son rôle
+     * - autres utilisateurs : événements correspondant à son rôle, au type et à la compétence de l'un de ses partenaires
+     *
+     * Attention : une modification sur cette méthode doit être répercutée dans la méthode findUsersToNotifyForClubEvent du UserRepository
+     */
+    private function restrictToUser(QueryBuilder $qb, User $user): void
+    {
+        if ($user->isSuperAdmin()) {
+            return;
+        }
+
+        $userRoles = array_keys(array_filter([
+            User::ROLE_ADMIN_TERRITORY => $user->isTerritoryAdmin(),
+            User::ROLE_ADMIN_PARTNER => $user->isPartnerAdmin(),
+            User::ROLE_USER_PARTNER => $user->isUserPartner(),
+        ]));
+        $this->addJsonMatchCondition($qb, 'c.userRoles', 'userRole', $userRoles);
+
+        if ($user->isTerritoryAdmin()) {
+            return;
+        }
+
+        $partnerTypes = [];
+        $partnerCompetences = [];
+        foreach ($user->getPartners() as $partner) {
+            if (null !== $partner->getType()) {
+                $partnerTypes[] = $partner->getType()->value;
+            }
+            foreach ($partner->getCompetence() ?? [] as $competence) {
+                $partnerCompetences[] = $competence->value;
+            }
+        }
+        $this->addJsonMatchCondition($qb, 'c.partnerTypes', 'partnerType', $partnerTypes);
+        $this->addJsonMatchCondition($qb, 'c.partnerCompetences', 'partnerCompetence', $partnerCompetences);
+    }
+
+    /**
+     * Condition sur une colonne JSON de restrictions : aucune restriction, ou au moins une valeur en commun.
+     *
+     * @param array<string> $values
+     */
+    private function addJsonMatchCondition(QueryBuilder $qb, string $field, string $paramPrefix, array $values): void
+    {
+        $conditions = ['JSON_LENGTH('.$field.') = 0'];
+        foreach (array_values(array_unique($values)) as $index => $value) {
+            $paramName = $paramPrefix.'_'.$index;
+            $conditions[] = 'JSON_CONTAINS('.$field.', :'.$paramName.') = 1';
+            $qb->setParameter($paramName, json_encode($value));
+        }
+
+        $qb->andWhere(implode(' OR ', $conditions));
     }
 
     /**

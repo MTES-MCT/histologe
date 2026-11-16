@@ -2,17 +2,19 @@
 
 namespace App\Controller\Back;
 
+use App\Dto\Request\CalendarEventRequest;
 use App\Entity\Enum\Qualification;
 use App\Entity\User;
+use App\Repository\ClubEventRepository;
+use App\Repository\InterventionRepository;
 use App\Repository\PartnerRepository;
 use App\Repository\TerritoryRepository;
-use App\Dto\Request\CalendarEventRequest;
-use App\Repository\ClubEventRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\Attribute\MapRequestPayload;
 use Symfony\Component\Routing\Attribute\Route;
-use Symfony\Component\HttpKernel\Attribute\MapQueryString;
 
 #[Route('/bo/calendrier')]
 class CalendarController extends AbstractController
@@ -68,62 +70,37 @@ class CalendarController extends AbstractController
     #[Route('/events/', name: 'back_calendar_events')]
     public function events(
         ClubEventRepository $clubEventRepository,
-        // AddressesHistoryListViewFactory $addressesHistoryListViewFactory,
-        // ZoneRepository $zoneRepository,
-        #[MapQueryString] ?CalendarEventRequest $calendarEventRequest = null,
-    ): void {
-        
-
-
-
+        InterventionRepository $interventionRepository,
+        #[MapRequestPayload] ?CalendarEventRequest $calendarEventRequest = null,
+    ): JsonResponse {
         /** @var User $user */
         $user = $this->getUser();
 
-        // $filters = null !== $calendarEventRequest
-        //     ? $calendarEventRequest->getFilters()
-        //     : [
-        //     ];
-
-
-
         $clubEvents = $clubEventRepository->findAllFilteredForUser($user, $calendarEventRequest);
-        // $visites = [];
-        // $processedSignalements = [];
-        // $processedArretes = [];
+        $interventions = $interventionRepository->findAllFilteredForUser($user, $calendarEventRequest);
 
-        // TODO : en sortie : liste d'événements 
-        // si visite : date, heure, référence signalement, uuis signalement, Nom et prénom occupant, nom opérateur
+        // TODO : en sortie : liste d'événements
+        // si visite : date, heure, référence signalement, uuid signalement, Nom et prénom occupant, nom opérateur
         // si club : date, nom club
 
+        $events = [];
 
-        // $responseData = [
-        //     'filters' => $filters,
-        //     'list' => array_values($responseAddresses),
-        //     'pagination' => [
-        //         'current_page' => $page,
-        //         'total_pages' => $totalPages,
-        //         'total_items' => $totalAddresses,
-        //     ],
-        //     'zoneAreas' => $zoneAreas,
-        // ];
+        foreach ($clubEvents as $clubEvent) {
+            $events[] = [
+                'title' => $clubEvent->getName(),
+                'start' => $clubEvent->getDateEvent()->format('Y-m-d\TH:i:s'),
+                'extendedProps' => ['type' => 'club'],
+            ];
+        }
 
-        // $response = $this->json(
-        //     $responseData,
-        //     Response::HTTP_OK,
-        //     ['content-type' => 'application/json'],
-        //     ['groups' => ['signalements:read']]
-        // );
+        foreach ($interventions as $intervention) {
+            $events[] = [
+                'title' => 'Visite #'.$intervention->getSignalement()->getReference(),
+                'start' => $intervention->getScheduledAt()->format('Y-m-d\TH:i:s'),
+                'extendedProps' => ['type' => 'visite'],
+            ];
+        }
 
-        // // Remove '?' at the start of the string
-        // $parsableQueryString = null !== $addressesHistorySearchQuery
-        //     ? substr($addressesHistorySearchQuery->getQueryStringForUrl(), 1)
-        //     : '';
-        // $cookie = Cookie::create(AddressesHistorySearchQuery::COOKIE_NAME)
-        //     ->withValue($parsableQueryString)
-        //     ->withExpires(strtotime('+1 hour'));
-
-        // $response->headers->setCookie($cookie);
-
-        // return $response;
+        return $this->json($events);
     }
 }
