@@ -75,21 +75,20 @@ class CalendarController extends AbstractController
     ): JsonResponse {
         /** @var User $user */
         $user = $this->getUser();
+        // TODO : ajouter un Voter ?
 
         $clubEvents = $clubEventRepository->findAllFilteredForUser($user, $calendarEventRequest);
         $interventions = $interventionRepository->findAllFilteredForUser($user, $calendarEventRequest);
 
-        // TODO : en sortie : liste d'événements
-        // si visite : date, heure, référence signalement, uuid signalement, Nom et prénom occupant, nom opérateur
-        // si club : date, nom club
-
         $events = [];
-
         foreach ($clubEvents as $clubEvent) {
             $events[] = [
                 'title' => $clubEvent->getName(),
                 'start' => $clubEvent->getDateEvent()->format('Y-m-d\TH:i:s'),
-                'extendedProps' => ['type' => 'club'],
+                'extendedProps' => [
+                    'type' => 'club',
+                    'link' => $clubEvent->getUrl(),
+                ],
             ];
         }
 
@@ -97,7 +96,12 @@ class CalendarController extends AbstractController
             $events[] = [
                 'title' => 'Visite #'.$intervention->getSignalement()->getReference(),
                 'start' => $intervention->getScheduledAt()->format('Y-m-d\TH:i:s'),
-                'extendedProps' => ['type' => 'visite'],
+                'extendedProps' => [
+                    'type' => 'visite', // TODO : préciser visite de contrôle ?
+                    'link' => $this->generateUrl('back_signalement_view', ['uuid' => $intervention->getSignalement()->getUuid()]),
+                    'occupant' => $intervention->getSignalement()->getNomOccupantComplet(),
+                    'operator' => $intervention->getPartner()?->getNom(),
+                ],
             ];
         }
 
