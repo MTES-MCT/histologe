@@ -505,7 +505,7 @@ public function suiviSignalementCompleteSyndic(
     Request $request,
 ): Response {
     $signalement = $signalementRepository->findOneByCodeForPublic($code);
-    $this->denyAccessUnlessGranted(SignalementFoVoter::SIGN_USAGER_COMPLETE, $signalement);
+    $this->denyAccessUnlessGranted(SignalementFoVoter::SIGN_USAGER_EDIT, $signalement);
 
     /** @var SignalementUser $signalementUser */
     $signalementUser = $this->getUser();
@@ -539,7 +539,7 @@ public function suiviSignalementCompleteSyndic(
     <div class="signalement-group-data-card">
         <div class="fr-display-flex-row fr-justify-content-space-between fr-align-items-center">
             <h3 class="title-blue-france fr-h5">Coordonnées du syndic</h3>
-            {% if (is_granted('SIGN_USAGER_COMPLETE', signalement)) %}
+            {% if (is_granted('SIGN_USAGER_EDIT', signalement)) %}
                 <a href="{{ path('front_suivi_signalement_complete_syndic', {'code': signalement.codeSuivi}) }}"
                     class="fr-btn fr-btn--sm fr-icon-edit-line fr-btn--icon-left fr-btn--tertiary fr-hidden fr-unhidden-md"
                     >Compléter les informations</a>
@@ -560,13 +560,13 @@ public function suiviSignalementCompleteSyndic(
         {% if signalement.telSyndicSecondaire %}
             {{ signalement.telSyndicSecondaireDecoded|phone }}
         {% endif %}
-        {% if (is_granted('SIGN_USAGER_COMPLETE', signalement)) %}
+        {% if (is_granted('SIGN_USAGER_EDIT', signalement)) %}
             <a href="{{ path('front_suivi_signalement_complete_syndic', {'code': signalement.codeSuivi}) }}"
                 class="fr-btn fr-btn--sm fr-icon-edit-line fr-btn--icon-left fr-btn--tertiary fr-hidden-md"
                 >Compléter les informations</a>
         {% endif %}
     </div>
-{% elseif is_granted('SIGN_USAGER_COMPLETE', signalement) %}
+{% elseif is_granted('SIGN_USAGER_EDIT', signalement) %}
     <div class="fr-callout fr-icon-information-line fr-callout--blue-cumulus fr-mt-3w">
         <p class="fr-callout__title">Syndic de copropriété</p>
         <p>

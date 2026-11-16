@@ -53,6 +53,57 @@ class SignalementEditControllerTest extends WebTestCase
         yield 'SERVICE_SECOURS' => [ProfileDeclarant::SERVICE_SECOURS];
     }
 
+    public static function provideSignalementEditRoutes(): \Generator
+    {
+        foreach ([
+            'front_suivi_signalement_complete_adresse_logement',
+            'front_suivi_signalement_complete_occupant',
+            'front_suivi_signalement_complete_bailleur',
+            'front_suivi_signalement_complete_agence',
+            'front_suivi_signalement_complete_syndic',
+            'front_suivi_signalement_complete_situation_foyer',
+            'front_suivi_signalement_complete_assurance',
+            'front_suivi_signalement_complete_informations_generales',
+            'front_suivi_signalement_complete_type_composition',
+        ] as $route) {
+            foreach (['GET', 'POST'] as $method) {
+                yield $route.' '.$method => [$route, $method];
+            }
+        }
+
+        yield 'front_suivi_signalement_complete_localisation POST' => ['front_suivi_signalement_complete_localisation', 'POST'];
+    }
+
+    #[DataProvider('provideSignalementEditRoutes')]
+    public function testCannotEditAnotherSignalement(string $route, string $method): void
+    {
+        $client = static::createClient();
+
+        /** @var EntityManagerInterface $entityManager */
+        $entityManager = static::getContainer()->get('doctrine')->getManager();
+        $signalements = $entityManager->getRepository(Signalement::class)->findBy([
+            'statut' => SignalementStatus::ACTIVE,
+            'isLogementVacant' => false,
+        ], ['id' => 'ASC'], 2);
+        $this->assertCount(2, $signalements);
+        [$signalement, $otherSignalement] = $signalements;
+
+        $signalementUser = $this->getSignalementUser($signalement);
+        $client->loginUser($signalementUser, 'code_suivi');
+
+        /** @var RouterInterface $router */
+        $router = static::getContainer()->get(RouterInterface::class);
+        $ownUrl = $router->generate($route, ['code' => $signalement->getCodeSuivi()]);
+        $client->request($method, $ownUrl);
+        $this->assertResponseStatusCodeSame(Response::HTTP_OK);
+
+        $url = $router->generate($route, ['code' => $otherSignalement->getCodeSuivi()]);
+
+        $client->request($method, $url);
+
+        $this->assertResponseStatusCodeSame(Response::HTTP_FORBIDDEN);
+    }
+
     #[DataProvider('provideStatusSignalement')]
     public function testDisplaySuiviSignalementCompleteByStatus(string $status): void
     {

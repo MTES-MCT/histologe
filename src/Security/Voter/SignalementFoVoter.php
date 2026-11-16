@@ -22,7 +22,6 @@ class SignalementFoVoter extends Voter
     public const string SIGN_USAGER_ADD_SUIVI = 'SIGN_USAGER_ADD_SUIVI';
     public const string SIGN_USAGER_EDIT = 'SIGN_USAGER_EDIT';
     public const string SIGN_USAGER_BASCULE_PROCEDURE = 'SIGN_USAGER_BASCULE_PROCEDURE';
-    public const string SIGN_USAGER_COMPLETE = 'SIGN_USAGER_COMPLETE';
     public const string SIGN_USAGER_COMPLETE_TRAVAUX_MISE_EN_CONFORMITE = 'SIGN_USAGER_COMPLETE_TRAVAUX_MISE_EN_CONFORMITE';
     public const string SIGN_USAGER_EDIT_OFFLINE = 'SIGN_USAGER_EDIT_OFFLINE';
 
@@ -38,7 +37,6 @@ class SignalementFoVoter extends Voter
             self::SIGN_USAGER_VIEW,
             self::SIGN_USAGER_EDIT,
             self::SIGN_USAGER_BASCULE_PROCEDURE,
-            self::SIGN_USAGER_COMPLETE,
             self::SIGN_USAGER_COMPLETE_TRAVAUX_MISE_EN_CONFORMITE,
             self::SIGN_USAGER_EDIT_OFFLINE,
         ])
@@ -48,7 +46,7 @@ class SignalementFoVoter extends Voter
     protected function voteOnAttribute(string $attribute, mixed $subject, TokenInterface $token, ?Vote $vote = null): bool
     {
         if (self::SIGN_USAGER_EDIT_OFFLINE === $attribute) {
-            return $this->canUsagerEdit($subject);
+            return $this->isEditableSignalement($subject);
         }
         /** @var User|null $user */
         $user = $token->getUser();
@@ -62,10 +60,9 @@ class SignalementFoVoter extends Voter
         return match ($attribute) {
             self::SIGN_USAGER_VIEW => $this->canUsagerView($subject, $user),
             self::SIGN_USAGER_ADD_SUIVI => $this->canUsagerAddSuivi($subject, $user),
-            self::SIGN_USAGER_EDIT => $this->canUsagerEdit($subject),
+            self::SIGN_USAGER_EDIT => $this->canUsagerEdit($subject, $user),
             self::SIGN_USAGER_BASCULE_PROCEDURE => $this->canUsagerBasculeProcedure($subject, $user),
-            self::SIGN_USAGER_COMPLETE => $this->canUsagerCompleteDossier($subject),
-            self::SIGN_USAGER_COMPLETE_TRAVAUX_MISE_EN_CONFORMITE => $this->canUsagerCompleteTravauxMiseEnConformite($subject),
+            self::SIGN_USAGER_COMPLETE_TRAVAUX_MISE_EN_CONFORMITE => $this->canUsagerCompleteTravauxMiseEnConformite($subject, $user),
             default => false,
         };
     }
@@ -100,7 +97,16 @@ class SignalementFoVoter extends Voter
         return false;
     }
 
-    private function canUsagerEdit(Signalement $signalement): bool
+    private function canUsagerEdit(Signalement $signalement, SignalementUser $user): bool
+    {
+        if (!$this->canUsagerView($signalement, $user)) {
+            return false;
+        }
+
+        return $this->isEditableSignalement($signalement);
+    }
+
+    private function isEditableSignalement(Signalement $signalement): bool
     {
         if ($signalement->getIsLogementVacant()) {
             return false;
@@ -128,13 +134,12 @@ class SignalementFoVoter extends Voter
         return false;
     }
 
-    private function canUsagerCompleteDossier(Signalement $signalement): bool
+    private function canUsagerCompleteTravauxMiseEnConformite(Signalement $signalement, SignalementUser $user): bool
     {
-        return $this->canUsagerEdit($signalement);
-    }
+        if (!$this->canUsagerView($signalement, $user)) {
+            return false;
+        }
 
-    private function canUsagerCompleteTravauxMiseEnConformite(Signalement $signalement): bool
-    {
         if ($signalement->getIsLogementVacant()) {
             return false;
         }

@@ -50,7 +50,7 @@
 			<div class="signalement-group-data-card">
 				<div class="fr-display-flex-row fr-justify-content-space-between fr-align-items-center">
 					<h3 class="title-blue-france fr-h5">Adresse du logement</h3>
-					{% if (is_granted('SIGN_USAGER_COMPLETE', signalement)) %}
+					{% if (is_granted('SIGN_USAGER_EDIT', signalement)) %}
 						<a href="{{ path('front_suivi_signalement_complete_adresse_logement', {'code': signalement.codeSuivi}) }}" 
 							class="fr-btn fr-btn--sm fr-icon-edit-line fr-btn--icon-left fr-btn--tertiary fr-hidden fr-unhidden-md"
 							>Compléter les informations</a>
@@ -66,7 +66,7 @@
 					{% endif %}
 				</ul>
 
-				{% if (is_granted('SIGN_USAGER_COMPLETE', signalement)) %}
+				{% if (is_granted('SIGN_USAGER_EDIT', signalement)) %}
 					<div class="fr-mt-2v">
 						<a href="{{ path('front_suivi_signalement_complete_adresse_logement', {'code': signalement.codeSuivi}) }}" 
 							class="fr-btn fr-btn--sm fr-icon-edit-line fr-btn--icon-left fr-btn--tertiary fr-hidden-md"
@@ -105,7 +105,7 @@
 					{% endif %}
 				</div>
 				
-				{% if (is_granted('SIGN_USAGER_COMPLETE', signalement)) %}
+				{% if (is_granted('SIGN_USAGER_EDIT', signalement)) %}
 					<a href="{{ path('front_suivi_signalement_complete_adresse_logement', {'code': signalement.codeSuivi}) }}" 
 						class="fr-btn fr-btn--sm fr-icon-edit-line fr-btn--icon-left fr-btn--tertiary fr-hidden-md"
 						>Compléter les informations</a>
@@ -114,7 +114,7 @@
 			<div class="signalement-group-data-card">
 				<div class="fr-display-flex-row fr-justify-content-space-between fr-align-items-center">
 					<h3 class="title-blue-france fr-h5">Coordonnées de l'occupant</h3>
-					{% if (is_granted('SIGN_USAGER_COMPLETE', signalement)) %}
+					{% if (is_granted('SIGN_USAGER_EDIT', signalement)) %}
 						<a href="{{ path('front_suivi_signalement_complete_occupant', {'code': signalement.codeSuivi}) }}" 
 							class="fr-btn fr-btn--sm fr-icon-edit-line fr-btn--icon-left fr-btn--tertiary fr-hidden fr-unhidden-md"
 							>Modifier les coordonnées</a>
@@ -143,7 +143,7 @@
 						</li>
 					{% endif %}
 				</ul>
-				{% if (is_granted('SIGN_USAGER_COMPLETE', signalement)) %}
+				{% if (is_granted('SIGN_USAGER_EDIT', signalement)) %}
 					<div class="fr-mt-3v">
 						<a href="{{ path('front_suivi_signalement_complete_occupant', {'code': signalement.codeSuivi}) }}" 
 							class="fr-btn fr-btn--sm fr-icon-edit-line fr-btn--icon-left fr-btn--tertiary fr-hidden-md"
@@ -218,7 +218,7 @@
 			<div class="signalement-group-data-card">
 				<div class="fr-display-flex-row fr-justify-content-space-between fr-align-items-center">
 					<h3 class="title-blue-france fr-h5">Votre bailleur</h3>
-					{% if (is_granted('SIGN_USAGER_COMPLETE', signalement)) %}
+					{% if (is_granted('SIGN_USAGER_EDIT', signalement)) %}
 						<a href="{{ path('front_suivi_signalement_complete_bailleur', {'code': signalement.codeSuivi}) }}" 
 							class="fr-btn fr-btn--sm fr-icon-edit-line fr-btn--icon-left fr-btn--tertiary fr-hidden fr-unhidden-md"
 							>Compléter les informations</a>
@@ -311,7 +311,7 @@
 						{% endif %}
 					{% endif %}
 				</ul>
-				{% if (is_granted('SIGN_USAGER_COMPLETE', signalement)) %}
+				{% if (is_granted('SIGN_USAGER_EDIT', signalement)) %}
 					<a href="{{ path('front_suivi_signalement_complete_bailleur', {'code': signalement.codeSuivi}) }}" 
 						class="fr-btn fr-btn--sm fr-icon-edit-line fr-btn--icon-left fr-btn--tertiary fr-hidden-md"
 						>Compléter les informations</a>
@@ -323,7 +323,7 @@
 				<div class="signalement-group-data-card">
 					<div class="fr-display-flex-row fr-justify-content-space-between fr-align-items-center">
 						<h3 class="title-blue-france fr-h5">Coordonnées de l'agence</h3>
-						{% if (is_granted('SIGN_USAGER_COMPLETE', signalement)) %}
+						{% if (is_granted('SIGN_USAGER_EDIT', signalement)) %}
 							<a href="{{ path('front_suivi_signalement_complete_agence', {'code': signalement.codeSuivi}) }}" 
 								class="fr-btn fr-btn--sm fr-icon-edit-line fr-btn--icon-left fr-btn--tertiary fr-hidden fr-unhidden-md"
 								>Compléter les informations</a>
@@ -374,13 +374,13 @@
 							</li>
 						{% endif %}
 					</ul>
-					{% if (is_granted('SIGN_USAGER_COMPLETE', signalement)) %}
+					{% if (is_granted('SIGN_USAGER_EDIT', signalement)) %}
 						<a href="{{ path('front_suivi_signalement_complete_agence', {'code': signalement.codeSuivi}) }}" 
 							class="fr-btn fr-btn--sm fr-icon-edit-line fr-btn--icon-left fr-btn--tertiary fr-hidden-md"
 							>Compléter les informations</a>
 					{% endif %}
 				</div>
-			{% elseif is_granted('SIGN_USAGER_COMPLETE', signalement) %}
+			{% elseif is_granted('SIGN_USAGER_EDIT', signalement) %}
 				<div class="fr-callout fr-icon-information-line fr-callout--blue-cumulus fr-mt-3w">
 					<p class="fr-callout__title">Agence de gestion</p>
 					<p>
@@ -398,7 +398,7 @@
 				<div class="signalement-group-data-card">
 					<div class="fr-display-flex-row fr-justify-content-space-between fr-align-items-center">
 						<h3 class="title-blue-france fr-h5">Coordonnées du syndic</h3>
-						{% if (is_granted('SIGN_USAGER_COMPLETE', signalement)) %}
+						{% if (is_granted('SIGN_USAGER_EDIT', signalement)) %}
 							<a href="{{ path('front_suivi_signalement_complete_syndic', {'code': signalement.codeSuivi}) }}"
 								class="fr-btn fr-btn--sm fr-icon-edit-line fr-btn--icon-left fr-btn--tertiary fr-hidden fr-unhidden-md"
 								>Compléter les informations</a>
@@ -431,13 +431,13 @@
 							</li>
 						{% endif %}
 					</ul>
-					{% if (is_granted('SIGN_USAGER_COMPLETE', signalement)) %}
+					{% if (is_granted('SIGN_USAGER_EDIT', signalement)) %}
 						<a href="{{ path('front_suivi_signalement_complete_syndic', {'code': signalement.codeSuivi}) }}"
 							class="fr-btn fr-btn--sm fr-icon-edit-line fr-btn--icon-left fr-btn--tertiary fr-hidden-md"
 							>Compléter les informations</a>
 					{% endif %}
 				</div>
-			{% elseif is_granted('SIGN_USAGER_COMPLETE', signalement) %}
+			{% elseif is_granted('SIGN_USAGER_EDIT', signalement) %}
 				<div class="fr-callout fr-icon-information-line fr-callout--blue-cumulus fr-mt-3w">
 					<p class="fr-callout__title">Syndic de copropriété</p>
 					<p>
@@ -454,7 +454,7 @@
 			<div class="signalement-group-data-card">
 				<div class="fr-display-flex-row fr-justify-content-space-between fr-align-items-center">
 					<h3 class="title-blue-france fr-h5">Votre assurance</h3>
-					{% if (is_granted('SIGN_USAGER_COMPLETE', signalement)) %}
+					{% if (is_granted('SIGN_USAGER_EDIT', signalement)) %}
 						<a href="{{ path('front_suivi_signalement_complete_assurance', {'code': signalement.codeSuivi}) }}" 
 							class="fr-btn fr-btn--sm fr-icon-edit-line fr-btn--icon-left fr-btn--tertiary fr-hidden fr-unhidden-md">
 							Compléter les informations
@@ -487,7 +487,7 @@
 						{% endif %}
 					</ul>
 				{% endif %}
-				{% if (is_granted('SIGN_USAGER_COMPLETE', signalement)) %}
+				{% if (is_granted('SIGN_USAGER_EDIT', signalement)) %}
 					<a href="{{ path('front_suivi_signalement_complete_assurance', {'code': signalement.codeSuivi}) }}" 
 						class="fr-btn fr-btn--sm fr-icon-edit-line fr-btn--icon-left fr-btn--tertiary fr-hidden-md">
 						Compléter les informations
@@ -567,7 +567,7 @@
 			<div class="signalement-group-data-card">
 				<div class="fr-display-flex-row fr-justify-content-space-between fr-align-items-center">
 					<h3 class="title-blue-france fr-h5">Type et composition du logement</h3>
-					{% if (is_granted('SIGN_USAGER_COMPLETE', signalement)) %}
+					{% if (is_granted('SIGN_USAGER_EDIT', signalement)) %}
 						<a href="{{ path('front_suivi_signalement_complete_type_composition', {'code': signalement.codeSuivi}) }}"
 							class="fr-btn fr-btn--sm fr-icon-edit-line fr-btn--icon-left fr-btn--tertiary fr-hidden fr-unhidden-md">
 							Compléter les informations
@@ -641,7 +641,7 @@
 						{% endif %}
 					{% endif %}
 				</ul>
-				{% if (is_granted('SIGN_USAGER_COMPLETE', signalement)) %}
+				{% if (is_granted('SIGN_USAGER_EDIT', signalement)) %}
 					<div class="fr-mt-2v">
 						<a href="{{ path('front_suivi_signalement_complete_type_composition', {'code': signalement.codeSuivi}) }}"
 							class="fr-btn fr-btn--sm fr-icon-edit-line fr-btn--icon-left fr-btn--tertiary fr-hidden-md">
@@ -653,7 +653,7 @@
 			<div class="signalement-group-data-card">
 				<div class="fr-display-flex-row fr-justify-content-space-between fr-align-items-center">
 					<h3 class="title-blue-france fr-h5">Informations générales sur le logement</h3>
-					{% if (is_granted('SIGN_USAGER_COMPLETE', signalement)) %}
+					{% if (is_granted('SIGN_USAGER_EDIT', signalement)) %}
 						<a href="{{ path('front_suivi_signalement_complete_informations_generales', {'code': signalement.codeSuivi}) }}" 
 							class="fr-btn fr-btn--sm fr-icon-edit-line fr-btn--icon-left fr-btn--tertiary fr-hidden fr-unhidden-md">
 							Compléter les informations
@@ -735,7 +735,7 @@
 						</li>
 					{% endif %}
 				</ul>
-				{% if (is_granted('SIGN_USAGER_COMPLETE', signalement)) %}
+				{% if (is_granted('SIGN_USAGER_EDIT', signalement)) %}
 					<a href="{{ path('front_suivi_signalement_complete_informations_generales', {'code': signalement.codeSuivi}) }}" 
 						class="fr-btn fr-btn--sm fr-icon-edit-line fr-btn--icon-left fr-btn--tertiary fr-hidden-md">
 						Compléter les informations
@@ -746,7 +746,7 @@
 			<div class="signalement-group-data-card">
 				<div class="fr-display-flex-row fr-justify-content-space-between fr-align-items-center">
 					<h3 class="title-blue-france fr-h5">Situation du foyer</h3>
-					{% if (is_granted('SIGN_USAGER_COMPLETE', signalement)) %}
+					{% if (is_granted('SIGN_USAGER_EDIT', signalement)) %}
 						<a href="{{ path('front_suivi_signalement_complete_situation_foyer', {'code': signalement.codeSuivi}) }}" 
 							class="fr-btn fr-btn--sm fr-icon-edit-line fr-btn--icon-left fr-btn--tertiary fr-hidden fr-unhidden-md">
 							Compléter les informations
@@ -856,7 +856,7 @@
 						</li>
 					{% endif %}
 				</ul>
-				{% if (is_granted('SIGN_USAGER_COMPLETE', signalement)) %}
+				{% if (is_granted('SIGN_USAGER_EDIT', signalement)) %}
 					<a href="{{ path('front_suivi_signalement_complete_situation_foyer', {'code': signalement.codeSuivi}) }}" 
 						class="fr-btn fr-btn--sm fr-icon-edit-line fr-btn--icon-left fr-btn--tertiary fr-hidden-md">
 						Compléter les informations
