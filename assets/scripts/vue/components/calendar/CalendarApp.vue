@@ -1,12 +1,19 @@
 <template>
   <div class="calendar-app">
-    <h1>Calendrier</h1>
+    <div class="calendar-app__header">
+      <h1 class="fr-mb-0">Calendrier</h1>
+      <CalendarFilters
+        v-model="filters"
+        :territories="territories"
+        :operators="operators"
+      />
+    </div>
     <FullCalendar :options="calendarOptions" />
   </div>
 </template>
 
 <script setup lang="ts">
-import { reactive } from 'vue'
+import { reactive, ref, onMounted } from 'vue'
 import FullCalendar from '@fullcalendar/vue3'
 import type {
   ButtonGroupInfo,
@@ -24,6 +31,8 @@ import dayGridPlugin from '@fullcalendar/vue3/daygrid'
 import listPlugin from '@fullcalendar/vue3/list'
 import frLocale from '@fullcalendar/vue3/locales/fr'
 import { FAKE_EVENTS } from './fakeEvents'
+import CalendarFilters from './components/CalendarFilters.vue'
+import type { CalendarFilterOption, CalendarFilters as CalendarFiltersState } from './types'
 
 import '@fullcalendar/vue3/skeleton.css'
 import '@fullcalendar/vue3/themes/classic/theme.css'
@@ -232,6 +241,41 @@ const calendarOptions: CalendarOptions = reactive({
     },
   },
 })
+
+
+// Filtres (options fournies par le serveur à l'initialisation)
+const territories = ref<CalendarFilterOption[]>([])
+const operators = ref<CalendarFilterOption[]>([])
+const filters = ref<CalendarFiltersState>({
+  territoryId: '',
+  operatorIds: [],
+  onlyMySignalements: false,
+})
+
+/**
+ * Lit une liste d'options JSON passée en data-attribute
+ */
+const parseOptions = (json: string | undefined): CalendarFilterOption[] => {
+  return json ? JSON.parse(json) : []
+}
+
+/**
+ * Initialisation à partir des data-attributes de #calendar-app
+ */
+const init = (): void => {
+  const initElement = document.querySelector('#calendar-app') as HTMLElement | null
+  if (!initElement) {
+    return
+  }
+
+  territories.value = parseOptions(initElement.dataset.territories)
+  operators.value = parseOptions(initElement.dataset.operators)
+  filters.value.onlyMySignalements = initElement.dataset.onlyMySignalements === '1'
+}
+
+onMounted(() => {
+  init()
+})
 </script>
 
 <style>
@@ -241,6 +285,16 @@ const calendarOptions: CalendarOptions = reactive({
     --fc-classic-background: var(--background-default-grey);
     --fc-classic-foreground: var(--text-default-grey);
     --fc-classic-today: var(--background-alt-blue-france);
+  }
+
+  /* Titre de la page et filtres sur la même ligne */
+  .calendar-app__header {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1.5rem;
+    margin-bottom: 1.5rem;
   }
 
   /* Préfixe .calendar-app pour l'emporter sur les classes utilitaires du thème classic */
