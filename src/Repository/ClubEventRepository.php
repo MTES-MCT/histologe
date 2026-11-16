@@ -2,7 +2,9 @@
 
 namespace App\Repository;
 
+use App\Dto\Request\CalendarEventRequest;
 use App\Entity\ClubEvent;
+use App\Entity\User;
 use App\Service\ListFilters\SearchClubEvent;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\Tools\Pagination\Paginator;
@@ -46,6 +48,34 @@ class ClubEventRepository extends ServiceEntityRepository
             ->andWhere('c.dateEvent >= :now')
             ->setParameter('now', $this->clock->now()->setTime(0, 0, 0))
             ->orderBy('c.dateEvent', \SortDirection::Ascending);
+
+        return $qb->getQuery()->getResult();
+    }
+
+
+    /**
+     * @return array<ClubEvent>
+     */
+    public function findAllFilteredForUser(
+        User $user,
+        ?CalendarEventRequest $calendarEventRequest
+    ): array
+    {
+        $qb = $this->createQueryBuilder('c')
+            ->andWhere('c.dateEvent BETWEEN :start AND :end')
+            ->setParameter('start', (new \DateTimeImmutable($calendarEventRequest->getDateDebut()))->setTime(0, 0, 0))
+            ->setParameter('end', (new \DateTimeImmutable($calendarEventRequest->getDateFin()))->setTime(23, 59, 59));
+
+
+        // if ($user->isSuperAdmin()) {
+        //     // pas de restrictions pour les SA
+        //     if (null !== $calendarEventRequest && !empty($calendarEventRequest->getTerritoire())) {
+        //         $qb->andWhere('c.territory IN (:territories)')
+        //             ->setParameter('territories', $calendarEventRequest->getTerritoire());
+        //     }
+        // }
+
+        $qb->orderBy('c.dateEvent', 'ASC');
 
         return $qb->getQuery()->getResult();
     }
