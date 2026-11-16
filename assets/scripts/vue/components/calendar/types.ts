@@ -17,6 +17,15 @@ export interface CalendarPeriod {
   dateFin: string
 }
 
+// Données propres à chaque événement, envoyées par le serveur (extendedProps)
+export interface CalendarEventProps {
+  type: 'club' | 'visite'
+  // Visite : fiche du signalement ; club : inscription
+  link: string
+  occupant?: string
+  operator?: string | null
+}
+
 export interface StoreState {
   territories: CalendarFilterOption[]
   operators: CalendarFilterOption[]

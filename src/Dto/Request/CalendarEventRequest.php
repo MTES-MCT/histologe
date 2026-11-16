@@ -11,7 +11,7 @@ class CalendarEventRequest
 
     public const int MAX_LIST_PAGINATION = 25;
 
-    /** 
+    /**
      * @param array<string, mixed>|null $operateurs
      */
     public function __construct(
