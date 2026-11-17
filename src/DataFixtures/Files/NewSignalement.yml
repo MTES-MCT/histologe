@@ -911,9 +911,8 @@ signalements:
     uuid: "00000000-0000-0000-2025-000000000010"
     reference: "2025-10"
     details: "Les murs sont complétements fissurés et le vent s'engouffre."
-    is_allocataire: "0"
     nature_logement: "maison"
-    superficie: 340
+    superficie: 120
     is_logement_social: 0
     logement_vacant: 1
     adresse_occupant: "1 D507"
@@ -922,20 +921,22 @@ signalements:
     statut: "ACTIVE"
     geoloc: "{\"lat\": 43.9438516, \"lng\": 0.3110056}"
     insee_occupant: "32194"
-    nb_pieces_logement: 1
+    nb_pieces_logement: 5
     nb_occupants_logement: 0
     score: 35
-    score_logement: 20
-    score_batiment: 15
-    loyer: null
-    date_entree: "2019-12-01"
+    score_logement: 0
+    score_batiment: 35
     nom_proprio: "ImmoGers"
     type_proprio: "ORGANISME_SOCIETE"
     profile_declarant: "TIERS_PRO"
-    profile_occupant: "LOCATAIRE"
-    created_by: "user-44-02@signal-logement.fr"
+    is_not_occupant: 1
+    nom_declarant: "Mathurin"
+    prenom_declarant: "Alix"
+    mail_declarant: "alix.mathurin@yopmail.com"
+    structure_declarant: "Mairie de Larressingle"
+    lien_declarant_occupant: null
     desordre_categorie:
-      - "Sécurite risques particuliers"
+      - "Bâtiment risques particuliers"
       - "Structure du bâti"
     desordre_critere:
       - "desordres_batiment_securite_elements_toit"
