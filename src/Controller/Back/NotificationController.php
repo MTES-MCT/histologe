@@ -151,7 +151,9 @@ class NotificationController extends AbstractController
         /** @var User $user */
         $user = $this->getUser();
         if ($notification->getUser()->getId() === $user->getId() && $this->isCsrfTokenValid('back_delete_notification_'.$notification->getId(), (string) $request->request->get('csrf_token'))) {
-            $notificationDeleter->deleteForUser($user, [$notification->getId()]);
+            /** @var int $notificationId */
+            $notificationId = $notification->getId();
+            $notificationDeleter->deleteForUser($user, [$notificationId]);
             $htmlTargetContents = $this->getHtmlTargetContentsForNotificationAction($request);
 
             return $this->json(['stayOnPage' => true, 'htmlTargetContents' => $htmlTargetContents]);

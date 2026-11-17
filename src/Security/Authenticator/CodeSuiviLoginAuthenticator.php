@@ -91,8 +91,8 @@ class CodeSuiviLoginAuthenticator extends AbstractLoginFormAuthenticator
 
                 return new SignalementUser(
                     $usagerData['identifier'],
-                    $usagerData['email'],
-                    $usagerData['user'] ?? null,
+                    $usagerData['user'],
+                    $usagerData['email'] ?? null,
                 );
             }),
             [new CsrfTokenBadge('authenticate', $csrfToken)]

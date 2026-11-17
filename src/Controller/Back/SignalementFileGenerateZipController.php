@@ -32,10 +32,14 @@ class SignalementFileGenerateZipController extends AbstractController
         MessageBusInterface $messageBus,
     ): Response {
         $this->denyAccessUnlessGranted(SignalementVoter::SIGN_VIEW, $signalement);
+        /** @var int $signalementId */
+        $signalementId = $signalement->getId();
         /** @var User $user */
         $user = $this->getUser();
+        /** @var int $userId */
+        $userId = $user->getId();
 
-        $generateFileZipMessage = new GenerateFileZipMessage(userId: $user->getId(), signalementId: $signalement->getId());
+        $generateFileZipMessage = new GenerateFileZipMessage(userId: $userId, signalementId: $signalementId);
         $count = $signalement
             ->getFiles()
             ->filter(static fn (File $file) => $file->isSituationImage())
@@ -82,9 +86,12 @@ class SignalementFileGenerateZipController extends AbstractController
         ValidatorInterface $validator,
     ): Response {
         $this->denyAccessUnlessGranted(SignalementVoter::SIGN_VIEW, $signalement);
-
+        /** @var int $signalementId */
+        $signalementId = $signalement->getId();
         /** @var User $user */
         $user = $this->getUser();
+        /** @var int $userId */
+        $userId = $user->getId();
 
         if (!$this->isCsrfTokenValid('zip_selection_'.$signalement->getUuid(), (string) $request->request->get('_token'))) {
             throw $this->createAccessDeniedException(MessageHelper::ERROR_MESSAGE_CSRF);
@@ -97,8 +104,8 @@ class SignalementFileGenerateZipController extends AbstractController
         }
 
         $messageBus->dispatch(new GenerateFileZipMessage(
-            userId: $user->getId(),
-            signalementId: $signalement->getId(),
+            userId: $userId,
+            signalementId: $signalementId,
             fileIds: $generateFileZipSelectionRequest->fileIds,
         ));
 

@@ -51,9 +51,11 @@ class SignalementFileController extends AbstractController
         $this->denyAccessUnlessGranted(SignalementVoter::SIGN_VIEW, $signalement);
         /** @var User $user */
         $user = $this->getUser();
+        /** @var int $signalementId */
+        $signalementId = $signalement->getId();
 
         $message = (new PdfExportMessage())
-            ->setSignalementId($signalement->getId())
+            ->setSignalementId($signalementId)
             ->setUserEmail($user->getEmail())
             ->setIsForUsager();
 
@@ -287,7 +289,7 @@ class SignalementFileController extends AbstractController
         }
         $this->denyAccessUnlessGranted(FileVoter::FILE_EDIT, $file);
         $infoDesordres = $signalementDesordresProcessor->process($signalement);
-        $documentTypeData = RequestDataExtractor::getString($requestData, 'documentType');
+        $documentTypeData = (string) RequestDataExtractor::getString($requestData, 'documentType');
         $documentType = DocumentType::tryFrom($documentTypeData);
         if (DocumentType::PHOTO_VISITE === $file->getDocumentType()) {
             // un document typé PHOTO_VISITE ne peut pas changer de type

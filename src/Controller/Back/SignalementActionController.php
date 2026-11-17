@@ -6,6 +6,7 @@ use App\Dto\AgentSelection;
 use App\Dto\RefusSignalement;
 use App\Entity\Enum\AffectationStatus;
 use App\Entity\Enum\MotifCloture;
+use App\Entity\Enum\MotifRefus;
 use App\Entity\Enum\ProcedureCategory;
 use App\Entity\Enum\SignalementStatus;
 use App\Entity\Enum\SuiviCategory;
@@ -175,9 +176,11 @@ class SignalementActionController extends AbstractController
 
             return $this->json($response, $response['code']);
         }
-        $signalement->setMotifRefus($refusSignalement->getMotifRefus());
+        /** @var MotifRefus $motifRefus */
+        $motifRefus = $refusSignalement->getMotifRefus();
+        $signalement->setMotifRefus($motifRefus);
         $description = $this->suiviDescriptionHelper->buildDescriptionForCreation(SuiviCategory::SIGNALEMENT_IS_REFUSED, [
-            'motif' => $refusSignalement->getMotifRefus()->label(),
+            'motif' => $motifRefus->label(),
             'description' => $refusSignalement->getDescription(),
         ]);
 
@@ -255,10 +258,12 @@ class SignalementActionController extends AbstractController
 
         $signalement->setStatut(SignalementStatus::CLOSED);
         $signalement->setClosedAt(new \DateTimeImmutable());
-        $signalement->setComCloture($this->htmlSanitizer->sanitize($signalement->getComCloture()));
+        $signalement->setComCloture($signalement->getComCloture() ? $this->htmlSanitizer->sanitize($signalement->getComCloture()) : null);
         $signalement->setClosedBy($user);
+        /** @var MotifCloture $motifCloture */
+        $motifCloture = $signalement->getMotifCloture();
 
-        if ($signalement->getTravauxMiseEnConformite() && !in_array($signalement->getMotifCloture(), MotifCloture::getListNeedTravauxPrecisions(), true)) {
+        if ($signalement->getTravauxMiseEnConformite() && !in_array($motifCloture, MotifCloture::getListNeedTravauxPrecisions(), true)) {
             $signalement->setTravauxMiseEnConformite(null);
         }
         if ($signalement->getDepartOccupantAt() && MotifCloture::DEPART_OCCUPANT !== $signalement->getMotifCloture()) {
@@ -267,7 +272,7 @@ class SignalementActionController extends AbstractController
 
         $description = $this->suiviManager->buildDescriptionClotureSignalement([
             'subject' => 'tous les partenaires',
-            'motif_cloture' => $signalement->getMotifCloture(),
+            'motif_cloture' => $motifCloture,
             'date_depart_occupant' => $signalement->getDepartOccupantAt(),
             'motif_suivi' => $signalement->getComCloture(),
             'procedures' => $signalement->getSignalementProcedures(ProcedureCategory::PROCEDURE_RETENUE),
@@ -283,7 +288,7 @@ class SignalementActionController extends AbstractController
             files: $form->has('files') ? $form->get('files')->getData() : [],
         );
         // à garder aprés la création du suivi afin que les notifications de fermeture partent bien (avant la suppression des abonnements)
-        $affectationManager->closeBySignalement($signalement, $signalement->getMotifCloture(), $user, $partner);
+        $affectationManager->closeBySignalement($signalement, $motifCloture, $user, $partner);
 
         $entityManager->flush();
         $this->addFlash('success', ['title' => 'Dossier fermé', 'message' => sprintf('Le dossier #%s a bien été fermé.', $signalement->getReference())]);
@@ -355,6 +360,9 @@ class SignalementActionController extends AbstractController
         EntityManagerInterface $entityManager,
     ): JsonResponse {
         $suivi = $suiviRepository->findOneBy(['id' => $request->query->get('suivi')]);
+        if (!$suivi) {
+            throw $this->createNotFoundException();
+        }
         $this->denyAccessUnlessGranted(SuiviVoter::SUIVI_DELETE, $suivi);
         if ($this->isCsrfTokenValid('signalement_delete_suivi_'.$signalement->getId(), (string) $request->request->get('_token'))) {
             $limit = new \DateTimeImmutable('-'.$this->delaySuiviEditableInMinutes.' minutes');
@@ -505,7 +513,7 @@ class SignalementActionController extends AbstractController
 
             return $this->json(['stayOnPage' => true, 'flashMessages' => $flashMessages]);
         }
-        $building = $rnbService->getBuilding($rnbId);
+        $building = $rnbId ? $rnbService->getBuilding($rnbId) : null;
         if (!$building) {
             $flashMessages[] = ['type' => 'alert', 'title' => 'Erreur', 'message' => 'Le bâtiment n\'a pas été trouvé.'];
 
@@ -599,7 +607,7 @@ class SignalementActionController extends AbstractController
 
         /** @var User $user */
         $user = $this->getUser();
-        $partner = $user->getPartnerInTerritory($signalement->getAddress()->getTerritory());
+        $partner = $user->getPartnerInTerritoryOrNull($signalement->getAddress()->getTerritory());
 
         if ($request->isMethod('POST')) {
             $requestData = $request->request->all();

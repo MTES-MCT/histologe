@@ -124,7 +124,7 @@ class ArreteFactory
             }
         }
 
-        if (!$user->isSuperAdmin() && $address->getTerritory()->getId() !== $user->getFirstTerritory()?->getId()) {
+        if (!$user->isSuperAdmin() && $address->getTerritory()->getId() !== $user->getFirstTerritory()->getId()) {
             return null;
         }
 

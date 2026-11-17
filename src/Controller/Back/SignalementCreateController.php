@@ -502,6 +502,9 @@ class SignalementCreateController extends AbstractController
                 foreach ($partnersList as $partnerId) {
                     if (in_array((int) $partnerId, array_column($partners, 'id'))) {
                         $partner = $partnerRepository->find((int) $partnerId);
+                        if (!$partner) {
+                            continue;
+                        }
                         $affectation = $affectationManager->createAffectation(
                             signalement: $signalement,
                             partner: $partner,
@@ -597,16 +600,13 @@ class SignalementCreateController extends AbstractController
     {
         $errorMsgs = [];
         if ($signalement->isTiersDeclarant()) {
-            if ('' === trim($signalement->getMailDeclarant())) {
+            if (null === $signalement->getMailDeclarant() || '' === trim($signalement->getMailDeclarant())) {
                 $errorMsgs[] = 'En tant que tiers déclarant, vous devez renseigner un e-mail pour le tiers.';
             }
 
-            if ('' === trim($signalement->getNomDeclarant())) {
+            if (null === $signalement->getNomDeclarant() || '' === trim($signalement->getNomDeclarant())) {
                 $errorMsgs[] = 'En tant que tiers déclarant, vous devez renseigner un nom pour le tiers.';
             }
-        }
-        if (null === $signalement->getProfileDeclarant()) {
-            $errorMsgs[] = 'Vous devez renseigner le profil du déclarant pour pouvoir soumettre le signalement.';
         }
         if (!count($signalement->getDesordrePrecisions())) {
             $errorMsgs[] = 'Vous devez renseigner au moins un désordre pour pouvoir soumettre le signalement.';

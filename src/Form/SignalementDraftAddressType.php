@@ -244,7 +244,7 @@ class SignalementDraftAddressType extends AbstractType
                 'required' => false,
                 'placeholder' => false,
                 'mapped' => false,
-                'data' => $signalement->getProfileDeclarant()->value ?? '',
+                'data' => $signalement->getId() ? $signalement->getProfileDeclarant()->value : '',
                 'constraints' => [
                     new Assert\NotBlank(
                         message: 'Veuillez renseigner le profil du déclarant.',

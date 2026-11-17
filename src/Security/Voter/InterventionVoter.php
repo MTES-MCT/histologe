@@ -56,8 +56,8 @@ class InterventionVoter extends Voter
         if ($user->isTerritoryAdmin() && $user->hasPartnerInTerritory($signalement->getAddress()->getTerritory())) {
             return true;
         }
-        $partner = $user->getPartnerInTerritory($signalement->getAddress()->getTerritory());
-        if (!$partner || !in_array(Qualification::VISITES, $partner->getCompetence())) {
+        $partner = $user->getPartnerInTerritoryOrFirstOne($signalement->getAddress()->getTerritory());
+        if (!in_array(Qualification::VISITES, $partner->getCompetence())) {
             return false;
         }
         if (!$intervention->getPartner()?->getId() || $intervention->getPartner()->getId() != $partner->getId()) {

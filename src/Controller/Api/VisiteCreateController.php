@@ -218,8 +218,8 @@ class VisiteCreateController extends AbstractController
         $this->entityManager->persist($intervention);
         $this->interventionManager->updateVisiteFromData(
             intervention: $intervention,
-            scheduledAt: new \DateTimeImmutable($visiteRequest->date),
-            scheduledAtTime: new \DateTimeImmutable($visiteRequest->date.' '.$visiteRequest->time),
+            scheduledAt: $visiteRequest->getScheduledAt(),
+            scheduledAtTime: $visiteRequest->getScheduledAtTime(),
             partnerChoice: $partner,
             visiteDone: $visiteRequest->visiteEffectuee,
             createdByPartnerFromAPI: $partner,

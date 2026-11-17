@@ -54,6 +54,22 @@ class SearchDashboardAverifier
     }
 
     /**
+     * @return array<int, int>
+     */
+    public function getPartnerIds(): array
+    {
+        $partnerIds = [];
+        foreach ($this->partners as $partner) {
+            if (!$partner->getId()) {
+                throw new \LogicException('Le partenaire doit avoir un identifiant.');
+            }
+            $partnerIds[] = $partner->getId();
+        }
+
+        return $partnerIds;
+    }
+
+    /**
      * @param Collection<int, Partner> $partners
      */
     public function setPartners(Collection $partners): void

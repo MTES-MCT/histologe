@@ -79,7 +79,7 @@ class FileVisibilityServiceTest extends TestCase
         $user = $this->createStub(User::class);
         $user->method('isSuperAdmin')->willReturn(false);
         $user->method('isTerritoryAdmin')->willReturn(false);
-        $user->method('getPartnerInTerritory')->willReturnMap([[$territory, $partner]]);
+        $user->method('getPartnerInTerritoryOrNull')->willReturnMap([[$territory, $partner]]);
 
         $result = $this->service->filterFilesForUser([$file], $user);
 
@@ -102,7 +102,7 @@ class FileVisibilityServiceTest extends TestCase
         $user = $this->createStub(User::class);
         $user->method('isSuperAdmin')->willReturn(false);
         $user->method('isTerritoryAdmin')->willReturn(false);
-        $user->method('getPartnerInTerritory')->willReturnMap([[$territory, $partner]]);
+        $user->method('getPartnerInTerritoryOrNull')->willReturnMap([[$territory, $partner]]);
 
         $result = $this->service->filterFilesForUser([$file], $user);
 
@@ -126,7 +126,7 @@ class FileVisibilityServiceTest extends TestCase
         $user = $this->createStub(User::class);
         $user->method('isSuperAdmin')->willReturn(false);
         $user->method('isTerritoryAdmin')->willReturn(false);
-        $user->method('getPartnerInTerritory')->willReturnMap([[$territory, $partner]]);
+        $user->method('getPartnerInTerritoryOrNull')->willReturnMap([[$territory, $partner]]);
 
         $result = $this->service->filterFilesForUser([$file], $user);
 

@@ -40,8 +40,8 @@ class SignalementDraftCoordonneesType extends AbstractType
         /** @var User $user */
         $user = $this->security->getUser();
         $nomPartner = '';
-        $territory = $user->getFirstTerritory();
-        if (!empty($territory)) {
+        if (!$user->isSuperAdmin()) {
+            $territory = $user->getFirstTerritory();
             $partner = $user->getPartnerInTerritoryOrFirstOne($territory);
             $nomPartner = $partner?->getNom();
         }

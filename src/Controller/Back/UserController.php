@@ -105,6 +105,8 @@ class UserController extends AbstractController
     ): Response {
         /** @var User $user */
         $user = $this->getUser();
+        /** @var int $userId */
+        $userId = $user->getId();
         /** @var array<int, User> $users */
         $users = $userRepository->findUsersPendingToArchive($user);
 
@@ -116,7 +118,7 @@ class UserController extends AbstractController
 
                 return $this->redirectToRoute('back_user_export_inactive_accounts');
             }
-            $messageBus->dispatch(new InactiveUserExportMessage($user->getId(), $format));
+            $messageBus->dispatch(new InactiveUserExportMessage($userId, $format));
             $messageSuccess = \sprintf(
                 "L'export a bien été envoyé par e-mail à l'adresse suivante : %s. Il arrivera d'ici quelques minutes. N'oubliez pas de consulter vos courriers indésirables (spam) !",
                 $user->getEmail()

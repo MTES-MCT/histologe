@@ -126,11 +126,13 @@ class AdminTerritoryFilesController extends AbstractController
             if ($this->uploadFile($uploadedFile, $file, $user, $form, $fileScanner, $uploadHandlerService, $logger, $imageManipulationHandler)) {
                 $em->persist($file);
                 $em->flush();
+                /** @var int $fileId */
+                $fileId = $file->getId();
                 $successMessage = 'Le document a bien été ajouté.';
 
                 // Dispatch message to duplicate file to all territories
                 if (empty($file->getTerritory())) {
-                    $this->messageBus->dispatch(new FileDuplicationMessage($file->getId()));
+                    $this->messageBus->dispatch(new FileDuplicationMessage($fileId));
                     $successMessage = 'Le document a bien été ajouté. ';
                     if (DocumentType::GRILLE_DE_VISITE === $file->getDocumentType()) {
                         $successMessage .= 'Il va être dupliqué pour tous les territoires qui ne possèdent pas de grille de visite. Cela peut prendre quelques minutes.';

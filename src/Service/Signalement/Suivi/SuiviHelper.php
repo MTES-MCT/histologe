@@ -25,6 +25,6 @@ class SuiviHelper
             return $suivi->getPartner()->getNom();
         }
 
-        return $user?->getPartnerInTerritory($signalement->getAddress()->getTerritory())?->getNom() ?? 'Aucun';
+        return $user?->getPartnerInTerritoryOrNull($signalement->getAddress()->getTerritory())?->getNom() ?? 'Aucun';
     }
 }
