@@ -152,7 +152,7 @@ class DossierMessageSISHFactory extends AbstractDossierMessageFactory
             ->setSignalementOrigine(AbstractEsaboraService::SIGNALEMENT_ORIGINE)
             ->setSignalementNumero($signalement->getReference())
             ->setSignalementCommentaire($this->buildSuivi($signalement))
-            ->setSignalementDate($signalement->getCreatedAt()?->format($formatDate))
+            ->setSignalementDate($signalement->getCreatedAt()->format($formatDate))
             ->setSignalementDetails($signalement->getDetails())
             ->setSignalementProblemes($this->buildProblemes($signalement))
             ->setPiecesJointesDocuments($this->buildPiecesJointes($signalement))

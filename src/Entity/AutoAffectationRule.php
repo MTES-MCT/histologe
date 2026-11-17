@@ -187,9 +187,9 @@ class AutoAffectationRule implements EntityHistoryInterface
     }
 
     /** @return array<string> */
-    public function getInseeToExclude(): ?array
+    public function getInseeToExclude(): array
     {
-        return $this->inseeToExclude;
+        return $this->inseeToExclude ?? [];
     }
 
     /** @param array<string> $inseeToExclude */

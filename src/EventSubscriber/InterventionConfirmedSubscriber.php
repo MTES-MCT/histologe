@@ -56,7 +56,7 @@ class InterventionConfirmedSubscriber implements EventSubscriberInterface
                     'partnerName' => $intervention->getPartner()?->getNom(),
                     'concludeProcedures' => array_map(
                         static fn (ProcedureType $procedure) => $procedure->label(),
-                        $intervention->getConcludeProcedure() ?? []
+                        $intervention->getConcludeProcedure()
                     ),
                     'details' => $intervention->getDetails(),
                 ]),

@@ -119,12 +119,12 @@ class DesordreCritere
         return $this;
     }
 
-    public function getDesordreCategorie(): ?DesordreCategorie
+    public function getDesordreCategorie(): DesordreCategorie
     {
         return $this->desordreCategorie;
     }
 
-    public function setDesordreCategorie(?DesordreCategorie $desordreCategorie): self
+    public function setDesordreCategorie(DesordreCategorie $desordreCategorie): self
     {
         $this->desordreCategorie = $desordreCategorie;
 

@@ -76,7 +76,7 @@ class FileVoter extends Voter
         if ($this->isAdminOrRTonHisTerritory($file, $user)) {
             return true;
         }
-        $partner = $user->getPartnerInTerritory($file->getSignalement()->getAddress()->getTerritory());
+        $partner = $user->getPartnerInTerritoryOrFirstOne($file->getSignalement()->getAddress()->getTerritory());
 
         return $file->getSignalement()->getAffectations()->filter(
             static function (Affectation $affectation) use ($partner) {

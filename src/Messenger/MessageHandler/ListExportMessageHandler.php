@@ -42,7 +42,7 @@ readonly class ListExportMessageHandler
             $selectedColumns = $listExportMessage->getSelectedColumns();
             $format = $listExportMessage->getFormat();
 
-            $timezone = $user->getFirstTerritory()?->getTimezone() ?? TimezoneProvider::TIMEZONE_EUROPE_PARIS;
+            $timezone = $user->getFirstTerritoryOrNull()?->getTimezone() ?? TimezoneProvider::TIMEZONE_EUROPE_PARIS;
             $datetimeStr = (new \DateTimeImmutable())->setTimezone(new \DateTimeZone($timezone))->format('Ymd-His');
             $uuid = Uuid::v4();
             $filename = 'export-histologe-'.$listExportMessage->getUserId().'-'.$datetimeStr.'-'.$uuid.'.'.$format;

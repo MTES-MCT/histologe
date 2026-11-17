@@ -348,9 +348,7 @@ class SignalementEditController extends AbstractController
         );
 
         $validationGroups = ['Default'];
-        if ($signalement->getProfileDeclarant()) {
-            $validationGroups[] = $signalement->getProfileDeclarant()->value;
-        }
+        $validationGroups[] = $signalement->getProfileDeclarant()->value;
         $errorMessage = FormHelper::getErrorsFromRequest($validator, $coordonneesFoyerRequest, $validationGroups);
 
         if (!empty($errorMessage)) {
@@ -430,9 +428,7 @@ class SignalementEditController extends AbstractController
             'json'
         );
         $validationGroups = ['Default'];
-        if ($signalement->getProfileDeclarant()) {
-            $validationGroups[] = $signalement->getProfileDeclarant()->value;
-        }
+        $validationGroups[] = $signalement->getProfileDeclarant()->value;
         $errorMessage = FormHelper::getErrorsFromRequest(
             $validator,
             $coordonneesBailleurRequest,
@@ -491,9 +487,7 @@ class SignalementEditController extends AbstractController
             'json'
         );
         $validationGroups = ['Default'];
-        if ($signalement->getProfileDeclarant()) {
-            $validationGroups[] = $signalement->getProfileDeclarant()->value;
-        }
+        $validationGroups[] = $signalement->getProfileDeclarant()->value;
         $errorMessage = FormHelper::getErrorsFromRequest(
             $validator,
             $coordonneesBailleurOldRequest,
@@ -553,9 +547,7 @@ class SignalementEditController extends AbstractController
             'json'
         );
         $validationGroups = ['Default'];
-        if ($signalement->getProfileDeclarant()) {
-            $validationGroups[] = $signalement->getProfileDeclarant()->value;
-        }
+        $validationGroups[] = $signalement->getProfileDeclarant()->value;
         $errorMessage = FormHelper::getErrorsFromRequest(
             $validator,
             $informationsBailleurRequest,
@@ -612,9 +604,7 @@ class SignalementEditController extends AbstractController
             'json'
         );
         $validationGroups = ['Default'];
-        if ($signalement->getProfileDeclarant()) {
-            $validationGroups[] = $signalement->getProfileDeclarant()->value;
-        }
+        $validationGroups[] = $signalement->getProfileDeclarant()->value;
         $errorMessage = FormHelper::getErrorsFromRequest(
             $validator,
             $coordonneesAgenceRequest,
@@ -681,9 +671,7 @@ class SignalementEditController extends AbstractController
             'json'
         );
         $validationGroups = ['Default'];
-        if ($signalement->getProfileDeclarant()) {
-            $validationGroups[] = $signalement->getProfileDeclarant()->value;
-        }
+        $validationGroups[] = $signalement->getProfileDeclarant()->value;
         $errorMessage = FormHelper::getErrorsFromRequest(
             $validator,
             $coordonneesSyndicRequest,

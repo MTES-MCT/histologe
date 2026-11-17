@@ -77,7 +77,7 @@ class LoadSuiviData extends Fixture implements OrderedFixtureInterface
             (
                 $createdBy->isApiUser() ?
                 ($signalement->getAffectations()->first() ?: null)?->getPartner() :
-                $createdBy->getPartnerInTerritoryOrFirstOne($signalement->getAddress()->getTerritory())
+                $createdBy->getPartnerInTerritoryOrFirstOneOrNull($signalement->getAddress()->getTerritory())
             ) :
             null;
         $createdAt = new \DateTimeImmutable();
