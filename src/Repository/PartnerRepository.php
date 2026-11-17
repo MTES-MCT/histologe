@@ -237,7 +237,7 @@ class PartnerRepository extends ServiceEntityRepository
     }
 
     /**
-     * @return array<string, Partner>
+     * @return array<int, Partner>
      */
     public function findPartnersWithQualificationOnTerritory(Qualification $qualification, Territory $territory): array
     {

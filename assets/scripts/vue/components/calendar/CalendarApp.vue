@@ -8,12 +8,15 @@
         :operators="sharedState.operators"
       />
     </div>
-    <section v-if="sharedState.hasErrorLoading" class="calendar-app__message fr-m-10w">
+    <section v-if="sharedState.hasErrorLoading" class="calendar-app__message fr-m-10w" role="alert">
       <h2 class="fr-text--light">Erreur lors du chargement du calendrier.</h2>
       <p>Veuillez recharger la page ou nous prévenir via le formulaire de contact.</p>
     </section>
     <template v-else>
-      <p v-if="sharedState.loadingInit" class="calendar-app__message">Chargement des événements...</p>
+      <!-- Toujours présent pour que les lecteurs d'écran annoncent le changement de contenu -->
+      <p class="calendar-app__message calendar-app__status" role="status">
+        <template v-if="sharedState.loadingInit">Chargement des événements...</template>
+      </p>
       <CalendarView />
     </template>
   </div>
@@ -58,7 +61,6 @@ const init = (): void => {
 init()
 </script>
 
-
 <style>
   /* Titre de la page et filtres sur la même ligne */
   .calendar-app__header {
@@ -72,5 +74,9 @@ init()
 
   .calendar-app__message {
     text-align: center;
+  }
+
+  .calendar-app__status:empty {
+    margin: 0;
   }
 </style>

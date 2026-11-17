@@ -4,11 +4,12 @@
     class="calendar-event-popover"
     role="dialog"
     :aria-labelledby="titleId"
-    tabindex="-1"
   >
     <div class="calendar-event-popover__header">
       <h2
         :id="titleId"
+        ref="title"
+        tabindex="-1"
         class="calendar-event-popover__title"
         :class="`calendar-event-popover__title--${eventProps.type}`"
       >
@@ -53,7 +54,7 @@
           class="fr-link fr-icon-arrow-right-line fr-link--icon-right"
           target="_blank"
           rel="noopener"
-          title="S'inscrire - nouvelle fenêtre"
+          title="S'inscrire - ouvre une nouvelle fenêtre"
         >
           S'inscrire
         </a>
@@ -92,6 +93,7 @@ const emit = defineEmits<{
 const dateFormatter = new Intl.DateTimeFormat('fr-FR', { weekday: 'long', day: 'numeric', month: 'long' })
 
 const popover = useTemplateRef<HTMLElement>('popover')
+const title = useTemplateRef<HTMLElement>('title')
 const titleId = useId()
 let popperInstance: Instance | null = null
 
@@ -150,7 +152,8 @@ onMounted(() => {
     strategy: 'fixed',
     modifiers: [{ name: 'offset', options: { offset: [0, 8] } }],
   })
-  popover.value.focus()
+  // Focus sur le titre : annoncé par les lecteurs d'écran, indicateur de focus visible
+  title.value?.focus()
 
   document.addEventListener('mousedown', onDocumentMouseDown)
   document.addEventListener('keydown', onDocumentKeyDown)
@@ -177,10 +180,6 @@ onBeforeUnmount(() => {
     background-color: var(--background-default-grey);
     border: 1px solid var(--border-default-grey);
     box-shadow: var(--overlap-shadow);
-  }
-
-  .calendar-event-popover:focus {
-    outline: none;
   }
 
   .calendar-event-popover__header {

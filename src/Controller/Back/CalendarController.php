@@ -67,7 +67,7 @@ class CalendarController extends AbstractController
         ]);
     }
 
-    #[Route('/events/', name: 'back_calendar_events')]
+    #[Route('/events/', name: 'back_calendar_events_json', methods: ['POST'])]
     public function events(
         ClubEventRepository $clubEventRepository,
         InterventionRepository $interventionRepository,
@@ -75,7 +75,6 @@ class CalendarController extends AbstractController
     ): JsonResponse {
         /** @var User $user */
         $user = $this->getUser();
-        // TODO : ajouter un Voter ?
 
         $clubEvents = $clubEventRepository->findAllFilteredForUser($user, $calendarEventRequest);
         $interventions = $interventionRepository->findAllFilteredForUser($user, $calendarEventRequest);
