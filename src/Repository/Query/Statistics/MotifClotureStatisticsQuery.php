@@ -22,7 +22,6 @@ class MotifClotureStatisticsQuery
     {
         $qb = $this->entityManager->createQueryBuilder()
             ->from(Signalement::class, 's')
-            ->innerJoin('s.address', 'address')
             ->select('COUNT(s.id)')
             ->where('s.statut = :statut')
             ->setParameter('statut', SignalementStatus::CLOSED)
