@@ -64,7 +64,7 @@ class SignalementEditController extends AbstractController
         Request $request,
     ): Response {
         $signalement = $signalementRepository->findOneByCodeForPublic($code);
-        $this->denyAccessUnlessGranted(SignalementFoVoter::SIGN_USAGER_COMPLETE, $signalement);
+        $this->denyAccessUnlessGranted(SignalementFoVoter::SIGN_USAGER_EDIT, $signalement);
 
         /** @var SignalementUser $signalementUser */
         $signalementUser = $this->getUser();
@@ -98,7 +98,7 @@ class SignalementEditController extends AbstractController
         EntityManagerInterface $entityManager,
     ): JsonResponse {
         $signalement = $signalementRepository->findOneByCodeForPublic($code);
-        $this->denyAccessUnlessGranted(SignalementFoVoter::SIGN_USAGER_COMPLETE, $signalement);
+        $this->denyAccessUnlessGranted(SignalementFoVoter::SIGN_USAGER_EDIT, $signalement);
 
         $requestData = $request->request->all();
         $rnbId = RequestDataExtractor::getString($requestData, 'rnbId');
@@ -137,7 +137,7 @@ class SignalementEditController extends AbstractController
         NotificationMailerRegistry $notificationMailerRegistry,
     ): Response {
         $signalement = $signalementRepository->findOneByCodeForPublic($code);
-        $this->denyAccessUnlessGranted(SignalementFoVoter::SIGN_USAGER_COMPLETE, $signalement);
+        $this->denyAccessUnlessGranted(SignalementFoVoter::SIGN_USAGER_EDIT, $signalement);
 
         /** @var SignalementUser $signalementUser */
         $signalementUser = $this->getUser();
@@ -185,7 +185,7 @@ class SignalementEditController extends AbstractController
         Request $request,
     ): Response {
         $signalement = $signalementRepository->findOneByCodeForPublic($code);
-        $this->denyAccessUnlessGranted(SignalementFoVoter::SIGN_USAGER_COMPLETE, $signalement);
+        $this->denyAccessUnlessGranted(SignalementFoVoter::SIGN_USAGER_EDIT, $signalement);
 
         /** @var SignalementUser $signalementUser */
         $signalementUser = $this->getUser();
@@ -246,7 +246,7 @@ class SignalementEditController extends AbstractController
         Request $request,
     ): Response {
         $signalement = $signalementRepository->findOneByCodeForPublic($code);
-        $this->denyAccessUnlessGranted(SignalementFoVoter::SIGN_USAGER_COMPLETE, $signalement);
+        $this->denyAccessUnlessGranted(SignalementFoVoter::SIGN_USAGER_EDIT, $signalement);
 
         /** @var SignalementUser $signalementUser */
         $signalementUser = $this->getUser();
@@ -280,7 +280,7 @@ class SignalementEditController extends AbstractController
         Request $request,
     ): Response {
         $signalement = $signalementRepository->findOneByCodeForPublic($code);
-        $this->denyAccessUnlessGranted(SignalementFoVoter::SIGN_USAGER_COMPLETE, $signalement);
+        $this->denyAccessUnlessGranted(SignalementFoVoter::SIGN_USAGER_EDIT, $signalement);
 
         /** @var SignalementUser $signalementUser */
         $signalementUser = $this->getUser();
@@ -315,7 +315,7 @@ class SignalementEditController extends AbstractController
         SituationFoyerProcessor $situationFoyerProcessor,
     ): Response {
         $signalement = $signalementRepository->findOneByCodeForPublic($code);
-        $this->denyAccessUnlessGranted(SignalementFoVoter::SIGN_USAGER_COMPLETE, $signalement);
+        $this->denyAccessUnlessGranted(SignalementFoVoter::SIGN_USAGER_EDIT, $signalement);
 
         /** @var SignalementUser $signalementUser */
         $signalementUser = $this->getUser();
@@ -373,7 +373,7 @@ class SignalementEditController extends AbstractController
         Request $request,
     ): Response {
         $signalement = $signalementRepository->findOneByCodeForPublic($code);
-        $this->denyAccessUnlessGranted(SignalementFoVoter::SIGN_USAGER_COMPLETE, $signalement);
+        $this->denyAccessUnlessGranted(SignalementFoVoter::SIGN_USAGER_EDIT, $signalement);
 
         /** @var SignalementUser $signalementUser */
         $signalementUser = $this->getUser();
@@ -406,7 +406,7 @@ class SignalementEditController extends AbstractController
         Request $request,
     ): Response {
         $signalement = $signalementRepository->findOneByCodeForPublic($code);
-        $this->denyAccessUnlessGranted(SignalementFoVoter::SIGN_USAGER_COMPLETE, $signalement);
+        $this->denyAccessUnlessGranted(SignalementFoVoter::SIGN_USAGER_EDIT, $signalement);
 
         /** @var SignalementUser $signalementUser */
         $signalementUser = $this->getUser();
@@ -457,7 +457,7 @@ class SignalementEditController extends AbstractController
         Request $request,
     ): Response {
         $signalement = $signalementRepository->findOneByCodeForPublic($code);
-        $this->denyAccessUnlessGranted(SignalementFoVoter::SIGN_USAGER_COMPLETE, $signalement);
+        $this->denyAccessUnlessGranted(SignalementFoVoter::SIGN_USAGER_EDIT, $signalement);
 
         /** @var SignalementUser $signalementUser */
         $signalementUser = $this->getUser();

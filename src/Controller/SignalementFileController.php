@@ -5,7 +5,6 @@ namespace App\Controller;
 use App\Entity\Enum\DocumentType;
 use App\Entity\Enum\SuiviDelayedType;
 use App\Factory\SuiviDelayedFactory;
-use App\Manager\SuiviManager;
 use App\Messenger\Message\PdfExportMessage;
 use App\Repository\FileRepository;
 use App\Repository\SignalementRepository;
@@ -165,7 +164,6 @@ class SignalementFileController extends AbstractController
         Request $request,
         FileRepository $fileRepository,
         UploadHandlerService $uploadHandlerService,
-        SuiviManager $suiviManager,
         SuiviDelayedFactory $suiviDelayedFactory,
         SignalementRepository $signalementRepository,
         EntityManagerInterface $entityManager,
@@ -177,7 +175,7 @@ class SignalementFileController extends AbstractController
             );
         }
         $signalement = $signalementRepository->findOneByCodeForPublic($code);
-        $this->denyAccessUnlessGranted('SIGN_USAGER_EDIT', $signalement);
+        $this->denyAccessUnlessGranted(SignalementFoVoter::SIGN_USAGER_EDIT, $signalement);
         /** @var SignalementUser $signalementUser */
         $signalementUser = $this->getUser();
 
