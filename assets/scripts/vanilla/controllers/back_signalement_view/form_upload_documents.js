@@ -119,6 +119,7 @@ function initializeUploadModal(modalSelector) {
       'modal-upload-list-item'
     );
     div.innerHTML = initInnerHtml(file);
+    div.querySelector('.name').textContent = file.name;
     const btnDeleteTmpFile = div.querySelector('a.delete-tmp-file');
     addEventListenerDeleteTmpFile(btnDeleteTmpFile);
     listContainer.prepend(div);
@@ -194,7 +195,7 @@ function initializeUploadModal(modalSelector) {
     }
     innerHTML += `
             <div class="file-name">
-                <div class="name">${file.name}</div>
+                <div class="name"></div>
             </div>
             <div class="file-progress">
                 <span></span>
