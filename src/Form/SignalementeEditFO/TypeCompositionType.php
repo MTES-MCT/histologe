@@ -301,7 +301,8 @@ class TypeCompositionType extends AbstractType
                 ],
             ])
             ->add('cuisineCollective', ChoiceType::class, [
-                'label' => 'Accès à une cuisine collective ? (facultatif)',
+                'label' => 'Accès à une cuisine collective ? <span class="text-required">*</span>',
+                'label_html' => true,
                 'choices' => [
                     'Oui' => 'oui',
                     'Non' => 'non',
@@ -347,7 +348,8 @@ class TypeCompositionType extends AbstractType
                 ],
             ])
             ->add('salleDeBainCollective', ChoiceType::class, [
-                'label' => 'Accès à une salle de bain ou des douches collectives ? (facultatif)',
+                'label' => 'Accès à une salle de bain ou des douches collectives ? <span class="text-required">*</span>',
+                'label_html' => true,
                 'choices' => [
                     'Oui' => 'oui',
                     'Non' => 'non',
@@ -393,7 +395,8 @@ class TypeCompositionType extends AbstractType
                 ],
             ])
             ->add('wcCollective', ChoiceType::class, [
-                'label' => 'Accès à des toilettes (WC) collectives ? (facultatif)',
+                'label' => 'Accès à des toilettes (WC) collectives ? <span class="text-required">*</span>',
+                'label_html' => true,
                 'choices' => [
                     'Oui' => 'oui',
                     'Non' => 'non',
@@ -420,7 +423,8 @@ class TypeCompositionType extends AbstractType
                 ],
             ])
             ->add('wcCuisine', ChoiceType::class, [
-                'label' => 'Toilettes (WC) et cuisine dans la même pièce ? (facultatif)',
+                'label' => 'Toilettes (WC) et cuisine dans la même pièce ? <span class="text-required">*</span>',
+                'label_html' => true,
                 'choices' => [
                     'Oui' => 'oui',
                     'Non' => 'non',
