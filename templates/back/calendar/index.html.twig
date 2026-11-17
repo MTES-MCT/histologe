@@ -13,7 +13,7 @@
 
     <section class="fr-px-5v fr-pb-5v">
         <div id="calendar-app"
-            data-ajaxurl="{{ path('back_calendar_events') }}"
+            data-ajaxurl="{{ path('back_calendar_events_json') }}"
             data-operators="{{ operators|json_encode }}"
             data-territories="{{ territories|json_encode }}"
             data-uniquement-mes-dossiers="{{ is_granted('ROLE_ADMIN_TERRITORY') ? '0' : '1' }}"

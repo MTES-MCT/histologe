@@ -25,7 +25,7 @@ interface TitleRange {
 }
 
 // Couleurs des événements selon leur type (variables définies dans styles/fullCalendarDsfr.css)
-const EVENT_COLORS: Record<string, { color: string; contrastColor: string }> = {
+const EVENT_COLORS: Record<CalendarEventProps['type'], { color: string; contrastColor: string }> = {
   club: { color: 'var(--calendar-event-club)', contrastColor: 'var(--calendar-event-club-contrast)' },
   visite: { color: 'var(--calendar-event-visite)', contrastColor: 'var(--calendar-event-visite-contrast)' },
 }
@@ -86,10 +86,12 @@ const getListDayHeaderInnerClass = (info: ListDayHeaderInnerInfo): string => {
 }
 
 /**
- * Libellé court du numéro de semaine dans la vue mois : "S45"
+ * Libellé court du numéro de semaine dans la vue mois : "S45", lu "Semaine 45"
  */
-const getInlineWeekNumberContent = (info: InlineWeekNumberInfo): string => {
-  return `S${info.num}`
+const getInlineWeekNumberContent = (info: InlineWeekNumberInfo): { html: string } => {
+  return {
+    html: `<span aria-hidden="true">S${info.num}</span><span class="fr-sr-only">Semaine ${info.num}</span>`,
+  }
 }
 
 /**
@@ -128,8 +130,8 @@ const getWeekDayHeaderContent = (info: DayHeaderInfo): { html: string } | true =
  * Couleur de l'événement selon son type (extendedProps.type : "club" ou "visite")
  */
 const applyEventColors = (event: EventInput): EventInput => {
-  const colors = EVENT_COLORS[event.extendedProps?.type]
-  return colors ? { ...event, ...colors } : event
+  const type = (event.extendedProps as CalendarEventProps | undefined)?.type
+  return type ? { ...event, ...EVENT_COLORS[type] } : event
 }
 
 /**
@@ -210,16 +212,19 @@ const getListEventContent = (info: EventDisplayInfo): { domNodes: Node[] } => {
     title.append(` ${eventProps.operator}`)
   }
 
+  // Intitulé complété par le titre de l'événement pour les lecteurs d'écran (liens identiques sur la page)
+  const linkText = eventProps.type === 'club' ? "S'inscrire" : 'Voir le dossier'
   const link = createElement(
     'a',
     'fr-link fr-icon-arrow-right-line fr-link--icon-right calendar-app__event-link',
-    eventProps.type === 'club' ? "S'inscrire" : 'Voir le dossier'
+    linkText
   ) as HTMLAnchorElement
+  link.append(createElement('span', 'fr-sr-only', ` ${info.event.title}`))
   link.href = eventProps.link
   if (eventProps.type === 'club') {
     link.target = '_blank'
     link.rel = 'noopener'
-    link.title = "S'inscrire - nouvelle fenêtre"
+    link.title = `${linkText} ${info.event.title} - ouvre une nouvelle fenêtre`
   }
 
   return {
@@ -266,6 +271,8 @@ export const dsfrOptions: CalendarOptions = {
       listItemEventClass: 'calendar-app__list-event',
       listItemEventInnerClass: 'calendar-app__list-event-inner',
       eventContent: getListEventContent,
+      // Pas de popup en vue liste : la ligne n'est pas un bouton, seul le lien est interactif
+      eventInteractive: false,
     },
     // Colonne de gauche : "Lundi" puis "2 novembre 2026"
     listWeek: {

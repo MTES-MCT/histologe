@@ -320,6 +320,11 @@ Le thème empile le contenu de l'en-tête en colonne : on le remet en ligne (jou
 
 /* Lien "+ x autres" de la vue mois */
 .calendar-app .calendar-app__more-link {
+  /* Zone tactile d'au moins 24px de haut */
+  display: inline-flex;
+  align-items: center;
+  min-height: 1.5rem;
+  padding: 0.125rem 0.5rem;
   font-size: 0.875rem;
   font-weight: 500;
   color: var(--text-action-high-blue-france);
