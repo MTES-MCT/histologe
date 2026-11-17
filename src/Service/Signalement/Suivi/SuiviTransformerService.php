@@ -78,7 +78,7 @@ class SuiviTransformerService
             if ($suiviFile->getFile()) {
                 $url = $this->urlGenerator->generate('show_file', ['uuid' => $suiviFile->getFile()->getUuid()], UrlGeneratorInterface::ABSOLUTE_URL);
                 $url = $this->urlSigner->sign($url, FileController::SIGNATURE_VALIDITY_DURATION);
-                $description .= '<a class="fr-link" target="_blank" rel="noopener" href="'.$url.'">'.$suiviFile->getTitle().'</a>';
+                $description .= '<a class="fr-link" target="_blank" rel="noopener" href="'.$url.'">'.htmlspecialchars($suiviFile->getTitle()).'</a>';
                 if ($suiviFile->getFile()->getDocumentType() && DocumentType::AUTRE !== $suiviFile->getFile()->getDocumentType()) {
                     if (DocumentType::PHOTO_SITUATION === $suiviFile->getFile()->getDocumentType() && null !== $suiviFile->getFile()->getDesordreSlug()) {
                         $desordreCritere = $this->desordreCritereRepository->findOneBy(['slugCritere' => $suiviFile->getFile()->getDesordreSlug()]);
@@ -96,7 +96,7 @@ class SuiviTransformerService
                     }
                 }
             } else {
-                $description .= 'Fichier supprimé ('.$suiviFile->getTitle().')';
+                $description .= 'Fichier supprimé ('.htmlspecialchars($suiviFile->getTitle()).')';
             }
             $description .= '</li>';
         }
