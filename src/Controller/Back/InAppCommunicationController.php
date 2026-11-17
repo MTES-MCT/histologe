@@ -31,7 +31,7 @@ class InAppCommunicationController extends AbstractController
         InAppCommunicationUserRepository $inAppCommunicationUserRepository,
         EntityManagerInterface $entityManager,
     ): Response {
-        /** @var User $user */
+        /* @var User $user */
         if ($entityManager->getConnection()->getDatabasePlatform() instanceof PostgreSQLPlatform) {
             return new Response('');
         }
@@ -70,7 +70,7 @@ class InAppCommunicationController extends AbstractController
         InAppCommunicationRepository $inAppCommunicationRepository,
         EntityManagerInterface $entityManager,
     ): JsonResponse {
-        /** @var User $user */
+        /* @var User $user */
         if ($entityManager->getConnection()->getDatabasePlatform() instanceof PostgreSQLPlatform) {
             return new JsonResponse(['success' => true]);
         }
