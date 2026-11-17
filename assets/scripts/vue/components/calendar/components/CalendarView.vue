@@ -56,6 +56,9 @@ const buildWeekBadge = (info: DatesSetInfo): string => {
 /**
  * Met à jour le badge du numéro de semaine à chaque changement de vue ou de période
  */
+const closeEventPopover = (): void => {
+  selectedEvent.value = null
+}
 const onDatesSet = (info: DatesSetInfo): void => {
   closeEventPopover()
   calendarOptions.toolbarElements = {
@@ -64,9 +67,6 @@ const onDatesSet = (info: DatesSetInfo): void => {
   }
 }
 
-const closeEventPopover = (): void => {
-  selectedEvent.value = null
-}
 
 /**
  * Élément auquel ancrer la popup de détail
@@ -125,6 +125,9 @@ const calendarOptions: CalendarOptions = reactive({
   },
   // Surcharge du libellé "Planning" de la locale fr
   listText: 'Liste',
+  // Textes accessibles absents de la locale fr (sinon en anglais : "Close", "Events")
+  closeHint: 'Fermer',
+  eventsHint: 'Événements',
   datesSet: onDatesSet,
   eventClick: onEventClick,
 })
