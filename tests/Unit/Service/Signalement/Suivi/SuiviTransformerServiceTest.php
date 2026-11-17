@@ -2,6 +2,7 @@
 
 namespace App\Tests\Unit\Service\Signalement\Suivi;
 
+use App\Entity\Enum\DocumentType;
 use App\Entity\Enum\SuiviCategory;
 use App\Entity\File;
 use App\Entity\Suivi;
@@ -35,7 +36,7 @@ class SuiviTransformerServiceTest extends TestCase
         );
         $title = '<img src=x onerror=alert(1)> & "été".png';
         $suivi = (new Suivi())->setDescription('Message')->setCategory(SuiviCategory::MESSAGE_PARTNER);
-        $suivi->addSuiviFile((new SuiviFile())->setTitle($title)->setFile(new File()));
+        $suivi->addSuiviFile((new SuiviFile())->setTitle($title)->setFile((new File())->setDocumentType(DocumentType::AUTRE)));
         $suivi->addSuiviFile((new SuiviFile())->setTitle($title));
 
         $description = $service->transformDescription($suivi, true, SuiviRecipient::DEFAULT);
