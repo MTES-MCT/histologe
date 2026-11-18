@@ -24,6 +24,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerInterface;
 use Symfony\Bridge\Doctrine\Attribute\MapEntity;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\Form\Flow\FormFlowInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\RedirectResponse;
@@ -42,10 +43,20 @@ use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 )]
 class ServiceSecoursController extends AbstractController
 {
+    public function __construct(
+        #[Autowire(env: 'FEATURE_SERVICE_SECOURS_PROCONNECT')]
+        private readonly bool $featureServiceSecoursProconnect,
+    ) {
+    }
+
     #[Route('', name: 'service_secours_home', methods: ['GET'])]
-    public function home(): Response
-    {
-        return $this->render('service_secours/home.html.twig');
+    public function home(
+    ): Response {
+        if ($this->featureServiceSecoursProconnect) {
+            return $this->render('service_secours/home.html.twig');
+        }
+
+        throw $this->createNotFoundException();
     }
 
     #[Route('/proconnect/login', name: 'service_secours_proconnect_login', methods: ['POST'])]
