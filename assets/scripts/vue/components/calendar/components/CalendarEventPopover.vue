@@ -1,8 +1,7 @@
 <template>
-  <div
+  <dialog
     ref="popover"
     class="calendar-event-popover"
-    role="dialog"
     :aria-labelledby="titleId"
   >
     <div class="calendar-event-popover__header">
@@ -31,7 +30,7 @@
           <span class="fr-icon-calendar-line fr-icon--sm" aria-hidden="true"></span>
           {{ dateLabel }}
         </li>
-        <li v-if="timeLabel">
+        <li>
           <span class="fr-icon-time-line fr-icon--sm" aria-hidden="true"></span>
           {{ timeLabel }}
         </li>
@@ -40,10 +39,10 @@
           <span class="fr-sr-only">Occupant :</span>
           {{ eventProps.occupant }}
         </li>
-        <li v-if="operatorLabel">
+        <li v-if="eventProps.operator">
           <span class="fr-icon-briefcase-line fr-icon--sm" aria-hidden="true"></span>
           <span class="fr-sr-only">Opérateur :</span>
-          {{ operatorLabel }}
+          {{ eventProps.operator }}
         </li>
       </ul>
 
@@ -67,17 +66,14 @@
         </a>
       </p>
     </div>
-  </div>
+  </dialog>
 </template>
 
 <script setup lang="ts">
 import { computed, onBeforeUnmount, onMounted, useId, useTemplateRef } from 'vue'
-import { createPopper } from '@popperjs/core'
-import type { Instance } from '@popperjs/core'
 import type { EventApi } from '@fullcalendar/vue3'
 import type { CalendarEventProps } from '../types'
 
-// Props
 interface Props {
   event: EventApi
   // Élément cliqué, auquel la popup est ancrée
@@ -85,21 +81,22 @@ interface Props {
 }
 const props: Props = defineProps<Props>()
 
-// Émissions
 const emit = defineEmits<{
   close: []
 }>()
 
+// Écart entre la popup et l'élément cliqué, et marge minimale avec les bords de la fenêtre (px)
+const OFFSET = 8
+const VIEWPORT_MARGIN = 8
+
 const dateFormatter = new Intl.DateTimeFormat('fr-FR', { weekday: 'long', day: 'numeric', month: 'long' })
 
-const popover = useTemplateRef<HTMLElement>('popover')
+const popover = useTemplateRef<HTMLDialogElement>('popover')
 const title = useTemplateRef<HTMLElement>('title')
 const titleId = useId()
-let popperInstance: Instance | null = null
 
 const eventProps = computed<CalendarEventProps>(() => props.event.extendedProps as CalendarEventProps)
 
-// "Lundi 2 novembre"
 const dateLabel = computed<string>(() => {
   if (!props.event.start) {
     return ''
@@ -108,22 +105,39 @@ const dateLabel = computed<string>(() => {
   return label.charAt(0).toUpperCase() + label.slice(1)
 })
 
-// "9:00" (pas d'heure pour un événement sur la journée entière)
 const timeLabel = computed<string>(() => {
   const start = props.event.start
-  if (!start || props.event.allDay) {
+  if (!start) {
     return ''
   }
   return `${start.getHours()}:${String(start.getMinutes()).padStart(2, '0')}`
 })
 
-// Visite sans partenaire : opérateur externe
-const operatorLabel = computed<string>(() => {
-  if (eventProps.value.type !== 'visite') {
-    return ''
+/**
+ * Place la popup sous l'élément cliqué, ou au-dessus s'il n'y a pas la place,
+ * sans qu'elle déborde de la fenêtre
+ */
+const updatePosition = (): void => {
+  const dialog = popover.value
+  if (!dialog) {
+    return
   }
-  return eventProps.value.operator || 'Opérateur externe'
-})
+
+  const anchorRect = props.anchor.getBoundingClientRect()
+  const { width, height } = dialog.getBoundingClientRect()
+
+  const fitsBelow = anchorRect.bottom + OFFSET + height <= window.innerHeight - VIEWPORT_MARGIN
+  const top = fitsBelow
+    ? anchorRect.bottom + OFFSET
+    : Math.max(VIEWPORT_MARGIN, anchorRect.top - OFFSET - height)
+  const left = Math.min(
+    Math.max(VIEWPORT_MARGIN, anchorRect.left),
+    window.innerWidth - width - VIEWPORT_MARGIN
+  )
+
+  dialog.style.top = `${top}px`
+  dialog.style.left = `${left}px`
+}
 
 /**
  * Fermeture au clic en dehors de la popup, y compris sur l'élément d'ancrage
@@ -146,23 +160,23 @@ onMounted(() => {
     return
   }
 
-  // Sous l'élément cliqué, ou au-dessus s'il n'y a pas la place
-  popperInstance = createPopper(props.anchor, popover.value, {
-    placement: 'bottom-start',
-    strategy: 'fixed',
-    modifiers: [{ name: 'offset', options: { offset: [0, 8] } }],
-  })
+  popover.value.show()
+  updatePosition()
   // Focus sur le titre : annoncé par les lecteurs d'écran, indicateur de focus visible
   title.value?.focus()
 
   document.addEventListener('mousedown', onDocumentMouseDown)
   document.addEventListener('keydown', onDocumentKeyDown)
+  // Suit l'élément cliqué lors d'un défilement (de la page ou d'un conteneur) ou d'un redimensionnement
+  window.addEventListener('scroll', updatePosition, { capture: true, passive: true })
+  window.addEventListener('resize', updatePosition, { passive: true })
 })
 
 onBeforeUnmount(() => {
-  popperInstance?.destroy()
   document.removeEventListener('mousedown', onDocumentMouseDown)
   document.removeEventListener('keydown', onDocumentKeyDown)
+  window.removeEventListener('scroll', updatePosition, { capture: true })
+  window.removeEventListener('resize', updatePosition)
 
   // Rend le focus à l'élément d'origine s'il est toujours affiché
   if (props.anchor.isConnected) {
@@ -173,6 +187,12 @@ onBeforeUnmount(() => {
 
 <style>
   .calendar-event-popover {
+    /* Styles par défaut de <dialog> neutralisés : position calculée dans updatePosition() */
+    position: fixed;
+    inset: auto;
+    margin: 0;
+    padding: 0;
+    color: inherit;
     z-index: 1000;
     width: max-content;
     min-width: 16rem;

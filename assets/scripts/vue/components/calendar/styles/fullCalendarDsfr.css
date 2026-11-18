@@ -216,13 +216,11 @@ Le thème empile le contenu de l'en-tête en colonne : on le remet en ligne (jou
  * que FullCalendar insère dans <body>, hors de .calendar-app
  */
 
-/* Couleurs des événements selon leur type (trait, ou fond pour les événements "journée") */
+/* Couleurs des événements selon leur type (trait à gauche) */
 .calendar-app,
 .calendar-app__popover {
   --calendar-event-club: var(--blue-france-sun-113-625);
-  --calendar-event-club-contrast: var(--text-inverted-blue-france);
   --calendar-event-visite: var(--orange-terre-battue-main-645);
-  --calendar-event-visite-contrast: var(--grey-50-1000);
 }
 
 /* Textes des événements (12px dans le thème classic) */
@@ -320,7 +318,7 @@ Le thème empile le contenu de l'en-tête en colonne : on le remet en ligne (jou
 
 /* Lien "+ x autres" de la vue mois */
 .calendar-app .calendar-app__more-link {
-  /* Zone tactile d'au moins 24px de haut */
+  /* Zone tactile d'au moins 24px de haut pour accessibilité*/
   display: inline-flex;
   align-items: center;
   min-height: 1.5rem;

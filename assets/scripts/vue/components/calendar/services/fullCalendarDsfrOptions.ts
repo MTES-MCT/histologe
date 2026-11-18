@@ -18,16 +18,15 @@ import '@fullcalendar/vue3/themes/classic/theme.css'
 import '@fullcalendar/vue3/themes/classic/palette.css'
 import '../styles/fullCalendarDsfr.css'
 
-// Bornes d'une période à formater (dates "marqueurs" FullCalendar, codées en UTC)
 interface TitleRange {
   start: { marker: Date }
   end?: { marker: Date } | null
 }
 
 // Couleurs des événements selon leur type (variables définies dans styles/fullCalendarDsfr.css)
-const EVENT_COLORS: Record<CalendarEventProps['type'], { color: string; contrastColor: string }> = {
-  club: { color: 'var(--calendar-event-club)', contrastColor: 'var(--calendar-event-club-contrast)' },
-  visite: { color: 'var(--calendar-event-visite)', contrastColor: 'var(--calendar-event-visite-contrast)' },
+const EVENT_COLORS: Record<CalendarEventProps['type'], string> = {
+  club: 'var(--calendar-event-club)',
+  visite: 'var(--calendar-event-visite)',
 }
 
 const dayFormatter = new Intl.DateTimeFormat('fr-FR', { day: 'numeric', timeZone: 'UTC' })
@@ -131,7 +130,7 @@ const getWeekDayHeaderContent = (info: DayHeaderInfo): { html: string } | true =
  */
 const applyEventColors = (event: EventInput): EventInput => {
   const type = (event.extendedProps as CalendarEventProps | undefined)?.type
-  return type ? { ...event, ...EVENT_COLORS[type] } : event
+  return type ? { ...event, color: EVENT_COLORS[type] } : event
 }
 
 /**
