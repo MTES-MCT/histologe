@@ -1,13 +1,13 @@
 # 📝 Postmortem – Prise de contrôle d'un sous-domaine via un CNAME résiduel
 
-> Le retrait en avril 2025 du domaine personnalisé `beta.signal-logement.beta.gouv.fr` sur scalingo sans avoir supprimé l'enregistrement DNS correspondant nous a exposait à une prise de console DNS du sous-domaine.
+> Le retrait en avril 2025 du domaine personnalisé `beta.signal-logement.beta.gouv.fr` sur scalingo sans avoir supprimé l'enregistrement DNS correspondant nous a exposé à une prise de console DNS du sous-domaine.
 
 ## 📅 Date & Heure de l'incident
 
 - **Date de début vulnérabilité :** 2025-04-01.
-- - **Date de début signalement :** 2025-11-11.
+- **Date de début signalement :** 2025-11-11.
 - **Date de fin :** 2026-11-12.
-- **Début de l'exposition :**correspondant au retrait du domaine personnalisé de l'application Scalingo.
+- **Début de l'exposition :** correspondant au retrait du domaine personnalisé de l'application Scalingo.
 - **Durée totale :** ~1 jour entre le signalement et la remédiation complète
 
 
