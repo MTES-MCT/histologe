@@ -224,6 +224,21 @@ class PartnerRepository extends ServiceEntityRepository
     }
 
     /**
+     * @return array<int, Partner>
+     */
+    public function findPartnersWithQualificationOnTerritory(Qualification $qualification, Territory $territory): array
+    {
+        $qb = $this->createQueryBuilder('p');
+        $qb->select('DISTINCT p');
+        $qb->andWhere('p.territory = :territory')
+            ->setParameter('territory', $territory);
+        $qb->andWhere('REGEXP(p.competence, :regexp) = true')
+            ->setParameter('regexp', '(^'.$qualification->name.',)|(,'.$qualification->name.',)|(,'.$qualification->name.'$)|(^'.$qualification->name.'$)');
+
+        return $qb->getQuery()->getResult();
+    }
+
+    /**
      * @return array<string, Partner>
      */
     public function findWithInsee(string $insee, ?Territory $territory = null): array
