@@ -213,11 +213,24 @@ class AppExtensionTest extends WebTestCase
     public static function provideHosts(): \Generator
     {
         yield 'localhost' => ['localhost', 'localhost'];
-        yield 'localhost service-secours' => ['services-secours.localhost', 'services-secours.localhost'];
+        yield 'localhost service-secours' => ['service-secours.localhost', 'localhost'];
         yield 'staging' => ['histologe-staging.incubateur.net', 'histologe-staging.incubateur.net'];
-        yield 'staging service-secours' => ['services-secours.histologe-staging.incubateur.net', 'services-secours.histologe-staging.incubateur.net'];
+        yield 'staging service-secours' => ['service-secours.histologe-staging.incubateur.net', 'histologe-staging.incubateur.net'];
         yield 'production' => ['bo.signal-logement.beta.gouv.fr', 'signal-logement.beta.gouv.fr'];
-        yield 'production service-secours' => ['services-secours.signal-logement.beta.gouv.fr', 'services-secours.signal-logement.beta.gouv.fr'];
+        yield 'production service-secours' => ['service-secours.signal-logement.beta.gouv.fr', 'signal-logement.beta.gouv.fr'];
+    }
+
+    public function testGenerateRootUrl(): void
+    {
+        self::bootKernel();
+        $container = static::getContainer();
+        /** @var AppExtension $appExtension */
+        $appExtension = $container->get(AppExtension::class);
+
+        $request = \Symfony\Component\HttpFoundation\Request::create('http://service-secours.localhost:8080/home');
+        $url = $appExtension->generateRootUrl('/signalement?profil=service_secours', $request);
+
+        $this->assertSame('http://localhost:8080/signalement?profil=service_secours', $url);
     }
 
     #[DataProvider('provideAnswer')]
