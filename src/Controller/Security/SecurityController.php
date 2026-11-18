@@ -198,6 +198,9 @@ class SecurityController extends AbstractController
         SignalementRepository $signalementRepository,
     ): Response {
         $signalement = $signalementRepository->findOneByCodeForPublic($code);
+        if (str_contains($filename, '-signalement-') || !str_contains($filename, $signalement->getUuid())) {
+            throw $this->createAccessDeniedException();
+        }
         $this->denyAccessUnlessGranted(SignalementFoVoter::SIGN_USAGER_VIEW, $signalement);
 
         try {
