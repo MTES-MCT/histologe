@@ -37,7 +37,7 @@ class CalendarController extends AbstractController
         $user = $this->getUser();
 
         $operators = [];
-        $userTerritory = $user->getFirstTerritory();
+        $userTerritory = $user->getFirstTerritoryOrNull();
         if ($user->isTerritoryAdmin() && null !== $userTerritory) {
             $partners = $partnerRepository->findPartnersWithQualificationOnTerritory(Qualification::VISITES, $userTerritory);
             foreach ($partners as $partner) {
