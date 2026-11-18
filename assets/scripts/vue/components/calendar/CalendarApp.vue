@@ -13,7 +13,6 @@
       <p>Veuillez recharger la page ou nous prévenir via le formulaire de contact.</p>
     </section>
     <template v-else>
-      <!-- Toujours présent pour que les lecteurs d'écran annoncent le changement de contenu -->
       <p class="calendar-app__message calendar-app__status" role="status">
         <template v-if="sharedState.loadingInit">Chargement des événements...</template>
       </p>
@@ -28,21 +27,13 @@ import CalendarFilters from './components/CalendarFilters.vue'
 import CalendarView from './components/CalendarView.vue'
 import type { CalendarFilterOption } from './types'
 
-// State
 const sharedState = store.state
 const sharedProps = store.props
 
-/**
- * Lit une liste d'options JSON passée en data-attribute
- */
 const parseOptions = (json: string | undefined): CalendarFilterOption[] => {
   return json ? JSON.parse(json) : []
 }
 
-/**
- * Initialisation à partir des data-attributes de #calendar-app
- * Les événements sont chargés par le calendrier lui-même
- */
 const init = (): void => {
   const initElement = document.querySelector('#calendar-app') as HTMLElement | null
   if (!initElement) {

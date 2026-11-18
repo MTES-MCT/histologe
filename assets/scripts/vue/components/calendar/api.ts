@@ -2,6 +2,7 @@ import axios from 'axios'
 import * as Sentry from '@sentry/browser'
 import type { EventInput } from '@fullcalendar/vue3'
 import type { CalendarFilters, CalendarPeriod } from './types'
+import { AXIOS_TIMEOUT } from '../../../vanilla/controllers/environment'
 
 /**
  * Construit le corps de la requête à partir des filtres et de la période affichée
@@ -32,7 +33,7 @@ export async function fetchEvents(
     const response = await axios.post<EventInput[]>(
       ajaxUrl,
       buildFormData(filters, period),
-      { timeout: 15000, signal }
+      { timeout: AXIOS_TIMEOUT, signal }
     )
     return response.data
   } catch (error) {

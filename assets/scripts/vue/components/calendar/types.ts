@@ -1,11 +1,9 @@
-// Option d'un filtre, telle que fournie par le serveur (data-territories, data-operators)
 export interface CalendarFilterOption {
   id: string | number
   label: string
 }
 
 export interface CalendarFilters {
-  // Vide : tous les territoires
   territoire: string
   operateurs: string[]
   uniquementMesDossiers: boolean
@@ -20,7 +18,6 @@ export interface CalendarPeriod {
 // Données propres à chaque événement, envoyées par le serveur (extendedProps)
 export interface CalendarEventProps {
   type: 'club' | 'visite'
-  // Visite : fiche du signalement ; club : inscription
   link: string
   occupant?: string
   operator?: string | null

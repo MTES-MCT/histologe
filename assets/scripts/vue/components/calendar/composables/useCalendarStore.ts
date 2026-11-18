@@ -1,7 +1,6 @@
 import { reactive } from 'vue'
 import type { StoreState, StoreProps } from '../types'
 
-// State
 const state = reactive<StoreState>({
   territories: [],
   operators: [],

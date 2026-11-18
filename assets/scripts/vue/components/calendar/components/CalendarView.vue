@@ -23,7 +23,6 @@ import { useCalendarEvents } from '../composables/useCalendarEvents'
 import CalendarEventPopover from './CalendarEventPopover.vue'
 
 interface SelectedEvent {
-  // Change à chaque ouverture : la popup est recréée et repositionnée
   key: number
   event: EventApi
   anchor: HTMLElement
@@ -48,17 +47,14 @@ const buildWeekBadge = (info: DatesSetInfo): string => {
     return ''
   }
 
-  // Formaté selon la locale du calendrier : "Semaine 46"
   const weekLabel = info.view.calendar.formatDate(info.view.currentStart, { week: 'long' })
   return `<p class="fr-badge calendar-app__week-badge">${weekLabel}</p>`
 }
 
-/**
- * Met à jour le badge du numéro de semaine à chaque changement de vue ou de période
- */
 const closeEventPopover = (): void => {
   selectedEvent.value = null
 }
+
 const onDatesSet = (info: DatesSetInfo): void => {
   closeEventPopover()
   calendarOptions.toolbarElements = {
@@ -67,12 +63,6 @@ const onDatesSet = (info: DatesSetInfo): void => {
   }
 }
 
-
-/**
- * Élément auquel ancrer la popup de détail
- * Événement cliqué dans la popup "+ x autres" : celle-ci est fermée (la popup de détail la remplace)
- * et la popup de détail est ancrée au lien "+ x autres"
- */
 const getEventAnchor = (eventElement: HTMLElement): HTMLElement => {
   const morePopover = eventElement.closest<HTMLElement>('.calendar-app__popover')
   if (!morePopover) {
@@ -85,12 +75,7 @@ const getEventAnchor = (eventElement: HTMLElement): HTMLElement => {
   return moreLink ?? eventElement
 }
 
-/**
- * Clic sur un événement : ouvre sa popup de détail
- */
 const onEventClick = (info: EventClickInfo): void => {
-  // Vue liste : toutes les informations et le lien sont déjà affichés, pas de popup
-  // (un clic sur le lien "Voir le dossier" / "S'inscrire" garde sa navigation normale)
   if (info.view.type.startsWith('list')) {
     return
   }
@@ -125,9 +110,6 @@ const calendarOptions: CalendarOptions = reactive({
   },
   // Surcharge du libellé "Planning" de la locale fr
   listText: 'Liste',
-  // Textes accessibles absents de la locale fr (sinon en anglais : "Close", "Events")
-  closeHint: 'Fermer',
-  eventsHint: 'Événements',
   datesSet: onDatesSet,
   eventClick: onEventClick,
 })

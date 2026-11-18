@@ -21,14 +21,12 @@ export function useCalendarEvents() {
       const events = await fetchEvents(
         store.props.ajaxurl,
         state.filters,
-        // "2026-10-26T00:00:00+01:00" → "2026-10-26"
         { dateDebut: info.startStr.slice(0, 10), dateFin: info.endStr.slice(0, 10) },
         abortController.signal
       )
       state.loadingInit = false
       return events
     } catch (error) {
-      // Requête remplacée par une plus récente : FullCalendar ignore son résultat
       if (!axios.isCancel(error)) {
         state.loadingInit = false
         state.hasErrorLoading = true

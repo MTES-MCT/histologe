@@ -36,8 +36,6 @@ class CalendarController extends AbstractController
         /** @var User $user */
         $user = $this->getUser();
 
-        // Filtre "opérateur" réservé au RT (un seul territoire) : partenaires ayant la compétence visites
-        // + une entrée pour les visites faites par un opérateur externe
         $operators = [];
         $userTerritory = $user->getFirstTerritory();
         if ($user->isTerritoryAdmin() && null !== $userTerritory) {
@@ -48,8 +46,6 @@ class CalendarController extends AbstractController
             $operators[] = ['id' => 'extern', 'label' => 'Opérateur externe'];
         }
 
-        // Filtre "territoire" : tous les territoires actifs pour le SA,
-        // ceux de l'utilisateur s'il est rattaché à des partenaires de plusieurs territoires
         $territories = [];
         if ($user->isSuperAdmin()) {
             $territories = $territoryRepository->findAllList();
@@ -96,7 +92,7 @@ class CalendarController extends AbstractController
                 'title' => 'Visite #'.$intervention->getSignalement()->getReference(),
                 'start' => $intervention->getScheduledAt()->format('Y-m-d\TH:i:s'),
                 'extendedProps' => [
-                    'type' => 'visite', // TODO : préciser visite de contrôle ?
+                    'type' => 'visite', // TODO : préciser visite de contrôle ? -> en attente de réponse de Mathilde
                     'link' => $this->generateUrl('back_signalement_view', ['uuid' => $intervention->getSignalement()->getUuid()]),
                     'occupant' => $intervention->getSignalement()->getNomOccupantComplet(),
                     'operator' => $intervention->getPartner()?->getNom(),
