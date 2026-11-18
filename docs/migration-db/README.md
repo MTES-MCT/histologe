@@ -2,7 +2,7 @@
 
 Dans le cadre de l'étude de migration vers PostgreSQL, un environnement PostgreSQL + Adminer est disponible en local aux côtés de MySQL :
 
-- **PostgreSQL 18.6 (PostGIS)** : port local `5433` (accessible depuis les conteneurs sur `signal_logement_postgres:5432`)
+- **PostgreSQL 18.7 (PostGIS)** : port local `5433` (accessible depuis les conteneurs sur `signal_logement_postgres:5432`)
 - **Adminer** : accessible sur [http://localhost:8083](http://localhost:8083) (sélectionner le moteur *PostgreSQL*, serveur *signal_logement_postgres*, utilisateur *signal_logement*, mot de passe *signal_logement*, base *signal_logement_db*)
 
 ## Lancer l'environnement Docker avec PostgreSQL
@@ -23,7 +23,7 @@ Pour démarrer l'environnement avec MySQL par défaut :
 Pour faire fonctionner l'application sur PostgreSQL, ajouter ou modifier la variable `DATABASE_URL` dans `.env.local` :
 
 ```dotenv
-DATABASE_URL="postgresql://signal_logement:signal_logement@signal_logement_postgres:5432/signal_logement_db?serverVersion=18.6&charset=utf8"
+DATABASE_URL="postgresql://signal_logement:signal_logement@signal_logement_postgres:5432/signal_logement_db?serverVersion=18.7&charset=utf8"
 ```
 
 Pour revenir sur MySQL (moteur par défaut) :

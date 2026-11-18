@@ -5,7 +5,7 @@ DOCKER_COMP   = docker compose
 DOCKER_COMP_FILE_TOOLS   = docker-compose.tools.yml
 DATABASE_USER = signal_logement
 DATABASE_NAME = signal_logement_db
-DATABASE_URL_POSTGRES = postgresql://signal_logement:signal_logement@signal_logement_postgres:5432/signal_logement_db?serverVersion=18.6&charset=utf8
+DATABASE_URL_POSTGRES = postgresql://signal_logement:signal_logement@signal_logement_postgres:5432/signal_logement_db?serverVersion=18.7&charset=utf8
 PATH_DUMP_SQL = data/dump.sql
 PATH_MB_DUMP_SQL = data/dump.pgsql
 PATH_MB_REPORT_SQL = .docker/metabase/resources-report.sql

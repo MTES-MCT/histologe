@@ -39,7 +39,7 @@ Cette application est déployé chez Scalingo, hébergé par Outscale.
 | PHP        | 8.4.x   |
 | Node.js    | 24.x.x  |
 | MySQL      | 8.4.x   |
-| PostgreSQL | 18.6    |
+| PostgreSQL | 18.7    |
 | Redis      | 7.x     |
 
 ### URL(s)
