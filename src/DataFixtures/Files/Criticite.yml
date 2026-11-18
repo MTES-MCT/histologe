@@ -35,7 +35,7 @@ criticites:
     is_danger: 0
   -
     critere: "L'entrée du bâtiment est abîmée ou mal sécurisée"
-    label: "La porte ferme difficilement et laisse passer l’air. La porte est facile à crocheter, il y a un espace entre le cadre et la porte, et pas d’isolation thermique. "
+    label: "La porte ferme difficilement et laisse passer l’air. La porte est facile à crocheter, il y a un espace entre le cadre et la porte, et pas d’isolation thermique."
     is_archive: 0
     is_default: 0
     score: 2
@@ -75,7 +75,7 @@ criticites:
     is_danger: 1
   -
     critere: "Le bâtiment n’est pas sécurisé contre les chutes."
-    label: "les garde-corps sont insuffisants "
+    label: "les garde-corps sont insuffisants"
     is_archive: 0
     is_default: 0
     score: 1
@@ -99,7 +99,7 @@ criticites:
     is_danger: 1
   -
     critere: "Les murs et plafonds intérieurs sont mal entretenus"
-    label: "la peinture est sale et non entretenue. "
+    label: "la peinture est sale et non entretenue."
     is_archive: 0
     is_default: 0
     score: 1
@@ -203,7 +203,7 @@ criticites:
     is_danger: 0
   -
     critere: "Le chauffage collectif est obsolète."
-    label: "l’équipement est obsolète et ne fonctionne plus correctement. "
+    label: "l’équipement est obsolète et ne fonctionne plus correctement."
     is_archive: 0
     is_default: 0
     score: 2
@@ -251,7 +251,7 @@ criticites:
     is_danger: 0
   -
     critere: "L’usage des lieux n’est pas respecté."
-    label: "les parties communes sont mal utilisées, ce qui gêne leur utilisation. "
+    label: "les parties communes sont mal utilisées, ce qui gêne leur utilisation."
     is_archive: 0
     is_default: 0
     score: 2
@@ -259,7 +259,7 @@ criticites:
     is_danger: 0
   -
     critere: "L’usage des lieux n’est pas respecté."
-    label: "les parties communes et équipements sont mal utilisés ou négligés ce qui empêche régulièrement de les utiliser (locaux encombrés, amoncellement de déchets, graffitis, équipements volontairement dégradés, éclairage mis hors d'usage, ascenseurs volontairement bloqués, portes enfoncées…). "
+    label: "les parties communes et équipements sont mal utilisés ou négligés ce qui empêche régulièrement de les utiliser (locaux encombrés, amoncellement de déchets, graffitis, équipements volontairement dégradés, éclairage mis hors d'usage, ascenseurs volontairement bloqués, portes enfoncées…)."
     is_archive: 0
     is_default: 0
     score: 3
@@ -283,7 +283,7 @@ criticites:
     is_danger: 1
   -
     critere: "Fils électriques dénudés"
-    label: "Le réseau électrique semble “bricolé”, anarchique et non protégé. Il n'y a pas de prise de terre. Des fils dénudés sont apparents. "
+    label: "Le réseau électrique semble “bricolé”, anarchique et non protégé. Il n'y a pas de prise de terre. Des fils dénudés sont apparents."
     is_archive: 0
     is_default: 0
     score: 3
@@ -379,7 +379,7 @@ criticites:
     is_danger: 0
   -
     critere: "Les garde-corps ou rambardes sont dangereuses."
-    label: "Il n'y a pas de garde-corps ou rambardes, elles sont très abîmées ou mesurent moins de 1 mètre de hauteur. "
+    label: "Il n'y a pas de garde-corps ou rambardes, elles sont très abîmées ou mesurent moins de 1 mètre de hauteur."
     is_archive: 0
     is_default: 0
     score: 3
@@ -387,7 +387,7 @@ criticites:
     is_danger: 0
   -
     critere: "L'accès au logement est mal éclairé."
-    label: "L’éclairage est insuffisant depuis l’accès de la porte d’entrée jusqu'à 10m de distance. "
+    label: "L’éclairage est insuffisant depuis l’accès de la porte d’entrée jusqu'à 10m de distance."
     is_archive: 0
     is_default: 0
     score: 1
@@ -471,7 +471,7 @@ criticites:
     is_danger: 0
   -
     critere: "Mes factures de chauffage sont anormalement élevées."
-    label: "Ma facture en hausse et je limite mon chauffage. "
+    label: "Ma facture en hausse et je limite mon chauffage."
     is_archive: 0
     is_default: 0
     score: 2
@@ -479,7 +479,7 @@ criticites:
     is_danger: 0
   -
     critere: "Mes factures de chauffage sont anormalement élevées."
-    label: "Ma facture est trop élevée et le chauffage est limité dans le logement. "
+    label: "Ma facture est trop élevée et le chauffage est limité dans le logement."
     is_archive: 0
     is_default: 0
     score: 3
@@ -549,7 +549,7 @@ criticites:
     is_danger: 0
   -
     critere: "Il y a des traces importantes de moisissures."
-    label: "il y a des traces de moisissures dans les pièces d’eau uniquement ou de petites traces de moisissures dans l’ensemble du logement. "
+    label: "il y a des traces de moisissures dans les pièces d’eau uniquement ou de petites traces de moisissures dans l’ensemble du logement."
     is_archive: 0
     is_default: 0
     score: 2
@@ -557,7 +557,7 @@ criticites:
     is_danger: 0
   -
     critere: "Il y a des traces importantes de moisissures."
-    label: "il y a d’importantes traces de moisissures dans l’ensemble des pièces à vivre. "
+    label: "il y a d’importantes traces de moisissures dans l’ensemble des pièces à vivre."
     is_archive: 0
     is_default: 0
     score: 3
@@ -833,7 +833,7 @@ criticites:
     is_danger: 0
   -
     critere: "Le bruit extérieur est gênant."
-    label: "J’entends du bruit en journée ou en soirée. Ça ne me gêne pas si les fenêtres fermées. "
+    label: "J’entends du bruit en journée ou en soirée. Ça ne me gêne pas si les fenêtres fermées."
     is_archive: 0
     is_default: 0
     score: 2
@@ -849,7 +849,7 @@ criticites:
     is_danger: 0
   -
     critere: "Les escaliers intérieurs sont dangereux."
-    label: "Les escaliers sont stables mais déformés ou il manque des éléments (marches, barreaux, main courante, …). "
+    label: "Les escaliers sont stables mais déformés ou il manque des éléments (marches, barreaux, main courante, …)."
     is_archive: 0
     is_default: 0
     score: 1
@@ -857,7 +857,7 @@ criticites:
     is_danger: 0
   -
     critere: "Les escaliers intérieurs sont dangereux."
-    label: "Les escaliers sont instables. Ils sont déformés ou il manque des éléments (marches, barreaux, main courante, …). "
+    label: "Les escaliers sont instables. Ils sont déformés ou il manque des éléments (marches, barreaux, main courante, …)."
     is_archive: 0
     is_default: 0
     score: 2
@@ -865,7 +865,7 @@ criticites:
     is_danger: 1
   -
     critere: "Les escaliers intérieurs sont dangereux."
-    label: "Les escaliers sont instables ou risquent de s’effondrer. Ils sont affaissés avec de grosses déformations. "
+    label: "Les escaliers sont instables ou risquent de s’effondrer. Ils sont affaissés avec de grosses déformations."
     is_archive: 0
     is_default: 0
     score: 3
@@ -921,7 +921,7 @@ criticites:
     is_danger: 0
   -
     critere: "Le chauffage ne fonctionne pas bien."
-    label: "le chauffage est insuffisant, la chaleur ressentie est trop faible. "
+    label: "le chauffage est insuffisant, la chaleur ressentie est trop faible."
     is_archive: 0
     is_default: 0
     score: 1
@@ -997,7 +997,7 @@ criticites:
     is_danger: 0
   -
     critere: "J’ai un problème d'évacuation des eaux usées."
-    label: "j’ai remarqué un reflux ou des odeurs au niveau des points d’eau qui montrent que le système d’évacuation fonctionne mal. "
+    label: "j’ai remarqué un reflux ou des odeurs au niveau des points d’eau qui montrent que le système d’évacuation fonctionne mal."
     is_archive: 0
     is_default: 0
     score: 1
@@ -1005,7 +1005,7 @@ criticites:
     is_danger: 0
   -
     critere: "J’ai un problème d'évacuation des eaux usées."
-    label: "le système d’évacuation est incomplet ou défaillant (exemple : absence de siphon) ou il y a problèmes récurrents de mauvais fonctionnement. "
+    label: "le système d’évacuation est incomplet ou défaillant (exemple : absence de siphon) ou il y a problèmes récurrents de mauvais fonctionnement."
     is_archive: 0
     is_default: 0
     score: 2
@@ -1113,7 +1113,7 @@ criticites:
     is_danger: 0
   -
     critere: "Les façades ne sont pas en bon état."
-    label: "il y a des fissures et/ou traces d'humidité sur les façades, et/ou des défaut d'isolation extérieure. "
+    label: "il y a des fissures et/ou traces d'humidité sur les façades, et/ou des défaut d'isolation extérieure."
     is_archive: 0
     is_default: 0
     score: 2

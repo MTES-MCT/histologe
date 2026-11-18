@@ -228,11 +228,10 @@ class PartnerRepository extends ServiceEntityRepository
     public function findPartnersWithQualificationAffectedOnSignalement(Qualification $qualification, Signalement $signalement): array
     {
         $qb = $this->createQueryBuilder('p');
-        $qb->select('DISTINCT p');
         $qb->innerJoin('p.affectations', 'a', 'WITH', 'a.signalement = :signalement')
             ->setParameter('signalement', $signalement);
-        $qb->andWhere('REGEXP(p.competence, :regexp) = true')
-            ->setParameter('regexp', '(^'.$qualification->name.',)|(,'.$qualification->name.',)|(,'.$qualification->name.'$)|(^'.$qualification->name.'$)');
+        $qb->andWhere("CONCAT(',', p.competence, ',') LIKE :competence")
+            ->setParameter('competence', '%,'.$qualification->name.',%');
 
         return $qb->getQuery()->getResult();
     }

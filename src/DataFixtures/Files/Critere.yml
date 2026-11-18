@@ -65,7 +65,7 @@ criteres:
   -
     situation: "l'état du bâtiment"
     label: "Le sol est abîmé."
-    description: "Les sols sont stables et au même niveau. la circulation est aisée. "
+    description: "Les sols sont stables et au même niveau. la circulation est aisée."
     is_archive: 0
     is_danger: 1
     coef: 2
@@ -74,7 +74,7 @@ criteres:
   -
     situation: "l'état du bâtiment"
     label: "Les escaliers sont abîmés."
-    description: "Les escaliers sont stables et faciles d’usage. ils ne sont pas trop étroits, ni trop pentus. "
+    description: "Les escaliers sont stables et faciles d’usage. ils ne sont pas trop étroits, ni trop pentus."
     is_archive: 0
     is_danger: 1
     coef: 2
@@ -92,7 +92,7 @@ criteres:
   -
     situation: "l'état du bâtiment"
     label: "Les murs et plafonds intérieurs sont mal entretenus"
-    description: "Les surfaces sont repeintes, propres et faciles à entretenir. "
+    description: "Les surfaces sont repeintes, propres et faciles à entretenir."
     is_archive: 0
     is_danger: 0
     coef: 1
@@ -101,7 +101,7 @@ criteres:
   -
     situation: "l'état et propreté du logement"
     label: "Les sols sont humides."
-    description: "Le sol et les murs en contact avec le sol sont parfaitement secs. les caves sont ventilées, sans humidité. "
+    description: "Le sol et les murs en contact avec le sol sont parfaitement secs. les caves sont ventilées, sans humidité."
     is_archive: 0
     is_danger: 0
     coef: 1
@@ -110,7 +110,7 @@ criteres:
   -
     situation: "la sécurité des occupants"
     label: "L’installation du réseau électrique a un problème."
-    description: "L’installation fonctionne correctement. elle ne présente pas de risque de contact direct ou indirect, ni de risque d'incendie. "
+    description: "L’installation fonctionne correctement. elle ne présente pas de risque de contact direct ou indirect, ni de risque d'incendie."
     is_archive: 0
     is_danger: 0
     coef: 2
@@ -128,7 +128,7 @@ criteres:
   -
     situation: "la sécurité des occupants"
     label: "La protection incendie n’est pas adaptée."
-    description: "Les parois des logements et parties communes et les cloisons des caves sont résistantes au feu. les portes palières et d'accès aux caves sont en matériaux pleins et épais. "
+    description: "Les parois des logements et parties communes et les cloisons des caves sont résistantes au feu. les portes palières et d'accès aux caves sont en matériaux pleins et épais."
     is_archive: 0
     is_danger: 0
     coef: 1
@@ -137,7 +137,7 @@ criteres:
   -
     situation: "la sécurité des occupants"
     label: "Le chauffage collectif est obsolète."
-    description: "L’équipement fonctionne correctement et est bien entretenu. "
+    description: "L’équipement fonctionne correctement et est bien entretenu."
     is_archive: 0
     is_danger: 1
     coef: 1
@@ -155,7 +155,7 @@ criteres:
   -
     situation: "la vie commune et le voisinage"
     label: "L’usage des lieux n’est pas respecté."
-    description: "Les occupants font un usage normal des parties communes et des équipements collectifs. il n'y a pas de dégradation (volontaire ou par négligence). "
+    description: "Les occupants font un usage normal des parties communes et des équipements collectifs. il n'y a pas de dégradation (volontaire ou par négligence)."
     is_archive: 0
     is_danger: 0
     coef: 1
@@ -190,7 +190,7 @@ criteres:
     type: 1
   -
     situation: "Logement"
-    label: "Présence d'animaux nuisibles "
+    label: "Présence d'animaux nuisibles"
     description: "Absence de rongeurs, d'insectes parasites.\r\npas d'accumulation de pigeons."
     is_archive: 1
     is_danger: 0
@@ -202,7 +202,7 @@ criteres:
     label: "Éclairement naturel des pièces principales"
     description: "Éclairement suffisant pour permettre une activité normale sans avoir recours à l'éclairage artificiel.\r\nle rapport de la surface laissant passer la lumière sur la surface de la pièce est supérieur à 1/6."
     is_archive: 1
-    is_danger: 0    
+    is_danger: 0
     coef: 3
     new_coef: 1
     type: 1
@@ -253,7 +253,7 @@ criteres:
     type: 1
   -
     situation: "Logement"
-    label: "Chaudière gaz:\r\nInstallation, sécurité "
+    label: "Chaudière gaz:\r\nInstallation, sécurité"
     description: "Appareils à circuits de combustion non étanche raccordés à une évacuation des produits de combustion vers l'extérieur, munis de sécurité au refoulement.\r\nappareils à circuit de combustion  étanche."
     is_archive: 1
     is_danger: 0
@@ -400,7 +400,7 @@ criteres:
     label: "Mon logement est en sous-sol."
     description: "Le logement n'est pas situé au niveau -1 du bâtiment ou en inter-sol sans lumière extérieure directe."
     is_archive: 0
-    is_danger: 0    
+    is_danger: 0
     coef: 3
     new_coef: 8
     type: 2
@@ -427,7 +427,7 @@ criteres:
     label: "Mon logement est une pièce unique, de moins de 9m²."
     description: "Le logement n'est pas constitué d'une seule pièce de moins de 9m2."
     is_archive: 0
-    is_danger: 1    
+    is_danger: 1
     coef: 3
     new_coef: 1
     type: 2
@@ -452,9 +452,9 @@ criteres:
   -
     situation: "les espaces de vie"
     label: "La lumière naturelle en pleine journée est insuffisante."
-    description: "L'éclairage naturel du logement est suffisant pour vivre sans éclairage électrique en pleine journée. "
+    description: "L'éclairage naturel du logement est suffisant pour vivre sans éclairage électrique en pleine journée."
     is_archive: 0
-    is_danger: 0    
+    is_danger: 0
     coef: 3
     new_coef: 8
     type: 2
@@ -497,7 +497,7 @@ criteres:
   -
     situation: "la sécurité des occupants"
     label: "Les garde-corps ou rambardes sont dangereuses."
-    description: "Les garde-corps ou rambardes du logement ne présentent pas de défauts ou de risques pour les personnes. "
+    description: "Les garde-corps ou rambardes du logement ne présentent pas de défauts ou de risques pour les personnes."
     is_archive: 0
     is_danger: 0
     coef: 2
@@ -515,7 +515,7 @@ criteres:
   -
     situation: "l'état et propreté du logement"
     label: "Il y a des traces importantes de moisissures."
-    description: "Vous ne constatez aucune présence de traces d'humidité ou de moisissures dans le logement. "
+    description: "Vous ne constatez aucune présence de traces d'humidité ou de moisissures dans le logement."
     is_archive: 0
     is_danger: 0
     coef: 2
@@ -524,7 +524,7 @@ criteres:
   -
     situation: "l'état et propreté du logement"
     label: "La peinture est écaillée par endroits."
-    description: " la peinture n’est pas écaillée dans les différentes pièces du logement. "
+    description: "la peinture n’est pas écaillée dans les différentes pièces du logement."
     is_archive: 0
     is_danger: 0
     coef: 1
@@ -562,7 +562,7 @@ criteres:
     label: "J'ai un problème avec l’eau potable."
     description: "J’ai accès à l’eau potable et le débit de l’eau est bon."
     is_archive: 0
-    is_danger: 0    
+    is_danger: 0
     coef: 3
     new_coef: 3
     type: 1
@@ -587,7 +587,7 @@ criteres:
   -
     situation: "le confort du logement"
     label: "Mes factures de chauffage sont anormalement élevées."
-    description: "Vos factures de consommation énergétique ne sont pas en augmentation continue ou ne présentent pas de hausses non prévues, sur les mois d'hiver ou d'une année à l’autre. vous ne limitez pas l'usage de votre chauffage. "
+    description: "Vos factures de consommation énergétique ne sont pas en augmentation continue ou ne présentent pas de hausses non prévues, sur les mois d'hiver ou d'une année à l’autre. vous ne limitez pas l'usage de votre chauffage."
     is_archive: 0
     is_danger: 0
     coef: 1
@@ -598,14 +598,14 @@ criteres:
     label: "Il y a des nuisibles dans mon logement (blattes, punaises de lit, rongeurs...)."
     description: "Aucun nuisible et aucune trace de nuisibles dans le logement (cafards, punaises de lit, rongeurs, pigeons, termites, moustiques, insectes…)."
     is_archive: 0
-    is_danger: 0    
+    is_danger: 0
     coef: 3
     new_coef: 0
     type: 2
   -
     situation: "la vie commune et le voisinage"
     label: "Le bruit à l’intérieur du logement ou du bâtiment est gênant."
-    description: "La perception des bruits générés par les voisins ou les équipements proches est forte et gênante. "
+    description: "La perception des bruits générés par les voisins ou les équipements proches est forte et gênante."
     is_archive: 0
     is_danger: 0
     coef: 2
@@ -659,7 +659,7 @@ criteres:
   -
     situation: "la sécurité des occupants"
     label: "Les escaliers intérieurs sont dangereux."
-    description: "Les escaliers sont stables et faciles d’usage. ils ne sont pas trop étroits, ni trop pentus. "
+    description: "Les escaliers sont stables et faciles d’usage. ils ne sont pas trop étroits, ni trop pentus."
     is_archive: 0
     is_danger: 0
     coef: 2
@@ -686,7 +686,7 @@ criteres:
   -
     situation: "l'état du bâtiment"
     label: "Les façades ne sont pas en bon état."
-    description: "Les façades ne présentent pas de risques pour les occupants, le voisinage ou les passants. leur aspect est correct. "
+    description: "Les façades ne présentent pas de risques pour les occupants, le voisinage ou les passants. leur aspect est correct."
     is_archive: 0
     is_danger: 0
     coef: 1
