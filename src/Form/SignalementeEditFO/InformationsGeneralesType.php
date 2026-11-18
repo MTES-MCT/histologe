@@ -332,7 +332,7 @@ class InformationsGeneralesType extends AbstractType
                 $groups = ['Default'];
 
                 $data = $form->getData();
-                if ($data instanceof Signalement && null !== $data->getProfileDeclarant()) {
+                if ($data instanceof Signalement) {
                     $groups[] = $data->getProfileDeclarant()->name;
                 }
 

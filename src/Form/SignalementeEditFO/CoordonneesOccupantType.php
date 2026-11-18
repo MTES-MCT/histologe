@@ -119,7 +119,7 @@ class CoordonneesOccupantType extends AbstractType
                 $groups = ['fo_coordonnees_occupant'];
 
                 $data = $form->getData();
-                if ($data instanceof Signalement && null !== $data->getProfileDeclarant()) {
+                if ($data instanceof Signalement) {
                     $groups[] = $data->getProfileDeclarant()->name;
                 }
 
