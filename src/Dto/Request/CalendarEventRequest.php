@@ -34,7 +34,6 @@ class CalendarEventRequest
 
         $start = \DateTimeImmutable::createFromFormat('!Y-m-d', $this->dateDebut);
         $end = \DateTimeImmutable::createFromFormat('!Y-m-d', $this->dateFin);
-        // Format invalide : déjà signalé par Assert\Date
         if (false === $start || false === $end) {
             return;
         }

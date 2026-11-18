@@ -2,6 +2,7 @@
 
 namespace App\Tests\Functional\Repository;
 
+use App\Entity\Enum\Qualification;
 use App\Entity\Partner;
 use App\Entity\Signalement;
 use App\Entity\Territory;
@@ -276,6 +277,34 @@ class PartnerRepositoryTest extends KernelTestCase
         }
 
         $this->assertGreaterThan(1, $partnersQueryBuilder->getQuery()->getResult());
+    }
+
+    public function testFindPartnersWithQualificationOnTerritory(): void
+    {
+        $territory = $this->entityManager->getRepository(Territory::class)->findOneBy(['zip' => '13']);
+
+        $partners = $this->partnerRepository->findPartnersWithQualificationOnTerritory(Qualification::VISITES, $territory);
+
+        $this->assertNotEmpty($partners);
+        $emails = [];
+        foreach ($partners as $partner) {
+            $this->assertEquals('13', $partner->getTerritory()->getZip());
+            $this->assertContains(Qualification::VISITES, $partner->getCompetence());
+            $emails[] = $partner->getEmail();
+        }
+        $this->assertContains('partenaire-13-01@signal-logement.fr', $emails);
+    }
+
+    public function testFindPartnersWithQualificationOnTerritoryAmongSeveralCompetences(): void
+    {
+        // Partenaires 62-01 et 62-02 : VISITES parmi plusieurs compétences
+        $territory = $this->entityManager->getRepository(Territory::class)->findOneBy(['zip' => '62']);
+
+        $partners = $this->partnerRepository->findPartnersWithQualificationOnTerritory(Qualification::VISITES, $territory);
+
+        $emails = array_map(static fn (Partner $partner): ?string => $partner->getEmail(), $partners);
+        $this->assertContains('partenaire-62-01@signal-logement.fr', $emails);
+        $this->assertContains('partenaire-62-02@signal-logement.fr', $emails);
     }
 
     protected function tearDown(): void

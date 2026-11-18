@@ -1,6 +1,5 @@
 <template>
   <div class="calendar-filters">
-    <!-- Territoire : SA et utilisateurs multi-territoires -->
     <!-- Labels rendus ici, à gauche des champs, plutôt que dans les composants (au-dessus) -->
     <div v-if="territories.length > 0" class="calendar-filters__field">
       <label class="fr-label" for="calendar-filter-territory">Territoire</label>
@@ -12,15 +11,11 @@
       />
     </div>
 
-    <!-- Opérateur : RT -->
-    <!-- Le champ d'AppListCheckboxes n'est pas un contrôle de formulaire : le label nomme le groupe de cases -->
-    <div
+    <fieldset
       v-else-if="operators.length > 0"
-      class="calendar-filters__field"
-      role="group"
-      aria-labelledby="calendar-filter-operators-label"
+      class="calendar-filters__field calendar-filters__fieldset"
     >
-      <span id="calendar-filter-operators-label" class="fr-label">Opérateur</span>
+      <legend class="fr-label">Opérateur</legend>
       <AppListCheckboxes
         id="calendar-filter-operators"
         :model-value="modelValue.operateurs"
@@ -28,7 +23,7 @@
         placeholder="Tous les opérateurs"
         @update:model-value="onOperatorsChange"
       />
-    </div>
+    </fieldset>
 
     <button
       type="button"
@@ -49,8 +44,6 @@ import type HistoInterfaceSelectOption from '../../common/HistoInterfaceSelectOp
 import type { CheckboxGroup } from '../../common/AppListCheckboxes.types'
 import type { CalendarFilterOption, CalendarFilters } from '../types'
 
-// Props
-// (v-model déclaré à la main : le code généré par defineModel ne passe pas la vérification de ts-loader)
 interface Props {
   modelValue: CalendarFilters
   territories: CalendarFilterOption[]
@@ -62,26 +55,20 @@ const props: Props = defineProps<Props>()
 // (une liaison réactive ferait double bascule avec celle du DSFR)
 const initialUniquementMesDossiers = props.modelValue.uniquementMesDossiers
 
-// Émissions
 const emit = defineEmits<{
   'update:modelValue': [filters: CalendarFilters]
 }>()
 
-// Options au format attendu par HistoSelect, avec "Tous les territoires" en premier
 const territoryItems = computed<HistoInterfaceSelectOption[]>(() => {
   const items = props.territories.map((territory) => ({ Id: String(territory.id), Text: territory.label }))
   return [{ Id: '', Text: 'Tous les territoires' }, ...items]
 })
 
-// Options au format attendu par AppListCheckboxes (un seul groupe, sans titre)
 const operatorGroups = computed<CheckboxGroup[]>(() => {
   const options = props.operators.map((operator) => ({ Id: String(operator.id), Text: operator.label }))
   return [{ options }]
 })
 
-/**
- * Met à jour les filtres (le calendrier recharge ses événements en conséquence)
- */
 const updateFilters = (changes: Partial<CalendarFilters>): void => {
   emit('update:modelValue', { ...props.modelValue, ...changes })
 }
@@ -125,6 +112,20 @@ const toggleUniquementMesDossiers = (): void => {
   .calendar-filters .calendar-filters__field > .fr-label {
     margin: 0;
     white-space: nowrap;
+  }
+
+  /* Styles par défaut du fieldset neutralisés */
+  .calendar-filters .calendar-filters__fieldset {
+    min-width: 0;
+    margin: 0;
+    padding: 0;
+    border: 0;
+  }
+
+  /* Legend flottant : affiché comme un élément ordinaire, à gauche du champ (et non incrusté dans la bordure) */
+  .calendar-filters .calendar-filters__fieldset > legend {
+    float: left;
+    padding: 0;
   }
 
   /* AppListCheckboxes affiche un label vide quand on ne lui passe pas de slot */

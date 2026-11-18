@@ -124,12 +124,13 @@ class InterventionRepository extends ServiceEntityRepository
         $qb = $this->createQueryBuilder('i')
             ->innerJoin('i.signalement', 's')
             ->innerJoin('s.address', 'address')
-            ->leftJoin('i.partner', 'p') // null pour un opérateur externe
+            ->leftJoin('i.partner', 'p')
             ->addSelect('s', 'p')
             ->andWhere('i.type IN (:visiteTypes)')
             ->setParameter('visiteTypes', [InterventionType::VISITE->name, InterventionType::VISITE_CONTROLE->name])
             ->andWhere('i.status IS NULL OR i.status != :canceled')
             ->setParameter('canceled', Intervention::STATUS_CANCELED)
+            ->andWhere('i.partner IS NOT NULL OR i.externalOperator IS NOT NULL')
             ->andWhere('s.statut NOT IN (:excludedStatus)')
             ->setParameter('excludedStatus', SignalementStatus::excludedStatuses())
             // Fin exclue : dateFin est le lendemain du dernier jour affiché
@@ -137,7 +138,7 @@ class InterventionRepository extends ServiceEntityRepository
             ->setParameter('start', new \DateTimeImmutable($calendarEventRequest?->getDateDebut() ?? 'today'))
             ->setParameter('end', new \DateTimeImmutable($calendarEventRequest?->getDateFin() ?? 'tomorrow'));
 
-        // Filtre par "mes dossiers" : si activé, on ne garde que les visites pour lesquelles l'utilisateur est abonné au signalement
+        // Filtre par "mes dossiers"
         if ('1' === $calendarEventRequest?->getUniquementMesDossiers()) {
             $existsSubscription = $this->getEntityManager()->createQueryBuilder()
                 ->select('1')
@@ -169,8 +170,7 @@ class InterventionRepository extends ServiceEntityRepository
                 $qb->andWhere(implode(' OR ', $operatorConditions));
             }
         } elseif (!$user->isSuperAdmin()) {
-            // Agents et admins partenaire : les visites de leurs partenaires,
-            // sur les signalements où ce partenaire est affecté (même règle que SignalementVoter::canView)
+            // Agents et admins partenaire : les visites de leurs partenaires toujours affectés
             $existsAffectation = $this->getEntityManager()->createQueryBuilder()
                 ->select('1')
                 ->from(Affectation::class, 'a')
@@ -182,7 +182,7 @@ class InterventionRepository extends ServiceEntityRepository
                 ->setParameter('userPartners', $user->getPartners());
         }
 
-        // Filtre territoire (SA et utilisateurs multi-territoires) : restreint encore les visites autorisées ci-dessus
+        // Filtre territoire (SA et utilisateurs multi-territoires)
         if (!$user->isTerritoryAdmin() && !empty($calendarEventRequest?->getTerritoire())) {
             $qb->andWhere('address.territory = :territory')
                 ->setParameter('territory', $calendarEventRequest->getTerritoire());
