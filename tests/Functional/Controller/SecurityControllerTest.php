@@ -196,7 +196,7 @@ class SecurityControllerTest extends WebTestCase
         self::ensureKernelShutdown();
         $client = static::createClient();
         $uuid = '00000000-0000-0000-2024-000000000012';
-        $filename = 'export-pdf-signalement-'.$uuid.'.pdf';
+        $filename = 'export-pdf-dossier-'.$uuid.'.pdf';
         /** @var SignalementRepository $signalementRepository */
         $signalementRepository = static::getContainer()->get(SignalementRepository::class);
         $signalement = $signalementRepository->findOneBy(['uuid' => $uuid]);
@@ -221,7 +221,7 @@ class SecurityControllerTest extends WebTestCase
         self::ensureKernelShutdown();
         $client = static::createClient();
         $uuid = '00000000-0000-0000-2022-000000000001';
-        $filename = 'export-pdf-signalement-'.$uuid.'.pdf';
+        $filename = 'export-dossier-signalement-'.$uuid.'.pdf';
         /** @var SignalementRepository $signalementRepository */
         $signalementRepository = static::getContainer()->get(SignalementRepository::class);
         $signalement = $signalementRepository->findOneBy(['uuid' => $uuid]);
