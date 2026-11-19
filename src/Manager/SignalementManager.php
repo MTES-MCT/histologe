@@ -1523,6 +1523,19 @@ class SignalementManager
         $this->entityManager->flush();
     }
 
+    public function reinitClotureValues(Signalement $signalement): void
+    {
+        // On supprime les infos du signalement liées à la clôture
+        $signalement
+            ->setClosedAt(null)
+            ->setMotifCloture(null)
+            ->setComCloture(null)
+            ->setTravauxMiseEnConformite(null)
+            ->setDepartOccupantAt(null)
+            ->setMotifClotureUsager(null)
+            ->setTravauxMiseEnConformiteUsager(null);
+    }
+
     public function archive(Signalement $signalement): void
     {
         $signalement->setStatut(SignalementStatus::ARCHIVED);

@@ -22,6 +22,7 @@ use App\Form\CloseSignalementType;
 use App\Form\ProcedureEngageeType;
 use App\Form\RefusSignalementType;
 use App\Manager\AffectationManager;
+use App\Manager\SignalementManager;
 use App\Manager\SuiviManager;
 use App\Manager\UserSignalementSubscriptionManager;
 use App\Repository\AffectationRepository;
@@ -440,6 +441,7 @@ class SignalementActionController extends AbstractController
         Signalement $signalement,
         Request $request,
         AffectationUpdater $affectationUpdater,
+        SignalementManager $signalementManager,
         EntityManagerInterface $entityManager,
     ): RedirectResponse|JsonResponse {
         /** @var User $user */
@@ -465,6 +467,9 @@ class SignalementActionController extends AbstractController
                 }
             }
             if (SignalementStatus::INJONCTION_BAILLEUR !== $signalement->getStatut()) {
+                if (SignalementStatus::CLOSED === $signalement->getStatut()) {
+                    $signalementManager->reinitClotureValues($signalement);
+                }
                 $signalement->setStatut(SignalementStatus::ACTIVE);
             }
             $subscriptionCreated = false;
