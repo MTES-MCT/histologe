@@ -1,6 +1,10 @@
 export function disableHeaderAndFooterButtonOfModal(modal) {
-  const headerButtons = modal.querySelectorAll('.fr-modal__header button');
-  const footerButtons = modal.querySelectorAll('.fr-modal__footer button');
+  const headerButtons = modal.querySelectorAll(
+    '.fr-modal__header button, .side-panel__header button'
+  );
+  const footerButtons = modal.querySelectorAll(
+    '.fr-modal__footer button, .side-panel__footer button'
+  );
   headerButtons.forEach((button) => {
     button.setAttribute('disabled', '');
   });
@@ -10,8 +14,12 @@ export function disableHeaderAndFooterButtonOfModal(modal) {
 }
 
 export function enableHeaderAndFooterButtonOfModal(modal) {
-  const headerButtons = modal.querySelectorAll('.fr-modal__header button');
-  const footerButtons = modal.querySelectorAll('.fr-modal__footer button');
+  const headerButtons = modal.querySelectorAll(
+    '.fr-modal__header button, .side-panel__header button'
+  );
+  const footerButtons = modal.querySelectorAll(
+    '.fr-modal__footer button, .side-panel__footer button'
+  );
   headerButtons.forEach((button) => {
     button.removeAttribute('disabled');
   });

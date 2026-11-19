@@ -109,7 +109,7 @@ if (addVisiteForm) {
   initVisiteForm(addVisiteForm);
 }
 
-document.addEventListener('click', (event) => {
+document.getElementById('signalement-view')?.addEventListener('click', (event) => {
   const btn = event.target.closest('.btn-manage-visite');
   if (!btn) {
     return;
