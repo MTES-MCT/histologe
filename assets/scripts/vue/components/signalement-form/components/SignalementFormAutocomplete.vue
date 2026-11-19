@@ -74,8 +74,16 @@ export default defineComponent({
       selectedSuggestionIndex: -1
     }
   },
+  watch: {
+    'suggestions.length' (length: number) {
+      if (length > 0) {
+        document.addEventListener('click', this.closeAutocomplete)
+      } else {
+        document.removeEventListener('click', this.closeAutocomplete)
+      }
+    }
+  },
   created () {
-    document.addEventListener('click', this.closeAutocomplete)
     watch(
       () => this.formStore.data[this.idAutocomplete],
       (newValue: any) => {
@@ -141,6 +149,9 @@ export default defineComponent({
         this.selectedSuggestionIndex = -1
       }
     }
+  },
+  beforeUnmount () {
+    document.removeEventListener('click', this.closeAutocomplete)
   },
   emits: ['update:modelValue']
 })

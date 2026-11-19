@@ -312,7 +312,9 @@ function initializeUploadModal(modalSelector) {
 
   let fileFilter, documentType, interventionId;
 
-  document.addEventListener('click', (e) => {
+  const uploadButtonsContainer =
+    document.getElementById('signalement-view') ?? document.getElementById('form-pro-container');
+  uploadButtonsContainer?.addEventListener('click', (e) => {
     const button = e.target.closest('.open-modal-upload-files-btn');
     if (!button) return;
 
@@ -322,8 +324,8 @@ function initializeUploadModal(modalSelector) {
 
     nbFilesProccessing = 0;
     enableHeaderAndFooterButtonOfModal(modal);
+    reinitializeModal();
     listContainer.innerHTML = '';
-    modal.dataset.hasChanges = false;
     modal.querySelectorAll('.filter-conditional').forEach((type) => {
       type.classList.add('fr-hidden');
     });
@@ -381,7 +383,6 @@ function initializeUploadModal(modalSelector) {
         button.click();
       });
     });
-    reinitializeModal();
   });
 
   function reinitializeModal() {

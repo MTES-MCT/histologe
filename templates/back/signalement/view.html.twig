@@ -210,7 +210,7 @@
      %}
         {% set signalementInvalidClass = 'signalement-invalid' %}
     {% endif %}
-    <div class="fr-background--white {{ signalementInvalidClass }}">
+    <div id="signalement-view" class="fr-background--white {{ signalementInvalidClass }}">
         <section id="signalement-{{ signalement.id }}-content" class="fr-pt-4v">
             <div id="photos-album-container">
                 {% include 'back/signalement/view/photos-album.html.twig' %}

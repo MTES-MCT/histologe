@@ -6,7 +6,7 @@ document.addEventListener('click', (e) => {
 
   const targetSelector = link.dataset.selectAllInTarget;
   const target = document.querySelector(targetSelector);
-  if (!targetSelector) return;
+  if (!target) return;
 
   /** @type {NodeListOf<HTMLInputElement>} */
   const checkboxes = Array.from(target.querySelectorAll('input[type="checkbox"]')).filter(
