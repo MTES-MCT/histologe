@@ -46,12 +46,16 @@
 				<div class="fr-fieldset__element">
 					{{ form_row(form.autreSituationVulnerabilite) }}
 				</div>
-				<div class="fr-fieldset__element fr-mb-0">
-					{{ form_row(form.bail) }}
-				</div>
-				<div class="fr-fieldset__element fr-mb-0">
-					{{ form_row(form.etatDesLieux) }}
-				</div>
+				{% if form.bail is defined %}
+					<div class="fr-fieldset__element fr-mb-0">
+						{{ form_row(form.bail) }}
+					</div>
+				{% endif %}
+				{% if form.etatDesLieux is defined %}
+					<div class="fr-fieldset__element fr-mb-0">
+						{{ form_row(form.etatDesLieux) }}
+					</div>
+				{% endif %}
 				<div class="fr-fieldset__element fr-mb-0">
 					{{ form_row(form.dpe) }}
 				</div>

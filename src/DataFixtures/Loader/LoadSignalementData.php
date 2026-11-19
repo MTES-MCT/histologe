@@ -393,7 +393,24 @@ class LoadSignalementData extends Fixture implements OrderedFixtureInterface
             ->setNbPiecesLogement($row['nb_pieces_logement'] ?? 1)
             ->setIsLogementVacant($row['logement_vacant'] ?? false);
 
-        $signalement->setProfileOccupant(ProfileOccupant::from($row['profile_occupant'] ?? ''));
+        $signalement->setProfileOccupant(ProfileOccupant::tryFrom($row['profile_occupant'] ?? ''));
+
+        if ($signalement->getIsLogementVacant()) {
+            // Logement vacant : pas d'occupant, donc ni profil, ni identité, ni bail, ni loyer, ni allocation
+            $signalement
+                ->setProfileOccupant(null)
+                ->setCiviliteOccupant($row['civilite_occupant'] ?? null)
+                ->setNomOccupant($row['nom_occupant'] ?? null)
+                ->setPrenomOccupant($row['prenom_occupant'] ?? null)
+                ->setTelOccupant($row['tel_occupant'] ?? null)
+                ->setMailOccupant($row['mail_occupant'] ?? null)
+                ->setEtageOccupant($row['etage_occupant'] ?? null)
+                ->setNumAppartOccupant(null)
+                ->setLoyer(null)
+                ->setIsBailEnCours(null)
+                ->setIsAllocataire(null)
+                ->setNumAllocataire(null);
+        }
 
         $rawaddress = $row['adresse_occupant'] ?? str_replace(',', '', $faker->streetAddress());
         $parsedAddress = AddressParser::parse($rawaddress);
@@ -433,8 +450,12 @@ class LoadSignalementData extends Fixture implements OrderedFixtureInterface
                 ->setPrenomDeclarant($row['prenom_declarant'] ?? $faker->firstName())
                 ->setTelDeclarant($row['tel_declarant'] ?? $phoneNumber)
                 ->setMailDeclarant($row['mail_declarant'] ?? $faker->email())
-                ->setStructureDeclarant($faker->company())
-                ->setLienDeclarantOccupant($linkChoices[array_rand($linkChoices)]);
+                ->setStructureDeclarant($row['structure_declarant'] ?? $faker->company())
+                ->setLienDeclarantOccupant(
+                    array_key_exists('lien_declarant_occupant', $row)
+                        ? $row['lien_declarant_occupant']
+                        : $linkChoices[array_rand($linkChoices)]
+                );
         } else {
             $signalement->setIsNotOccupant(false);
         }
