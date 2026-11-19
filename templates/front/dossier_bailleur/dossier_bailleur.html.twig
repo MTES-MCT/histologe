@@ -404,7 +404,7 @@
 		</div>
 	</div>
 
-	{% if signalement.getSuiviReponseBailleur() or signalement.statut is not same as enum('App\\Entity\\Enum\\SignalementStatus').INJONCTION_BAILLEUR %}
+	{% if is_granted('SIGN_BAILLEUR_SEE_MESSAGERIE', signalement) %}
 		<hr>
 		<div class="fr-grid-row fr-grid-row--gutters">		
 			<div class="fr-col-12 fr-col-md-6">

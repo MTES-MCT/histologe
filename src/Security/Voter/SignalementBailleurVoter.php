@@ -15,11 +15,12 @@ use Symfony\Component\Security\Core\Authorization\Voter\Voter;
  */
 class SignalementBailleurVoter extends Voter
 {
+    public const string SIGN_BAILLEUR_SEE_MESSAGERIE = 'SIGN_BAILLEUR_SEE_MESSAGERIE';
     public const string SIGN_BAILLEUR_ADD_SUIVI = 'SIGN_BAILLEUR_ADD_SUIVI';
 
     protected function supports(string $attribute, $subject): bool
     {
-        return \in_array($attribute, [self::SIGN_BAILLEUR_ADD_SUIVI]) && ($subject instanceof Signalement);
+        return \in_array($attribute, [self::SIGN_BAILLEUR_ADD_SUIVI, self::SIGN_BAILLEUR_SEE_MESSAGERIE]) && ($subject instanceof Signalement);
     }
 
     protected function voteOnAttribute(string $attribute, mixed $subject, TokenInterface $token, ?Vote $vote = null): bool
@@ -34,9 +35,15 @@ class SignalementBailleurVoter extends Voter
         }
 
         return match ($attribute) {
+            self::SIGN_BAILLEUR_SEE_MESSAGERIE => $this->canBailleurSeeMessagerie($subject),
             self::SIGN_BAILLEUR_ADD_SUIVI => $this->canBailleurAddSuivi($subject),
             default => false,
         };
+    }
+
+    private function canBailleurSeeMessagerie(Signalement $signalement): bool
+    {
+        return $signalement->getSuiviReponseBailleur() || SignalementStatus::INJONCTION_BAILLEUR !== $signalement->getStatut();
     }
 
     private function canBailleurAddSuivi(Signalement $signalement): bool
