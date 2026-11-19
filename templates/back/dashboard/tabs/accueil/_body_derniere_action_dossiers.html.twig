@@ -88,7 +88,15 @@
                         link: path('back_injonction_signalement_index',  {territoire: items.territory_id, messages: 'bailleur' })
                     } %}
                 {% endif %}
-                {% if items.nextClubEvent %}
+                {% if feature_calendar and items.nextEvent is defined %}
+                    {% include 'back/dashboard/components/_tuile.html.twig' with {
+                        icon_path: 'img/picto-dsfr/calendar.svg',
+                        title: items.nextEvent.name,
+                        badge_class: 'fr-badge--purple-glycine',
+                        badge_label: items.nextEvent.dateEvent|format_datetime(locale='fr', timezone=territory_timezone, pattern='dd/MM/yyyy HH:mm'),
+                        link: path('back_calendar')
+                    } %}
+                {% elseif not feature_calendar and items.nextClubEvent %}
                     {% include 'back/dashboard/components/_tuile.html.twig' with {
                         icon_path: 'img/picto-dsfr/calendar.svg',
                         title: items.nextClubEvent.name,
@@ -97,7 +105,7 @@
                         badge_label: items.nextClubEvent.dateEvent|format_datetime(locale='fr', timezone=territory_timezone, pattern='dd/MM/yyyy HH:mm'),
                         link: items.nextClubEvent.url,
                         blank: true
-                    } %}
+                    } %} 
                 {% else %}
                     {% include 'back/dashboard/components/_tuile.html.twig' with {
                         icon_path: 'img/picto-dsfr/calendar.svg', 

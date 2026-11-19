@@ -4,13 +4,20 @@ declare(strict_types=1);
 
 namespace App\Tests\Unit\Service\DashboardTabPanel\TabBodyLoader;
 
+use App\Entity\Address;
+use App\Entity\ClubEvent;
+use App\Entity\Intervention;
+use App\Entity\Signalement;
+use App\Entity\Territory;
 use App\Entity\User;
 use App\Repository\ClubEventRepository;
+use App\Repository\InterventionRepository;
 use App\Service\DashboardTabPanel\TabBody;
 use App\Service\DashboardTabPanel\TabBodyLoader\DossiersDernierActionTabBodyLoader;
 use App\Service\DashboardTabPanel\TabBodyType;
 use App\Service\DashboardTabPanel\TabDataManager;
 use App\Service\DashboardTabPanel\TabQueryParameters;
+use App\Service\TimezoneProvider;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\MockObject\Stub;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
@@ -84,7 +91,13 @@ class DossiersDernierActionTabBodyLoaderTest extends KernelTestCase
             ->with($tabQueryParameters)
             ->willReturn($expectedInterconnexion);
 
-        $loader = new DossiersDernierActionTabBodyLoader($security, $tabDataManager, $this->clubEventRepository);
+        $loader = new DossiersDernierActionTabBodyLoader(
+            $security,
+            $tabDataManager,
+            $this->clubEventRepository,
+            $this->createStub(InterventionRepository::class),
+            false,
+        );
         $tabBody = new TabBody(
             type: TabBodyType::TAB_DATA_TYPE_DERNIER_ACTION_DOSSIERS,
             tabQueryParameters: $tabQueryParameters
@@ -128,7 +141,13 @@ class DossiersDernierActionTabBodyLoaderTest extends KernelTestCase
         $tabDataManager->expects($this->never())
             ->method('countInjonctionsNouveauxMessages');
 
-        $loader = new DossiersDernierActionTabBodyLoader($security, $tabDataManager, $this->clubEventRepository);
+        $loader = new DossiersDernierActionTabBodyLoader(
+            $security,
+            $tabDataManager,
+            $this->clubEventRepository,
+            $this->createStub(InterventionRepository::class),
+            false,
+        );
         $tabBody = new TabBody(
             type: TabBodyType::TAB_DATA_TYPE_DERNIER_ACTION_DOSSIERS,
             tabQueryParameters: $tabQueryParameters
@@ -145,5 +164,123 @@ class DossiersDernierActionTabBodyLoaderTest extends KernelTestCase
         $this->assertArrayNotHasKey('data_interconnexion', $data);
         $this->assertSame(42, $data['territory_id']);
         $this->assertSame('back/dashboard/tabs/accueil/_body_derniere_action_dossiers.html.twig', $tabBody->getTemplate());
+    }
+
+    public function testLoadWithCalendarNextEventIsVisiteWhenBeforeClubEvent(): void
+    {
+        $intervention = $this->createIntervention('2026-12-01 10:00');
+        $clubEvent = $this->createClubEvent('2026-12-02 14:00');
+
+        $data = $this->loadWithCalendar($intervention, $clubEvent);
+
+        $this->assertEquals(['name' => 'Visite #2026-12', 'dateEvent' => $intervention->getScheduledAt()], $data['nextEvent']);
+    }
+
+    public function testLoadWithCalendarNextEventIsClubEventWhenBeforeVisite(): void
+    {
+        $intervention = $this->createIntervention('2026-12-03 10:00');
+        $clubEvent = $this->createClubEvent('2026-12-02 14:00');
+
+        $data = $this->loadWithCalendar($intervention, $clubEvent);
+
+        $this->assertSame(['name' => 'Club SA', 'dateEvent' => $clubEvent->getDateEvent()], $data['nextEvent']);
+    }
+
+    public function testLoadWithCalendarNextEventIsVisiteWithoutClubEvent(): void
+    {
+        $intervention = $this->createIntervention('2026-12-01 10:00');
+
+        $data = $this->loadWithCalendar($intervention, null);
+
+        $this->assertEquals(['name' => 'Visite #2026-12', 'dateEvent' => $intervention->getScheduledAt()], $data['nextEvent']);
+    }
+
+    public function testLoadWithCalendarNextEventIsClubEventWithoutVisite(): void
+    {
+        $clubEvent = $this->createClubEvent('2026-12-02 14:00');
+
+        $data = $this->loadWithCalendar(null, $clubEvent);
+
+        $this->assertSame(['name' => 'Club SA', 'dateEvent' => $clubEvent->getDateEvent()], $data['nextEvent']);
+    }
+
+    public function testLoadWithCalendarWithoutNextEvent(): void
+    {
+        $data = $this->loadWithCalendar(null, null);
+
+        $this->assertArrayNotHasKey('nextEvent', $data);
+        $this->assertArrayNotHasKey('nextClubEvent', $data);
+    }
+
+    /**
+     * Chargement par un agent (sans KPI), avec la fonctionnalité calendrier activée
+     *
+     * @return array<string, mixed>
+     */
+    private function loadWithCalendar(?Intervention $nextIntervention, ?ClubEvent $nextClubEvent): array
+    {
+        /** @var User&Stub $user */
+        $user = $this->createStub(User::class);
+        $user->method('isSuperAdmin')->willReturn(false);
+        $user->method('isTerritoryAdmin')->willReturn(false);
+        /** @var Security&Stub $security */
+        $security = $this->createStub(Security::class);
+        $security->method('isGranted')->willReturn(true);
+        $security->method('getUser')->willReturn($user);
+
+        /** @var TabDataManager&Stub $tabDataManager */
+        $tabDataManager = $this->createStub(TabDataManager::class);
+        $tabDataManager->method('getDernierActionDossiers')->willReturn(['data' => [], 'total' => 0, 'page' => 1]);
+
+        /** @var ClubEventRepository&Stub $clubEventRepository */
+        $clubEventRepository = $this->createStub(ClubEventRepository::class);
+        $clubEventRepository->method('findNextForUser')->willReturn($nextClubEvent);
+
+        // Le filtre territoire du tableau de bord est transmis à la recherche de la prochaine visite
+        /** @var InterventionRepository&MockObject $interventionRepository */
+        $interventionRepository = $this->createMock(InterventionRepository::class);
+        $interventionRepository->expects($this->once())
+            ->method('findNextForUser')
+            ->with($user, 42)
+            ->willReturn($nextIntervention);
+
+        $loader = new DossiersDernierActionTabBodyLoader(
+            $security,
+            $tabDataManager,
+            $clubEventRepository,
+            $interventionRepository,
+            true,
+        );
+        $tabBody = new TabBody(
+            type: TabBodyType::TAB_DATA_TYPE_DERNIER_ACTION_DOSSIERS,
+            tabQueryParameters: new TabQueryParameters(territoireId: 42)
+        );
+
+        $loader->load($tabBody);
+
+        $data = $tabBody->getData();
+        $this->assertIsArray($data);
+
+        return $data;
+    }
+
+    private function createIntervention(string $scheduledAt): Intervention
+    {
+        // getScheduledAt() convertit la date dans le fuseau horaire du territoire du signalement
+        $territory = (new Territory())->setTimezone(TimezoneProvider::TIMEZONE_EUROPE_PARIS);
+        $signalement = (new Signalement())
+            ->setReference('2026-12')
+            ->setAddress((new Address())->setTerritory($territory));
+
+        return (new Intervention())
+            ->setScheduledAt(new \DateTimeImmutable($scheduledAt))
+            ->setSignalement($signalement);
+    }
+
+    private function createClubEvent(string $dateEvent): ClubEvent
+    {
+        return (new ClubEvent())
+            ->setName('Club SA')
+            ->setDateEvent(new \DateTimeImmutable($dateEvent));
     }
 }
