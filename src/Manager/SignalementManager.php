@@ -24,6 +24,7 @@ use App\Entity\Enum\AffectationStatus;
 use App\Entity\Enum\EtageType;
 use App\Entity\Enum\MotifCloture;
 use App\Entity\Enum\MotifClotureUsager;
+use App\Entity\Enum\ProcedureCategory;
 use App\Entity\Enum\ProfileDeclarant;
 use App\Entity\Enum\ProfileOccupant;
 use App\Entity\Enum\ProprioType;
@@ -1528,12 +1529,16 @@ class SignalementManager
         // On supprime les infos du signalement liées à la clôture
         $signalement
             ->setClosedAt(null)
+            ->setClosedBy(null)
             ->setMotifCloture(null)
             ->setComCloture(null)
             ->setTravauxMiseEnConformite(null)
             ->setDepartOccupantAt(null)
             ->setMotifClotureUsager(null)
             ->setTravauxMiseEnConformiteUsager(null);
+        foreach ($signalement->getSignalementProcedures(ProcedureCategory::PROCEDURE_RETENUE) as $signalementProcedure) {
+            $signalement->removeSignalementProcedure($signalementProcedure);
+        }
     }
 
     public function archive(Signalement $signalement): void
