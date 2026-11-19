@@ -1,5 +1,5 @@
 <template>
-  <p v-html="variablesReplacer.replace(label)" :class="customCss">
+  <p v-html="variablesReplacer.replaceHtml(label)" :class="customCss">
   </p>
 </template>
 

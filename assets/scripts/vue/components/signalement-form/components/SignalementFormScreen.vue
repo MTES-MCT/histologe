@@ -19,7 +19,7 @@
         id="form-screen-warning"
         :label="formStore.data.errorMessage"
       ></SignalementFormWarning>
-      <div v-html="variablesReplacer.replace(description)" class="fr-mb-3v"></div>
+      <div v-html="variablesReplacer.replaceHtml(description)" class="fr-mb-3v"></div>
       <div v-if="components != undefined">
         <SignalementFormComponentGenerator
           :componentList="components.body"
