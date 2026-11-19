@@ -3,6 +3,7 @@
 namespace App\Service\DashboardTabPanel\TabBodyLoader;
 
 use App\Entity\User;
+use App\Repository\InterventionRepository;
 use App\Security\Voter\InjonctionBailleurVoter;
 use App\Service\ClubEventService;
 use App\Service\DashboardTabPanel\TabBody;
@@ -10,6 +11,7 @@ use App\Service\DashboardTabPanel\TabBodyType;
 use App\Service\DashboardTabPanel\TabDataManager;
 use App\Service\DashboardTabPanel\TabDossier;
 use Symfony\Bundle\SecurityBundle\Security;
+use Symfony\Component\DependencyInjection\Attribute\Autowire;
 
 class DossiersDernierActionTabBodyLoader extends AbstractTabBodyLoader
 {
@@ -19,6 +21,9 @@ class DossiersDernierActionTabBodyLoader extends AbstractTabBodyLoader
         private readonly Security $security,
         private readonly TabDataManager $tabDataManager,
         private readonly ClubEventService $clubEventService,
+        private readonly InterventionRepository $interventionRepository,
+        #[Autowire(env: 'FEATURE_CALENDAR')]
+        private readonly bool $featureCalendar,
     ) {
         parent::__construct($this->security);
     }
@@ -53,7 +58,25 @@ class DossiersDernierActionTabBodyLoader extends AbstractTabBodyLoader
             $data['data_interconnexion'] = $this->tabDataManager->getInterconnexions($this->tabQueryParameters);
         }
         $data['territory_id'] = $this->tabQueryParameters ? $this->tabQueryParameters->territoireId : null;
-        $data['nextClubEvent'] = $this->clubEventService->getNextClubEventForUser($user);
+
+        $nextClubEvent = $this->clubEventService->getNextClubEventForUser($user);
+        if ($this->featureCalendar) {
+            $nextIntervention = $this->interventionRepository->findNextForUser($user, $this->tabQueryParameters?->territoireId);
+            $useIntervention = $nextIntervention && (!$nextClubEvent || $nextIntervention->getScheduledAt() < $nextClubEvent->getDateEvent());
+            if ($useIntervention) {
+                $data['nextEvent'] = [
+                    'name' => 'Visite #'.$nextIntervention->getSignalement()->getReference(),
+                    'dateEvent' => $nextIntervention->getScheduledAt(),
+                ];
+            } elseif ($nextClubEvent) {
+                $data['nextEvent'] = [
+                    'name' => $nextClubEvent->getName(),
+                    'dateEvent' => $nextClubEvent->getDateEvent(),
+                ];
+            }
+        } else {
+            $data['nextClubEvent'] = $nextClubEvent;
+        }
 
         $tabBody->setData($data);
         $tabBody->setCount($paginatedDossiers['total']);
