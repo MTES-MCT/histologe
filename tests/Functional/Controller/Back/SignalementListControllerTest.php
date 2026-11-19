@@ -85,8 +85,8 @@ class SignalementListControllerTest extends WebTestCase
         yield 'Search by Allocataire CAF' => [['allocataire' => 'caf', 'isImported' => 'oui'], 16];
         yield 'Search by Allocataire MSA' => [['allocataire' => 'msa', 'isImported' => 'oui'], 1];
         yield 'Search by Allocataire Oui (CAF+MSA+1)' => [['allocataire' => 'oui', 'isImported' => 'oui'], 17];
-        yield 'Search by Allocataire Non (null+empty)' => [['allocataire' => 'non', 'isImported' => 'oui'], 14];
-        yield 'Search by Situation Bail en cours' => [['situation' => 'bail_en_cours', 'isImported' => 'oui'], 17];
+        yield 'Search by Allocataire Non (null+empty)' => [['allocataire' => 'non', 'isImported' => 'oui'], 13];
+        yield 'Search by Situation Bail en cours' => [['situation' => 'bail_en_cours', 'isImported' => 'oui'], 16];
         yield 'Search by Situation Prévis de départ' => [['situation' => 'preavis_de_depart', 'isImported' => 'oui'], 1];
         yield 'Search by Situation Attente de relogement' => [['situation' => 'attente_relogement', 'isImported' => 'oui'], 2];
         yield 'Search by Occupation logement Vacant' => [['occupationLogement' => 'logement_vacant', 'isImported' => 'oui'], 1];

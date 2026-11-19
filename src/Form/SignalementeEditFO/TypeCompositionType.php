@@ -64,7 +64,8 @@ class TypeCompositionType extends AbstractType
                 ],
             ])
             ->add('natureAutrePrecision', TextType::class, [
-                'label' => 'Précision sur la nature (facultatif)',
+                'label' => 'Précision sur la nature <span class="text-required">*</span>',
+                'label_html' => true,
                 'help' => 'Format attendu : texte (15 caractères maximum)',
                 'required' => false,
                 'mapped' => false,
@@ -77,10 +78,23 @@ class TypeCompositionType extends AbstractType
                         max: 15,
                         maxMessage: 'La précision sur la nature du logement doit comporter au maximum {{ limit }} caractères.',
                     ),
+                    new Assert\Callback(
+                        callback: static function ($value, $context) {
+                            $form = $context->getRoot();
+                            $natureLogement = $form->get('natureLogement')->getData();
+
+                            if ('autre' === $natureLogement && (null === $value || '' === $value)) {
+                                $context
+                                    ->buildViolation('Veuillez indiquer des précisions sur la nature du logement.')
+                                    ->addViolation();
+                            }
+                        },
+                    ),
                 ],
             ])
             ->add('appartementEtage', EnumType::class, [
-                'label' => 'Localisation de l\'appartement',
+                'label' => 'Localisation de l\'appartement <span class="text-required">*</span>',
+                'label_html' => true,
                 'class' => EtageType::class,
                 'choice_label' => static function ($choice) {
                     return $choice->label();
@@ -91,9 +105,24 @@ class TypeCompositionType extends AbstractType
                 'placeholder' => false,
                 'mapped' => false,
                 'data' => $appartementEtage,
+                'constraints' => [
+                    new Assert\Callback(
+                        callback: static function ($value, $context) {
+                            $form = $context->getRoot();
+                            $natureLogement = $form->get('natureLogement')->getData();
+
+                            if ('appartement' === $natureLogement && (null === $value || '' === $value)) {
+                                $context
+                                    ->buildViolation('Veuillez indiquer la localisation de l\'appartement.')
+                                    ->addViolation();
+                            }
+                        },
+                    ),
+                ],
             ])
             ->add('appartementEtagePrecision', TextType::class, [
-                'label' => 'Précision sur l\'étage (si "Autre étage")',
+                'label' => 'Précision sur l\'étage <span class="text-required">*</span>',
+                'label_html' => true,
                 'help' => 'Numéro d\'étage (1 ou 2 chiffres)',
                 'required' => false,
                 'mapped' => false,
@@ -272,7 +301,8 @@ class TypeCompositionType extends AbstractType
                 ],
             ])
             ->add('cuisineCollective', ChoiceType::class, [
-                'label' => 'Accès à une cuisine collective ? (facultatif)',
+                'label' => 'Accès à une cuisine collective ? <span class="text-required">*</span>',
+                'label_html' => true,
                 'choices' => [
                     'Oui' => 'oui',
                     'Non' => 'non',
@@ -283,6 +313,20 @@ class TypeCompositionType extends AbstractType
                 'placeholder' => false,
                 'mapped' => false,
                 'data' => $cuisineCollective,
+                'constraints' => [
+                    new Assert\Callback(
+                        callback: static function ($value, $context) {
+                            $form = $context->getRoot();
+                            $cuisine = $form->get('cuisine')->getData();
+
+                            if ('non' === $cuisine && (null === $value || '' === $value)) {
+                                $context
+                                    ->buildViolation('Veuillez indiquer si le logement a une cuisine collective.')
+                                    ->addViolation();
+                            }
+                        },
+                    ),
+                ],
             ])
             ->add('salleDeBain', ChoiceType::class, [
                 'label' => 'Salle de bain, salle d\'eau avec douche ou baignoire ? <span class="text-required">*</span>',
@@ -304,7 +348,8 @@ class TypeCompositionType extends AbstractType
                 ],
             ])
             ->add('salleDeBainCollective', ChoiceType::class, [
-                'label' => 'Accès à une salle de bain ou des douches collectives ? (facultatif)',
+                'label' => 'Accès à une salle de bain ou des douches collectives ? <span class="text-required">*</span>',
+                'label_html' => true,
                 'choices' => [
                     'Oui' => 'oui',
                     'Non' => 'non',
@@ -315,6 +360,20 @@ class TypeCompositionType extends AbstractType
                 'placeholder' => false,
                 'mapped' => false,
                 'data' => $salleDeBainCollective,
+                'constraints' => [
+                    new Assert\Callback(
+                        callback: static function ($value, $context) {
+                            $form = $context->getRoot();
+                            $salleDeBain = $form->get('salleDeBain')->getData();
+
+                            if ('non' === $salleDeBain && (null === $value || '' === $value)) {
+                                $context
+                                    ->buildViolation('Veuillez indiquer si le logement a une salle de bain collective.')
+                                    ->addViolation();
+                            }
+                        },
+                    ),
+                ],
             ])
             ->add('wc', ChoiceType::class, [
                 'label' => 'Toilettes (WC) ? <span class="text-required">*</span>',
@@ -336,7 +395,8 @@ class TypeCompositionType extends AbstractType
                 ],
             ])
             ->add('wcCollective', ChoiceType::class, [
-                'label' => 'Accès à des toilettes (WC) collectives ? (facultatif)',
+                'label' => 'Accès à des toilettes (WC) collectives ? <span class="text-required">*</span>',
+                'label_html' => true,
                 'choices' => [
                     'Oui' => 'oui',
                     'Non' => 'non',
@@ -347,9 +407,24 @@ class TypeCompositionType extends AbstractType
                 'placeholder' => false,
                 'mapped' => false,
                 'data' => $wcCollective,
+                'constraints' => [
+                    new Assert\Callback(
+                        callback: static function ($value, $context) {
+                            $form = $context->getRoot();
+                            $wc = $form->get('wc')->getData();
+
+                            if ('non' === $wc && (null === $value || '' === $value)) {
+                                $context
+                                    ->buildViolation('Veuillez indiquer si le logement a des toilettes collectives.')
+                                    ->addViolation();
+                            }
+                        },
+                    ),
+                ],
             ])
             ->add('wcCuisine', ChoiceType::class, [
-                'label' => 'Toilettes (WC) et cuisine dans la même pièce ? (facultatif)',
+                'label' => 'Toilettes (WC) et cuisine dans la même pièce ? <span class="text-required">*</span>',
+                'label_html' => true,
                 'choices' => [
                     'Oui' => 'oui',
                     'Non' => 'non',
@@ -360,6 +435,21 @@ class TypeCompositionType extends AbstractType
                 'placeholder' => false,
                 'mapped' => false,
                 'data' => $wcCuisine,
+                'constraints' => [
+                    new Assert\Callback(
+                        callback: static function ($value, $context) {
+                            $form = $context->getRoot();
+                            $cuisine = $form->get('cuisine')->getData();
+                            $wc = $form->get('wc')->getData();
+
+                            if ('oui' === $cuisine && 'oui' === $wc && (null === $value || '' === $value)) {
+                                $context
+                                    ->buildViolation('Veuillez indiquer si la cuisine et les toilettes sont dans la même pièce.')
+                                    ->addViolation();
+                            }
+                        },
+                    ),
+                ],
             ]);
 
         $builder->add('save', SubmitType::class, [
