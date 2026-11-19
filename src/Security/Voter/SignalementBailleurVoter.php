@@ -15,12 +15,12 @@ use Symfony\Component\Security\Core\Authorization\Voter\Voter;
  */
 class SignalementBailleurVoter extends Voter
 {
-    public const string SIGN_BAILLEUR_HAS_RESPONSE_INJONCTION = 'SIGN_BAILLEUR_HAS_RESPONSE_INJONCTION';
+    public const string SIGN_BAILLEUR_SEE_MESSAGERIE = 'SIGN_BAILLEUR_SEE_MESSAGERIE';
     public const string SIGN_BAILLEUR_ADD_SUIVI = 'SIGN_BAILLEUR_ADD_SUIVI';
 
     protected function supports(string $attribute, $subject): bool
     {
-        return \in_array($attribute, [self::SIGN_BAILLEUR_ADD_SUIVI, self::SIGN_BAILLEUR_HAS_RESPONSE_INJONCTION]) && ($subject instanceof Signalement);
+        return \in_array($attribute, [self::SIGN_BAILLEUR_ADD_SUIVI, self::SIGN_BAILLEUR_SEE_MESSAGERIE]) && ($subject instanceof Signalement);
     }
 
     protected function voteOnAttribute(string $attribute, mixed $subject, TokenInterface $token, ?Vote $vote = null): bool
@@ -35,29 +35,27 @@ class SignalementBailleurVoter extends Voter
         }
 
         return match ($attribute) {
-            self::SIGN_BAILLEUR_HAS_RESPONSE_INJONCTION => $this->isSignalementHasResponseInjonction($subject),
+            self::SIGN_BAILLEUR_SEE_MESSAGERIE => $this->canBailleurSeeMessagerie($subject),
             self::SIGN_BAILLEUR_ADD_SUIVI => $this->canBailleurAddSuivi($subject),
             default => false,
         };
     }
 
-    private function isSignalementHasResponseInjonction(Signalement $signalement): bool
+    private function canBailleurSeeMessagerie(Signalement $signalement): bool
     {
-        return $signalement->getSuiviReponseBailleur() ? true : false;
+        return $signalement->getSuiviReponseBailleur() || SignalementStatus::INJONCTION_BAILLEUR !== $signalement->getStatut();
     }
 
     private function canBailleurAddSuivi(Signalement $signalement): bool
     {
-        if (in_array($signalement->getStatut(), [
-            SignalementStatus::CLOSED,
-            SignalementStatus::ARCHIVED,
-            SignalementStatus::REFUSED,
-            SignalementStatus::INJONCTION_CLOSED,
-        ], true)) {
-            return false;
+        if (in_array($signalement->getStatut(), [SignalementStatus::NEED_VALIDATION, SignalementStatus::ACTIVE])) {
+            return true;
         }
 
-        // autorisé si le bailleur a répondu à l'injonction et que le signalement est encore en cours, y compris aprés bascule de procédure
-        return $this->isSignalementHasResponseInjonction($signalement);
+        if ($signalement->getSuiviReponseBailleur() && SignalementStatus::INJONCTION_BAILLEUR === $signalement->getStatut()) {
+            return true;
+        }
+
+        return false;
     }
 }

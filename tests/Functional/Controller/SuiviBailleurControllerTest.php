@@ -11,7 +11,9 @@ use App\Entity\Suivi;
 use App\Repository\FileRepository;
 use App\Security\User\SignalementBailleur;
 use Doctrine\ORM\EntityManagerInterface;
+use PHPUnit\Framework\Attributes\DataProvider;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\RouterInterface;
 
 class SuiviBailleurControllerTest extends WebTestCase
@@ -375,5 +377,63 @@ class SuiviBailleurControllerTest extends WebTestCase
 
         $crawler = $client->request('GET', $urlDossierBailleur);
         $this->assertCount(4, $crawler->filter('.message-box'));
+    }
+
+    public static function provideAddMessageStatuses(): \Generator
+    {
+        foreach ([
+            [SignalementStatus::DRAFT, false, false],
+            [SignalementStatus::NEED_VALIDATION, true, true],
+            [SignalementStatus::ACTIVE, true, true],
+            [SignalementStatus::CLOSED, false, false],
+            [SignalementStatus::ARCHIVED, false, false],
+            [SignalementStatus::REFUSED, false, false],
+            [SignalementStatus::DRAFT_ARCHIVED, false, false],
+            [SignalementStatus::INJONCTION_BAILLEUR, true, false],
+            [SignalementStatus::INJONCTION_CLOSED, false, false],
+        ] as [$status, $allowed2364, $allowed2363]) {
+            yield 'INJ-2364 with reponse bailleur'.$status->value => ['2364', $status, $allowed2364];
+            yield 'INJ-2363 without reponse bailleur'.$status->value => ['2363', $status, $allowed2363];
+        }
+    }
+
+    #[DataProvider('provideAddMessageStatuses')]
+    public function testAddMessageBySignalementStatus(string $referenceInjonction, SignalementStatus $status, bool $isAllowed): void
+    {
+        $client = static::createClient();
+
+        /** @var EntityManagerInterface $entityManager */
+        $entityManager = static::getContainer()->get('doctrine')->getManager();
+        $signalement = $entityManager->getRepository(Signalement::class)->findOneBy(['referenceInjonction' => $referenceInjonction]);
+        $this->assertNotNull($signalement);
+        $signalement->setStatut($status);
+        $entityManager->flush();
+
+        $uuid = $signalement->getUuid();
+        $this->assertNotEmpty($uuid);
+        $client->loginUser(new SignalementBailleur(userIdentifier: $uuid), 'login_bailleur');
+
+        /** @var RouterInterface $router */
+        $router = static::getContainer()->get(RouterInterface::class);
+        $suiviRepository = $entityManager->getRepository(Suivi::class);
+        $criteria = ['signalement' => $signalement->getId(), 'category' => SuiviCategory::MESSAGE_BAILLEUR];
+        $messageCount = $suiviRepository->count($criteria);
+
+        if ($isAllowed) {
+            $crawler = $client->request('GET', $router->generate('front_dossier_bailleur'));
+            $form = $crawler->filter('form[name="message_bailleur"]')->form();
+            $form['message_bailleur[description]'] = 'Un message du bailleur';
+            $client->submit($form);
+
+            $this->assertResponseStatusCodeSame(Response::HTTP_OK);
+        } else {
+            $client->request('POST', $router->generate('front_dossier_bailleur_add_message'), [
+                'message_bailleur' => ['description' => 'Un message du bailleur'],
+            ]);
+
+            $this->assertResponseStatusCodeSame(Response::HTTP_FORBIDDEN);
+        }
+
+        $this->assertSame($messageCount + ($isAllowed ? 1 : 0), $suiviRepository->count($criteria));
     }
 }
