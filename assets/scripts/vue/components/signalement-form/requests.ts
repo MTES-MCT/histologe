@@ -124,6 +124,7 @@ export const requests = {
   },
 
   archiveDraft (draftUuid: string, functionReturn: Function) {
+    // TODO : on garde cette fonction pour qu'elle puisse être utilisée avec un bouton de demande expresse dans l'interface (cf #6713)
     const url = formStore.props.ajaxurlArchiveDraft
     requests.doRequestPost(url, { uuid: draftUuid }, functionReturn, undefined)
   },

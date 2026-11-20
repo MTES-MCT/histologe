@@ -28,6 +28,24 @@ class SignalementDraftRepository extends ServiceEntityRepository
     }
 
     /**
+     * Brouillons en cours ayant le même checksum (email déclarant + adresse) que le brouillon donné.
+     *
+     * @return array<int, SignalementDraft>
+     */
+    public function findOtherPendingWithSameChecksum(SignalementDraft $signalementDraft): array
+    {
+        return $this->createQueryBuilder('s')
+            ->where('s.checksum = :checksum')
+            ->andWhere('s.status = :status')
+            ->andWhere('s.id != :id')
+            ->setParameter('checksum', $signalementDraft->getChecksum())
+            ->setParameter('status', SignalementDraftStatus::EN_COURS)
+            ->setParameter('id', $signalementDraft->getId())
+            ->getQuery()
+            ->getResult();
+    }
+
+    /**
      * @return array<int, SignalementDraft>
      *
      * @throws \DateMalformedStringException

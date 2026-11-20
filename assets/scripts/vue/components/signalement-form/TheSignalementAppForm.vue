@@ -265,7 +265,6 @@ export default defineComponent({
           formStore.alreadyExists.createdAt = requestResponse.created_at
           formStore.alreadyExists.updatedAt = requestResponse.updated_at
           formStore.alreadyExists.draftExists = requestResponse.draft_exists
-          formStore.alreadyExists.draftUuid = requestResponse.draft_uuid
           if (formStore.alreadyExists.type === 'signalement') {
             matomo.pushFormEvent('showModal', 'Signalement existant')
           }
