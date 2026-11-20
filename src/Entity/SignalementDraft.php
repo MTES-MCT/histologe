@@ -55,7 +55,7 @@ class SignalementDraft
     private Collection $signalements;
 
     #[ORM\Column(type: 'string', length: 255, nullable: true)]
-    private ?string $checksum;
+    private string $checksum = '';
 
     #[ORM\Column(nullable: true)]
     private ?\DateTimeImmutable $pendingDraftRemindedAt = null;
@@ -210,7 +210,7 @@ class SignalementDraft
 
     public function getChecksum(): string
     {
-        return $this->checksum ?? throw new \LogicException('Checksum is not set');
+        return $this->checksum;
     }
 
     public function setChecksum(): static

@@ -22,7 +22,7 @@ class Commune implements EntityHistoryInterface
     private ?Territory $territory = null;
 
     #[ORM\Column(type: 'string', length: 255)]
-    private string $nom;
+    private string $nom = '';
 
     #[ORM\Column(type: 'string', length: 10)]
     private string $codePostal;
@@ -47,9 +47,6 @@ class Commune implements EntityHistoryInterface
 
     public function getNom(bool $withArrondissement = false): string
     {
-        if (!$this->nom) {
-            throw new \LogicException('Commune nom is not set');
-        }
         if ($withArrondissement) {
             return $this->nom;
         }

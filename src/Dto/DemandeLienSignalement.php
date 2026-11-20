@@ -15,11 +15,11 @@ class DemandeLienSignalement
     #[Assert\NotBlank()]
     private string $adresseHelper;
 
-    private ?string $adresse = null;
+    private string $adresse = '';
 
-    private ?string $codePostal = null;
+    private string $codePostal = '';
 
-    private ?string $ville = null;
+    private string $ville = '';
 
     /**
      * @param ?array<mixed> $payload
@@ -60,10 +60,6 @@ class DemandeLienSignalement
 
     public function getAdresse(): string
     {
-        if (null === $this->adresse) {
-            throw new \LogicException('DemandeLienSignalement adresse is not set');
-        }
-
         return $this->adresse;
     }
 
@@ -76,10 +72,6 @@ class DemandeLienSignalement
 
     public function getCodePostal(): string
     {
-        if (null === $this->codePostal) {
-            throw new \LogicException('DemandeLienSignalement codePostal is not set');
-        }
-
         return $this->codePostal;
     }
 
@@ -92,10 +84,6 @@ class DemandeLienSignalement
 
     public function getVille(): string
     {
-        if (null === $this->ville) {
-            throw new \LogicException('DemandeLienSignalement ville is not set');
-        }
-
         return $this->ville;
     }
 

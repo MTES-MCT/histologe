@@ -12,6 +12,7 @@ use App\Entity\Enum\InterconnectionAuthType;
 use App\Entity\Enum\InterventionType;
 use App\Entity\Enum\PartnerType;
 use App\Entity\Enum\ProfileDeclarant;
+use App\Entity\Enum\SuiviCategory;
 use App\Entity\Enum\UserStatus;
 use App\Entity\File;
 use App\Entity\Intervention;
@@ -170,6 +171,7 @@ trait FixturesHelper
     ): Suivi {
         return (new Suivi())
             ->setType(Suivi::TYPE_PARTNER)
+            ->setCategory(SuiviCategory::MESSAGE_PARTNER)
             ->setDescription($description)
             ->setCreatedAt(new \DateTimeImmutable())
             ->setCreatedBy($this->getUser([User::ROLE_USER_PARTNER]))

@@ -12,7 +12,7 @@ class Settings
     #[Groups('settings:read')]
     private ?string $lastname = null;
     #[Groups('settings:read')]
-    private ?string $avatarOrPlaceHolder = null;
+    private string $avatarOrPlaceHolder = '';
     #[Groups('settings:read')]
     private ?string $roleLabel = null;
     /**
@@ -149,10 +149,6 @@ class Settings
 
     public function getAvatarOrPlaceHolder(): string
     {
-        if (null === $this->avatarOrPlaceHolder) {
-            throw new \LogicException('Settings avatarOrPlaceHolder is not set');
-        }
-
         return $this->avatarOrPlaceHolder;
     }
 

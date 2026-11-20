@@ -11,7 +11,7 @@ class UserSearchFilterRequest
         max: 50,
         maxMessage: 'Le nom ne peut pas dépasser {{ limit }} caractères.'
     )]
-    public ?string $name = null;
+    public string $name = '';
 
     /**
      * @var array<string, mixed>|null
@@ -24,10 +24,6 @@ class UserSearchFilterRequest
 
     public function getName(): string
     {
-        if (null === $this->name) {
-            throw new \LogicException('UserSearchFilterRequest name is not set');
-        }
-
         return $this->name;
     }
 }
