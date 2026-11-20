@@ -26,16 +26,28 @@ class InviteTiersRequest implements RequestInterface
 
     public function getNom(): string
     {
+        if (null === $this->nom) {
+            throw new \LogicException('InviteTiersRequest nom is not set');
+        }
+
         return $this->nom;
     }
 
     public function getPrenom(): string
     {
+        if (null === $this->prenom) {
+            throw new \LogicException('InviteTiersRequest prenom is not set');
+        }
+
         return $this->prenom;
     }
 
     public function getMail(): string
     {
+        if (null === $this->mail) {
+            throw new \LogicException('InviteTiersRequest mail is not set');
+        }
+
         return $this->mail;
     }
 

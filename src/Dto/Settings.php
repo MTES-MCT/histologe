@@ -149,6 +149,10 @@ class Settings
 
     public function getAvatarOrPlaceHolder(): string
     {
+        if (null === $this->avatarOrPlaceHolder) {
+            throw new \LogicException('Settings avatarOrPlaceHolder is not set');
+        }
+
         return $this->avatarOrPlaceHolder;
     }
 

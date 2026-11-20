@@ -24,6 +24,10 @@ class UserSearchFilterRequest
 
     public function getName(): string
     {
+        if (null === $this->name) {
+            throw new \LogicException('UserSearchFilterRequest name is not set');
+        }
+
         return $this->name;
     }
 }
