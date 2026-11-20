@@ -1,24 +1,16 @@
-import { test, expect } from '@playwright/test';
+import { test, expect, Page } from '@playwright/test';
 import { waitForVueAppToBeInteractive } from '../utils/vue-app-helper';
 
-test('signalement form for locataire', async ({page}) => {
-    test.setTimeout(120000);
-    
-    // Nettoyer le contexte pour avoir une session propre
-    await page.context().clearCookies();
-    
+const geocodageResponse = '{"type":"FeatureCollection","features":[{"type":"Feature","geometry":{"type":"Point","coordinates":[5.446618,43.531033]},"properties":{"label":"3 Rue de l\'Ecole 13100 Aix-en-Provence","score":0.8801781818181817,"housenumber":"3","id":"13001_8566uu_00003","banId":"38c9dab8-0043-446c-99e3-a91bc63853c0","name":"3 Rue de l\'Ecole","postcode":"13100","citycode":"13001","x":897817.04,"y":6273282.5,"city":"Aix-en-Provence","context":"13, Bouches-du-Rhône, Provence-Alpes-Côte d\'Azur","type":"housenumber","importance":0.68196,"street":"Rue de l\'Ecole","_type":"address"}},{"type":"Feature","geometry":{"type":"Point","coordinates":[5.360444,43.278392]},"properties":{"label":"3 Rue de l\'ecole 13007 Marseille","score":0.8749827272727272,"housenumber":"3","id":"13207_2965_00003","banId":"c0a61d9c-8916-400e-9fba-9dd372db007e","name":"3 Rue de l\'ecole","postcode":"13007","citycode":"13207","x":891691.06,"y":6245000.42,"city":"Marseille","district":"Marseille 7e Arrondissement","context":"13, Bouches-du-Rhône, Provence-Alpes-Côte d\'Azur","type":"housenumber","importance":0.62481,"street":"Rue de l\'ecole","_type":"address"}},{"type":"Feature","geometry":{"type":"Point","coordinates":[5.460397,43.555482]},"properties":{"label":"3 Rue de l\'Ecole 13100 Aix-en-Provence","score":0.8746154545454545,"housenumber":"3","id":"13001_0870_00003","banId":"265bc206-94b6-466d-90f1-9bdbee5f2aff","name":"3 Rue de l\'Ecole","postcode":"13100","citycode":"13001","x":898846.1,"y":6276033.17,"city":"Aix-en-Provence","context":"13, Bouches-du-Rhône, Provence-Alpes-Côte d\'Azur","type":"housenumber","importance":0.62077,"street":"Rue de l\'Ecole","_type":"address"}},{"type":"Feature","geometry":{"type":"Point","coordinates":[-4.085699,48.610375]},"properties":{"label":"3 Rue de l\'Ecole 29440 Trézilidé","score":0.7122709090909091,"housenumber":"3","id":"29301_f885e7_00003","name":"3 Rue de l\'Ecole","postcode":"29440","citycode":"29301","x":178339.91,"y":6857885.55,"city":"Trézilidé","context":"29, Finistère, Bretagne","type":"housenumber","importance":0.33498,"street":"Rue de l\'Ecole","_type":"address"}},{"type":"Feature","geometry":{"type":"Point","coordinates":[5.631364,43.21392]},"properties":{"label":"Rue de l’Ecole 13600 Ceyreste","score":0.6632602597402597,"id":"13023_0068","banId":"e04adc10-538f-4e43-941d-99d576524e3e","name":"Rue de l’Ecole","postcode":"13600","citycode":"13023","x":913923.47,"y":6238532.5,"city":"Ceyreste","context":"13, Bouches-du-Rhône, Provence-Alpes-Côte d\'Azur","type":"street","importance":0.43872,"street":"Rue de l’Ecole","_type":"address"}},{"type":"Feature","geometry":{"type":"Point","coordinates":[6.031596,47.450296]},"properties":{"label":"Rue de l\'Ecole 70190 Trésilley","score":0.61964,"id":"70507_0005","banId":"cad2cbd1-02fe-43df-8551-4946e64a15e9","name":"Rue de l\'Ecole","postcode":"70190","citycode":"70507","x":928383.9,"y":6709933.74,"city":"Trésilley","context":"70, Haute-Saône, Bourgogne-Franche-Comté","type":"street","importance":0.31604,"street":"Rue de l\'Ecole","_type":"address"}},{"type":"Feature","geometry":{"type":"Point","coordinates":[5.054749,43.406128]},"properties":{"label":"3 Rue de l\'Ecole Vieille 13500 Martigues","score":0.5797109090909092,"housenumber":"3","id":"13056_0530_00003","name":"3 Rue de l\'Ecole Vieille","postcode":"13500","citycode":"13056","x":866502.21,"y":6258500.81,"city":"Martigues","context":"13, Bouches-du-Rhône, Provence-Alpes-Côte d\'Azur","type":"housenumber","importance":0.61682,"street":"Rue de l\'Ecole Vieille","_type":"address"}},{"type":"Feature","geometry":{"type":"Point","coordinates":[4.706909,43.524113]},"properties":{"label":"3 Rue de l\'Ecole du Sambuc 13200 Arles","score":0.547100303030303,"housenumber":"3","id":"13004_1259_00003","banId":"faa1b580-9504-4df4-b7f8-1e6f2476818d","name":"3 Rue de l\'Ecole du Sambuc","postcode":"13200","citycode":"13004","x":838037.11,"y":6270940.5,"city":"Arles","context":"13, Bouches-du-Rhône, Provence-Alpes-Côte d\'Azur","type":"housenumber","importance":0.68477,"street":"Rue de l\'Ecole du Sambuc","_type":"address"}},{"type":"Feature","geometry":{"type":"Point","coordinates":[5.55226,43.39321]},"properties":{"label":"3 Place de l’Ecole 13124 Peypin","score":0.5162634265734265,"housenumber":"3","id":"13073_0100_00003","banId":"a4606c42-53db-4bd1-9cc1-bc0ee155d45d","name":"3 Place de l’Ecole","postcode":"13124","citycode":"13073","x":906850.69,"y":6258241.68,"city":"Peypin","context":"13, Bouches-du-Rhône, Provence-Alpes-Côte d\'Azur","type":"housenumber","importance":0.48659,"street":"Place de l’Ecole","_type":"address"}},{"type":"Feature","geometry":{"type":"Point","coordinates":[4.91921,43.839695]},"properties":{"label":"3 Place de l\'Ecole 13670 Verquières","score":0.5035934265734265,"housenumber":"3","id":"13116_0002_00003","banId":"2d7c42ca-381b-4673-a2cb-2822281e5b64","name":"3 Place de l\'Ecole","postcode":"13670","citycode":"13116","x":854350.27,"y":6306396.31,"city":"Verquières","context":"13, Bouches-du-Rhône, Provence-Alpes-Côte d\'Azur","type":"housenumber","importance":0.34722,"street":"Place de l\'Ecole","_type":"address"}}],"query":"3 rue de l\'école 13"}';
+
+async function startSignalementLocataire(page: Page) {
     await page.goto(`${process.env.BASE_URL ?? 'http://localhost:8080'}/signalement`);
-
-    page.on('requestfailed', request => {
-        console.log('Request failed:', request.url(), request.failure());
-    });
-
     await waitForVueAppToBeInteractive(page, 60000);
     await page.route('**/geocodage/search/**', route => {
         route.fulfill({
             status: 200,
             contentType: 'application/json',
-            body: '{"type":"FeatureCollection","features":[{"type":"Feature","geometry":{"type":"Point","coordinates":[5.446618,43.531033]},"properties":{"label":"3 Rue de l\'Ecole 13100 Aix-en-Provence","score":0.8801781818181817,"housenumber":"3","id":"13001_8566uu_00003","banId":"38c9dab8-0043-446c-99e3-a91bc63853c0","name":"3 Rue de l\'Ecole","postcode":"13100","citycode":"13001","x":897817.04,"y":6273282.5,"city":"Aix-en-Provence","context":"13, Bouches-du-Rhône, Provence-Alpes-Côte d\'Azur","type":"housenumber","importance":0.68196,"street":"Rue de l\'Ecole","_type":"address"}},{"type":"Feature","geometry":{"type":"Point","coordinates":[5.360444,43.278392]},"properties":{"label":"3 Rue de l\'ecole 13007 Marseille","score":0.8749827272727272,"housenumber":"3","id":"13207_2965_00003","banId":"c0a61d9c-8916-400e-9fba-9dd372db007e","name":"3 Rue de l\'ecole","postcode":"13007","citycode":"13207","x":891691.06,"y":6245000.42,"city":"Marseille","district":"Marseille 7e Arrondissement","context":"13, Bouches-du-Rhône, Provence-Alpes-Côte d\'Azur","type":"housenumber","importance":0.62481,"street":"Rue de l\'ecole","_type":"address"}},{"type":"Feature","geometry":{"type":"Point","coordinates":[5.460397,43.555482]},"properties":{"label":"3 Rue de l\'Ecole 13100 Aix-en-Provence","score":0.8746154545454545,"housenumber":"3","id":"13001_0870_00003","banId":"265bc206-94b6-466d-90f1-9bdbee5f2aff","name":"3 Rue de l\'Ecole","postcode":"13100","citycode":"13001","x":898846.1,"y":6276033.17,"city":"Aix-en-Provence","context":"13, Bouches-du-Rhône, Provence-Alpes-Côte d\'Azur","type":"housenumber","importance":0.62077,"street":"Rue de l\'Ecole","_type":"address"}},{"type":"Feature","geometry":{"type":"Point","coordinates":[-4.085699,48.610375]},"properties":{"label":"3 Rue de l\'Ecole 29440 Trézilidé","score":0.7122709090909091,"housenumber":"3","id":"29301_f885e7_00003","name":"3 Rue de l\'Ecole","postcode":"29440","citycode":"29301","x":178339.91,"y":6857885.55,"city":"Trézilidé","context":"29, Finistère, Bretagne","type":"housenumber","importance":0.33498,"street":"Rue de l\'Ecole","_type":"address"}},{"type":"Feature","geometry":{"type":"Point","coordinates":[5.631364,43.21392]},"properties":{"label":"Rue de l’Ecole 13600 Ceyreste","score":0.6632602597402597,"id":"13023_0068","banId":"e04adc10-538f-4e43-941d-99d576524e3e","name":"Rue de l’Ecole","postcode":"13600","citycode":"13023","x":913923.47,"y":6238532.5,"city":"Ceyreste","context":"13, Bouches-du-Rhône, Provence-Alpes-Côte d\'Azur","type":"street","importance":0.43872,"street":"Rue de l’Ecole","_type":"address"}},{"type":"Feature","geometry":{"type":"Point","coordinates":[6.031596,47.450296]},"properties":{"label":"Rue de l\'Ecole 70190 Trésilley","score":0.61964,"id":"70507_0005","banId":"cad2cbd1-02fe-43df-8551-4946e64a15e9","name":"Rue de l\'Ecole","postcode":"70190","citycode":"70507","x":928383.9,"y":6709933.74,"city":"Trésilley","context":"70, Haute-Saône, Bourgogne-Franche-Comté","type":"street","importance":0.31604,"street":"Rue de l\'Ecole","_type":"address"}},{"type":"Feature","geometry":{"type":"Point","coordinates":[5.054749,43.406128]},"properties":{"label":"3 Rue de l\'Ecole Vieille 13500 Martigues","score":0.5797109090909092,"housenumber":"3","id":"13056_0530_00003","name":"3 Rue de l\'Ecole Vieille","postcode":"13500","citycode":"13056","x":866502.21,"y":6258500.81,"city":"Martigues","context":"13, Bouches-du-Rhône, Provence-Alpes-Côte d\'Azur","type":"housenumber","importance":0.61682,"street":"Rue de l\'Ecole Vieille","_type":"address"}},{"type":"Feature","geometry":{"type":"Point","coordinates":[4.706909,43.524113]},"properties":{"label":"3 Rue de l\'Ecole du Sambuc 13200 Arles","score":0.547100303030303,"housenumber":"3","id":"13004_1259_00003","banId":"faa1b580-9504-4df4-b7f8-1e6f2476818d","name":"3 Rue de l\'Ecole du Sambuc","postcode":"13200","citycode":"13004","x":838037.11,"y":6270940.5,"city":"Arles","context":"13, Bouches-du-Rhône, Provence-Alpes-Côte d\'Azur","type":"housenumber","importance":0.68477,"street":"Rue de l\'Ecole du Sambuc","_type":"address"}},{"type":"Feature","geometry":{"type":"Point","coordinates":[5.55226,43.39321]},"properties":{"label":"3 Place de l’Ecole 13124 Peypin","score":0.5162634265734265,"housenumber":"3","id":"13073_0100_00003","banId":"a4606c42-53db-4bd1-9cc1-bc0ee155d45d","name":"3 Place de l’Ecole","postcode":"13124","citycode":"13073","x":906850.69,"y":6258241.68,"city":"Peypin","context":"13, Bouches-du-Rhône, Provence-Alpes-Côte d\'Azur","type":"housenumber","importance":0.48659,"street":"Place de l’Ecole","_type":"address"}},{"type":"Feature","geometry":{"type":"Point","coordinates":[4.91921,43.839695]},"properties":{"label":"3 Place de l\'Ecole 13670 Verquières","score":0.5035934265734265,"housenumber":"3","id":"13116_0002_00003","banId":"2d7c42ca-381b-4673-a2cb-2822281e5b64","name":"3 Place de l\'Ecole","postcode":"13670","citycode":"13116","x":854350.27,"y":6306396.31,"city":"Verquières","context":"13, Bouches-du-Rhône, Provence-Alpes-Côte d\'Azur","type":"housenumber","importance":0.34722,"street":"Place de l\'Ecole","_type":"address"}}],"query":"3 rue de l\'école 13"}',
+            body: geocodageResponse,
         })
     })
 
@@ -50,6 +42,19 @@ test('signalement form for locataire', async ({page}) => {
     await page.locator('#vos_coordonnees_occupant_tel').click();
     await page.locator('#vos_coordonnees_occupant_tel').fill('0607080906');
     await page.getByRole('button', { name: 'Suivant' }).click();
+}
+
+test('signalement form for locataire', async ({page}) => {
+    test.setTimeout(120000);
+    
+    // Nettoyer le contexte pour avoir une session propre
+    await page.context().clearCookies();
+    
+    page.on('requestfailed', request => {
+        console.log('Request failed:', request.url(), request.failure());
+    });
+
+    await startSignalementLocataire(page);
     await page.getByRole('textbox', { name: 'Nom de famille ou de l\'' }).fill('Imperial Asiatic Men');
     await page.getByRole('button', { name: 'Suivant' }).click();
     await page.getByText('Oui', { exact: true }).click();
@@ -131,4 +136,42 @@ test('signalement form for locataire', async ({page}) => {
     await page.getByRole('button', { name: 'Suivant' }).click();
     await page.getByRole('heading', { name: 'Validation du signalement' }).click();
     await page.getByRole('button', { name: 'Valider mon signalement' }).click();
+});
+
+test('signalement form escapes user values injected in HTML descriptions', async ({page}) => {
+    test.setTimeout(120000);
+
+    await page.context().clearCookies();
+
+    // Création d'un brouillon réel via le parcours usager (créé lors du contrôle de doublon)
+    const draftResponsePromise = page.waitForResponse(response =>
+        response.url().endsWith('/signalement-draft/check') && response.request().method() === 'POST'
+    );
+    await startSignalementLocataire(page);
+    const { uuid } = await (await draftResponsePromise).json();
+    expect(uuid).toBeTruthy();
+
+    // Brouillon falsifié : une valeur normalement issue d'un bouton radio contient du HTML
+    const xssPayload = '<img src="x" onerror="window.__xssExecuted = true">';
+    await page.route(`**/signalement-draft/${uuid}/informations`, async route => {
+        const response = await route.fetch();
+        const json = await response.json();
+        json.signalement.payload.currentStep = 'type_logement';
+        json.signalement.payload.type_logement_nature = 'appartement';
+        json.signalement.payload.adresse_logement_complement_adresse_etage = xssPayload;
+        await route.fulfill({ response, json });
+    });
+
+    await page.goto(`${process.env.BASE_URL ?? 'http://localhost:8080'}/signalement-draft/${uuid}`);
+    await waitForVueAppToBeInteractive(page, 60000);
+
+    const description = page.locator('#type_logement_description');
+    await expect(description).toContainText('Vous avez indiqué que le logement est un');
+
+    // Le HTML interne (JSON + dictionnaire) est conservé
+    await expect(description.locator('strong').first()).toHaveText('appartement');
+    // La valeur usager est affichée en texte, sans être interprétée
+    await expect(description.locator('strong').nth(1)).toHaveText(xssPayload);
+    await expect(description.locator('img')).toHaveCount(0);
+    expect(await page.evaluate(() => (window as any).__xssExecuted)).toBeUndefined();
 });

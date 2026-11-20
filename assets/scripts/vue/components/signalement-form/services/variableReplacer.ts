@@ -63,7 +63,7 @@ export const variablesReplacer = {
 
     if (isDictionary) {
       // Les traductions du dictionnaire sont internes (HTML autorisé),
-      // mais une valeur absente du dictionnaire est renvoyée telle quelle : elle vient de l'usager.
+      // mais une valeur absente du dictionnaire est renvoyée telle quelle
       if (escape && (typeof value !== 'string' || !Object.prototype.hasOwnProperty.call(dictionaryStore, value))) {
         return escapeHtml(String(value))
       }
