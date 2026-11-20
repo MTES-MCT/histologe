@@ -4,6 +4,7 @@ namespace App\Service\Import\Signalement;
 
 use App\Entity\Enum\MotifCloture;
 use App\Entity\Enum\SignalementStatus;
+use Symfony\Component\Uid\Uuid;
 
 class SignalementImportMapper
 {
@@ -19,6 +20,7 @@ class SignalementImportMapper
     private const STATUT_CSV_FERMETURE = 'fermeture';
 
     private const ANONYMIZE_FIELDS = [
+        'details',
         'numAllocataire',
         'nomOccupant',
         'prenomOccupant',
@@ -34,6 +36,7 @@ class SignalementImportMapper
         'structureDeclarant',
         'montantAllocation',
         'naissanceOccupants',
+        'conclusionVisite',
     ];
 
     /**
@@ -271,11 +274,13 @@ class SignalementImportMapper
                     default:
                 }
 
-                if ($anonymize && \in_array($fieldColumn, self::ANONYMIZE_FIELDS)) {
+                if ($anonymize && \in_array($fieldColumn, self::ANONYMIZE_FIELDS) && !empty($fieldValue)) {
                     if ('numAllocataire' === $fieldColumn || 'montantAllocation' === $fieldColumn) {
                         $fieldValue = 0;
+                    } elseif ('telOccupant' === $fieldColumn || 'telProprio' === $fieldColumn || 'telDeclarant' === $fieldColumn) {
+                        $fieldValue = '0600000000';
                     } else {
-                        $fieldValue = $fieldColumn.'_anonymized_'.uniqid();
+                        $fieldValue = $fieldColumn.'_anonymized_'.Uuid::v4()->toString();
                         if ('mailOccupant' === $fieldColumn || 'mailDeclarant' === $fieldColumn || 'mailProprio' === $fieldColumn) {
                             $fieldValue .= '@example.com';
                         }
