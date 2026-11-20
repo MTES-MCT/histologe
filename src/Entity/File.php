@@ -253,7 +253,7 @@ class File implements EntityHistoryInterface
      * @see templates/back/signalement/view/photos-documents.html.twig
      * @see templates/back/signalement_create/tabs/tab-situation.html.twig
      */
-    public function getDisplayFilename(): ?string
+    public function getDisplayFilename(): string
     {
         return basename($this->filename);
     }

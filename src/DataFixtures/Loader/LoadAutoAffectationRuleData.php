@@ -34,8 +34,12 @@ class LoadAutoAffectationRuleData extends Fixture implements OrderedFixtureInter
      */
     public function loadAutoAffectationRule(ObjectManager $manager, array $row): void
     {
+        $territory = $this->territoryRepository->findOneBy(['name' => $row['territory']]);
+        if (!$territory) {
+            throw new \UnexpectedValueException(sprintf('Territory not found for name "%s"', $row['territory']));
+        }
         $affectation = (new AutoAffectationRule())
-            ->setTerritory($this->territoryRepository->findOneBy(['name' => $row['territory']]))
+            ->setTerritory($territory)
             ->setStatus($row['status'])
             ->setProfileDeclarant($row['profile_declarant'])
             ->setPartnerType(PartnerType::from($row['partner_type']))

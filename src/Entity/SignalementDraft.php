@@ -210,7 +210,7 @@ class SignalementDraft
 
     public function getChecksum(): string
     {
-        return $this->checksum;
+        return $this->checksum ?? throw new \LogicException('Checksum is not set');
     }
 
     public function setChecksum(): static

@@ -83,6 +83,6 @@ class Partner
         $this->nom = $partner->getNom();
         $this->codeDepartement = $partner->getTerritory()?->getZip();
         $this->type = $partner->getType();
-        $this->competences = $partner->getCompetence() ?? [];
+        $this->competences = $partner->getCompetence();
     }
 }

@@ -151,12 +151,7 @@ class DesordreCritere
 
     public function removeDesordrePrecision(DesordrePrecision $desordrePrecision): self
     {
-        if ($this->desordrePrecisions->removeElement($desordrePrecision)) {
-            // set the owning side to null (unless already changed)
-            if ($desordrePrecision->getDesordreCritere() === $this) {
-                $desordrePrecision->setDesordreCritere(null);
-            }
-        }
+        $this->desordrePrecisions->removeElement($desordrePrecision);
 
         return $this;
     }

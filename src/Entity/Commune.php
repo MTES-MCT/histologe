@@ -47,11 +47,14 @@ class Commune implements EntityHistoryInterface
 
     public function getNom(bool $withArrondissement = false): string
     {
+        if (!$this->nom) {
+            throw new \LogicException('Commune nom is not set');
+        }
         if ($withArrondissement) {
             return $this->nom;
         }
 
-        return $this->nom ? ImportCommune::sanitizeCommuneWithArrondissement($this->nom) : null;
+        return ImportCommune::sanitizeCommuneWithArrondissement($this->nom);
     }
 
     public function setNom(?string $nom): self
@@ -87,6 +90,10 @@ class Commune implements EntityHistoryInterface
 
     public function getTerritory(): Territory
     {
+        if (!$this->territory) {
+            throw new \LogicException('Commune territory is not set');
+        }
+
         return $this->territory;
     }
 
