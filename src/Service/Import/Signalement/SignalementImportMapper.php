@@ -4,6 +4,7 @@ namespace App\Service\Import\Signalement;
 
 use App\Entity\Enum\MotifCloture;
 use App\Entity\Enum\SignalementStatus;
+use Symfony\Component\Uid\Uuid;
 
 class SignalementImportMapper
 {
@@ -17,6 +18,26 @@ class SignalementImportMapper
     private const STATUT_CSV_EN_COURS = 'en cours';
     private const STATUT_CSV_OUVERTURE = 'ouverture';
     private const STATUT_CSV_FERMETURE = 'fermeture';
+
+    private const ANONYMIZE_FIELDS = [
+        'details',
+        'numAllocataire',
+        'nomOccupant',
+        'prenomOccupant',
+        'telOccupant',
+        'mailOccupant',
+        'nomProprio',
+        'telProprio',
+        'mailProprio',
+        'nomDeclarant',
+        'prenomDeclarant',
+        'telDeclarant',
+        'mailDeclarant',
+        'structureDeclarant',
+        'montantAllocation',
+        'naissanceOccupants',
+        'conclusionVisite',
+    ];
 
     /**
      * @return array<string, string|int>
@@ -115,7 +136,7 @@ class SignalementImportMapper
      *
      * @return array<int|string, mixed>
      */
-    public function map(array $columns, array $data): array
+    public function map(array $columns, array $data, bool $anonymize = false): array
     {
         /** @var array<int|string, mixed> $dataMapped */
         $dataMapped = [];
@@ -251,6 +272,19 @@ class SignalementImportMapper
                         $fieldValue = mb_strimwidth($fieldValue, 0, 50);
                         break;
                     default:
+                }
+
+                if ($anonymize && \in_array($fieldColumn, self::ANONYMIZE_FIELDS) && !empty($fieldValue)) {
+                    if ('numAllocataire' === $fieldColumn || 'montantAllocation' === $fieldColumn) {
+                        $fieldValue = 0;
+                    } elseif ('telOccupant' === $fieldColumn || 'telProprio' === $fieldColumn || 'telDeclarant' === $fieldColumn) {
+                        $fieldValue = '0600000000';
+                    } else {
+                        $fieldValue = $fieldColumn.'_anonymized_'.Uuid::v4()->toString();
+                        if ('mailOccupant' === $fieldColumn || 'mailDeclarant' === $fieldColumn || 'mailProprio' === $fieldColumn) {
+                            $fieldValue .= '@example.com';
+                        }
+                    }
                 }
 
                 if (str_contains($fileColumn, 'Signalement - ')) {
