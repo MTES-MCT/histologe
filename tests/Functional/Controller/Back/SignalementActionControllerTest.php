@@ -4,9 +4,14 @@ namespace App\Tests\Functional\Controller\Back;
 
 use App\Entity\Affectation;
 use App\Entity\Enum\AffectationStatus;
+use App\Entity\Enum\MotifClotureUsager;
+use App\Entity\Enum\ProcedureCategory;
 use App\Entity\Enum\ProcedureType;
+use App\Entity\Enum\SignalementStatus;
 use App\Entity\Enum\SuiviCategory;
+use App\Entity\Enum\TravauxMiseEnConformite;
 use App\Entity\File;
+use App\Entity\SignalementProcedure;
 use App\Entity\Suivi;
 use App\Entity\UserSignalementSubscription;
 use App\Repository\SignalementRepository;
@@ -866,5 +871,48 @@ class SignalementActionControllerTest extends WebTestCase
         ]);
 
         $this->assertResponseStatusCodeSame(Response::HTTP_FORBIDDEN);
+    }
+
+    public function testReopenAllSignalementClosedResetsClotureValues(): void
+    {
+        $signalement = $this->signalementRepository->findOneBy(['reference' => '2023-1']);
+        $this->assertSame(SignalementStatus::CLOSED, $signalement->getStatut());
+
+        $signalement
+            ->setComCloture('Commentaire de clôture')
+            ->setDepartOccupantAt(new \DateTimeImmutable('-1 month'))
+            ->setMotifClotureUsager(MotifClotureUsager::TRAVAUX_FAITS_OU_EN_COURS)
+            ->setTravauxMiseEnConformiteUsager(TravauxMiseEnConformite::NON);
+        foreach ([ProcedureCategory::PROCEDURE_RETENUE, ProcedureCategory::PROCEDURE_ENGAGEE] as $procedureCategory) {
+            $signalementProcedure = (new SignalementProcedure())
+                ->setProcedureType(ProcedureType::RSD)
+                ->setProcedureCategory($procedureCategory);
+            $signalement->addSignalementProcedure($signalementProcedure);
+            $this->entityManager->persist($signalementProcedure);
+        }
+        $this->entityManager->flush();
+
+        $route = $this->router->generate('back_signalement_reopen', ['uuid' => $signalement->getUuid()]);
+        $this->client->request('GET', $route, [
+            'signalement-action' => ['reopenAll' => '1'],
+            'publicSuivi' => '0',
+            '_token' => $this->generateCsrfToken($this->client, 'signalement_reopen_'.$signalement->getId()),
+        ]);
+
+        $this->assertResponseRedirects($this->router->generate('back_signalement_view', ['uuid' => $signalement->getUuid()]));
+
+        $this->entityManager->clear();
+        $signalement = $this->signalementRepository->find($signalement->getId());
+        $this->assertSame(SignalementStatus::ACTIVE, $signalement->getStatut());
+        $this->assertNull($signalement->getClosedAt());
+        $this->assertNull($signalement->getClosedBy());
+        $this->assertNull($signalement->getMotifCloture());
+        $this->assertNull($signalement->getComCloture());
+        $this->assertNull($signalement->getTravauxMiseEnConformite());
+        $this->assertNull($signalement->getDepartOccupantAt());
+        $this->assertNull($signalement->getMotifClotureUsager());
+        $this->assertNull($signalement->getTravauxMiseEnConformiteUsager());
+        $this->assertCount(0, $signalement->getSignalementProcedures(ProcedureCategory::PROCEDURE_RETENUE));
+        $this->assertCount(1, $signalement->getSignalementProcedures(ProcedureCategory::PROCEDURE_ENGAGEE));
     }
 }

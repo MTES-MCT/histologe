@@ -22,16 +22,22 @@ class MotifClotureStatisticsQuery
     {
         $qb = $this->entityManager->createQueryBuilder()
             ->from(Signalement::class, 's')
-            ->innerJoin('s.address', 'address')
             ->select('COUNT(s.id)')
             ->where('s.statut = :statut')
             ->setParameter('statut', SignalementStatus::CLOSED)
             ->andWhere('s.closedAt IS NOT NULL')
             ->andWhere('s.isImported IS NULL OR s.isImported = 0')
+            // Soit motif v1 (donc pas de travaux mise en conformité, car il n'y avait pas la question à ce moment-là)
+            // Soit motif v2 (donc il faut que travaux mise en conformité soit OUI ou EN_COURS, et que travaux mise en conformité usager soit différent de NON)
             ->andWhere('
                 (s.motifCloture IN (:motifsClotureV1) AND s.travauxMiseEnConformite IS NULL) 
                 OR 
-                (s.motifCloture IN (:motifsClotureV2) AND s.travauxMiseEnConformite IN (:miseEnConformite))')
+                (
+                    s.motifCloture IN (:motifsClotureV2)
+                    AND s.travauxMiseEnConformite IN (:miseEnConformite))
+                    AND (s.travauxMiseEnConformiteUsager IS NULL OR s.travauxMiseEnConformiteUsager != :travauxMiseEnConformiteUsagerNon)
+            ')
+            // Les motifs v1 sont assez larges car mal utilisés à la base (notamment pour insalubrité, RSD ou péril)
             ->setParameter('motifsClotureV1', [
                 MotifCloture::TRAVAUX_FAITS_OU_EN_COURS,
                 MotifCloture::RELOGEMENT_OCCUPANT,
@@ -41,6 +47,7 @@ class MotifClotureStatisticsQuery
             ])
             ->setParameter('motifsClotureV2', MotifCloture::getListNeedTravauxPrecisions())
             ->setParameter('miseEnConformite', [TravauxMiseEnConformite::OUI, TravauxMiseEnConformite::EN_COURS])
+            ->setParameter('travauxMiseEnConformiteUsagerNon', TravauxMiseEnConformite::NON)
         ;
 
         return (int) $qb->getQuery()->getSingleScalarResult();
