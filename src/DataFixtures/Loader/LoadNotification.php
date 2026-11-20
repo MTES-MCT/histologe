@@ -42,6 +42,9 @@ class LoadNotification extends Fixture implements OrderedFixtureInterface
     private function loadNotification(ObjectManager $manager, array $row): void
     {
         $user = $this->userRepository->findOneBy(['email' => $row['user']]);
+        if (!$user) {
+            throw new \UnexpectedValueException(sprintf('User not found for email "%s"', $row['user']));
+        }
         $type = NotificationType::from($row['type']);
         $signalement = $this->signalementRepository->findOneBy(['reference' => $row['signalement']]);
         $suivi = null;

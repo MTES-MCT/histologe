@@ -32,13 +32,17 @@ class LoadDesordreCritereData extends Fixture implements OrderedFixtureInterface
      */
     private function loadSituations(ObjectManager $manager, array $row): void
     {
+        $desordreCategorie = $this->desordreCategorieRepository->findOneBy(['label' => $row['desordre_categorie_label']]);
+        if (!$desordreCategorie) {
+            throw new \UnexpectedValueException(sprintf('DesordreCategorie not found for label "%s"', $row['desordre_categorie_label']));
+        }
         $desordreCritere = (new DesordreCritere())
             ->setSlugCategorie($row['slug_categorie'])
             ->setLabelCategorie($row['label_categorie'])
             ->setZoneCategorie(DesordreCritereZone::from($row['zone_categorie']))
             ->setSlugCritere($row['slug_critere'])
             ->setLabelCritere($row['label_critere'])
-            ->setDesordreCategorie($this->desordreCategorieRepository->findOneBy(['label' => $row['desordre_categorie_label']]));
+            ->setDesordreCategorie($desordreCategorie);
         if (isset($row['config_precision_libre_type'])) {
             $desordreCritere->setConfigPrecisionLibreType($row['config_precision_libre_type']);
         }

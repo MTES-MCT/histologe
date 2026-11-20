@@ -38,7 +38,7 @@ class LoadAutoAffectationRuleData extends Fixture implements OrderedFixtureInter
             ->setTerritory($this->territoryRepository->findOneBy(['name' => $row['territory']]))
             ->setStatus($row['status'])
             ->setProfileDeclarant($row['profile_declarant'])
-            ->setPartnerType(PartnerType::tryFrom($row['partner_type']))
+            ->setPartnerType(PartnerType::from($row['partner_type']))
             ->setInseeToInclude($row['insee_to_include'])
             ->setInseeToExclude($row['insee_to_exclude'])
             ->setPartnerToExclude($row['partner_to_exclude'] ?? [])
@@ -54,10 +54,10 @@ class LoadAutoAffectationRuleData extends Fixture implements OrderedFixtureInter
             $proceduresSuspectees = [];
             if (\is_array($row['procedures_suspectees'])) {
                 foreach ($row['procedures_suspectees'] as $procedureSuspectee) {
-                    $proceduresSuspectees[] = Qualification::tryFrom($procedureSuspectee);
+                    $proceduresSuspectees[] = Qualification::from($procedureSuspectee);
                 }
             } else {
-                $proceduresSuspectees[] = Qualification::tryFrom($row['procedures_suspectees']);
+                $proceduresSuspectees[] = Qualification::from($row['procedures_suspectees']);
             }
             $affectation->setProceduresSuspectees($proceduresSuspectees);
         }
@@ -76,7 +76,14 @@ class LoadAutoAffectationRuleData extends Fixture implements OrderedFixtureInter
             return null;
         }
 
-        return array_map(fn (string $name): string => (string) $this->zoneRepository->findOneBy(['name' => $name])->getId(), $zoneNames);
+        return array_map(function (string $name): string {
+            $zone = $this->zoneRepository->findOneBy(['name' => $name]);
+            if (null === $zone) {
+                throw new \UnexpectedValueException(sprintf('Zone not found for name "%s"', $name));
+            }
+
+            return (string) $zone->getId();
+        }, $zoneNames);
     }
 
     public function getOrder(): int

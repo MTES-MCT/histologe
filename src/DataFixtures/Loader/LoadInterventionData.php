@@ -48,6 +48,9 @@ class LoadInterventionData extends Fixture implements OrderedFixtureInterface
     private function loadInterventions(ObjectManager $manager, array $row): void
     {
         $signalement = $this->signalementRepository->findOneBy(['reference' => $row['signalement']]);
+        if (!$signalement) {
+            throw new \UnexpectedValueException(sprintf('Signalement not found for reference "%s"', $row['signalement']));
+        }
         $intervention = (new Intervention())
             ->setSignalement($signalement)
             ->setScheduledAt($this->getScheduledAt($row))
@@ -69,13 +72,16 @@ class LoadInterventionData extends Fixture implements OrderedFixtureInterface
         if (isset($row['conclude_procedure'])) {
             $concludeProcedures = [];
             foreach ($row['conclude_procedure'] as $concludeProcedure) {
-                $concludeProcedures[] = ProcedureType::tryFrom($concludeProcedure);
+                $concludeProcedures[] = ProcedureType::from($concludeProcedure);
             }
             $intervention->setConcludeProcedure($concludeProcedures);
             $this->signalementQualificationUpdater->updateQualificationFromVisiteProcedureList($signalement, $concludeProcedures);
         }
         if (isset($row['user']) && isset($row['documents'])) {
             $user = $this->userRepository->findOneBy(['email' => $row['user']]);
+            if (!$user) {
+                throw new \UnexpectedValueException(sprintf('User not found for email "%s"', $row['user']));
+            }
             foreach ($row['documents'] as $document) {
                 $file = $this->fileFactory->createInstanceFrom(
                     filename: $document,

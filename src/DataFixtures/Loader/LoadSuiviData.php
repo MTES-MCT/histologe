@@ -33,10 +33,15 @@ class LoadSuiviData extends Fixture implements OrderedFixtureInterface
     {
         $signalements = $this->signalementRepository->findBy(['statut' => [SignalementStatus::ACTIVE->value, SignalementStatus::CLOSED->value]]);
         $admin = $this->userRepository->findOneBy(['email' => $this->parameterBag->get('user_system_email')]);
+        if (!$admin) {
+            throw new \UnexpectedValueException(sprintf('Admin user with email %s not found', $this->parameterBag->get('user_system_email')));
+        }
 
         $second = 1;
         foreach ($signalements as $signalement) {
-            $rt = $this->userRepository->findActiveTerritoryAdmins($signalement->getAddress()->getTerritory()->getId());
+            /** @var int $territoryId */
+            $territoryId = $signalement->getAddress()->getTerritory()->getId();
+            $rt = $this->userRepository->findActiveTerritoryAdmins($territoryId);
             $user = $rt ? $rt[0] : $admin;
             $suivi = $this->suiviManager->createSuivi(
                 signalement: $signalement,
@@ -69,6 +74,9 @@ class LoadSuiviData extends Fixture implements OrderedFixtureInterface
         $signalement = $this->signalementRepository->findOneBy(['reference' => $row['signalement']]);
         if (!$signalement) {
             $signalement = $this->signalementRepository->findOneBy(['uuid' => $row['signalement']]);
+            if (!$signalement) {
+                throw new \UnexpectedValueException(sprintf('Signalement with reference or UUID %s not found', $row['signalement']));
+            }
         }
         $createdBy = isset($row['created_by']) ? $this->userRepository->findOneBy(['email' => $row['created_by']]) : null;
         // si le suivi est créé par un utilisateur API, on récupère le partenaire de l'affectation du signalement
@@ -84,12 +92,12 @@ class LoadSuiviData extends Fixture implements OrderedFixtureInterface
         if (isset($row['created_at'])) {
             $createdAt = new \DateTimeImmutable($row['created_at']);
         } elseif (SuiviCategory::MESSAGE_USAGER_POST_CLOTURE->value === $row['category']) {
+            if (null === $signalement->getClosedAt()) {
+                throw new \UnexpectedValueException(sprintf('Signalement with reference %s has no closed date', $row['signalement']));
+            }
             $createdAt = $signalement->getClosedAt()->modify('+3 days');
         }
-        $category = null;
-        if (isset($row['category'])) {
-            $category = SuiviCategory::from($row['category']);
-        }
+        $category = SuiviCategory::from($row['category']);
 
         $suivi = $this->suiviManager->createSuivi(
             signalement: $signalement,
