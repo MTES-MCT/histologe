@@ -1,7 +1,7 @@
 <template>
   <div :class="[ customCss, { 'signalement-form-subscreen-error': hasError && error } ]" :id="id">
     <h3 v-if="!shouldAddFieldset && label">{{ variablesReplacer.replace(label) }}</h3>
-    <div v-if="!shouldAddFieldset && description" v-html="variablesReplacer.replace(description)"></div>
+    <div v-if="!shouldAddFieldset && description" v-html="variablesReplacer.replaceHtml(description)"></div>
     <component
       v-if="components != undefined"
       :is="shouldAddFieldset ? 'fieldset' : 'div'"
@@ -10,7 +10,7 @@
       >
       <legend v-if="shouldAddFieldset && label && isLegendHeading"><h3>{{ variablesReplacer.replace(label) }}</h3></legend>
       <legend v-else-if="shouldAddFieldset && label" class="fr-fieldset__legend fr-fieldset__legend--bold fr-my-3v">{{ variablesReplacer.replace(label) }}</legend>
-      <div v-if="shouldAddFieldset && description" v-html="variablesReplacer.replace(description)" class="form-subscreen-description"></div>
+      <div v-if="shouldAddFieldset && description" v-html="variablesReplacer.replaceHtml(description)" class="form-subscreen-description"></div>
       <component
         v-for="component in components.body"
         :is="component.type"
