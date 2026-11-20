@@ -1,0 +1,83 @@
+{% extends 'emails/base_email.html.twig' %}
+
+{% block body %}
+	<p style="text-align: center;"><strong>Information importante relative à la sécurité des données partagées sur la plateforme</strong></p>
+
+	<p>Bonjour {{ prenom_declarant }} {{ nom_declarant }},</p>
+
+	<p>
+		Nous vous contactons aujourd'hui au titre de votre <strong>rôle de Tiers Déclarant sur un ou plusieurs dossiers déposés sur Signal Logement.</strong>
+	</p>
+
+	<p>
+		Dans tout ou partie des dossiers que vous avez déposés, les informations de contacts de l'occupant n'étant pas renseignées, nous n'avons pas pu les informer que des données les concernant ont été exposées lors de l'attaque informatique du 25 août dernier.
+	</p>
+
+	<p>
+		Nous vous demandons donc de bien vouloir prendre contact avec les personnes concernées afin de les informer. Vous trouverez la liste des dossiers et personnes concernées ci-après :
+	</p>
+
+	<ul>
+		{% for signalement in signalements %}
+			<li>
+				<strong>Signalement n°{{ signalement.reference }}</strong><br>
+				Logement : {{ signalement.adresse }}, {{ signalement.cp }} {{ signalement.ville|upper }}<br>
+				Occupant : {{ signalement.prenom_occupant }} {{ signalement.nom_occupant }}<br>
+				<a href="{{ signalement.lien }}" target="_blank" rel="noopener">
+					{{ is_agent ? 'Voir la fiche du signalement' : 'Accéder à la page de suivi' }}
+				</a>
+			</li>
+		{% endfor %}
+	</ul>
+
+	<hr>
+
+	<p style="text-align: center;"><strong>Informations concernant l'exposition de vos données</strong></p>
+
+	<p>
+		<strong>Les données concernant l’objet de votre dossier sur Signal Logement (désordres, photos, documents, description des problèmes, etc.) ainsi que vos échanges avec l’administration <u>n’ont pas été divulgués</u>. Vous pouvez donc continuer à accéder et à suivre votre dossier en toute sécurité.</strong>
+	</p>
+
+	<p>Cependant, la date de dépôt et la référence de votre dossier <u>ont été exposées</u>, de même que <strong>certaines de vos données personnelles</strong> :</p>
+
+	<ul>
+		<li>votre nom de famille,</li>
+		<li>votre prénom,</li>
+		<li>votre adresse e-mail,</li>
+		<li>votre numéro de téléphone,</li>
+		<li>l'adresse postale du logement.</li>
+	</ul>
+
+	<p>
+		<strong>Si vous les avez renseignées dans votre dossier</strong>, certaines informations concernant <strong>votre situation</strong> (<em>votre caisse d’allocation familiale, votre numéro d’allocataire, le montant de votre allocation, la superficie de votre logement, le montant du loyer, le nombre de personnes vivant dans le logement</em>) et <strong>le bailleur du logement ou agence locative</strong> (<em>nom ou raison sociale, e-mail et téléphone</em>) ont <u>également été exposées</u>.
+	</p>
+
+	<hr>
+
+	<p style="text-align: center;"><strong>Recommandations de sécurité</strong></p>
+
+	<p>Il est possible que les données exposées soient utilisées à des fins frauduleuses. Aussi, nous vous recommandons de :</p>
+
+	<ul>
+		<li>Vous méfier des messages urgents ou suspects, particulièrement ceux vous demandant un paiement : <strong>Signal Logement ne vous demandera jamais de payer pour un service</strong>.</li>
+		<li>Ne pas communiquer d’informations sensibles : <strong>Signal Logement ne vous demandera jamais d’identifiants ou de coordonnées bancaires</strong>, ni par téléphone, ni par e-mail.</li>
+		<li>Vérifier les adresses e-mails des expéditeurs des e-mails que vous recevez. Seule une adresse en .<u>gouv.fr garantit complètement qu'une</u> sollicitation provient d'un service de l’État.</li>
+		<li>Passer par votre espace de suivi sur Signal Logement pour adresser à l’administration les demandes concernant votre dossier.</li>
+		<li>Suivre les recommandations de <a href="https://www.cnil.fr/fr/se-proteger-sur-internet-avec-les-cyber-reflexes" target="_blank" rel="noopener">la CNIL</a> et de <a href="https://cybermalveillance.gouv.fr" target="_blank" rel="noopener">cybermalveillance.gouv.fr</a> concernant votre sécurité en ligne.</li>
+		<li>Signaler toute tentative d’arnaque sur internet sur <a href="https://www.service-public.gouv.fr/particuliers/vosdroits/N31138" target="_blank" rel="noopener">les plateformes dédiées</a>.</li>
+	</ul>
+
+	<p>
+		Conformément à l'article 34.2 du RGPD, le délégué à la protection des données des ministères de la transition écologique, de l'aménagement du territoire, des transports, de la ville et du logement peut être contacté à l’adresse suivante : <a href="mailto:dpd.daj.sg@developpement-durable.gouv.fr">dpd.daj.sg@developpement-durable.gouv.fr</a>
+	</p>
+
+	<p>
+		Nous restons également à votre disposition via le support de Signal Logement : <a href="https://signal-logement.beta.gouv.fr/une-question/contact" target="_blank" rel="noopener">https://signal-logement.beta.gouv.fr/une-question/contact</a>
+	</p>
+
+	<p style="padding: 8px 6px; text-align: center; background-color: #ececfe;">
+		<strong>L'équipe Signal Logement reste pleinement mobilisée suite à cet incident et travaille activement avec les équipes ministérielles de cyberdéfense pour limiter son impact. Nous vous prions de bien vouloir accepter nos excuses pour cet incident de sécurité.</strong>
+	</p>
+
+	<p style="text-align: right;">La direction générale de l’aménagement, du logement et de la nature</p>
+{% endblock %}
