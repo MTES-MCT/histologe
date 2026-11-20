@@ -128,6 +128,7 @@ class ExportIterableQuery
      */
     private function fetchMainData(array $signalementIds, array $selectedColumns): array
     {
+        $hasAddressColumn = false;
         $columns = SignalementExportSelectableColumns::getColumns();
         $specificSelectKeys = array_keys(array_filter($columns, static fn ($col) => isset($col['specificSelect'])));
 
@@ -146,7 +147,14 @@ class ExportIterableQuery
             $export = $columns[$column]['export'];
             if (str_starts_with($export, 's.') || str_starts_with($export, 'address.')) {
                 $qb->addSelect($export);
+                if (str_starts_with($export, 'address.')) {
+                    $hasAddressColumn = true;
+                }
             }
+        }
+
+        if ($hasAddressColumn) {
+            $qb->addGroupBy('address.id');
         }
 
         if (\in_array('STATUT', $selectedColumns, true)) {

@@ -94,7 +94,21 @@ class PartnerRepository extends ServiceEntityRepository
         }
 
         if ($searchPartner->getIsNotNotifiable()) {
-            $queryBuilder->andHaving('isNotifiable = 0');
+            $queryBuilder->andWhere(
+                '(CASE
+                    WHEN (p.email IS NOT NULL AND p.email != \'\' AND p.emailNotifiable = 1) THEN 1
+                    WHEN EXISTS (
+                        SELECT 1
+                        FROM '.UserPartner::class.' upNotif
+                        JOIN upNotif.user uNotif
+                        WHERE upNotif.partner = p
+                        AND uNotif.email IS NOT NULL
+                        AND uNotif.statut LIKE \''.UserStatus::ACTIVE->value.'\'
+                        AND uNotif.isMailingActive = 1
+                    ) THEN 1
+                    ELSE 0
+                END) = 0'
+            );
         }
 
         if ($searchPartner->getIsOnlyInterconnected()) {
@@ -214,11 +228,10 @@ class PartnerRepository extends ServiceEntityRepository
     public function findPartnersWithQualificationAffectedOnSignalement(Qualification $qualification, Signalement $signalement): array
     {
         $qb = $this->createQueryBuilder('p');
-        $qb->select('DISTINCT p');
         $qb->innerJoin('p.affectations', 'a', 'WITH', 'a.signalement = :signalement')
             ->setParameter('signalement', $signalement);
-        $qb->andWhere('REGEXP(p.competence, :regexp) = true')
-            ->setParameter('regexp', '(^'.$qualification->name.',)|(,'.$qualification->name.',)|(,'.$qualification->name.'$)|(^'.$qualification->name.'$)');
+        $qb->andWhere("CONCAT(',', p.competence, ',') LIKE :competence")
+            ->setParameter('competence', '%,'.$qualification->name.',%');
 
         return $qb->getQuery()->getResult();
     }

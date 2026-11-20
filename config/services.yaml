@@ -64,6 +64,7 @@ services:
         resource: '../src/'
         exclude:
             - '../src/DependencyInjection/'
+            - '../src/Doctrine/Dql/'
             - '../src/Entity/'
             - '../src/Kernel.php'
             - '../src/Tests/'

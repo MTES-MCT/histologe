@@ -110,14 +110,14 @@ desordre_critere:
     label_categorie: "Présence de nuisibles"
     zone_categorie: "BATIMENT"
     slug_critere: "desordres_batiment_nuisibles_rongeurs"
-    label_critere: "Il y a des rongeurs (rats, souris...) "
+    label_critere: "Il y a des rongeurs (rats, souris...)"
   -
     desordre_categorie_label: "Usage / entretien" 
     slug_categorie: "desordres_batiment_nuisibles"
     label_categorie: "Présence de nuisibles"
     zone_categorie: "BATIMENT"
     slug_critere: "desordres_batiment_nuisibles_punaises"
-    label_critere: "Il y a des punaises de lit "
+    label_critere: "Il y a des punaises de lit"
   -
     desordre_categorie_label: "Usage / entretien" 
     slug_categorie: "desordres_batiment_nuisibles"
@@ -147,7 +147,7 @@ desordre_critere:
     label_categorie: "Sécurité, risque de chute"
     zone_categorie: "BATIMENT"
     slug_critere: "desordres_batiment_securite_toit"
-    label_critere: "Le plafond ou le toit risque de s'effondrer et il a de très grosses fissures "
+    label_critere: "Le plafond ou le toit risque de s'effondrer et il a de très grosses fissures"
   -
     desordre_categorie_label: "Structure du bâti" 
     slug_categorie: "desordres_batiment_securite"
@@ -448,14 +448,14 @@ desordre_critere:
     label_categorie: "Présence de nuisibles"
     zone_categorie: "LOGEMENT"
     slug_critere: "desordres_logement_nuisibles_rongeurs"
-    label_critere: "Il y a des rongeurs (rats, souris...) "
+    label_critere: "Il y a des rongeurs (rats, souris...)"
   -
     desordre_categorie_label: "Propreté / entretien" 
     slug_categorie: "desordres_logement_nuisibles"
     label_categorie: "Présence de nuisibles"
     zone_categorie: "LOGEMENT"
     slug_critere: "desordres_logement_nuisibles_punaises"
-    label_critere: "Il y a des punaises de lit "
+    label_critere: "Il y a des punaises de lit"
   -
     desordre_categorie_label: "Propreté / entretien" 
     slug_categorie: "desordres_logement_nuisibles"
