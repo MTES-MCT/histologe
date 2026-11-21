@@ -197,11 +197,12 @@ class SecurityController extends AbstractController
         string $code,
         SignalementRepository $signalementRepository,
     ): Response {
+        /** @var Signalement $signalement */
         $signalement = $signalementRepository->findOneByCodeForPublic($code);
+        $this->denyAccessUnlessGranted(SignalementFoVoter::SIGN_USAGER_VIEW, $signalement);
         if (str_contains($filename, '-signalement-') || !str_contains($filename, $signalement->getUuid())) {
             throw $this->createAccessDeniedException();
         }
-        $this->denyAccessUnlessGranted(SignalementFoVoter::SIGN_USAGER_VIEW, $signalement);
 
         try {
             $file = $imageVariantProvider->getFileVariant($filename);

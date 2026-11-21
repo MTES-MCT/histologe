@@ -521,7 +521,7 @@ class User implements UserInterface, EntityHistoryInterface, PasswordAuthenticat
         $territories = [];
         foreach ($this->userPartners as $userPartner) {
             $territory = $userPartner->getPartner()->getTerritory();
-            if ($forceLoadObject) {
+            if ($territory && $forceLoadObject) {
                 $territory->getZip();
             }
             if ($territory) {

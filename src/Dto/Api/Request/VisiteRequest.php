@@ -116,6 +116,10 @@ class VisiteRequest implements RequestInterface, RequestFileInterface
     #[Ignore]
     public function getScheduledAt(): \DateTimeImmutable
     {
+        if (null === $this->date) {
+            throw new \LogicException('VisiteRequest date is not set');
+        }
+
         return new \DateTimeImmutable($this->date);
     }
 
@@ -137,6 +141,9 @@ class VisiteRequest implements RequestInterface, RequestFileInterface
         self $object,
         ExecutionContextInterface $context,
     ): void {
+        if (null === $object->date) {
+            throw new \LogicException('VisiteRequest date is not set');
+        }
         $dateTime = \DateTimeImmutable::createFromFormat('Y-m-d', $object->date);
         $today = new \DateTimeImmutable('today');
 

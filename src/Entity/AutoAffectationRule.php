@@ -29,9 +29,9 @@ class AutoAffectationRule implements EntityHistoryInterface
     private ?int $id = null;
 
     #[ORM\ManyToOne(targetEntity: Territory::class, inversedBy: 'autoAffectationRules')]
-    #[ORM\JoinColumn()]
+    #[ORM\JoinColumn(nullable: false)]
     #[Assert\NotBlank(message: 'Merci de choisir un territoire.')]
-    private ?Territory $territory;
+    private Territory $territory;
 
     #[ORM\Column(type: 'string', options: ['comment' => 'Value possible ACTIVE or ARCHIVED'])]
     #[Assert\NotBlank(message: 'Merci de choisir un statut.')]
@@ -126,12 +126,12 @@ class AutoAffectationRule implements EntityHistoryInterface
         return $this;
     }
 
-    public function getTerritory(): ?Territory
+    public function getTerritory(): Territory
     {
         return $this->territory;
     }
 
-    public function setTerritory(?Territory $territory): self
+    public function setTerritory(Territory $territory): self
     {
         $this->territory = $territory;
 
@@ -302,9 +302,9 @@ class AutoAffectationRule implements EntityHistoryInterface
     }
 
     /** @return list<Qualification> */
-    public function getProceduresSuspectees(): ?array
+    public function getProceduresSuspectees(): array
     {
-        return $this->proceduresSuspectees;
+        return $this->proceduresSuspectees ?? [];
     }
 
     /** @param list<Qualification> $proceduresSuspectees */

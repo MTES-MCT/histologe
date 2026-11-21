@@ -98,13 +98,21 @@ class LoadUserData extends Fixture implements OrderedFixtureInterface
 
         if (isset($row['partners'])) {
             foreach ($row['partners'] as $partner) {
+                $partner = $this->partnerRepository->findOneBy(['nom' => $partner]);
+                if (!$partner) {
+                    throw new \UnexpectedValueException(sprintf('Partner with name %s not found', $partner));
+                }
                 $userPartner = new UserPartner();
-                $userPartner->setUser($user)->setPartner($this->partnerRepository->findOneBy(['nom' => $partner]));
+                $userPartner->setUser($user)->setPartner($partner);
                 $manager->persist($userPartner);
             }
         } elseif (isset($row['partner'])) {
+            $partner = $this->partnerRepository->findOneBy(['nom' => $row['partner']]);
+            if (!$partner) {
+                throw new \UnexpectedValueException(sprintf('Partner with name %s not found', $row['partner']));
+            }
             $userPartner = new UserPartner();
-            $userPartner->setUser($user)->setPartner($this->partnerRepository->findOneBy(['nom' => $row['partner']]));
+            $userPartner->setUser($user)->setPartner($partner);
             $manager->persist($userPartner);
         }
 
@@ -177,6 +185,9 @@ class LoadUserData extends Fixture implements OrderedFixtureInterface
         $manager->persist($user);
 
         $partner = $this->partnerRepository->findOneBy(['nom' => Partner::DEFAULT_PARTNER]);
+        if (!$partner) {
+            throw new \UnexpectedValueException(sprintf('Partner with name %s not found', Partner::DEFAULT_PARTNER));
+        }
         $userPartner = new UserPartner();
         $userPartner->setUser($user)->setPartner($partner);
         $manager->persist($userPartner);

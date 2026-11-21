@@ -65,7 +65,7 @@ class Desordre
                         $this->libelle = $desordrePrecision->getDesordreCritere()->getLabelCritere();
                         if ($desordrePrecision->getDesordreCritere()->getDesordrePrecisions()->count() > 1) {
                             $this->identifiant = $desordrePrecision->getDesordreCritere()->getSlugCritere();
-                            $labelCleaned = strip_tags(str_replace('<br>', ' - ', $desordrePrecision->getLabel()));
+                            $labelCleaned = strip_tags(str_replace('<br>', ' - ', (string) $desordrePrecision->getLabel()));
                             $this->precisions[$desordrePrecisionSlug] = $labelCleaned;
                             if (!empty($precisionsLibres[$desordrePrecisionSlug])) {
                                 $this->precisionsLibres[] = [

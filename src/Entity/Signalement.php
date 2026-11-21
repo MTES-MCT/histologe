@@ -948,7 +948,7 @@ class Signalement implements EntityHistoryInterface, EntityHistoryCollectionInte
         return $this->telProprio;
     }
 
-    public function getTelProprioDecoded(?bool $national = false): ?string
+    public function getTelProprioDecoded(bool $national = false): ?string
     {
         return Phone::format($this->telProprio, $national);
     }
@@ -1059,7 +1059,7 @@ class Signalement implements EntityHistoryInterface, EntityHistoryCollectionInte
         return $this->telDeclarant;
     }
 
-    public function getTelDeclarantDecoded(?bool $national = false): ?string
+    public function getTelDeclarantDecoded(bool $national = false): ?string
     {
         return Phone::format($this->telDeclarant, $national);
     }
@@ -1149,7 +1149,7 @@ class Signalement implements EntityHistoryInterface, EntityHistoryCollectionInte
         return $this->telOccupant;
     }
 
-    public function getTelOccupantDecoded(?bool $national = false, ?bool $nationalIfFrench = false): ?string
+    public function getTelOccupantDecoded(bool $national = false, bool $nationalIfFrench = false): ?string
     {
         return Phone::format($this->telOccupant, $national, $nationalIfFrench);
     }
@@ -1284,7 +1284,7 @@ class Signalement implements EntityHistoryInterface, EntityHistoryCollectionInte
         return $this->telAgence;
     }
 
-    public function getTelAgenceDecoded(?bool $national = false): ?string
+    public function getTelAgenceDecoded(bool $national = false): ?string
     {
         return Phone::format($this->telAgence, $national);
     }
@@ -1301,7 +1301,7 @@ class Signalement implements EntityHistoryInterface, EntityHistoryCollectionInte
         return $this->telAgenceSecondaire;
     }
 
-    public function getTelAgenceSecondaireDecoded(?bool $national = false): ?string
+    public function getTelAgenceSecondaireDecoded(bool $national = false): ?string
     {
         return Phone::format($this->telAgenceSecondaire, $national);
     }
@@ -1366,7 +1366,7 @@ class Signalement implements EntityHistoryInterface, EntityHistoryCollectionInte
         return $this->telSyndic;
     }
 
-    public function getTelSyndicDecoded(?bool $national = false): ?string
+    public function getTelSyndicDecoded(bool $national = false): ?string
     {
         return Phone::format($this->telSyndic, $national);
     }
@@ -1383,7 +1383,7 @@ class Signalement implements EntityHistoryInterface, EntityHistoryCollectionInte
         return $this->telSyndicSecondaire;
     }
 
-    public function getTelSyndicSecondaireDecoded(?bool $national = false): ?string
+    public function getTelSyndicSecondaireDecoded(bool $national = false): ?string
     {
         return Phone::format($this->telSyndicSecondaire, $national);
     }
@@ -1593,12 +1593,7 @@ class Signalement implements EntityHistoryInterface, EntityHistoryCollectionInte
 
     public function removeSuivi(Suivi $suivi): static
     {
-        if ($this->suivis->removeElement($suivi)) {
-            // set the owning side to null (unless already changed)
-            if ($suivi->getSignalement() === $this) {
-                $suivi->setSignalement(null);
-            }
-        }
+        $this->suivis->removeElement($suivi);
 
         return $this;
     }
@@ -2034,7 +2029,7 @@ class Signalement implements EntityHistoryInterface, EntityHistoryCollectionInte
         return $this->telOccupantBis;
     }
 
-    public function getTelOccupantBisDecoded(?bool $national = false): ?string
+    public function getTelOccupantBisDecoded(bool $national = false): ?string
     {
         return Phone::format($this->telOccupantBis, $national);
     }
@@ -2085,6 +2080,10 @@ class Signalement implements EntityHistoryInterface, EntityHistoryCollectionInte
 
     public function getAddress(): Address
     {
+        if (!$this->address) {
+            throw new \LogicException('Address is not set');
+        }
+
         return $this->address;
     }
 
@@ -2446,7 +2445,7 @@ class Signalement implements EntityHistoryInterface, EntityHistoryCollectionInte
         return $this->telProprioSecondaire;
     }
 
-    public function getTelProprioSecondaireDecoded(?bool $national = false): ?string
+    public function getTelProprioSecondaireDecoded(bool $national = false): ?string
     {
         return Phone::format($this->telProprioSecondaire, $national);
     }
@@ -2463,7 +2462,7 @@ class Signalement implements EntityHistoryInterface, EntityHistoryCollectionInte
         return $this->telDeclarantSecondaire;
     }
 
-    public function getTelDeclarantSecondaireDecoded(?bool $national = false): ?string
+    public function getTelDeclarantSecondaireDecoded(bool $national = false): ?string
     {
         return Phone::format($this->telDeclarantSecondaire, $national);
     }
@@ -2608,7 +2607,7 @@ class Signalement implements EntityHistoryInterface, EntityHistoryCollectionInte
 
     public function getNomOccupantOrDeclarant(): string
     {
-        return $this->nomOccupant ?? $this->nomDeclarant;
+        return $this->nomOccupant ?? $this->nomDeclarant ?? throw new \LogicException('No occupant or declarant name set');
     }
 
     public function hasDesordrePrecision(DesordrePrecision $desordrePrecision): bool

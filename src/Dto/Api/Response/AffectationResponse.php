@@ -14,7 +14,7 @@ class AffectationResponse extends Affectation
         $this->partenaireType = $affectation->getPartner()->getType();
         $this->statut = $affectation->getStatut();
         $this->dateAffectation = $affectation->getCreatedAt()->format(\DATE_ATOM);
-        $this->dateAcceptation = $affectation->getAnsweredAt()->format(\DATE_ATOM);
+        $this->dateAcceptation = $affectation->getAnsweredAt()?->format(\DATE_ATOM);
         $this->motifRefus = $affectation->getMotifRefus();
         $this->motifCloture = $affectation->getMotifCloture();
     }
