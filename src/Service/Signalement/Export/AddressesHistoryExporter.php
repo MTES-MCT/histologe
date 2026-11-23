@@ -6,7 +6,7 @@ use App\Dto\Request\Signalement\AddressesHistorySearchQuery;
 use App\Entity\User;
 use App\Repository\Query\Address\AddressesHistoryQuery;
 use App\Utils\ExportFormat;
-use OpenSpout\Common\Entity\Row;
+use App\Utils\SpreadsheetCell;
 use OpenSpout\Writer\CSV\Options as CsvOptions;
 use OpenSpout\Writer\CSV\Writer as CsvWriter;
 use OpenSpout\Writer\XLSX\Writer as XlsxWriter;
@@ -33,10 +33,10 @@ readonly class AddressesHistoryExporter
             : new CsvWriter(new CsvOptions(FIELD_DELIMITER: ExportFormat::CSV_SEPARATOR));
 
         $writer->openToFile($outputFilePath);
-        $writer->addRow(Row::fromValues($this->buildHeaders($maxArretes)));
+        $writer->addRow(SpreadsheetCell::rowFromValues($this->buildHeaders($maxArretes), $format));
 
         foreach ($addresses as $address) {
-            $writer->addRow(Row::fromValues($this->buildRowValues($address, $maxArretes)));
+            $writer->addRow(SpreadsheetCell::rowFromValues($this->buildRowValues($address, $maxArretes), $format));
         }
 
         $writer->close();
