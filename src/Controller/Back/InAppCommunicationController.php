@@ -31,7 +31,6 @@ class InAppCommunicationController extends AbstractController
         InAppCommunicationUserRepository $inAppCommunicationUserRepository,
         EntityManagerInterface $entityManager,
     ): Response {
-        /* @var User $user */
         if ($entityManager->getConnection()->getDatabasePlatform() instanceof PostgreSQLPlatform) {
             return new Response('');
         }
