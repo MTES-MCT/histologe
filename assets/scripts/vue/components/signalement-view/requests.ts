@@ -1,5 +1,6 @@
 import { store } from './store'
 import { commonRequests } from '../common/utils/commonRequests'
+import { buildQueryString } from './utils/signalementUtils'
 
 export const requests = {
   getSignalements (functionReturn: Function, options = {}) {
@@ -36,5 +37,18 @@ export const requests = {
     let ajaxurlEditSearch = decodeURIComponent(store.props.ajaxurlEditSearch)
     ajaxurlEditSearch = ajaxurlEditSearch.replace('<id>', id)
     commonRequests.doPostRequest(ajaxurlEditSearch, { _token: csrfToken, name: newName }, functionReturn, [id, newName])
+  },
+  massAffectationAnalyze (partnerId: string, functionReturn: Function) {
+    const queryParams = buildQueryString(store.state.input.queryParameters)
+    const ajaxurl = store.props.ajaxurlMassAffectationAnalyze + '?' + queryParams + `&partnerId=${partnerId}`
+    commonRequests.doRequest(ajaxurl, functionReturn)
+  },
+  massAffectationValidate (payload: { partnerId: string; ids: string[] }, csrfToken: string, functionReturn: Function) {
+    const ajaxurl = store.props.ajaxurlMassAffectationValidate
+    commonRequests.doPostRequest(
+      ajaxurl,
+      { _token: csrfToken, partnerId: payload.partnerId, ids: payload.ids },
+      functionReturn
+    )
   }
 }

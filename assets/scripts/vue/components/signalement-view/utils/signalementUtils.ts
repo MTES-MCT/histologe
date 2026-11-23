@@ -25,6 +25,9 @@ export function handleQueryParameter (context: any): any {
       if (type === 'text') {
         filters[key] = filter?.defaultValue ?? (variableTester.isNotEmpty(value) ? value : null)
         addQueryParameter(context, key, value)
+        if (key === 'territoire') {
+          context.sharedState.currentTerritoryId = value
+        }
       } else if (type === 'date') {
         const keyDebut = key
         const keyFin = key.replace('Debut', 'Fin')
@@ -288,17 +291,18 @@ export function removeQueryParameter (context: any, name: string): any {
 }
 
 export function buildUrl (context: any, ajaxurl: string): any {
-  const queryParams = context
-    .sharedState
-    .input
-    .queryParameters
-    .map((parameter: QueryParameter) => `${parameter.name}=${parameter.value}`)
-    .join('&')
-  context.sharedProps.ajaxurlSignalement = ajaxurl + '?' + (queryParams as string)
+  const queryParams = buildQueryString(context.sharedState.input.queryParameters)
+  context.sharedProps.ajaxurlSignalement = ajaxurl + '?' + queryParams
   if (!ajaxurl.includes('cartographie')) {
     // on n'enregistre en localStorage les filtres que si on est sur la liste de signalements
     localStorage.setItem('back_link_signalement_view', queryParams)
   }
+}
+
+export function buildQueryString (queryParameters: QueryParameter[]): string {
+  return queryParameters
+    .map((parameter: QueryParameter) => `${parameter.name}=${parameter.value}`)
+    .join('&')
 }
 
 export function clearScreen (context: any): any {

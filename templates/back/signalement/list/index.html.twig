@@ -23,6 +23,9 @@
          data-csrf-delete-search="{{ csrf_token('delete_search') }}"
          data-ajaxurl-edit-search="{{ path('back_user_search_filters_edit', {'id' : '<id>'}) }}"
          data-csrf-edit-search="{{ csrf_token('edit_search') }}"
+         data-ajaxurl-mass-affectation-analyze="{{ path('back_signalements_mass_affectation_analyze') }}"
+         data-ajaxurl-mass-affectation-validate="{{ path('back_signalements_mass_affectation_validate') }}"
+         data-csrf-mass-affectation-validate="{{ csrf_token('mass_affectation_validate') }}"
          data-platform-name="{{ platform.name }}"
     >
 

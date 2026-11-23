@@ -231,6 +231,9 @@ export const store = {
     csrfDeleteSearch: '',
     ajaxurlEditSearch: '',
     csrfEditSearch: '',
+    ajaxurlMassAffectationAnalyze: '',
+    ajaxurlMassAffectationValidate: '',
+    csrfMassAffectationValidate: '',
     platformName: '',
     token: ''
   }

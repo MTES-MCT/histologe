@@ -147,6 +147,14 @@
           class="fr-link fr-link--icon-left fr-icon-star-line fr-text--sm">
         Sauvegarder ma recherche
       </button>
+      <button
+          v-if="sharedState.user.isAdmin && sharedState.input.filters.status === 'en_cours' && sharedState.input.filters.territoire !== undefined" 
+          data-fr-opened="false"
+          data-panel-open="panel-mass-affectation"
+          aria-controls="panel-mass-affectation"
+          class="fr-link fr-link--icon-left fr-icon-briefcase-line fr-text--sm">
+        Affecter ces signalements
+      </button>
     </div>
     <div :class="defineCssBlocMultiTerritoire(2,2)">
       <button

@@ -4,6 +4,7 @@
   <SignalementViewModalSaveSearch
     @savedSearchSuccess="onSearchSaved"
   />
+  <SignalementViewPanelMassAffectation/>
   <div v-if="classNameDeleteConfirmation.length > 0" class="fr-notice" :class="classNameDeleteConfirmation">
     <div class="fr-container">
       <div class="fr-notice__body">
@@ -119,6 +120,7 @@ import SignalementListCards from './components/SignalementListCards.vue'
 import SignalementListPagination from './components/SignalementListPagination.vue'
 import SignalementViewModalEditSearch from './components/SignalementViewModalEditSearch.vue'
 import SignalementViewModalSaveSearch from './components/SignalementViewModalSaveSearch.vue'
+import SignalementViewPanelMassAffectation from './components/SignalementViewPanelMassAffectation.vue'
 import HistoSelect from '../common/HistoSelect.vue'
 import { handleQueryParameter, handleSettings, handleTerritoryChange, handleSignalementsShared, handleFilters, addQueryParameter, removeQueryParameter, buildUrl, clearScreen, applySavedSearch } from './utils/signalementUtils'
 
@@ -133,6 +135,7 @@ export default defineComponent({
     SignalementListPagination,
     SignalementViewModalEditSearch,
     SignalementViewModalSaveSearch,
+    SignalementViewPanelMassAffectation,
     HistoSelect
   },
   data () {
@@ -169,6 +172,9 @@ export default defineComponent({
         this.sharedProps.csrfDeleteSearch = initElements.dataset.csrfDeleteSearch
         this.sharedProps.ajaxurlEditSearch = initElements.dataset.ajaxurlEditSearch
         this.sharedProps.csrfEditSearch = initElements.dataset.csrfEditSearch
+        this.sharedProps.ajaxurlMassAffectationAnalyze = initElements.dataset.ajaxurlMassAffectationAnalyze
+        this.sharedProps.ajaxurlMassAffectationValidate = initElements.dataset.ajaxurlMassAffectationValidate
+        this.sharedProps.csrfMassAffectationValidate = initElements.dataset.csrfMassAffectationValidate
         this.sharedProps.platformName = initElements.dataset.platformName
         if (!reset) {
           handleQueryParameter(this)
