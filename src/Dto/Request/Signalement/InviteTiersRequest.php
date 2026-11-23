@@ -11,14 +11,14 @@ class InviteTiersRequest implements RequestInterface
     public function __construct(
         #[Assert\NotBlank(message: 'Merci de saisir un nom.')]
         #[Assert\Length(max: 50, maxMessage: 'Le nom ne doit pas dépasser {{ limit }} caractères.')]
-        private readonly ?string $nom = null,
+        private readonly string $nom = '',
         #[Assert\NotBlank(message: 'Merci de saisir un prénom.')]
         #[Assert\Length(max: 50, maxMessage: 'Le prénom ne doit pas dépasser {{ limit }} caractères.')]
-        private readonly ?string $prenom = null,
+        private readonly string $prenom = '',
         #[Assert\NotBlank(message: 'Merci de saisir un e-mail.')]
         #[Email(mode: Email::VALIDATION_MODE_STRICT)]
         #[Assert\Length(max: 255, maxMessage: 'L\'e-mail ne doit pas dépasser {{ limit }} caractères.')]
-        private readonly ?string $mail = null,
+        private readonly string $mail = '',
         #[AppAssert\TelephoneFormat]
         private readonly ?string $telephone = null,
     ) {

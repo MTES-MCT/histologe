@@ -32,15 +32,17 @@ class LoadDesordrePrecisionData extends Fixture implements OrderedFixtureInterfa
      */
     private function loadSituations(ObjectManager $manager, array $row): void
     {
+        $desordreCritere = $this->desordreCritereRepository->findOneBy(['slugCritere' => $row['desordre_critere_slug']]);
+        if (!$desordreCritere) {
+            throw new \UnexpectedValueException(sprintf('DesordreCritere with slug %s not found', $row['desordre_critere_slug']));
+        }
         $desordrePrecision = (new DesordrePrecision())
             ->setCoef($row['coef'])
             ->setIsDanger($row['is_danger'])
             ->setIsSuroccupation($row['is_suroccupation'])
             ->setLabel($row['label'])
             ->setDesordrePrecisionSlug($row['desordre_precision_slug'])
-            ->setDesordreCritere(
-                $this->desordreCritereRepository->findOneBy(['slugCritere' => $row['desordre_critere_slug']])
-            );
+            ->setDesordreCritere($desordreCritere);
 
         if (isset($row['is_insalubrite'])) {
             $desordrePrecision->setIsInsalubrite($row['is_insalubrite']);

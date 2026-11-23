@@ -3,6 +3,7 @@
 namespace App\Command\Temp;
 
 use App\Entity\Affectation;
+use App\Entity\Bailleur;
 use App\Entity\Enum\PartnerType;
 use App\Entity\Enum\SignalementStatus;
 use App\Entity\Signalement;
@@ -95,6 +96,7 @@ class AutoAffectBailleursToSignalementsCommand extends Command
         foreach ($signalements as $signalement) {
             $io->progressAdvance();
 
+            /** @var Bailleur $bailleur */
             $bailleur = $signalement->getBailleur();
 
             $partner = $this->partnerRepository->findOneBy([
@@ -167,7 +169,7 @@ class AutoAffectBailleursToSignalementsCommand extends Command
                     'id' => $s->getId(),
                     'uuid' => $s->getUuid(),
                     'reference' => $s->getReference(),
-                    'bailleur' => $s->getBailleur()->getName(),
+                    'bailleur' => $s->getBailleur()?->getName(),
                 ], $notAffectedSignalements)
             );
         }
@@ -180,7 +182,7 @@ class AutoAffectBailleursToSignalementsCommand extends Command
                     'id' => $s->getId(),
                     'uuid' => $s->getUuid(),
                     'reference' => $s->getReference(),
-                    'bailleur' => $s->getBailleur()->getName(),
+                    'bailleur' => $s->getBailleur()?->getName(),
                 ], $alreadyAffectedSignalements)
             );
         }

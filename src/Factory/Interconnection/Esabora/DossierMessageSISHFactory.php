@@ -116,7 +116,7 @@ class DossierMessageSISHFactory extends AbstractDossierMessageFactory
             ->setSasDateAffectation(
                 $affectation
                     ->getCreatedAt()
-                    ?->setTimezone(new \DateTimeZone($timezone))
+                    ->setTimezone(new \DateTimeZone($timezone))
                     ->format($formatDateTime)
             )
             ->setSasDestinataire($destinataire)

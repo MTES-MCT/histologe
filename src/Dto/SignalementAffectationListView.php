@@ -139,13 +139,13 @@ class SignalementAffectationListView
     /** @return array<Affectation> */
     public function getAffectations(): array
     {
-        return $this->affectations;
+        return $this->affectations ?? [];
     }
 
     /** @return array<Qualification> */
     public function getQualifications(): array
     {
-        return $this->qualifications;
+        return $this->qualifications ?? [];
     }
 
     #[Groups(['signalements:read'])]
@@ -208,6 +208,10 @@ class SignalementAffectationListView
 
     public function getCanDeleteSignalement(): bool
     {
+        if (null === $this->canDeleteSignalement) {
+            throw new \LogicException('SignalementAffectationListView canDeleteSignalement is not set');
+        }
+
         return $this->canDeleteSignalement;
     }
 

@@ -35,7 +35,7 @@ class PartnerToExcludeValidator extends ConstraintValidator
         }
 
         $rule = $this->context->getObject();
-        if (!$rule instanceof AutoAffectationRule || null === $rule->getTerritory()) {
+        if (!$rule instanceof AutoAffectationRule) {
             return;
         }
 

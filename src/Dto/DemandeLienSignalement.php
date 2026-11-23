@@ -15,11 +15,11 @@ class DemandeLienSignalement
     #[Assert\NotBlank()]
     private string $adresseHelper;
 
-    private ?string $adresse = null;
+    private string $adresse = '';
 
-    private ?string $codePostal = null;
+    private string $codePostal = '';
 
-    private ?string $ville = null;
+    private string $ville = '';
 
     /**
      * @param ?array<mixed> $payload

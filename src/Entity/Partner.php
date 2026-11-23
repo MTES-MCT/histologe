@@ -354,7 +354,7 @@ class Partner implements EntityHistoryInterface
         return $this;
     }
 
-    /** @return array<string> */
+    /** @return array<int, string|null> */
     public function getEsaboraCredential(): array
     {
         return [
@@ -381,9 +381,9 @@ class Partner implements EntityHistoryInterface
     }
 
     /** @return array<Qualification> */
-    public function getCompetence(): ?array
+    public function getCompetence(): array
     {
-        return $this->competence;
+        return $this->competence ?? [];
     }
 
     /** @param array<Qualification> $competence */
@@ -455,7 +455,7 @@ class Partner implements EntityHistoryInterface
         }
 
         foreach (self::SANTE_HABITAT_URL_PATTERNS as $pattern) {
-            if (str_contains($this->esaboraUrl, $pattern)) {
+            if (str_contains((string) $this->esaboraUrl, $pattern)) {
                 return true;
             }
         }

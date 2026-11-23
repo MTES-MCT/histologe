@@ -155,6 +155,7 @@ class NotificationAndMailSenderTest extends KernelTestCase
         $suivi->setSignalement($signalement);
         $suivi->setCreatedBy($admin);
         $suivi->setType(Suivi::TYPE_PARTNER);
+        $suivi->setCategory(SuiviCategory::MESSAGE_PARTNER);
         $suivi->setDescription('Le signalement a été clôturé pour tous les partenaires avec le motif...');
         $this->entityManager->persist($suivi);
 
@@ -191,6 +192,7 @@ class NotificationAndMailSenderTest extends KernelTestCase
         ->setSignalement($signalement)
         ->setDescription('test description')
         ->setType(Suivi::TYPE_PARTNER)
+        ->setCategory(SuiviCategory::MESSAGE_PARTNER)
         ->setIsVisibleForUsager(true);
 
         $this->entityManager->persist($suivi);
@@ -330,6 +332,7 @@ class NotificationAndMailSenderTest extends KernelTestCase
         ->setSignalement($signalement)
         ->setDescription('test description')
         ->setType(Suivi::TYPE_PARTNER)
+        ->setCategory(SuiviCategory::MESSAGE_PARTNER)
         ->setIsVisibleForUsager(true);
 
         $this->entityManager->persist($suivi);

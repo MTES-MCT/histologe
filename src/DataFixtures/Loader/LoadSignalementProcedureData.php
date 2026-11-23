@@ -33,6 +33,9 @@ class LoadSignalementProcedureData extends Fixture implements OrderedFixtureInte
     public function loadSignalementProcedure(ObjectManager $manager, array $row): void
     {
         $signalement = $this->signalementRepository->findOneBy(['reference' => $row['signalement']]);
+        if (!$signalement) {
+            throw new \UnexpectedValueException(sprintf('Signalement with reference %s not found', $row['signalement']));
+        }
 
         $signalementProcedure = (new SignalementProcedure())
             ->setSignalement($signalement)

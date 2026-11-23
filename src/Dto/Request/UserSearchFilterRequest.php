@@ -11,7 +11,7 @@ class UserSearchFilterRequest
         max: 50,
         maxMessage: 'Le nom ne peut pas dépasser {{ limit }} caractères.'
     )]
-    public ?string $name = null;
+    public string $name = '';
 
     /**
      * @var array<string, mixed>|null

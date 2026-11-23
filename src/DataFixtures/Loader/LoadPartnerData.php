@@ -83,17 +83,21 @@ class LoadPartnerData extends Fixture implements OrderedFixtureInterface
         }
 
         if (isset($row['bailleur'])) {
-            $partner->setBailleur($this->bailleurRepository->findOneBailleurBy($row['bailleur'], $partner->getTerritory()));
+            $territory = $partner->getTerritory();
+            if (!$territory) {
+                throw new \UnexpectedValueException(sprintf('Partner %s has no territory', $row['nom']));
+            }
+            $partner->setBailleur($this->bailleurRepository->findOneBailleurBy($row['bailleur'], $territory));
         }
 
         if (isset($row['competence'])) {
             $competences = [];
             if (\is_array($row['competence'])) {
                 foreach ($row['competence'] as $competence) {
-                    $competences[] = Qualification::tryFrom($competence);
+                    $competences[] = Qualification::from($competence);
                 }
             } else {
-                $competences[] = Qualification::tryFrom($row['competence']);
+                $competences[] = Qualification::from($row['competence']);
             }
             $partner->setCompetence($competences);
         }
@@ -107,6 +111,9 @@ class LoadPartnerData extends Fixture implements OrderedFixtureInterface
         if (isset($row['epcis'])) {
             foreach ($row['epcis'] as $epciCode) {
                 $epci = $this->epciRepository->findOneBy(['code' => $epciCode]);
+                if (!$epci) {
+                    throw new \UnexpectedValueException(sprintf('Epci with code %s not found', $epciCode));
+                }
                 $partner->addEpci($epci);
             }
         }

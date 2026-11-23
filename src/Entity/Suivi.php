@@ -88,11 +88,10 @@ class Suivi implements EntityHistoryInterface
 
     #[ORM\Column(
         type: 'string',
-        nullable: true,
         enumType: SuiviCategory::class,
         options: ['comment' => 'Value possible enum SuiviCategory']
     )]
-    private ?SuiviCategory $category = null;
+    private SuiviCategory $category;
 
     private ?bool $seenByUsager = null;
 
@@ -120,7 +119,7 @@ class Suivi implements EntityHistoryInterface
 
     public function __toString(): string
     {
-        return $this->createdAt->format('d/m/y H:i').' '.$this->category->value;
+        return $this->createdAt->format('d/m/y H:i').' '.$this->getCategory()->value;
     }
 
     public function setSuiviTransformerService(?SuiviTransformerService $suiviTransformerService): void
@@ -292,12 +291,12 @@ class Suivi implements EntityHistoryInterface
         return $this;
     }
 
-    public function getSignalement(): ?Signalement
+    public function getSignalement(): Signalement
     {
         return $this->signalement;
     }
 
-    public function setSignalement(?Signalement $signalement): self
+    public function setSignalement(Signalement $signalement): self
     {
         $this->signalement = $signalement;
 
@@ -384,12 +383,12 @@ class Suivi implements EntityHistoryInterface
         return $this;
     }
 
-    public function getCategory(): ?SuiviCategory
+    public function getCategory(): SuiviCategory
     {
-        return $this->category;
+        return $this->category ?? throw new \LogicException('Category is not set');
     }
 
-    public function setCategory(?SuiviCategory $category): static
+    public function setCategory(SuiviCategory $category): static
     {
         $this->category = $category;
 
@@ -398,19 +397,11 @@ class Suivi implements EntityHistoryInterface
 
     public function isSubmittedByBailleur(): bool
     {
-        if (null === $this->category) {
-            return false;
-        }
-
         return in_array($this->category, SuiviCategory::categoriesSubmittedByBailleur(), true);
     }
 
     public function isAutomatic(): bool
     {
-        if (null === $this->category) {
-            return false;
-        }
-
         return in_array($this->category, SuiviCategory::automaticCategories(), true);
     }
 

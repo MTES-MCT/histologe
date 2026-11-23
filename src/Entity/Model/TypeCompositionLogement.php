@@ -69,7 +69,7 @@ class TypeCompositionLogement
 
     public function getTypeLogementAppartementEtageEnum(): ?EtageType
     {
-        return EtageType::tryFrom($this->typeLogementAppartementEtage);
+        return EtageType::tryFrom((string) $this->typeLogementAppartementEtage);
     }
 
     public function setTypeLogementAppartementEtage(?string $typeLogementAppartementEtage): self

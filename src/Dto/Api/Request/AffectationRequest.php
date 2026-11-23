@@ -141,18 +141,30 @@ class AffectationRequest implements RequestInterface
     #[Ignore]
     public function getStatut(): AffectationStatus
     {
+        if (null === $this->statut) {
+            throw new \LogicException('AffectationRequest statut is not set');
+        }
+
         return AffectationStatus::from($this->statut);
     }
 
     #[Ignore]
     public function getMotifCloture(): MotifCloture
     {
+        if (null === $this->motifCloture) {
+            throw new \LogicException('motifCloture statut is not set');
+        }
+
         return MotifCloture::from($this->motifCloture);
     }
 
     #[Ignore]
     public function getMotifRefus(): MotifRefus
     {
+        if (null === $this->motifRefus) {
+            throw new \LogicException('motifRefus statut is not set');
+        }
+
         return MotifRefus::from($this->motifRefus);
     }
 }

@@ -57,13 +57,19 @@ class LoadAffectationData extends Fixture implements OrderedFixtureInterface
         $signalement = $this->signalementRepository->findOneBy(['reference' => $row['signalement']]);
         if (!$signalement) {
             $signalement = $this->signalementRepository->findOneBy(['uuid' => $row['signalement']]);
+            if (!$signalement) {
+                throw new \UnexpectedValueException(sprintf('Signalement not found for reference or uuid "%s"', $row['signalement']));
+            }
         }
         $partner = $this->partnerRepository->findOneBy(['email' => $row['partner']]);
+        if (!$partner) {
+            throw new \UnexpectedValueException(sprintf('Partner not found for email "%s"', $row['partner']));
+        }
         $answeredBy = $this->userRepository->findOneBy(['email' => $row['answered_by']]);
         $affectation = (new Affectation())
             ->setSignalement($signalement)
             ->setPartner($partner)
-            ->setStatut(AffectationStatus::tryFrom($row['statut']))
+            ->setStatut(AffectationStatus::from($row['statut']))
             ->setTerritory($this->territoryRepository->findOneBy(['name' => $row['territory']]))
             ->setCreatedAt(new \DateTimeImmutable())
             ->setAffectedBy($this->userRepository->findOneBy(['email' => $row['affected_by']]))

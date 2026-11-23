@@ -69,6 +69,10 @@ class FileRequest implements RequestInterface
     #[Ignore]
     public function getDocumentTypeEnum(): DocumentType
     {
+        if (null === $this->documentType) {
+            throw new \LogicException('FileRequest documentType is not set');
+        }
+
         return DocumentType::from($this->documentType);
     }
 }
