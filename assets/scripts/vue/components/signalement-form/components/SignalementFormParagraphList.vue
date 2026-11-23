@@ -1,6 +1,6 @@
 <template>
   <ul :class="customCss">
-    <li v-for="(item, index) in values" :key="index" v-html="variablesReplacer.replace(item)"></li>
+    <li v-for="(item, index) in values" :key="index" v-html="variablesReplacer.replaceHtml(item)"></li>
   </ul>
 </template>
 
