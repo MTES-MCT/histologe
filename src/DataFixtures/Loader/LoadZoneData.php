@@ -39,19 +39,31 @@ class LoadZoneData extends Fixture implements OrderedFixtureInterface
     private function loadZone(ObjectManager $manager, array $row): void
     {
         $zone = new Zone();
+        $territory = $this->territoryRepository->findOneBy(['name' => $row['territory']]);
+        if (!$territory) {
+            throw new \UnexpectedValueException(sprintf('Territory with name %s not found', $row['territory']));
+        }
 
         $geometry = $this->geometryFactory->createFromWkt($row['area']);
         $zone->setArea($geometry)
             ->setName($row['name'])
             ->setType(ZoneType::AUTRE)
-            ->setTerritory($this->territoryRepository->findOneBy(['name' => $row['territory']]))
+            ->setTerritory($territory)
             ->setCreatedBy($this->userRepository->findOneBy(['email' => $row['created_by']]));
         foreach ($row['partners'] as $partner) {
-            $zone->addPartner($this->partnerRepository->findOneBy(['email' => $partner]));
+            $partner = $this->partnerRepository->findOneBy(['email' => $partner]);
+            if (!$partner) {
+                throw new \UnexpectedValueException(sprintf('Partner with email %s not found', $partner));
+            }
+            $zone->addPartner($partner);
         }
         if (isset($row['excluded_partners'])) {
             foreach ($row['excluded_partners'] as $partner) {
-                $zone->addExcludedPartner($this->partnerRepository->findOneBy(['email' => $partner]));
+                $partner = $this->partnerRepository->findOneBy(['email' => $partner]);
+                if (!$partner) {
+                    throw new \UnexpectedValueException(sprintf('Partner with email %s not found', $partner));
+                }
+                $zone->addExcludedPartner($partner);
             }
         }
         $manager->persist($zone);

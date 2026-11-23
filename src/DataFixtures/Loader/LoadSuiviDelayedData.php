@@ -40,7 +40,13 @@ class LoadSuiviDelayedData extends Fixture implements OrderedFixtureInterface
     public function loadSuiviDelayed(ObjectManager $manager, array $row): void
     {
         $signalement = $this->signalementRepository->findOneBy(['reference' => $row['signalement']]);
+        if (!$signalement) {
+            throw new \UnexpectedValueException(sprintf('Signalement with reference %s not found', $row['signalement']));
+        }
         $user = $this->userRepository->findOneBy(['email' => $row['user']]);
+        if (!$user) {
+            throw new \UnexpectedValueException(sprintf('User with email %s not found', $row['user']));
+        }
         $createdAt = (new \DateTimeImmutable())->modify($row['created_at']);
         $category = SuiviCategory::from($row['suivi_category']);
         $type = SuiviDelayedType::from($row['suivid_delayed_type']);

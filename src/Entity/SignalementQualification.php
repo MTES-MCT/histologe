@@ -77,7 +77,7 @@ class SignalementQualification
     /** @return array<int> */
     public function getCriticites(): array
     {
-        return $this->criticites;
+        return $this->criticites ?? [];
     }
 
     /** @param array<int> $criticites */
@@ -89,9 +89,9 @@ class SignalementQualification
     }
 
     /** @return array<int> */
-    public function getDesordrePrecisionIds(): ?array
+    public function getDesordrePrecisionIds(): array
     {
-        return $this->desordrePrecisionIds;
+        return $this->desordrePrecisionIds ?? [];
     }
 
     /** @param array<int> $desordrePrecisionIds */

@@ -137,12 +137,12 @@ class DesordrePrecision
         return $this;
     }
 
-    public function getDesordreCritere(): ?DesordreCritere
+    public function getDesordreCritere(): DesordreCritere
     {
         return $this->desordreCritere;
     }
 
-    public function setDesordreCritere(?DesordreCritere $desordreCritere): self
+    public function setDesordreCritere(DesordreCritere $desordreCritere): self
     {
         $this->desordreCritere = $desordreCritere;
 

@@ -29,10 +29,14 @@ class LoadTagData extends Fixture implements OrderedFixtureInterface
      */
     private function loadTags(ObjectManager $manager, array $row): void
     {
+        $territory = $this->territoryRepository->findOneBy(['name' => $row['territory']]);
+        if (!$territory) {
+            throw new \UnexpectedValueException(sprintf('Territory with name %s not found', $row['territory']));
+        }
         $tag = (new Tag())
             ->setLabel($row['label'])
             ->setIsArchive($row['is_archive'])
-            ->setTerritory($this->territoryRepository->findOneBy(['name' => $row['territory']]));
+            ->setTerritory($territory);
 
         $manager->persist($tag);
     }

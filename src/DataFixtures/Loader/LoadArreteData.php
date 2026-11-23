@@ -57,6 +57,9 @@ class LoadArreteData extends Fixture implements OrderedFixtureInterface
         ;
         if (isset($row['signalement'])) {
             $signalement = $this->signalementRepository->findOneBy(['reference' => $row['signalement']]);
+            if (!$signalement) {
+                throw new \UnexpectedValueException(sprintf('Signalement not found for reference "%s"', $row['signalement']));
+            }
             $user = $this->userRepository->findOneBy(['email' => $row['user']]);
             $arrete->setSignalement($signalement);
             $arrete->setAddress($signalement->getAddress());

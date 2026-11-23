@@ -210,7 +210,7 @@ class SignalementDraft
 
     public function getChecksum(): string
     {
-        return $this->checksum;
+        return $this->checksum ?? '';
     }
 
     public function setChecksum(): static

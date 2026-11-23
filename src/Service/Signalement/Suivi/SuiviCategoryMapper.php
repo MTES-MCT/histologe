@@ -121,7 +121,7 @@ class SuiviCategoryMapper
 
     public function mapFromSuivi(Suivi $suivi): SuiviCategoryDto
     {
-        if ($suivi->getCategory() && isset(self::SUIVI_CATEGORIES_CONFIGURATION[$suivi->getCategory()->name])) {
+        if (isset(self::SUIVI_CATEGORIES_CONFIGURATION[$suivi->getCategory()->name])) {
             $configuration = self::SUIVI_CATEGORIES_CONFIGURATION[$suivi->getCategory()->name];
         } else {
             $title = HtmlCleaner::clean($suivi->getDescription(recipient: SuiviRecipient::USAGER));

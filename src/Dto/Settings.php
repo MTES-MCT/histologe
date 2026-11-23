@@ -12,7 +12,7 @@ class Settings
     #[Groups('settings:read')]
     private ?string $lastname = null;
     #[Groups('settings:read')]
-    private ?string $avatarOrPlaceHolder = null;
+    private string $avatarOrPlaceHolder = '';
     #[Groups('settings:read')]
     private ?string $roleLabel = null;
     /**

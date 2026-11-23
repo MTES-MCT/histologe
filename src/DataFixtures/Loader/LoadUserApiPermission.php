@@ -36,6 +36,9 @@ class LoadUserApiPermission extends Fixture implements OrderedFixtureInterface
     private function loadUserApiPermission(ObjectManager $manager, array $row): void
     {
         $user = $this->userRepository->findOneBy(['email' => $row['user']]);
+        if (!$user) {
+            throw new \UnexpectedValueException(sprintf('User with email %s not found', $row['user']));
+        }
         $userApiPermission = new UserApiPermission();
         $userApiPermission->setUser($user);
         if (isset($row['partner'])) {

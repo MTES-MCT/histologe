@@ -213,13 +213,21 @@ class LoadSignalementData extends Fixture implements OrderedFixtureInterface
 
         if (isset($row['tags'])) {
             foreach ($row['tags'] as $tag) {
-                $signalement->addTag($this->tagRepository->findOneBy(['label' => $tag, 'territory' => $signalement->getAddress()->getTerritory()]));
+                $tagEntity = $this->tagRepository->findOneBy(['label' => $tag, 'territory' => $signalement->getAddress()->getTerritory()]);
+                if (!$tagEntity) {
+                    throw new \UnexpectedValueException(sprintf('Tag with label %s not found in territory %s', $tag, $signalement->getAddress()->getTerritory()->getName()));
+                }
+                $signalement->addTag($tagEntity);
             }
         }
 
         if (isset($row['criticites'])) {
             foreach ($row['criticites'] as $criticite) {
-                $signalement->addCriticite($this->criticiteRepository->findOneBy(['label' => $criticite]));
+                $criticiteEntity = $this->criticiteRepository->findOneBy(['label' => $criticite]);
+                if (!$criticiteEntity) {
+                    throw new \UnexpectedValueException(sprintf('Criticite with label %s not found', $criticite));
+                }
+                $signalement->addCriticite($criticiteEntity);
             }
         }
 
@@ -515,9 +523,11 @@ class LoadSignalementData extends Fixture implements OrderedFixtureInterface
 
         if (isset($row['desordre_precision'])) {
             foreach ($row['desordre_precision'] as $desordrePrecision) {
-                $signalement->addDesordrePrecision(
-                    $this->desordrePrecisionRepository->findOneBy(['desordrePrecisionSlug' => $desordrePrecision])
-                );
+                $desordrePrecisionEntity = $this->desordrePrecisionRepository->findOneBy(['desordrePrecisionSlug' => $desordrePrecision]);
+                if (!$desordrePrecisionEntity) {
+                    throw new \UnexpectedValueException(sprintf('Desordre precision with slug %s not found', $desordrePrecision));
+                }
+                $signalement->addDesordrePrecision($desordrePrecisionEntity);
             }
         }
 
@@ -557,6 +567,9 @@ class LoadSignalementData extends Fixture implements OrderedFixtureInterface
             foreach ($row['personalTags'] as $personalTag) {
                 $user = $this->userRepository->findOneBy(['email' => $personalTag['user']]);
                 $tag = $this->personalTagRepository->findOneBy(['label' => $personalTag['label'], 'user' => $user]);
+                if (!$tag) {
+                    throw new \UnexpectedValueException(sprintf('Personal tag with label %s not found for user %s', $personalTag['label'], $personalTag['user']));
+                }
                 $tag->addSignalement($signalement);
             }
         }

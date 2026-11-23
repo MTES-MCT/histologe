@@ -45,7 +45,7 @@ class FileFactory
         ?array $partnerCompetence = null,
         ?array $partnerType = null,
         ?bool $setDatePriseDeVueFromExifData = true,
-    ): ?File {
+    ): File {
         $extension = strtolower(pathinfo($filename, \PATHINFO_EXTENSION));
         $title = basename($title);
         $file = (new File())
