@@ -122,7 +122,7 @@ class SignalementDuplicateCheckerTest extends KernelTestCase
         $signalementDuplicateChecker = static::getContainer()->get(SignalementDuplicateChecker::class);
         $result = $signalementDuplicateChecker->check($signalementDraftRequest);
 
-        $this->assertNotNull($result['draft_uuid']);
+        $this->assertArrayNotHasKey('draft_uuid', $result);
         $this->assertTrue($result['already_exists']);
         $this->assertEquals('draft', $result['type']);
     }

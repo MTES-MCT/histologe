@@ -12,6 +12,7 @@ use App\Factory\TiersInvitationFactory;
 use App\Manager\SuiviManager;
 use App\Messenger\Message\NewSignalementCheckFileMessage;
 use App\Messenger\Message\SignalementDraftProcessMessage;
+use App\Repository\SignalementDraftRepository;
 use App\Repository\UserRepository;
 use App\Service\Files\DocumentProvider;
 use App\Service\Mailer\NotificationMail;
@@ -39,6 +40,7 @@ class SignalementDraftCompletedSubscriber implements EventSubscriberInterface
         private readonly SuiviManager $suiviManager,
         private readonly UserRepository $userRepository,
         private readonly TiersInvitationFactory $tiersInvitationFactory,
+        private readonly SignalementDraftRepository $signalementDraftRepository,
     ) {
     }
 
@@ -80,6 +82,7 @@ class SignalementDraftCompletedSubscriber implements EventSubscriberInterface
                 $this->dispatchDraftProcessing($signalementDraft, $signalement);
                 $this->dispatchCheckFiles($signalement);
                 $signalementDraft->setStatus(SignalementDraftStatus::EN_SIGNALEMENT);
+                $this->archiveDuplicateDrafts($signalementDraft);
                 $this->entityManager->flush();
                 $this->entityManager->commit();
             } else {
@@ -89,6 +92,18 @@ class SignalementDraftCompletedSubscriber implements EventSubscriberInterface
             $this->logger->error($exception->getMessage());
             $this->entityManager->rollback();
             throw $exception;
+        }
+    }
+
+    /**
+     * Archive les autres brouillons en cours du même déclarant pour la même adresse,
+     * afin qu'ils ne déclenchent plus de relance une fois le signalement déposé.
+     */
+    private function archiveDuplicateDrafts(SignalementDraft $signalementDraft): void
+    {
+        $duplicateDrafts = $this->signalementDraftRepository->findOtherPendingWithSameChecksum($signalementDraft);
+        foreach ($duplicateDrafts as $duplicateDraft) {
+            $duplicateDraft->setStatus(SignalementDraftStatus::ARCHIVE);
         }
     }
 

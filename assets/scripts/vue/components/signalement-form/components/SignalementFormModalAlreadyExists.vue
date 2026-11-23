@@ -79,7 +79,7 @@
                 le <strong>{{ formatDate(formStore.alreadyExists.createdAt) }}</strong>.
                 <br>
                 <br>
-                Vous pouvez récupérer les infos de ce signalement et reprendre où vous en étiez.
+                Vous pouvez récupérer les infos de ce signalement et reprendre où vous en étiez grâce à un lien renvoyé par e-mail.
                 <br>
                 Souhaitez-vous reprendre le signalement ?
               </p>
@@ -219,10 +219,11 @@ export default defineComponent({
     },
     makeNewSignalement () {
       this.desactiveNextbutton()
-      const draftUuid = formStore.alreadyExists.draftUuid || formStore.data.uuidSignalementDraft
-      if (formStore.alreadyExists.draftExists && (formStore.alreadyExists.type === 'draft' || formStore.alreadyExists.type === 'signalement')) {
-        requests.archiveDraft(draftUuid, this.saveAndContinue)
-      } else if (formStore.alreadyExists.type === 'signalement') {
+      if (
+        (formStore.alreadyExists.draftExists && formStore.alreadyExists.type === 'draft')
+        ||
+        (formStore.alreadyExists.type === 'signalement')
+      ) {
         this.saveAndContinue()
       }
     },
