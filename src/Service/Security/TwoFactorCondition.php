@@ -3,6 +3,7 @@
 namespace App\Service\Security;
 
 use App\Entity\User;
+use App\Security\User\SignalementUser;
 use Scheb\TwoFactorBundle\Security\TwoFactor\AuthenticationContextInterface;
 use Scheb\TwoFactorBundle\Security\TwoFactor\Condition\TwoFactorConditionInterface;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
@@ -14,12 +15,15 @@ class TwoFactorCondition implements TwoFactorConditionInterface
         private bool $feature2faEmailEnabled,
         #[Autowire(env: 'FEATURE_2FA_EMAIL_ALL_ROLES')]
         private bool $feature2faEmailAllRoles,
+        #[Autowire(env: 'FEATURE_2FA_EMAIL_USAGERS')]
+        private bool $feature2faEmailUsagers
     ) {
     }
 
     /**
      * Les rôles éligibles et l'exclusion ProConnect sont gérés par User::isEmailAuthEnabled().
      * FEATURE_2FA_EMAIL_ALL_ROLES permet de filtrer pour ne garder que les super admin.
+     * FEATURE_2FA_EMAIL_USAGERS permet de filtrer pour ajouter les usagers.
      */
     public function shouldPerformTwoFactorAuthentication(AuthenticationContextInterface $context): bool
     {
@@ -32,11 +36,15 @@ class TwoFactorCondition implements TwoFactorConditionInterface
             return false;
         }
 
-        if ($this->feature2faEmailAllRoles) {
+        $user = $context->getUser();
+
+        if ($this->feature2faEmailUsagers && $user instanceof SignalementUser) {
             return true;
         }
 
-        $user = $context->getUser();
+        if ($this->feature2faEmailAllRoles) {
+            return true;
+        }
 
         return $user instanceof User && $user->isSuperAdmin();
     }

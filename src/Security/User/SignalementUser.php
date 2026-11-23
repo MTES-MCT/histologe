@@ -5,9 +5,10 @@ namespace App\Security\User;
 use App\Entity\Territory;
 use App\Entity\User;
 use App\Manager\UserManager;
+use Scheb\TwoFactorBundle\Model\Email\TwoFactorInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
 
-class SignalementUser implements UserInterface
+class SignalementUser implements UserInterface, TwoFactorInterface
 {
     private string $codeSuivi;
     private string $type;
@@ -15,6 +16,7 @@ class SignalementUser implements UserInterface
      * @var array<string>
      */
     private array $roles = [];
+    private ?string $authCode;
 
     public function __construct(
         private readonly string $userIdentifier,
@@ -61,5 +63,29 @@ class SignalementUser implements UserInterface
     public function getUser(): User
     {
         return $this->user;
+    }
+
+    public function isEmailAuthEnabled(): bool
+    {
+        return $this->user->isUsager();
+    }
+
+    public function getEmailAuthRecipient(): string
+    {
+        return $this->email;
+    }
+
+    public function getEmailAuthCode(): string
+    {
+        if (null === $this->authCode) {
+            throw new \LogicException('The email authentication code was not set');
+        }
+
+        return $this->authCode;
+    }
+
+    public function setEmailAuthCode(?string $authCode): void
+    {
+        $this->authCode = $authCode;
     }
 }
