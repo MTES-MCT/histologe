@@ -4,7 +4,6 @@ namespace App\Service\Import\Signalement;
 
 use App\Entity\Enum\MotifCloture;
 use App\Entity\Enum\SignalementStatus;
-use Symfony\Component\Uid\Uuid;
 
 class SignalementImportMapper
 {
@@ -280,7 +279,8 @@ class SignalementImportMapper
                     } elseif ('telOccupant' === $fieldColumn || 'telProprio' === $fieldColumn || 'telDeclarant' === $fieldColumn) {
                         $fieldValue = '0600000000';
                     } else {
-                        $fieldValue = $fieldColumn.'_anonymized_'.Uuid::v4()->toString();
+                        // Valeur courte (16 caractères) pour tenir dans la plus petite colonne (naissanceOccupants : 20)
+                        $fieldValue = 'anonyme-'.bin2hex(random_bytes(4));
                         if ('mailOccupant' === $fieldColumn || 'mailDeclarant' === $fieldColumn || 'mailProprio' === $fieldColumn) {
                             $fieldValue .= '@example.com';
                         }

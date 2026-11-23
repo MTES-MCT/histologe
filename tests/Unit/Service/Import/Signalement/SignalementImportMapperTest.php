@@ -45,12 +45,12 @@ class SignalementImportMapperTest extends TestCase
             'conclusionVisite',
         ];
         foreach ($textFields as $field) {
-            $this->assertStringStartsWith($field.'_anonymized_', $dataMapped[$field], $field);
+            $this->assertMatchesRegularExpression('/^anonyme-[0-9a-f]{8}$/', $dataMapped[$field], $field);
+            $this->assertLessThanOrEqual(20, mb_strlen($dataMapped[$field]), $field);
         }
 
         foreach (['mailOccupant', 'mailProprio', 'mailDeclarant'] as $field) {
-            $this->assertStringStartsWith($field.'_anonymized_', $dataMapped[$field], $field);
-            $this->assertStringEndsWith('@example.com', $dataMapped[$field], $field);
+            $this->assertMatchesRegularExpression('/^anonyme-[0-9a-f]{8}@example\.com$/', $dataMapped[$field], $field);
         }
 
         foreach (['telOccupant', 'telProprio', 'telDeclarant'] as $field) {
