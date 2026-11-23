@@ -115,7 +115,7 @@ class SignalementImportLoader
      * @throws NonUniqueResultException
      * @throws \Exception
      */
-    public function load(Territory $territory, array $data, array $headers, ?OutputInterface $output = null): void
+    public function load(Territory $territory, array $data, array $headers, bool $anonymize = false, ?OutputInterface $output = null): void
     {
         $countSignalement = 0;
         $this->userSystem = $this->userRepository->findOneBy(['email' => $this->parameterBag->get('user_system_email')]);
@@ -125,7 +125,7 @@ class SignalementImportLoader
 
         $dataMappedOk = [];
         foreach ($data as $item) {
-            $dataMappedToCheck = $this->signalementImportMapper->map($headers, $item);
+            $dataMappedToCheck = $this->signalementImportMapper->map($headers, $item, $anonymize);
             if (empty($dataMappedToCheck)) {
                 continue;
             }
