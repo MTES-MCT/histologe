@@ -7,8 +7,7 @@ use App\Form\SearchAnnuaireAgentType;
 use App\Repository\UserPartnerRepository;
 use App\Service\ListFilters\SearchAnnuaireAgent;
 use App\Utils\ExportFormat;
-use OpenSpout\Common\Entity\Cell;
-use OpenSpout\Common\Entity\Cell\StringCell;
+use App\Utils\SpreadsheetCell;
 use OpenSpout\Common\Entity\Row;
 use OpenSpout\Writer\CSV\Options as CsvOptions;
 use OpenSpout\Writer\CSV\Writer as CsvWriter;
@@ -78,26 +77,26 @@ class AnnuaireController extends AbstractController
 
             $contentType = ExportFormat::getContentTypeByFormat($format);
 
-            $response = new StreamedResponse(static function () use ($writer, $isMultiTerritory, $userPartners) {
+            $response = new StreamedResponse(static function () use ($writer, $format, $isMultiTerritory, $userPartners) {
                 $writer->openToFile('php://output');
-                $writer->addRow(Row::fromValues([
+                $writer->addRow(SpreadsheetCell::rowFromValues([
                     'Nom complet de l\'agent',
                     'Nom du partenaire',
                     'Email de l\'agent',
                     'Téléphone de l\'agent',
                     'Fonction de l\'agent',
                     $isMultiTerritory ? 'Territoire' : null,
-                ]));
+                ], $format));
                 foreach ($userPartners as $userPartner) {
                     $partner = $userPartner->getPartner();
                     $user = $userPartner->getUser();
                     $writer->addRow(new Row([
-                        Cell::fromValue($user->getNomComplet()),
-                        Cell::fromValue($partner->getNom()),
-                        Cell::fromValue($user->getEmail()),
-                        new StringCell($user->getPhoneDecoded() ?? '', null),
-                        Cell::fromValue($user->getFonction()),
-                        Cell::fromValue($isMultiTerritory ? ($partner->getTerritory()?->getZipAndName() ?? '') : null),
+                        SpreadsheetCell::fromValue($user->getNomComplet(), $format),
+                        SpreadsheetCell::fromValue($partner->getNom(), $format),
+                        SpreadsheetCell::fromValue($user->getEmail(), $format),
+                        SpreadsheetCell::fromValue($user->getPhoneDecoded(), $format),
+                        SpreadsheetCell::fromValue($user->getFonction(), $format),
+                        SpreadsheetCell::fromValue($isMultiTerritory ? ($partner->getTerritory()?->getZipAndName() ?? '') : null, $format),
                     ]));
                 }
                 $writer->close();

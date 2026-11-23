@@ -5,7 +5,7 @@ namespace App\Service\Export;
 use App\Entity\User;
 use App\Repository\UserRepository;
 use App\Utils\ExportFormat;
-use OpenSpout\Common\Entity\Row;
+use App\Utils\SpreadsheetCell;
 use OpenSpout\Writer\CSV\Options as CsvOptions;
 use OpenSpout\Writer\CSV\Writer as CsvWriter;
 use OpenSpout\Writer\XLSX\Writer as XlsxWriter;
@@ -27,7 +27,7 @@ readonly class InactiveUserExportLoader
         $writer->openToFile($outputFilePath);
 
         $headers = ['ID', 'Nom', 'Prénom', 'Email', 'Partenaire', 'Date de création', 'Dernière connexion', 'Date d\'archivage prévue'];
-        $writer->addRow(Row::fromValues($headers));
+        $writer->addRow(SpreadsheetCell::rowFromValues($headers, $format));
         /** @var array<int, User> $list */
         $list = $this->userRepository->findUsersPendingToArchive($user);
         foreach ($list as $item) {
@@ -50,7 +50,7 @@ readonly class InactiveUserExportLoader
                 $item->getLastLoginAt() ? $item->getLastLoginAt()->format('d/m/Y') : '',
                 $item->getArchivingScheduledAt() ? $item->getArchivingScheduledAt()->format('d/m/Y') : '',
             ];
-            $writer->addRow(Row::fromValues($rowArray));
+            $writer->addRow(SpreadsheetCell::rowFromValues($rowArray, $format));
         }
 
         $writer->close();

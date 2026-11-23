@@ -63,6 +63,32 @@ class SignalementExporterTest extends TestCase
         yield 'export with csv' => [ExportFormat::FORMAT_CSV];
     }
 
+    #[DataProvider('provideFileFormat')]
+    public function testLoadNeutralizesFormulas(string $format): void
+    {
+        /** @var MockObject&SignalementManager */
+        $signalementManager = $this->createMock(SignalementManager::class);
+        $user = $this->getUserFromRole(User::ROLE_ADMIN);
+        $signalementManager->expects($this->once())->method('findSignalementAffectationIterable')
+            ->willReturn($this->getSignalementExportGenerator([
+                new SignalementExport(reference: '=HYPERLINK("http://evil.test","clic")'),
+            ]));
+
+        $tmpFile = sys_get_temp_dir().'/export_test_'.uniqid().'.'.$format;
+        (new SignalementExporter($signalementManager))->write($user, $format, $tmpFile, [], ['REFERENCE']);
+
+        $rows = $this->readFile($tmpFile, $format);
+        if (ExportFormat::FORMAT_XLSX === $format) {
+            $this->assertStringNotContainsString('<f>', (string) file_get_contents('zip://'.$tmpFile.'#xl/worksheets/sheet1.xml'));
+            $expected = '=HYPERLINK("http://evil.test","clic")';
+        } else {
+            $expected = '\'=HYPERLINK("http://evil.test","clic")';
+        }
+        unlink($tmpFile);
+
+        $this->assertSame($expected, $rows[1][0]);
+    }
+
     /**
      * @return array<array<mixed>>
      */
