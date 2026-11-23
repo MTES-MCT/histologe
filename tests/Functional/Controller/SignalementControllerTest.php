@@ -5,6 +5,7 @@ namespace App\Tests\Functional\Controller;
 use App\Entity\Enum\AffectationStatus;
 use App\Entity\Enum\MotifCloture;
 use App\Entity\Enum\MotifClotureUsager;
+use App\Entity\Enum\ProfileDeclarant;
 use App\Entity\Enum\SignalementDraftStatus;
 use App\Entity\Enum\SignalementStatus;
 use App\Entity\Enum\SuiviCategory;
@@ -591,6 +592,59 @@ class SignalementControllerTest extends WebTestCase
         $firstSignalement = $signalementDraft->getSignalements()->first();
         $this->assertNotFalse($firstSignalement);
         $this->assertEquals(0, $firstSignalement->getSuivis()->count());
+    }
+
+    public function testCompleteSignalementDraftArchivesDuplicateDrafts(): void
+    {
+        self::ensureKernelShutdown();
+        $client = static::createClient();
+
+        /** @var EntityManagerInterface $entityManager */
+        $entityManager = $client->getContainer()->get('doctrine')->getManager();
+
+        $uuidSignalement = '00000000-0000-0000-2023-locataire002';
+        $payload = (string) file_get_contents(
+            __DIR__.'../../../../src/DataFixtures/Files/signalement_draft_payload/step/validation_signalement/locataire.json'
+        );
+        $payloadData = json_decode($payload, true);
+
+        $duplicateDraft = (new SignalementDraft())
+            ->setProfileDeclarant(ProfileDeclarant::LOCATAIRE)
+            ->setEmailDeclarant($payloadData['vos_coordonnees_occupant_email'])
+            ->setAddressComplete($payloadData['adresse_logement_adresse'])
+            ->setCurrentStep('info_procedure_bail')
+            ->setPayload($payloadData);
+        $otherAddressDraft = (new SignalementDraft())
+            ->setProfileDeclarant(ProfileDeclarant::LOCATAIRE)
+            ->setEmailDeclarant($payloadData['vos_coordonnees_occupant_email'])
+            ->setAddressComplete('1 Rue de la Paix 75002 Paris')
+            ->setCurrentStep('info_procedure_bail')
+            ->setPayload($payloadData);
+        $entityManager->persist($duplicateDraft);
+        $entityManager->persist($otherAddressDraft);
+        $entityManager->flush();
+
+        /** @var RouterInterface $router */
+        $router = $client->getContainer()->get(RouterInterface::class);
+        $urlPutSignalement = $router->generate('mise_a_jour_formulaire_signalement_draft', [
+            'uuid' => $uuidSignalement,
+        ]);
+        $client->request('PUT', $urlPutSignalement, [], [], [], $payload);
+
+        $this->assertEquals(Response::HTTP_OK, $client->getResponse()->getStatusCode());
+
+        /** @var SignalementDraftRepository $signalementDraftRepository */
+        $signalementDraftRepository = $entityManager->getRepository(SignalementDraft::class);
+        $entityManager->clear();
+
+        $signalementDraft = $signalementDraftRepository->findOneBy(['uuid' => $uuidSignalement]);
+        $this->assertEquals(SignalementDraftStatus::EN_SIGNALEMENT, $signalementDraft->getStatus());
+
+        $duplicateDraft = $signalementDraftRepository->findOneBy(['uuid' => $duplicateDraft->getUuid()]);
+        $this->assertEquals(SignalementDraftStatus::ARCHIVE, $duplicateDraft->getStatus());
+
+        $otherAddressDraft = $signalementDraftRepository->findOneBy(['uuid' => $otherAddressDraft->getUuid()]);
+        $this->assertEquals(SignalementDraftStatus::EN_COURS, $otherAddressDraft->getStatus());
     }
 
     public function testCompleteSignalementDraftToInjonctionBailleur(): void

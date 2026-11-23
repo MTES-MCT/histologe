@@ -141,7 +141,7 @@ export default defineComponent({
       } else if (type === 'toggle') {
         this.toggleComponentBySlug(param, param2)
       } else if (type === 'archive') {
-        const draftUuid = formStore.data.uuidSignalementDraft || formStore.alreadyExists.draftUuid
+        const draftUuid = formStore.data.uuidSignalementDraft
         if (draftUuid) {
           requests.archiveDraft(draftUuid, this.gotoHomepage)
         } else {
