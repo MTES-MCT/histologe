@@ -7,7 +7,7 @@ use App\Entity\User;
 use App\Repository\UserRepository;
 use App\Service\ListFilters\SearchUser;
 use App\Utils\ExportFormat;
-use OpenSpout\Common\Entity\Row;
+use App\Utils\SpreadsheetCell;
 use OpenSpout\Writer\CSV\Options as CsvOptions;
 use OpenSpout\Writer\CSV\Writer as CsvWriter;
 use OpenSpout\Writer\XLSX\Writer as XlsxWriter;
@@ -46,7 +46,7 @@ readonly class UserExportLoader
 
         $columns = self::getColumnForUser($searchUser->getUser());
         $headers = array_map(static fn ($column) => $column['label'], $columns);
-        $writer->addRow(Row::fromValues(array_values($headers)));
+        $writer->addRow(SpreadsheetCell::rowFromValues(array_values($headers), $format));
         /** @var array<int, User> $list */
         $list = $this->userRepository->findFiltered($searchUser);
         foreach ($list as $user) {
@@ -78,7 +78,7 @@ readonly class UserExportLoader
                 'permissionAffectation' => $user->isSuperAdmin() || $user->isTerritoryAdmin() || $user->hasPermissionAffectation() ? 'oui' : 'non',
                 default => '',
             }, array_keys($columns));
-            $writer->addRow(Row::fromValues($rowArray));
+            $writer->addRow(SpreadsheetCell::rowFromValues($rowArray, $format));
         }
         $writer->close();
     }

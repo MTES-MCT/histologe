@@ -6,7 +6,7 @@ use App\Entity\User;
 use App\Repository\Query\SignalementList\SameAddressQuery;
 use App\Repository\TerritoryRepository;
 use App\Utils\ExportFormat;
-use OpenSpout\Common\Entity\Row;
+use App\Utils\SpreadsheetCell;
 use OpenSpout\Writer\CSV\Options as CsvOptions;
 use OpenSpout\Writer\CSV\Writer as CsvWriter;
 use OpenSpout\Writer\XLSX\Writer as XlsxWriter;
@@ -107,7 +107,7 @@ class SignalementSameAddressController extends AbstractController
         if ($searchBailleur) {
             $filtersText['Bailleur'] = $request->query->get('bailleur');
         }
-        $format = $request->request->get('file-format');
+        $format = (string) $request->request->get('file-format');
         foreach ($signalements as $signalement) {
             if ($searchTerritoryId && $signalement['territoryId'] != $searchTerritoryId) {
                 continue;
@@ -144,9 +144,9 @@ class SignalementSameAddressController extends AbstractController
         }
         $filename = 'dossier_meme_adresse_'.date('Y-m-d_H-i-s').'.'.$format;
         $contentType = 'text/csv';
-        $response = new StreamedResponse(static function () use ($signalementsFiltered, $territories, $writer, $isMultiTerritory) {
+        $response = new StreamedResponse(static function () use ($signalementsFiltered, $territories, $writer, $format, $isMultiTerritory) {
             $writer->openToFile('php://output');
-            $writer->addRow(Row::fromValues([
+            $writer->addRow(SpreadsheetCell::rowFromValues([
                 $isMultiTerritory ? 'Territoire' : null,
                 'Référence du dossier',
                 'Nom / prénom de l\'occupant',
@@ -156,9 +156,9 @@ class SignalementSameAddressController extends AbstractController
                 'Statut du dossier',
                 'Date de création du dossier',
                 'Date de fermeture du dossier',
-            ]));
+            ], $format));
             foreach ($signalementsFiltered as $signalement) {
-                $writer->addRow(Row::fromValues([
+                $writer->addRow(SpreadsheetCell::rowFromValues([
                     $isMultiTerritory ? $territories[$signalement['territoryId']]->getZipAndName() : null,
                     $signalement['reference'],
                     $signalement['nomOccupant'].' '.$signalement['prenomOccupant'],
@@ -168,7 +168,7 @@ class SignalementSameAddressController extends AbstractController
                     $signalement['statut']->name,
                     $signalement['createdAt']->format('d/m/Y'),
                     $signalement['closedAt'] ? $signalement['closedAt']->format('d/m/Y') : null,
-                ]));
+                ], $format));
             }
             $writer->close();
         });

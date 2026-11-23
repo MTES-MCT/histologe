@@ -5,6 +5,7 @@ namespace App\Service\Signalement\Export;
 use App\Entity\User;
 use App\Manager\SignalementManager;
 use App\Utils\ExportFormat;
+use App\Utils\SpreadsheetCell;
 use Doctrine\DBAL\Exception;
 use OpenSpout\Common\Entity\Cell;
 use OpenSpout\Common\Entity\Row;
@@ -44,7 +45,7 @@ readonly class SignalementExporter
             $selectedColumns = [];
         }
         $headers = $this->getHeadersWithSelectedColumns($headers, $keysToRemove, $selectedColumns);
-        $writer->addRow($this->buildRow(array_values($headers)));
+        $writer->addRow(SpreadsheetCell::rowFromValues(array_values($headers), $format));
 
         $dateStyle = new Style(format: 'DD/MM/YYYY');
         foreach ($this->signalementManager->findSignalementAffectationIterable($user, $filters, $selectedColumns) as $signalementExportItem) {
@@ -66,23 +67,13 @@ readonly class SignalementExporter
                         continue;
                     }
                 }
-                $cells[] = Cell::fromValue($value);
+                $cells[] = SpreadsheetCell::fromValue($value, $format);
             }
 
             $writer->addRow(new Row($cells));
         }
 
         $writer->close();
-    }
-
-    /**
-     * @param array<string> $values
-     */
-    private function buildRow(array $values): Row
-    {
-        $cells = array_map(static fn ($v) => Cell::fromValue($v), $values);
-
-        return new Row($cells);
     }
 
     /**
