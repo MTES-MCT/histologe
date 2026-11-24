@@ -14,6 +14,18 @@ class EntityComparator
     ];
 
     /**
+     * Champs dont la valeur ne doit jamais être stockée, même partiellement (codes à usage unique).
+     * Seule la présence d'une valeur est conservée.
+     *
+     * @var string[]
+     */
+    private const array FIELDS_TO_MASK = [
+        'authCode',
+    ];
+
+    private const string MASK = '**********';
+
+    /**
      * @throws \ReflectionException
      */
     public function processValue(mixed $value): mixed
@@ -64,17 +76,23 @@ class EntityComparator
             return $changes;
         }
 
-        if (in_array($field, self::FIELDS_TO_TRUNCATE)) {
-            return [
-                'old' => substr((string) $oldValue, 0, 4).str_repeat('.', 10),
-                'new' => substr((string) $newValue, 0, 4).str_repeat('.', 10),
-            ];
+        return [
+            'old' => $this->protectSensitiveValue($oldValue, $field),
+            'new' => $this->protectSensitiveValue($newValue, $field),
+        ];
+    }
+
+    private function protectSensitiveValue(mixed $value, string $field): mixed
+    {
+        if (in_array($field, self::FIELDS_TO_MASK, true)) {
+            return null === $value ? null : self::MASK;
         }
 
-        return [
-            'old' => $oldValue,
-            'new' => $newValue,
-        ];
+        if (in_array($field, self::FIELDS_TO_TRUNCATE, true)) {
+            return substr((string) $value, 0, 4).str_repeat('.', 10);
+        }
+
+        return $value;
     }
 
     /**
@@ -92,7 +110,7 @@ class EntityComparator
             $property->setAccessible(true);
             $value = $this->processValue($property->getValue($entity));
             if ($value) {
-                $propertyValues[$property->getName()] = $value;
+                $propertyValues[$property->getName()] = $this->protectSensitiveValue($value, $property->getName());
             }
         }
 

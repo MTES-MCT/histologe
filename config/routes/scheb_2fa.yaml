@@ -15,7 +15,7 @@
         _controller: "scheb_two_factor.form_controller::form"
 
 2fa_suivi_login_check:
-    path: /2fa-suivi_check
+    path: /2fa-suivi-check
     schemes: [http]
 
 when@prod:
@@ -36,5 +36,5 @@ when@prod:
             _controller: "scheb_two_factor.form_controller::form"
 
     2fa_suivi_login_check:
-        path: /2fa-suivi_check
+        path: /2fa-suivi-check
         schemes: [https]

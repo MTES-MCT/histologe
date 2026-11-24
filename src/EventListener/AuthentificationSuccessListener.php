@@ -27,7 +27,7 @@ class AuthentificationSuccessListener
      * Sur ces chemins, scheb redéclenche l'interactive login après validation du code :
      * la connexion est tracée par onSchebTwoFactorAuthenticationSuccess() (LOGIN_2FA).
      */
-    private const array CHECK_2FA_PATHS = ['/2fa_check', '/2fa-suivi_check'];
+    private const array CHECK_2FA_PATHS = ['/2fa_check', '/2fa-suivi-check'];
 
     public function __construct(
         private readonly HistoryEntryManager $historyEntryManager,
