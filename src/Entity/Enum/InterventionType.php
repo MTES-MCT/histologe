@@ -6,13 +6,11 @@ enum InterventionType: string
 {
     case VISITE = 'VISITE';
     case VISITE_CONTROLE = 'VISITE_CONTROLE';
-    case ARRETE_PREFECTORAL = 'ARRETE_PREFECTORAL';
 
     /** @var array<string, string> */
     public const array INTERVENTION_TYPE_LABEL = [
         'VISITE' => 'Visite',
         'VISITE_CONTROLE' => 'Visite de contrôle',
-        'ARRETE_PREFECTORAL' => 'Arrêté préfectoral',
     ];
 
     public function label(): string

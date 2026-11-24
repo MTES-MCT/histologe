@@ -65,10 +65,6 @@ class LoadInterventionData extends Fixture implements OrderedFixtureInterface
             $intervention->setPartner($this->partnerRepository->findOneBy(['email' => $row['partner']]));
         }
 
-        if (isset($row['additional_information'])) {
-            $intervention->setAdditionalInformation($row['additional_information']);
-        }
-
         if (isset($row['conclude_procedure'])) {
             $concludeProcedures = [];
             foreach ($row['conclude_procedure'] as $concludeProcedure) {

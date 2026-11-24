@@ -68,8 +68,6 @@ class InterventionRepository extends ServiceEntityRepository
         $queryBuilder = $this->createQueryBuilder('i');
 
         return $queryBuilder
-            ->andWhere('i.type IN (:visiteTypes)')
-            ->setParameter('visiteTypes', [InterventionType::VISITE->name, InterventionType::VISITE_CONTROLE->name])
             ->andWhere('i.signalement = :signalement')
             ->setParameter('signalement', $signalement)
             ->orderBy('i.scheduledAt', \SortDirection::Descending)
@@ -103,8 +101,6 @@ class InterventionRepository extends ServiceEntityRepository
         $queryBuilder = $this->createQueryBuilder('i');
 
         return $queryBuilder
-            ->andWhere('i.type IN (:visiteTypes)')
-            ->setParameter('visiteTypes', [InterventionType::VISITE->name, InterventionType::VISITE_CONTROLE->name])
             ->andWhere('i.signalement = :signalement')
             ->setParameter('signalement', $signalement)
             ->andWhere('i.status = :done')

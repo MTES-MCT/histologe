@@ -2,7 +2,6 @@
 
 namespace App\EventListener;
 
-use App\Entity\Enum\InterventionType;
 use App\Entity\Enum\ProcedureType;
 use App\Entity\Intervention;
 use App\Utils\HtmlCleaner;
@@ -59,10 +58,7 @@ class InterventionEditedListener
 
     public function supports(Intervention $intervention): bool
     {
-        return Intervention::STATUS_DONE === $intervention->getStatus()
-            && (InterventionType::VISITE === $intervention->getType()
-                || InterventionType::VISITE_CONTROLE === $intervention->getType()
-            );
+        return Intervention::STATUS_DONE === $intervention->getStatus();
     }
 
     private function normalizeText(?string $text): string
