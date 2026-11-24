@@ -4,6 +4,7 @@ namespace App\Tests\Functional\Controller\Security;
 
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
+use Symfony\Component\RateLimiter\RateLimiterFactoryInterface;
 
 class TwoFactorResendCodeControllerTest extends WebTestCase
 {
@@ -11,6 +12,12 @@ class TwoFactorResendCodeControllerTest extends WebTestCase
 
     private function loginUntilTwoFactorForm(KernelBrowser $client): void
     {
+        // Le limiteur est stocké dans Redis : sans remise à zéro, les exécutions successives
+        // de la suite épuisent le quota (3 renvois / 15 min) et font échouer les tests.
+        /** @var RateLimiterFactoryInterface $limiterFactory */
+        $limiterFactory = static::getContainer()->get('limiter.two_factor_resend_code');
+        $limiterFactory->create(self::SUPER_ADMIN_EMAIL.'-127.0.0.1')->reset();
+
         $crawler = $client->request('GET', '/connexion');
         $client->submit($crawler->filter('form[name="login-form"]')->form([
             'email' => self::SUPER_ADMIN_EMAIL,
@@ -74,6 +81,21 @@ class TwoFactorResendCodeControllerTest extends WebTestCase
         $client->request('POST', '/2fa-renvoyer-code');
 
         $this->assertResponseRedirects();
+        $this->assertEmailCount(0);
+    }
+
+    public function testTwoFactorSuiviWithoutSessionShowsSessionExpiredPage(): void
+    {
+        $client = static::createClient();
+
+        foreach (['GET' => '/2fa-suivi', 'POST' => '/2fa-suivi-renvoyer-code'] as $method => $url) {
+            $client->request($method, $url);
+
+            // Symfony applique le code de l'AccessDeniedException à la réponse de l'entry point.
+            $this->assertResponseStatusCodeSame(403);
+            $this->assertSelectorTextContains('.fr-notice--alert', 'Votre session a expiré.');
+            $this->assertSelectorExists('a[href$="signalement-et-suivi/suivre-mon-dossier/"]');
+        }
         $this->assertEmailCount(0);
     }
 }

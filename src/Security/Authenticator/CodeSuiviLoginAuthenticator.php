@@ -24,6 +24,7 @@ use Symfony\Component\Security\Http\Authenticator\Passport\Badge\UserBadge;
 use Symfony\Component\Security\Http\Authenticator\Passport\Passport;
 use Symfony\Component\Security\Http\Authenticator\Passport\SelfValidatingPassport;
 use Symfony\Component\Security\Http\Util\TargetPathTrait;
+use Twig\Environment;
 use function Symfony\Component\String\u;
 
 class CodeSuiviLoginAuthenticator extends AbstractLoginFormAuthenticator
@@ -39,6 +40,7 @@ class CodeSuiviLoginAuthenticator extends AbstractLoginFormAuthenticator
         private readonly SignalementRepository $signalementRepository,
         private readonly SignalementUserProvider $signalementUserProvider,
         private readonly TwoFactorCondition $twoFactorCondition,
+        private readonly Environment $twig,
     ) {
     }
 
@@ -183,6 +185,8 @@ class CodeSuiviLoginAuthenticator extends AbstractLoginFormAuthenticator
     public function start(Request $request, ?AuthenticationException $authException = null): Response
     {
         if (empty($request->attributes->get('code'))) {
+            // Pas de redirection vers « home » : en prod elle renvoie vers le site public et le message serait perdu.
+            // Même rendu que SecurityController::loginFO() pour un lien invalide.
             if ($request->hasSession()) {
                 /** @var FlashBagAwareSessionInterface $session */
                 $session = $request->getSession();
@@ -192,7 +196,7 @@ class CodeSuiviLoginAuthenticator extends AbstractLoginFormAuthenticator
                 ]);
             }
 
-            return new RedirectResponse($this->urlGenerator->generate('home'));
+            return new Response($this->twig->render('front/flash-messages.html.twig'));
         }
 
         return parent::start($request, $authException);

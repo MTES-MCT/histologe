@@ -23,6 +23,7 @@ use Symfony\Component\HttpFoundation\Session\Session;
 use Symfony\Component\HttpFoundation\Session\Storage\MockArraySessionStorage;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Security\Core\Exception\CustomUserMessageAuthenticationException;
+use Twig\Environment;
 
 class CodeSuiviLoginAuthenticatorTest extends TestCase
 {
@@ -355,26 +356,30 @@ class CodeSuiviLoginAuthenticatorTest extends TestCase
         $this->assertInstanceOf(SignalementUser::class, $passport->getUser());
     }
 
-    public function testStartWithoutCodeRedirectsToHomeWithFlash(): void
+    public function testStartWithoutCodeRendersSessionExpiredPage(): void
     {
-        $this->urlGenerator->method('generate')->willReturnCallback(
-            static fn (string $route, array $params = []): string => 'home' === $route ? '/' : '/authentification/'.($params['code'] ?? '')
-        );
+        $twig = $this->createMock(Environment::class);
+        $twig->expects($this->once())
+            ->method('render')
+            ->with('front/flash-messages.html.twig')
+            ->willReturn('<p>page session expirée</p>');
         $session = new Session(new MockArraySessionStorage());
         $request = Request::create('/2fa-suivi');
         $request->setSession($session);
 
-        $response = $this->createAuthenticator()->start($request);
+        $response = $this->createAuthenticator(twig: $twig)->start($request);
 
-        $this->assertInstanceOf(RedirectResponse::class, $response);
-        $this->assertSame('/', $response->getTargetUrl());
-        $this->assertNotEmpty($session->getFlashBag()->get('error'));
+        $this->assertNotInstanceOf(RedirectResponse::class, $response);
+        $this->assertSame('<p>page session expirée</p>', $response->getContent());
+        $flashes = $session->getFlashBag()->get('error');
+        $this->assertCount(1, $flashes);
+        $this->assertSame('Session expirée', $flashes[0]['title']);
     }
 
     public function testStartWithCodeRedirectsToLoginPage(): void
     {
         $this->urlGenerator->method('generate')->willReturnCallback(
-            static fn (string $route, array $params = []): string => 'home' === $route ? '/' : '/authentification/'.($params['code'] ?? '')
+            static fn (string $route, array $params = []): string => '/authentification/'.($params['code'] ?? '')
         );
         $request = Request::create('/suivre-mon-signalement/12345678');
         $request->attributes->set('code', '12345678');
@@ -386,13 +391,14 @@ class CodeSuiviLoginAuthenticatorTest extends TestCase
         $this->assertSame('/authentification/12345678', $response->getTargetUrl());
     }
 
-    private function createAuthenticator(bool $usager2faEnabled = false): CodeSuiviLoginAuthenticator
+    private function createAuthenticator(bool $usager2faEnabled = false, ?Environment $twig = null): CodeSuiviLoginAuthenticator
     {
         return new CodeSuiviLoginAuthenticator(
             $this->urlGenerator,
             $this->signalementRepository,
             $this->signalementUserProvider,
             new TwoFactorCondition(true, false, $usager2faEnabled),
+            $twig ?? $this->createStub(Environment::class),
         );
     }
 
