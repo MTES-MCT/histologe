@@ -125,8 +125,16 @@ function initCloseSignalementForm() {
 }
 
 const btnCloseSignalement = document.querySelector('.btn-close-signalement');
+let closeSignalementFormNeedsReload = true;
 
-btnCloseSignalement?.addEventListener('click', () => {
+export function invalidateCloseSignalementForm() {
+  closeSignalementFormNeedsReload = true;
+}
+
+btnCloseSignalement?.addEventListener('click', async () => {
+  if (!closeSignalementFormNeedsReload) return;
+
+  closeSignalementFormNeedsReload = false;
   const url = btnCloseSignalement.dataset.url;
   const panelContent = document.querySelector('#panel-close-signalement-content');
   panelContent.querySelectorAll('textarea.editor').forEach((textarea) => {
@@ -149,6 +157,7 @@ btnCloseSignalement?.addEventListener('click', () => {
         initTinyMCE('#close-signalement-form textarea.editor');
       });
     } else {
+      invalidateCloseSignalementForm();
       const content =
         '<div class="fr-notice fr-notice--alert"><div class="fr-container"><div class="fr-notice__body"><p><span class="fr-notice__title">Erreur</span><span class="fr-notice__desc">Une erreur s\'est produite. Veuillez actualiser la page.</span></p></div></div></div>';
       document.querySelector('#panel-close-signalement-content').innerHTML = content;
