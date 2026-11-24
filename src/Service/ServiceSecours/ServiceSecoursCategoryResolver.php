@@ -15,28 +15,28 @@ class ServiceSecoursCategoryResolver
     public const string PATTERN_POLICE = '/(police|commissariat|crs)/i';
     public const string PATTERN_SDIS = '/(sdis|pompier|sapeur|secours|incendie|feu)/i';
 
-    public function resolve(string $organizationalUnit): ServiceSecoursCategory
+    public function resolve(?string $organizationValue = null, string $key = 'organization_label'): ServiceSecoursCategory
     {
-        if (preg_match(self::PATTERN_MARINS_POMPIERS, $organizationalUnit)) {
+        if (preg_match(self::PATTERN_MARINS_POMPIERS, $organizationValue)) {
             return ServiceSecoursCategory::MARINS_POMPIERS;
         }
 
-        if (preg_match(self::PATTERN_GENDARMERIE, $organizationalUnit)) {
+        if (preg_match(self::PATTERN_GENDARMERIE, $organizationValue)) {
             return ServiceSecoursCategory::GENDARMERIE;
         }
 
-        if (preg_match(self::PATTERN_POLICE, $organizationalUnit)) {
+        if (preg_match(self::PATTERN_POLICE, $organizationValue)) {
             return ServiceSecoursCategory::POLICE;
         }
 
-        if (preg_match(self::PATTERN_SDIS, $organizationalUnit)) {
+        if (preg_match(self::PATTERN_SDIS, $organizationValue)) {
             return ServiceSecoursCategory::SDIS;
         }
-        withScope(static function (Scope $scope) use ($organizationalUnit): void {
+        withScope(static function (Scope $scope) use ($organizationValue, $key): void {
             $scope->setLevel(Severity::warning());
-            $scope->setExtra('organizational_unit', $organizationalUnit);
+            $scope->setExtra($key, $organizationValue);
             captureMessage(
-                '[Service-secours] OrganizationalUnit non résolu : '.$organizationalUnit,
+                sprintf('[Service-secours] %s non résolu : %s', $key, $organizationValue),
                 Severity::warning()
             );
         });

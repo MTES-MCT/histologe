@@ -11,6 +11,7 @@ class ProConnectUser
     public string $email;
     public ?string $siret = null;
     public ?string $organizationalUnit = null;
+    public ?string $organizationLabel = null;
     public ?string $chorusdtMatricule = null;
     public ?string $fullname = null;
 
@@ -30,6 +31,7 @@ class ProConnectUser
         $this->email = $data['email'];
         $this->siret = $data['siret'] ?? null;
         $this->organizationalUnit = $data['organizational_unit'] ?? null;
+        $this->organizationLabel = $data['organization_label'] ?? null;
         $this->chorusdtMatricule = $data['chorusdt:matricule'] ?? null;
         $lastName = $data['usual_name'] ?? $data['family_name'] ?? '';
         $fullname = trim(sprintf('%s %s', $data['given_name'] ?? '', $lastName));

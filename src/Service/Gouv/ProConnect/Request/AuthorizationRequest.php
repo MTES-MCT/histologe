@@ -11,7 +11,7 @@ class AuthorizationRequest
         public string $nonce,
         public string $responseType = 'code',
         public string $acrValues = 'eidas1',
-        public string $scope = 'openid email uid',
+        public string $scope = 'openid email uid siret organizational_unit organization_label chorusdt',
     ) {
     }
 

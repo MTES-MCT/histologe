@@ -42,8 +42,19 @@ class ServiceSecoursRouteResolver
         }
 
         $organizationalUnit = $proConnectUser->organizationalUnit;
+        $organizationLabel = $proConnectUser->organizationLabel;
+        $fieldsMissing = [];
+
         if (null === $organizationalUnit || '' === trim($organizationalUnit)) {
-            throw new ServiceSecoursRouteResolutionException('L\'unité organisationnelle (organizational_unit) est manquante dans l\'identité ProConnect.');
+            $fieldsMissing[] = 'unité organisationnelle (organizational_unit)';
+        }
+
+        if (null === $organizationLabel || '' === trim($organizationLabel)) {
+            $fieldsMissing[] = 'libellé de l\'unité organisationnelle (organization_label)';
+        }
+
+        if (count($fieldsMissing) > 1) {
+            throw new ServiceSecoursRouteResolutionException(sprintf('Champs manquants dans l\'identité ProConnect : %s.', implode(', ', $fieldsMissing)));
         }
 
         try {
@@ -62,7 +73,17 @@ class ServiceSecoursRouteResolver
             throw new ServiceSecoursRouteResolutionException('Le territoire correspondant à votre établissement n’est pas encore actif sur Signal Logement.');
         }
 
-        $category = $this->serviceSecoursCategoryResolver->resolve($organizationalUnit);
+        $category = null;
+        if (null !== $organizationLabel && '' !== trim($organizationLabel)) {
+            $category = $this->serviceSecoursCategoryResolver->resolve(
+                $organizationLabel
+            );
+        } elseif (null !== $organizationalUnit && '' !== trim($organizationalUnit)) {
+            $category = $this->serviceSecoursCategoryResolver->resolve(
+                $organizationalUnit,
+                'organizational_unit',
+            );
+        }
 
         $serviceSecoursRoute = $this->serviceSecoursRouteRepository->findOneBy([
             'territory' => $territory,

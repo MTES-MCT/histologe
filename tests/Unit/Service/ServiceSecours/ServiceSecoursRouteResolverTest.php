@@ -51,6 +51,7 @@ class ServiceSecoursRouteResolverTest extends TestCase
             'email' => 'agent@sdis13.fr',
             'siret' => '12345678901234',
             'organizational_unit' => 'SDIS 13',
+            'organization_label' => 'SDIS 13',
         ]);
 
         $territory = new Territory();
@@ -97,6 +98,7 @@ class ServiceSecoursRouteResolverTest extends TestCase
             'email' => 'agent@police.fr',
             'siret' => '98765432109876',
             'organizational_unit' => 'Commissariat Central',
+            'organization_label' => 'Commissariat Central',
         ]);
 
         $territory = new Territory();
@@ -133,6 +135,7 @@ class ServiceSecoursRouteResolverTest extends TestCase
             'email' => 'agent@gendarmerie.interieur.gouv.fr',
             'siret' => '11223344556677',
             'organizational_unit' => 'Gendarmerie Nationale',
+            'organization_label' => 'Gendarmerie Nationale',
         ]);
 
         $territory = new Territory();
@@ -190,7 +193,39 @@ class ServiceSecoursRouteResolverTest extends TestCase
         ]);
 
         $this->expectException(ServiceSecoursRouteResolutionException::class);
-        $this->expectExceptionMessage('L\'unité organisationnelle (organizational_unit) est manquante dans l\'identité ProConnect.');
+        $this->expectExceptionMessage('Champs manquants dans l\'identité ProConnect : unité organisationnelle (organizational_unit), libellé de l\'unité organisationnelle (organization_label).');
+
+        $this->resolver->resolve($proConnectUser);
+    }
+
+    #[DataProvider('provideMissingOrEmptyValues')]
+    public function testResolveFailsWhenOrganizationalLabelIsMissingOrEmpty(?string $organizationLabel): void
+    {
+        $proConnectUser = new ProConnectUser([
+            'uid' => '123',
+            'sub' => 'sub_123',
+            'email' => 'agent@test.fr',
+            'siret' => '12345678901234',
+            'organization_label' => $organizationLabel,
+        ]);
+
+        $this->expectException(ServiceSecoursRouteResolutionException::class);
+        $this->expectExceptionMessage('Champs manquants dans l\'identité ProConnect : unité organisationnelle (organizational_unit), libellé de l\'unité organisationnelle (organization_label).');
+
+        $this->resolver->resolve($proConnectUser);
+    }
+
+    public function testResolveReportsBothMissingOrganizationFields(): void
+    {
+        $proConnectUser = new ProConnectUser([
+            'uid' => '123',
+            'sub' => 'sub_123',
+            'email' => 'agent@test.fr',
+            'siret' => '12345678901234',
+        ]);
+
+        $this->expectException(ServiceSecoursRouteResolutionException::class);
+        $this->expectExceptionMessage('Champs manquants dans l\'identité ProConnect : unité organisationnelle (organizational_unit), libellé de l\'unité organisationnelle (organization_label).');
 
         $this->resolver->resolve($proConnectUser);
     }
@@ -210,6 +245,7 @@ class ServiceSecoursRouteResolverTest extends TestCase
             'email' => 'agent@test.fr',
             'siret' => '12345678901234',
             'organizational_unit' => 'SDIS 99',
+            'organization_label' => 'SDIS 99',
         ]);
 
         $this->sireneService
@@ -235,6 +271,7 @@ class ServiceSecoursRouteResolverTest extends TestCase
             'email' => 'agent@test.fr',
             'siret' => '12345678901234',
             'organizational_unit' => 'SDIS 13',
+            'organization_label' => 'SDIS 13',
         ]);
 
         $territory = new Territory();
@@ -275,6 +312,7 @@ class ServiceSecoursRouteResolverTest extends TestCase
             'email' => 'agent@test.fr',
             'siret' => '12345678901234',
             'organizational_unit' => 'SDIS 13',
+            'organization_label' => 'SDIS 13',
         ]);
 
         $clientException = $this->createMock(ClientExceptionInterface::class);
@@ -298,6 +336,7 @@ class ServiceSecoursRouteResolverTest extends TestCase
             'email' => 'agent@test.fr',
             'siret' => '12345678901234',
             'organizational_unit' => 'SDIS 13',
+            'organization_label' => 'SDIS 13',
         ]);
 
         $this->sireneService
@@ -319,6 +358,7 @@ class ServiceSecoursRouteResolverTest extends TestCase
             'email' => 'agent@test.fr',
             'siret' => '12345678901234',
             'organizational_unit' => 'SDIS 13',
+            'organization_label' => 'SDIS 13',
         ]);
 
         $this->sireneService
