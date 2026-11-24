@@ -100,7 +100,7 @@ interventions:
     status: 'PLANNED'
   - 
     signalement: "2024-12"
-    partner: "partenaire-30-01@signal-logement.fr "
+    partner: "partenaire-30-01@signal-logement.fr"
     scheduled_at: '2024-12-12 15:30:00'
     status: 'DONE'
     occupant_present: 1
