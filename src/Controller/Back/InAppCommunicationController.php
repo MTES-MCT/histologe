@@ -8,6 +8,8 @@ use App\Repository\InAppCommunicationRepository;
 use App\Repository\InAppCommunicationUserRepository;
 use App\Repository\Query\InAppCommunication\InAppCommunicationUserQuery;
 use Doctrine\DBAL\Exception;
+use Doctrine\DBAL\Platforms\PostgreSQLPlatform;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
@@ -27,8 +29,13 @@ class InAppCommunicationController extends AbstractController
     public function show(
         InAppCommunicationRepository $inAppCommunicationRepository,
         InAppCommunicationUserRepository $inAppCommunicationUserRepository,
+        EntityManagerInterface $entityManager,
     ): Response {
-        /** @var User $user */
+        if ($entityManager->getConnection()->getDatabasePlatform() instanceof PostgreSQLPlatform) {
+            return new Response('');
+        }
+
+        /** @var ?User $user */
         $user = $this->getUser();
         $inAppCommunications = $inAppCommunicationRepository->findForUser($user);
         $listInAppCommunications = [];
@@ -60,8 +67,14 @@ class InAppCommunicationController extends AbstractController
     public function close(
         InAppCommunication $inAppCommunication,
         InAppCommunicationRepository $inAppCommunicationRepository,
+        EntityManagerInterface $entityManager,
     ): JsonResponse {
-        /** @var User $user */
+        /* @var User $user */
+        if ($entityManager->getConnection()->getDatabasePlatform() instanceof PostgreSQLPlatform) {
+            return new JsonResponse(['success' => true]);
+        }
+
+        /** @var ?User $user */
         $user = $this->getUser();
         $inAppCommunications = $inAppCommunicationRepository->findForUser($user, $inAppCommunication->getId());
         if (!$inAppCommunications) {
