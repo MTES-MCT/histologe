@@ -10,6 +10,7 @@ use App\Security\User\SignalementUser;
 use App\Service\Gouv\ProConnect\ProConnectAuthentication;
 use App\Service\Gouv\ProConnect\ProConnectContext;
 use App\Tests\UserHelper;
+use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\MockObject\Stub;
 use PHPUnit\Framework\TestCase;
 use Psr\Log\LoggerInterface;
@@ -190,9 +191,7 @@ class LogoutSubscriberTest extends TestCase
         $event = new LogoutEvent($request, $token);
 
         $this->proConnectAuth->method('getLogoutUrl')->willThrowException(new \RuntimeException('Network down'));
-        $this->urlGenerator->method('generate')
-            ->with('service_secours_home', ['domain' => 'histologe.test'])
-            ->willReturn('http://service-secours.histologe.test');
+        $this->urlGenerator->method('generate')->willReturn('http://service-secours.histologe.test');
 
         /** @var MockObject&LoggerInterface $logger */
         $logger = $this->createMock(LoggerInterface::class);
@@ -221,20 +220,23 @@ class LogoutSubscriberTest extends TestCase
         $token = $this->createMock(TokenInterface::class);
         $token->method('getUser')->willReturn($user);
 
-        $this->session
+        $session = $this->createMock(SessionInterface::class);
+        $session
             ->expects($this->once())
             ->method('invalidate');
 
         $request = new Request();
-        $request->setSession($this->session);
+        $request->setSession($session);
 
         $event = new LogoutEvent($request, $token);
 
-        $this->proConnectContext
+        $proConnectContext = $this->createMock(ProConnectContext::class);
+        $proConnectContext
             ->expects($this->once())
             ->method('clearSession');
 
-        $this->urlGenerator
+        $urlGenerator = $this->createMock(UrlGeneratorInterface::class);
+        $urlGenerator
             ->expects($this->once())
             ->method('generate')
             ->with($this->equalTo('app_login_bailleur'))
@@ -242,8 +244,8 @@ class LogoutSubscriberTest extends TestCase
 
         $subscriber = new LogoutSubscriber(
             $this->proConnectAuth,
-            $this->proConnectContext,
-            $this->urlGenerator,
+            $proConnectContext,
+            $urlGenerator,
             $this->logger,
         );
 
@@ -257,12 +259,13 @@ class LogoutSubscriberTest extends TestCase
     public function testLogoutRedirectsToProConnectForServiceSecoursUser(): void
     {
         $request = new Request([], [], [], [], [], ['HTTP_HOST' => 'service-secours.histologe.test']);
-        $this->session
+        $session = $this->createMock(SessionInterface::class);
+        $session
             ->expects($this->once())
             ->method('has')
             ->with('proconnect_id_token')
             ->willReturn(true);
-        $request->setSession($this->session);
+        $request->setSession($session);
 
         $serviceSecoursUser = new ServiceSecoursUser(
             'uuid-123',
@@ -297,12 +300,13 @@ class LogoutSubscriberTest extends TestCase
     public function testLogoutRedirectsToServiceSecoursHomeWhenNoIdToken(): void
     {
         $request = new Request([], [], [], [], [], ['HTTP_HOST' => 'service-secours.histologe.test']);
-        $this->session
+        $session = $this->createMock(SessionInterface::class);
+        $session
             ->expects($this->once())
             ->method('has')
             ->with('proconnect_id_token')
             ->willReturn(false);
-        $request->setSession($this->session);
+        $request->setSession($session);
 
         $serviceSecoursUser = new ServiceSecoursUser(
             'uuid-123',
@@ -318,9 +322,7 @@ class LogoutSubscriberTest extends TestCase
 
         $event = new LogoutEvent($request, $token);
 
-        $this->urlGenerator->method('generate')
-            ->with('service_secours_home', ['domain' => 'histologe.test'])
-            ->willReturn('http://service-secours.histologe.test');
+        $this->urlGenerator->method('generate')->willReturn('http://service-secours.histologe.test');
 
         $subscriber = new LogoutSubscriber(
             $this->proConnectAuth,

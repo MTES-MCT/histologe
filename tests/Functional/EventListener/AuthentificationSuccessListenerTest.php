@@ -147,7 +147,8 @@ class AuthentificationSuccessListenerTest extends WebTestCase
             $entityManager,
             '1',
             $historyEntryBuffer,
-            $suiviManager
+            $suiviManager,
+            static::getContainer()->get(NewLoginNotifier::class),
         );
 
         $serviceSecoursRoute = $serviceSecoursRouteRepository->findOneBy(['name' => 'SDIS 13']);
@@ -161,14 +162,15 @@ class AuthentificationSuccessListenerTest extends WebTestCase
             fullname: 'Jean Dupont'
         );
 
-        $this->token
+        $token = $this->createMock(TokenInterface::class);
+        $token
             ->expects($this->atLeastOnce())
             ->method('getUser')
             ->willReturn($serviceSecoursUser);
 
         $event = new InteractiveLoginEvent(
             Request::create('/services-secours/sdis-13/connexion'),
-            $this->token
+            $token
         );
 
         $authentificationSuccessListener->onSecurityInteractiveLogin($event);
