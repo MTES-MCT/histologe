@@ -3,6 +3,7 @@
 namespace App\Controller\Back;
 
 use App\Dto\Request\CalendarEventRequest;
+use App\Entity\Enum\InterventionType;
 use App\Entity\Enum\Qualification;
 use App\Entity\User;
 use App\Repository\ClubEventRepository;
@@ -37,9 +38,8 @@ class CalendarController extends AbstractController
         $user = $this->getUser();
 
         $operators = [];
-        $userTerritory = $user->getFirstTerritoryOrNull();
-        if ($user->isTerritoryAdmin() && null !== $userTerritory) {
-            $partners = $partnerRepository->findPartnersWithQualificationOnTerritory(Qualification::VISITES, $userTerritory);
+        if ($user->isTerritoryAdmin()) {
+            $partners = $partnerRepository->findPartnersWithQualificationOnTerritory(Qualification::VISITES, $user->getFirstTerritory());
             foreach ($partners as $partner) {
                 $operators[] = ['id' => (string) $partner->getId(), 'label' => mb_strtoupper($partner->getNom())];
             }
@@ -88,11 +88,13 @@ class CalendarController extends AbstractController
         }
 
         foreach ($interventions as $intervention) {
+            $type = InterventionType::VISITE_CONTROLE === $intervention->getType() ? 'visite_controle' : 'visite';
+            $title = InterventionType::VISITE_CONTROLE === $intervention->getType() ? 'Visite de contrôle #' : 'Visite #';
             $events[] = [
-                'title' => 'Visite #'.$intervention->getSignalement()->getReference(),
+                'title' => $title.$intervention->getSignalement()->getReference(),
                 'start' => $intervention->getScheduledAt()->format('Y-m-d\TH:i:s'),
                 'extendedProps' => [
-                    'type' => 'visite', // TODO : préciser visite de contrôle ? -> en attente de réponse de Mathilde
+                    'type' => $type,
                     'link' => $this->generateUrl('back_signalement_view', ['uuid' => $intervention->getSignalement()->getUuid()]),
                     'occupant' => $intervention->getSignalement()->getNomOccupantComplet(),
                     'operator' => $intervention->getPartner()?->getNom(),

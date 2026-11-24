@@ -229,6 +229,10 @@ onBeforeUnmount(() => {
     border-left-color: var(--calendar-event-visite);
   }
 
+  .calendar-event-popover__title--visite-controle {
+    border-left-color: var(--calendar-event-visite-controle);
+  }
+
   .calendar-event-popover__body {
     padding: 1rem;
   }

@@ -221,11 +221,12 @@ Le thème empile le contenu de l'en-tête en colonne : on le remet en ligne (jou
 .calendar-app__popover {
   --calendar-event-club: var(--blue-france-sun-113-625);
   --calendar-event-visite: var(--orange-terre-battue-main-645);
+  --calendar-event-visite-controle: var(--green-emeraude-main-632);
 }
 
 /* Textes des événements (12px dans le thème classic) */
 :is(.calendar-app, .calendar-app__popover) .calendar-app__event-inner {
-  font-size: 0.875rem;
+  font-size: 1rem;
   line-height: 1.5rem;
 }
 
@@ -278,6 +279,12 @@ Le thème empile le contenu de l'en-tête en colonne : on le remet en ligne (jou
   align-self: flex-start;
 }
 
+/* Vue semaine : espace entre les événements
+(padding plutôt que marge : FullCalendar empile les événements selon leur hauteur, marges non comprises) */
+.calendar-app .calendar-app__week-event {
+  padding-block: 0.5rem;
+}
+
 /* Vue liste : séparation entre les jours (thème classic) mais pas entre les événements d'un même jour */
 .calendar-app .calendar-app__list-event {
   border-width: 0;
@@ -323,9 +330,14 @@ Le thème empile le contenu de l'en-tête en colonne : on le remet en ligne (jou
   align-items: center;
   min-height: 1.5rem;
   padding: 0.125rem 0.5rem;
-  font-size: 0.875rem;
   font-weight: 500;
   color: var(--text-action-high-blue-france);
+}
+
+/* Taille portée par l'élément interne, auquel le thème classic impose 12px */
+.calendar-app .calendar-app__more-link-inner {
+  font-size: 1rem;
+  line-height: 1.5rem;
 }
 
 /* Popup "+ x autres" */

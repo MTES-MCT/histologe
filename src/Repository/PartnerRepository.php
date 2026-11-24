@@ -241,14 +241,14 @@ class PartnerRepository extends ServiceEntityRepository
      */
     public function findPartnersWithQualificationOnTerritory(Qualification $qualification, Territory $territory): array
     {
-        $qb = $this->createQueryBuilder('p');
-        $qb->select('DISTINCT p');
-        $qb->andWhere('p.territory = :territory')
-            ->setParameter('territory', $territory);
-        $qb->andWhere('REGEXP(p.competence, :regexp) = true')
-            ->setParameter('regexp', '(^'.$qualification->name.',)|(,'.$qualification->name.',)|(,'.$qualification->name.'$)|(^'.$qualification->name.'$)');
-
-        return $qb->getQuery()->getResult();
+        return $this->createQueryBuilder('p')
+            ->andWhere('p.territory = :territory')
+            ->setParameter('territory', $territory)
+            // Virgules ajoutées autour de la liste pour ne trouver que la valeur entière
+            ->andWhere("CONCAT(',', p.competence, ',') LIKE :competence")
+            ->setParameter('competence', '%,'.$qualification->name.',%')
+            ->getQuery()
+            ->getResult();
     }
 
     /**

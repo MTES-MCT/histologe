@@ -25,13 +25,14 @@ class MenuBuilderTest extends KernelTestCase
         $security = $this->createStub(Security::class);
         $security->method('getUser')->willReturn($user);
 
-        $menuBuilder = new MenuBuilder($security, true, false, false);
-        $this->assertCount(6, $menuBuilder->build()->getChildren());
+        $menuBuilder = new MenuBuilder($security, true, false, true);
+        $this->assertCount(7, $menuBuilder->build()->getChildren());
         $this->assertEquals('Tableau de bord', $menuBuilder->build()->getChildren()[0]->getLabel());
         $this->assertEquals('Signalements', $menuBuilder->build()->getChildren()[1]->getLabel());
-        $this->assertEquals('Données chiffrées', $menuBuilder->build()->getChildren()[2]->getLabel());
-        $this->assertEquals('Mes outils', $menuBuilder->build()->getChildren()[3]->getLabel());
-        $this->assertEquals('Best of', $menuBuilder->build()->getChildren()[4]->getLabel());
-        $this->assertEquals('Maxi Best of', $menuBuilder->build()->getChildren()[5]->getLabel());
+        $this->assertEquals('Calendrier', $menuBuilder->build()->getChildren()[2]->getLabel());
+        $this->assertEquals('Données chiffrées', $menuBuilder->build()->getChildren()[3]->getLabel());
+        $this->assertEquals('Mes outils', $menuBuilder->build()->getChildren()[4]->getLabel());
+        $this->assertEquals('Best of', $menuBuilder->build()->getChildren()[5]->getLabel());
+        $this->assertEquals('Maxi Best of', $menuBuilder->build()->getChildren()[6]->getLabel());
     }
 }

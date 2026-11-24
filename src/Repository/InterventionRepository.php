@@ -127,8 +127,8 @@ class InterventionRepository extends ServiceEntityRepository
             ->leftJoin('i.partner', 'p')
             ->addSelect('s', 'p')
             ->andWhere('i.type IN (:visiteTypes)')
-            ->setParameter('visiteTypes', [InterventionType::VISITE->name, InterventionType::VISITE_CONTROLE->name])
-            ->andWhere('i.status IS NULL OR i.status != :canceled')
+            ->setParameter('visiteTypes', [InterventionType::VISITE->name, InterventionType::VISITE_CONTROLE->name]) // TODO enlever avec suppression ARRETE
+            ->andWhere('i.status != :canceled')
             ->setParameter('canceled', Intervention::STATUS_CANCELED)
             ->andWhere('i.partner IS NOT NULL OR i.externalOperator IS NOT NULL')
             ->andWhere('s.statut NOT IN (:excludedStatus)')
