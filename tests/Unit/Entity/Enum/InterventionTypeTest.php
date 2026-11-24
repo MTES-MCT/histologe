@@ -27,6 +27,5 @@ class InterventionTypeTest extends TestCase
         yield 'Visite contrôle' => ['Visite contrôle', InterventionType::VISITE_CONTROLE];
         yield 'Visite de contrôle' => ['Visite de contrôle', InterventionType::VISITE_CONTROLE];
         yield 'Visite' => ['Visite', InterventionType::VISITE];
-        yield 'Arrêté préfectoral' => ['Arrêté préfectoral', InterventionType::ARRETE_PREFECTORAL];
     }
 }

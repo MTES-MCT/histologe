@@ -82,10 +82,7 @@ class InterventionConfirmedSubscriber implements EventSubscriberInterface
                 currentUser: $currentUser,
             );
         }
-
-        if (in_array($intervention->getType(), [InterventionType::VISITE_CONTROLE, InterventionType::VISITE], true)) {
-            $this->setBailleurPrevenu($intervention->getSignalement());
-        }
+        $this->setBailleurPrevenu($intervention->getSignalement());
     }
 
     private function setBailleurPrevenu(Signalement $signalement): void

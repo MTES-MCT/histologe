@@ -13,7 +13,6 @@ use App\Entity\Affectation;
 use App\Entity\Enum\Api\PersonneType;
 use App\Entity\Enum\DesordreCritereZone;
 use App\Entity\Enum\EtageType;
-use App\Entity\Enum\InterventionType;
 use App\Entity\Enum\ProprioType;
 use App\Entity\Partner;
 use App\Entity\Signalement;
@@ -169,10 +168,7 @@ readonly class SignalementResponseFactory
                 $signalementResponse->suivis[] = new Suivi($suivi);
             }
             foreach ($signalement->getInterventions() as $intervention) {
-                // TODO migration arretes : supprimer aprés migration et suppression physique des données
-                if (InterventionType::ARRETE_PREFECTORAL !== $intervention->getType()) {
-                    $signalementResponse->visites[] = $this->visiteFactory->createInstance($intervention);
-                }
+                $signalementResponse->visites[] = $this->visiteFactory->createInstance($intervention);
             }
 
             if ($this->s3Enable) {

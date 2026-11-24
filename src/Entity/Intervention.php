@@ -92,11 +92,6 @@ class Intervention implements EntityHistoryInterface, EntitySanitizerInterface
     #[ORM\Column(nullable: true, options: ['comment' => 'Unique id used by the provider'])]
     private ?int $providerId = null;
 
-    // TODO migration arretes : supprimer cette propriété et sa colonne en base
-    /** @var array<mixed> $additionalInformation */
-    #[ORM\Column(nullable: true)]
-    private ?array $additionalInformation = [];
-
     /** @var Collection<int, File> $files */
     #[ORM\OneToMany(mappedBy: 'intervention', targetEntity: File::class, cascade: ['persist'])]
     private Collection $files;
@@ -395,20 +390,6 @@ class Intervention implements EntityHistoryInterface, EntitySanitizerInterface
     public function setProviderId(?int $providerId): static
     {
         $this->providerId = $providerId;
-
-        return $this;
-    }
-
-    /** @return array<mixed> */
-    public function getAdditionalInformation(): ?array
-    {
-        return $this->additionalInformation;
-    }
-
-    /** @param array<mixed> $additionalInformation */
-    public function setAdditionalInformation(?array $additionalInformation): static
-    {
-        $this->additionalInformation = $additionalInformation;
 
         return $this;
     }
