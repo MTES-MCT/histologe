@@ -111,4 +111,34 @@ class EntityComparatorTest extends TestCase
             ], $result
         );
     }
+
+    /**
+     * @throws \ReflectionException
+     */
+    public function testCompareValuesMasksAuthCode(): void
+    {
+        $this->assertSame(
+            ['old' => null, 'new' => '***'],
+            $this->entityComparator->compareValues(null, '123456', 'authCode')
+        );
+        $this->assertSame(
+            ['old' => '***', 'new' => null],
+            $this->entityComparator->compareValues('123456', null, 'authCode')
+        );
+    }
+
+    public function testGetEntityPropertiesMasksSensitiveFields(): void
+    {
+        $entity = new class {
+            public string $email = 'agent@example.com';
+            public string $password = 'hashedpassword';
+            public string $authCode = '123456';
+        };
+
+        $properties = $this->entityComparator->getEntityPropertiesAndValueNormalized($entity);
+
+        $this->assertSame('***', $properties['authCode']);
+        $this->assertSame('hash***', $properties['password']);
+        $this->assertSame('agent@example.com', $properties['email']);
+    }
 }

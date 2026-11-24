@@ -1,40 +1,63 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Authentification à deux facteurs{% endblock %}
+{# Gabarit partagé : 2FA des agents (firewall main) et des usagers (firewall code_suivi). #}
+{% set isUsager = app.request.attributes.get('_route') starts with '2fa_suivi' %}
+{% set recipient = app.user and app.user.emailAuthRecipient is defined ? app.user.emailAuthRecipient|mask_email : '' %}
+{% if authenticationError %}
+    {% set errorMessage = authenticationError|trans(authenticationErrorData, 'SchebTwoFactorBundle') %}
+    {% if errorMessage == authenticationError %}
+        {% set errorMessage = authenticationError|trans(authenticationErrorData, 'security') %}
+    {% endif %}
+{% endif %}
+
+{% block title %}{% if authenticationError %}Erreur - {% endif %}Code de vérification{% endblock %}
 
 {% block body %}
     <main role="main" class="fr-container fr-py-5w" id="content">
         <div class="fr-grid-row fr-grid-row--center">
             <div class="fr-col-12 fr-col-md-8 fr-col-lg-6 fr-background-alt--blue-france fr-p-4w fr-radius--lg">
-                <h1 class="fr-text--center fr-mb-6v">Authentification à deux facteurs</h1>
-                {# Authentication errors #}
-                {% if authenticationError %}
-                    <div class="fr-notice fr-notice--alert">
-                        <div class="fr-container">
-                            <div class="fr-notice__body">
-                                <p>
-                                    <span class="fr-notice__title">{{ authenticationError|trans(authenticationErrorData, 'SchebTwoFactorBundle') }}</span>
-                                </p>
-                            </div>
-                        </div>
-                    </div>
-                {% endif %}
+                <h1 class="fr-text--center fr-mb-6v">Saisissez votre code de vérification</h1>
+
+                <p>
+                    {% if recipient %}
+                        Un code de vérification vous a été envoyé par e-mail à l'adresse <strong>{{ recipient }}</strong>.
+                    {% else %}
+                        Un code de vérification vous a été envoyé par e-mail.
+                    {% endif %}
+                    Il permet de vérifier qu'il s'agit bien de vous.
+                </p>
 
                 {# Let the user select the authentication method #}
                 {% if availableTwoFactorProviders|length > 1 %}
-                    <p>{{ "choose_provider"|trans({}, 'SchebTwoFactorBundle') }}:
+                    <p>{{ "choose_provider"|trans({}, 'SchebTwoFactorBundle') }} :
                         {% for provider in availableTwoFactorProviders %}
-                            <a href="{{ path("2fa_login", {"preferProvider": provider}) }}">{{ provider }}</a>
+                            <a href="{{ path(isUsager ? '2fa_suivi_login' : '2fa_login', {"preferProvider": provider}) }}">{{ provider }}</a>
                         {% endfor %}
                     </p>
                 {% endif %}
-                
-                {# The form to enter the authentication code #}
-                <form class="form" action="{{ checkPathUrl ? checkPathUrl: path(checkPathRoute) }}" method="post">
 
-                    <div class="fr-input-group">
-                        <label class="fr-label" for="_auth_code">{{ "auth_code"|trans({}, 'SchebTwoFactorBundle') }} {{ twoFactorProvider }}</label>
-                        <input class="fr-input" id="_auth_code" type="text" name="{{ authCodeParameterName }}" autocomplete="one-time-code" autofocus inputmode="numeric" pattern="[0-9]*"/>
+                {# The form to enter the authentication code #}
+                <form class="form" action="{{ checkPathUrl ? checkPathUrl: path(checkPathRoute) }}" method="post" novalidate>
+                    <div class="fr-input-group{% if authenticationError %} fr-input-group--error{% endif %}">
+                        <label class="fr-label" for="_auth_code">
+                            Code de vérification
+                            {# Nombre de chiffres : voir scheb_two_factor.email.digits (config/packages/scheb_2fa.yaml) #}
+                            <span class="fr-hint-text" id="auth-code-hint">Code à 6 chiffres, reçu par e-mail. Pensez à vérifier vos courriers indésirables.</span>
+                        </label>
+                        <input
+                            class="fr-input{% if authenticationError %} fr-input--error{% endif %}"
+                            id="_auth_code"
+                            type="text"
+                            name="{{ authCodeParameterName }}"
+                            autocomplete="one-time-code"
+                            inputmode="numeric"
+                            spellcheck="false"
+                            aria-describedby="auth-code-hint{% if authenticationError %} auth-code-error{% endif %}"
+                            {% if authenticationError %}aria-invalid="true" autofocus{% endif %}
+                        />
+                        {% if authenticationError %}
+                            <p class="fr-error-text" id="auth-code-error">{{ errorMessage }}</p>
+                        {% endif %}
                     </div>
 
                     {% if isCsrfProtectionEnabled %}
@@ -44,18 +67,24 @@
                     <ul class="fr-btns-group fr-mt-5v">
                         <li>
                             <button type="submit" class="fr-btn fr-btn--lg fr-btn--primary">
-                                Se connecter
+                                Valider le code
                             </button>
                         </li>
                     </ul>
-                    
-                    {# The logout link gives the user a way out if they can't complete two-factor authentication #}
-                    <div class="fr-text--center fr-form-group fr-mt-5v">
-                        <a href="{{ logoutPath }}">{{ "cancel"|trans({}, 'SchebTwoFactorBundle') }}</a>
-                    </div>
                 </form>
 
+                {# Formulaire distinct : un formulaire ne peut pas en contenir un autre. #}
+                <form action="{{ path(isUsager ? '2fa_suivi_resend_code' : '2fa_resend_code') }}" method="post" class="fr-mt-3v fr-text--center">
+                    <input type="hidden" name="_csrf_token" value="{{ csrf_token('two_factor_resend_code') }}">
+                    <p class="fr-mb-2v">Vous n'avez pas reçu le code ?</p>
+                    <button type="submit" class="fr-btn fr-btn--secondary">Renvoyer le code par e-mail</button>
+                </form>
+
+                {# The logout link gives the user a way out if they can't complete two-factor authentication #}
+                <p class="fr-text--center fr-mt-5v fr-mb-0">
+                    <a href="{{ logoutPath }}">Annuler la connexion</a>
+                </p>
             </div>
         </div>
-	</main>
+    </main>
 {% endblock %}

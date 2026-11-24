@@ -12,6 +12,7 @@ use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 class AccountAuthCodeMailerTest extends KernelTestCase
 {
     private const string AGENT_WARNING = 'prévenir votre responsable de territoire';
+    private const string USAGER_WARNING = 'il sert de sécurité pour accéder à votre dossier';
 
     public static function provideRoles(): \Generator
     {
@@ -40,8 +41,10 @@ class AccountAuthCodeMailerTest extends KernelTestCase
         $this->assertEmailHtmlBodyContains($email, '123456');
         if ($expectWarning) {
             $this->assertEmailHtmlBodyContains($email, self::AGENT_WARNING);
+            $this->assertEmailHtmlBodyNotContains($email, self::USAGER_WARNING);
         } else {
             $this->assertEmailHtmlBodyNotContains($email, self::AGENT_WARNING);
+            $this->assertEmailHtmlBodyContains($email, self::USAGER_WARNING);
         }
     }
 }

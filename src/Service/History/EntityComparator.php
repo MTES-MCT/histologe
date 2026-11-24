@@ -23,7 +23,7 @@ class EntityComparator
         'authCode',
     ];
 
-    private const string MASK = '**********';
+    private const string MASK = '***';
 
     /**
      * @throws \ReflectionException

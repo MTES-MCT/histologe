@@ -274,7 +274,7 @@ class CodeSuiviLoginAuthenticatorTest extends TestCase
                 'login-code-postal' => '13001',
                 '_csrf_token' => 'token123',
             ],
-            'Merci de demander à la personne qui a créé votre dossier de renseigner une adresse e-mail valide pour vous.',
+            CodeSuiviLoginAuthenticator::NO_EMAIL_MESSAGE,
         ];
 
         $signalementDeclarant = self::createMockSignalement(ProfileDeclarant::TIERS_PARTICULIER, 'Durand', 'Nadia', '75020', '87654321', 'occupant@example.com');
@@ -288,7 +288,7 @@ class CodeSuiviLoginAuthenticatorTest extends TestCase
                 'login-code-postal' => '75020',
                 '_csrf_token' => 'token456',
             ],
-            'Merci de demander à l\'occupant du logement de renseigner une adresse e-mail valide pour vous.',
+            CodeSuiviLoginAuthenticator::NO_EMAIL_MESSAGE,
         ];
 
         $signalementOccupantInconnu = self::createMockSignalement(ProfileDeclarant::LOCATAIRE, 'Martin', 'Luc', '13001', '12345678', EmailFormatValidator::EMAIL_HISTOLOGE_INCONNU);
@@ -301,7 +301,7 @@ class CodeSuiviLoginAuthenticatorTest extends TestCase
                 'login-code-postal' => '13001',
                 '_csrf_token' => 'token123',
             ],
-            'Merci de demander à la personne qui a créé votre dossier de renseigner une adresse e-mail valide pour vous.',
+            CodeSuiviLoginAuthenticator::NO_EMAIL_MESSAGE,
         ];
 
         $signalementOccupantInvalide = self::createMockSignalement(ProfileDeclarant::LOCATAIRE, 'Martin', 'Luc', '13001', '12345678', 'luc.martin@example');
@@ -314,7 +314,7 @@ class CodeSuiviLoginAuthenticatorTest extends TestCase
                 'login-code-postal' => '13001',
                 '_csrf_token' => 'token123',
             ],
-            'L\'adresse e-mail associée à votre dossier n\'est pas valide. Merci de demander à la personne qui a créé votre dossier de la corriger.',
+            CodeSuiviLoginAuthenticator::INVALID_EMAIL_MESSAGE,
         ];
 
         $signalementDeclarantInvalide = self::createMockSignalement(ProfileDeclarant::TIERS_PARTICULIER, 'Durand', 'Nadia', '75020', '87654321', 'occupant@example.com');
@@ -328,7 +328,7 @@ class CodeSuiviLoginAuthenticatorTest extends TestCase
                 'login-code-postal' => '75020',
                 '_csrf_token' => 'token456',
             ],
-            'L\'adresse e-mail associée à votre dossier n\'est pas valide. Merci de demander à l\'occupant du logement de la corriger.',
+            CodeSuiviLoginAuthenticator::INVALID_EMAIL_MESSAGE,
         ];
     }
 

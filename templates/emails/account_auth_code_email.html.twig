@@ -10,7 +10,12 @@
     <p>
         Ce code est personnel : ne le communiquez à personne.
     </p>
-    {% if not isUsager %}
+    {% if isUsager %}
+        <p>
+            Si vous n'êtes pas à l'origine de cette tentative de connexion, vous pouvez ignorer ce message :
+            il sert de sécurité pour accéder à votre dossier.
+        </p>
+    {% else %}
         <p>
             Si vous n'êtes pas à l'origine de cette tentative de connexion, nous vous recommandons de modifier votre mot de passe
             et de prévenir votre responsable de territoire.

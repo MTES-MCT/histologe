@@ -57,6 +57,7 @@ class AppExtension extends AbstractExtension implements GlobalsInterface
             new TwigFilter('badge_relance_class', [$this, 'getRelanceBadgeClass']),
             new TwigFilter('entity_label', [$this, 'getEntityLabel']),
             new TwigFilter('format_answer', [$this, 'formatAnswer']),
+            new TwigFilter('mask_email', [$this, 'maskEmail']),
         ];
     }
 
@@ -210,6 +211,22 @@ class AppExtension extends AbstractExtension implements GlobalsInterface
             default:
                 return $taggedText;
         }
+    }
+
+    /**
+     * Masque la partie locale d'une adresse e-mail en ne gardant que son premier caractère.
+     *
+     * (ex. : jean.dupont@example.com → j***@example.com).
+     */
+    public function maskEmail(?string $email): string
+    {
+        if (null === $email || !str_contains($email, '@')) {
+            return '';
+        }
+
+        [$localPart, $domain] = explode('@', $email, 2);
+
+        return mb_substr($localPart, 0, 1).'***@'.$domain;
     }
 
     public function formatPhone(?string $phoneNumber): string

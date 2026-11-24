@@ -31,6 +31,8 @@ class CodeSuiviLoginAuthenticator extends AbstractLoginFormAuthenticator
     use TargetPathTrait;
 
     public const string LOGIN_FO_ROUTE = 'app_login_fo';
+    public const string NO_EMAIL_MESSAGE = 'Aucune adresse e-mail n\'est associée à votre dossier : nous ne pouvons pas vous envoyer votre code de connexion. Contactez les services en charge de votre dossier pour la faire ajouter.';
+    public const string INVALID_EMAIL_MESSAGE = 'L\'adresse e-mail associée à votre dossier n\'est pas valide : nous ne pouvons pas vous envoyer votre code de connexion. Contactez les services en charge de votre dossier pour la faire corriger.';
 
     public function __construct(
         private readonly UrlGeneratorInterface $urlGenerator,
@@ -148,20 +150,18 @@ class CodeSuiviLoginAuthenticator extends AbstractLoginFormAuthenticator
             return;
         }
 
-        if (UserManager::DECLARANT === $visitorType) {
-            $email = $signalement->getMailDeclarant();
-            $contact = 'l\'occupant du logement';
-        } else {
-            $email = $signalement->getMailOccupant();
-            $contact = 'la personne qui a créé votre dossier';
-        }
+        $email = UserManager::DECLARANT === $visitorType
+            ? $signalement->getMailDeclarant()
+            : $signalement->getMailOccupant();
 
+        // Seuls les services en charge du dossier peuvent modifier l'adresse e-mail : on oriente vers eux,
+        // quel que soit le profil (un locataire est à la fois occupant et déclarant).
         if (empty($email) || EmailFormatValidator::EMAIL_HISTOLOGE_INCONNU === $email) {
-            throw new CustomUserMessageAuthenticationException(\sprintf('Merci de demander à %s de renseigner une adresse e-mail valide pour vous.', $contact));
+            throw new CustomUserMessageAuthenticationException(self::NO_EMAIL_MESSAGE);
         }
 
         if (EmailFormatValidator::isInvalidEmail($email)) {
-            throw new CustomUserMessageAuthenticationException(\sprintf('L\'adresse e-mail associée à votre dossier n\'est pas valide. Merci de demander à %s de la corriger.', $contact));
+            throw new CustomUserMessageAuthenticationException(self::INVALID_EMAIL_MESSAGE);
         }
     }
 
