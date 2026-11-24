@@ -10,10 +10,12 @@
     <p>
         Ce code est personnel : ne le communiquez à personne.
     </p>
-    <p>
-        Si vous n'êtes pas à l'origine de cette tentative de connexion, nous vous recommandons de modifier votre mot de passe
-        et de prévenir votre responsable de territoire.
-    </p>
+    {% if not isUsager %}
+        <p>
+            Si vous n'êtes pas à l'origine de cette tentative de connexion, nous vous recommandons de modifier votre mot de passe
+            et de prévenir votre responsable de territoire.
+        </p>
+    {% endif %}
 
     <p>A bientôt sur {{ platform.name }} !</p>
 {% endblock %}

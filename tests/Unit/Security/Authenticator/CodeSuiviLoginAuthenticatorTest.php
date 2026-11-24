@@ -11,7 +11,9 @@ use App\Repository\SignalementRepository;
 use App\Security\Authenticator\CodeSuiviLoginAuthenticator;
 use App\Security\Provider\SignalementUserProvider;
 use App\Security\User\SignalementUser;
+use App\Service\Security\TwoFactorCondition;
 use App\Tests\FixturesHelper;
+use App\Validator\EmailFormatValidator;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\MockObject\Stub;
 use PHPUnit\Framework\TestCase;
@@ -53,11 +55,7 @@ class CodeSuiviLoginAuthenticatorTest extends TestCase
             'user' => new User(),
         ]);
 
-        $authenticator = new CodeSuiviLoginAuthenticator(
-            $this->urlGenerator,
-            $this->signalementRepository,
-            $this->signalementUserProvider,
-        );
+        $authenticator = $this->createAuthenticator();
 
         $passport = $authenticator->authenticate($request);
         $this->assertInstanceOf(SignalementUser::class, $passport->getUser());
@@ -191,11 +189,7 @@ class CodeSuiviLoginAuthenticatorTest extends TestCase
 
         $request = new Request([], [], ['code' => 'wrongcode']);
         $this->signalementRepository->method('findOneByCodeForPublic')->willReturn(null);
-        $authenticator = new CodeSuiviLoginAuthenticator(
-            $this->urlGenerator,
-            $this->signalementRepository,
-            $this->signalementUserProvider,
-        );
+        $authenticator = $this->createAuthenticator();
         $authenticator->authenticate($request);
     }
 
@@ -219,11 +213,7 @@ class CodeSuiviLoginAuthenticatorTest extends TestCase
 
         $this->signalementRepository->method('findOneByCodeForPublic')->willReturn($signalement);
 
-        $authenticator = new CodeSuiviLoginAuthenticator(
-            $this->urlGenerator,
-            $this->signalementRepository,
-            $this->signalementUserProvider,
-        );
+        $authenticator = $this->createAuthenticator();
         $authenticator->authenticate($request);
     }
 
@@ -246,12 +236,130 @@ class CodeSuiviLoginAuthenticatorTest extends TestCase
 
         $this->signalementRepository->method('findOneByCodeForPublic')->willReturn($signalement);
 
-        $authenticator = new CodeSuiviLoginAuthenticator(
+        $authenticator = $this->createAuthenticator();
+        $authenticator->authenticate($request);
+    }
+
+    /**
+     * @param array<string> $requestData
+     */
+    #[DataProvider('provideMissingEmailCases')]
+    public function testAuthenticateWithoutValidEmailWhenUsager2faEnabledThrowsException(
+        Signalement $signalement,
+        array $requestData,
+        string $expectedMessage,
+    ): void {
+        $this->expectException(CustomUserMessageAuthenticationException::class);
+        $this->expectExceptionMessage($expectedMessage);
+
+        $request = new Request([], $requestData, ['code' => $signalement->getCodeSuivi()]);
+        $this->signalementRepository->method('findOneByCodeForPublic')->willReturn($signalement);
+
+        $this->createAuthenticator(usager2faEnabled: true)->authenticate($request);
+    }
+
+    public static function provideMissingEmailCases(): \Generator
+    {
+        $signalementOccupant = self::createMockSignalement(ProfileDeclarant::TIERS_PARTICULIER, 'Martin', 'Luc', '13001', '12345678', '');
+        $signalementOccupant->setMailOccupant(null)->setMailDeclarant('declarant@example.com');
+        yield 'occupant sans e-mail' => [
+            $signalementOccupant,
+            [
+                'visitor-type' => 'occupant',
+                'login-first-letter-prenom' => 'L',
+                'login-first-letter-nom' => 'M',
+                'login-code-postal' => '13001',
+                '_csrf_token' => 'token123',
+            ],
+            'Merci de demander à la personne qui a créé votre dossier de renseigner une adresse e-mail valide pour vous.',
+        ];
+
+        $signalementDeclarant = self::createMockSignalement(ProfileDeclarant::TIERS_PARTICULIER, 'Durand', 'Nadia', '75020', '87654321', 'occupant@example.com');
+        $signalementDeclarant->setMailDeclarant(null);
+        yield 'déclarant sans e-mail' => [
+            $signalementDeclarant,
+            [
+                'visitor-type' => 'déclarant',
+                'login-first-letter-prenom' => 'N',
+                'login-first-letter-nom' => 'D',
+                'login-code-postal' => '75020',
+                '_csrf_token' => 'token456',
+            ],
+            'Merci de demander à l\'occupant du logement de renseigner une adresse e-mail valide pour vous.',
+        ];
+
+        $signalementOccupantInconnu = self::createMockSignalement(ProfileDeclarant::LOCATAIRE, 'Martin', 'Luc', '13001', '12345678', EmailFormatValidator::EMAIL_HISTOLOGE_INCONNU);
+        yield 'occupant avec e-mail inconnu' => [
+            $signalementOccupantInconnu,
+            [
+                'visitor-type' => 'occupant',
+                'login-first-letter-prenom' => 'L',
+                'login-first-letter-nom' => 'M',
+                'login-code-postal' => '13001',
+                '_csrf_token' => 'token123',
+            ],
+            'Merci de demander à la personne qui a créé votre dossier de renseigner une adresse e-mail valide pour vous.',
+        ];
+
+        $signalementOccupantInvalide = self::createMockSignalement(ProfileDeclarant::LOCATAIRE, 'Martin', 'Luc', '13001', '12345678', 'luc.martin@example');
+        yield 'occupant avec e-mail invalide' => [
+            $signalementOccupantInvalide,
+            [
+                'visitor-type' => 'occupant',
+                'login-first-letter-prenom' => 'L',
+                'login-first-letter-nom' => 'M',
+                'login-code-postal' => '13001',
+                '_csrf_token' => 'token123',
+            ],
+            'L\'adresse e-mail associée à votre dossier n\'est pas valide. Merci de demander à la personne qui a créé votre dossier de la corriger.',
+        ];
+
+        $signalementDeclarantInvalide = self::createMockSignalement(ProfileDeclarant::TIERS_PARTICULIER, 'Durand', 'Nadia', '75020', '87654321', 'occupant@example.com');
+        $signalementDeclarantInvalide->setMailDeclarant('nadia.durand@@example.com');
+        yield 'déclarant avec e-mail invalide' => [
+            $signalementDeclarantInvalide,
+            [
+                'visitor-type' => 'déclarant',
+                'login-first-letter-prenom' => 'N',
+                'login-first-letter-nom' => 'D',
+                'login-code-postal' => '75020',
+                '_csrf_token' => 'token456',
+            ],
+            'L\'adresse e-mail associée à votre dossier n\'est pas valide. Merci de demander à l\'occupant du logement de la corriger.',
+        ];
+    }
+
+    public function testAuthenticateWithoutEmailWhenUsager2faDisabledSucceeds(): void
+    {
+        $signalement = self::createMockSignalement(ProfileDeclarant::LOCATAIRE, 'Martin', 'Luc', '13001', '12345678', '');
+        $signalement->setMailOccupant(null);
+        $request = new Request([], [
+            'visitor-type' => 'occupant',
+            'login-first-letter-prenom' => 'L',
+            'login-first-letter-nom' => 'M',
+            'login-code-postal' => '13001',
+            '_csrf_token' => 'token123',
+        ], ['code' => '12345678']);
+
+        $this->signalementRepository->method('findOneByCodeForPublic')->willReturn($signalement);
+        $this->signalementUserProvider->method('getUsagerData')->willReturn([
+            'identifier' => '12345678:occupant',
+            'email' => null,
+            'user' => new User(),
+        ]);
+
+        $passport = $this->createAuthenticator(usager2faEnabled: false)->authenticate($request);
+        $this->assertInstanceOf(SignalementUser::class, $passport->getUser());
+    }
+
+    private function createAuthenticator(bool $usager2faEnabled = false): CodeSuiviLoginAuthenticator
+    {
+        return new CodeSuiviLoginAuthenticator(
             $this->urlGenerator,
             $this->signalementRepository,
             $this->signalementUserProvider,
+            new TwoFactorCondition(true, false, $usager2faEnabled),
         );
-        $authenticator->authenticate($request);
     }
 
     private static function createMockSignalement(

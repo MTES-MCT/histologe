@@ -8,6 +8,8 @@ use App\Manager\UserManager;
 use App\Repository\SignalementRepository;
 use App\Security\Provider\SignalementUserProvider;
 use App\Security\User\SignalementUser;
+use App\Service\Security\TwoFactorCondition;
+use App\Validator\EmailFormatValidator;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -32,6 +34,7 @@ class CodeSuiviLoginAuthenticator extends AbstractLoginFormAuthenticator
         private readonly UrlGeneratorInterface $urlGenerator,
         private readonly SignalementRepository $signalementRepository,
         private readonly SignalementUserProvider $signalementUserProvider,
+        private readonly TwoFactorCondition $twoFactorCondition,
     ) {
     }
 
@@ -77,6 +80,7 @@ class CodeSuiviLoginAuthenticator extends AbstractLoginFormAuthenticator
         }
 
         $this->denyAccessIfNotAllowed($signalement, $firstLetterPrenom, $firstLetterNom, $codePostal, $visitorType);
+        $this->denyAccessIfNoEmailForTwoFactor($signalement, $visitorType);
 
         $userIdentifier = $codeSuivi.':'.$visitorType;
 
@@ -130,6 +134,32 @@ class CodeSuiviLoginAuthenticator extends AbstractLoginFormAuthenticator
         }
         if ((!$testDeclarant && !$testOccupant) || $signalement->getAddress()->getPostCode() !== $inputCodePostal) {
             throw new CustomUserMessageAuthenticationException('Informations incorrectes');
+        }
+    }
+
+    /**
+     * La 2FA usager envoie le code par e-mail : sans adresse, l'usager ne peut pas se connecter.
+     */
+    private function denyAccessIfNoEmailForTwoFactor(Signalement $signalement, string $visitorType): void
+    {
+        if (!$this->twoFactorCondition->isEnabledForUsagers()) {
+            return;
+        }
+
+        if (UserManager::DECLARANT === $visitorType) {
+            $email = $signalement->getMailDeclarant();
+            $contact = 'l\'occupant du logement';
+        } else {
+            $email = $signalement->getMailOccupant();
+            $contact = 'la personne qui a créé votre dossier';
+        }
+
+        if (empty($email) || EmailFormatValidator::EMAIL_HISTOLOGE_INCONNU === $email) {
+            throw new CustomUserMessageAuthenticationException(\sprintf('Merci de demander à %s de renseigner une adresse e-mail valide pour vous.', $contact));
+        }
+
+        if (EmailFormatValidator::isInvalidEmail($email)) {
+            throw new CustomUserMessageAuthenticationException(\sprintf('L\'adresse e-mail associée à votre dossier n\'est pas valide. Merci de demander à %s de la corriger.', $contact));
         }
     }
 

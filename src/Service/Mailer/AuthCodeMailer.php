@@ -24,7 +24,7 @@ class AuthCodeMailer implements AuthCodeMailerInterface
             new NotificationMail(
                 type: NotificationMailerType::TYPE_ACCOUNT_AUTH_CODE,
                 to: $user->getEmailAuthRecipient(),
-                user: $user,
+                user: $user instanceof SignalementUser ? $user->getUser() : $user,
             )
         );
     }

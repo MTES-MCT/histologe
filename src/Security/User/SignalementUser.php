@@ -16,7 +16,6 @@ class SignalementUser implements UserInterface, TwoFactorInterface
      * @var array<string>
      */
     private array $roles = [];
-    private ?string $authCode;
 
     public function __construct(
         private readonly string $userIdentifier,
@@ -67,25 +66,21 @@ class SignalementUser implements UserInterface, TwoFactorInterface
 
     public function isEmailAuthEnabled(): bool
     {
-        return $this->user->isUsager();
+        return $this->user->isUsager() && !empty($this->email);
     }
 
     public function getEmailAuthRecipient(): string
     {
-        return $this->email;
+        return $this->email ?? '';
     }
 
     public function getEmailAuthCode(): string
     {
-        if (null === $this->authCode) {
-            throw new \LogicException('The email authentication code was not set');
-        }
-
-        return $this->authCode;
+        return $this->user->getEmailAuthCode();
     }
 
     public function setEmailAuthCode(?string $authCode): void
     {
-        $this->authCode = $authCode;
+        $this->user->setEmailAuthCode($authCode);
     }
 }

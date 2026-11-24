@@ -16,7 +16,7 @@ class TwoFactorCondition implements TwoFactorConditionInterface
         #[Autowire(env: 'FEATURE_2FA_EMAIL_ALL_ROLES')]
         private bool $feature2faEmailAllRoles,
         #[Autowire(env: 'FEATURE_2FA_EMAIL_USAGERS')]
-        private bool $feature2faEmailUsagers
+        private bool $feature2faEmailUsagers,
     ) {
     }
 
@@ -38,7 +38,7 @@ class TwoFactorCondition implements TwoFactorConditionInterface
 
         $user = $context->getUser();
 
-        if ($this->feature2faEmailUsagers && $user instanceof SignalementUser) {
+        if ($user instanceof SignalementUser && $this->isEnabledForUsagers()) {
             return true;
         }
 
@@ -47,5 +47,10 @@ class TwoFactorCondition implements TwoFactorConditionInterface
         }
 
         return $user instanceof User && $user->isSuperAdmin();
+    }
+
+    public function isEnabledForUsagers(): bool
+    {
+        return $this->feature2faEmailEnabled && $this->feature2faEmailUsagers;
     }
 }

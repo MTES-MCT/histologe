@@ -8,6 +8,16 @@
     path: /2fa_check
     schemes: [http]
 
+2fa_suivi_login:
+    path: /2fa-suivi
+    schemes: [http]
+    defaults:
+        _controller: "scheb_two_factor.form_controller::form"
+
+2fa_suivi_login_check:
+    path: /2fa-suivi_check
+    schemes: [http]
+
 when@prod:
     2fa_login:
         path: /2fa
@@ -17,4 +27,14 @@ when@prod:
 
     2fa_login_check:
         path: /2fa_check
+        schemes: [https]
+
+    2fa_suivi_login:
+        path: /2fa-suivi
+        schemes: [https]
+        defaults:
+            _controller: "scheb_two_factor.form_controller::form"
+
+    2fa_suivi_login_check:
+        path: /2fa-suivi_check
         schemes: [https]

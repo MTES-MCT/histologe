@@ -10,6 +10,7 @@ use App\Repository\SignalementRepository;
 use App\Repository\UserRepository;
 use App\Service\History\HistoryEntryBuffer;
 use App\Service\Security\NewLoginNotifier;
+use App\Tests\UserHelper;
 use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerInterface;
 use Scheb\TwoFactorBundle\Security\TwoFactor\Event\TwoFactorAuthenticationEvent;
@@ -18,9 +19,12 @@ use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
+use Symfony\Component\Security\Http\Event\InteractiveLoginEvent;
 
 class AuthentificationSuccessListenerTest extends WebTestCase
 {
+    use UserHelper;
+
     public const USER_ADMIN_TERRITORY_13 = 'admin-territoire-13-01@signal-logement.fr';
     private ?KernelBrowser $client = null;
     private HistoryEntryRepository $historyEntryRepository;
@@ -62,21 +66,9 @@ class AuthentificationSuccessListenerTest extends WebTestCase
 
     public function testOnSchebTwoFactorAuthenticationSuccess(): void
     {
-        $historyEntryManager = static::getContainer()->get(HistoryEntryManager::class);
-        /** @var SignalementRepository $signalementRepository */
-        $signalementRepository = static::getContainer()->get(SignalementRepository::class);
         /** @var EntityManagerInterface $entityManager */
         $entityManager = static::getContainer()->get(EntityManagerInterface::class);
-        $authentificationSuccessListener = new AuthentificationSuccessListener(
-            $historyEntryManager,
-            $this->logger,
-            $signalementRepository,
-            $entityManager,
-            '1',
-            static::getContainer()->get(HistoryEntryBuffer::class),
-            static::getContainer()->get(SuiviManager::class),
-            static::getContainer()->get(NewLoginNotifier::class),
-        );
+        $authentificationSuccessListener = $this->createListener();
 
         /** @var UserRepository $userRepository */
         $userRepository = static::getContainer()->get(UserRepository::class);
@@ -116,5 +108,65 @@ class AuthentificationSuccessListenerTest extends WebTestCase
         $this->assertEmailSubjectContains($this->getMailerMessage(), 'Nouvelle connexion à votre compte');
         $historyEntries = $this->historyEntryRepository->findAll();
         $this->assertNotEmpty($historyEntries);
+    }
+
+    public function testOnSchebTwoFactorAuthenticationSuccessForUsager(): void
+    {
+        /** @var SignalementRepository $signalementRepository */
+        $signalementRepository = static::getContainer()->get(SignalementRepository::class);
+        $signalement = $signalementRepository->findOneBy(['uuid' => '00000000-0000-0000-2022-000000000001']);
+        $signalementUser = $this->getSignalementUser($signalement);
+        $usager = $signalementUser->getUser();
+        $this->assertNull($usager->getLastLoginAt(), 'lastLoginAt doit être null avant 2FA');
+
+        $token = $this->createStub(TokenInterface::class);
+        $token->method('getUser')->willReturn($signalementUser);
+
+        $event = new TwoFactorAuthenticationEvent(
+            Request::create($this->urlGenerator->generate('2fa_suivi_login_check'), Request::METHOD_POST, ['_auth_code' => 1234]),
+            $token
+        );
+
+        $this->createListener()->onSchebTwoFactorAuthenticationSuccess($event);
+
+        $usagerAfterLogin = static::getContainer()->get(UserRepository::class)->find($usager->getId());
+        $this->assertNotNull($usagerAfterLogin->getLastLoginAt(), 'lastLoginAt de l\'usager doit être mis à jour après succès 2FA');
+        $this->assertEmailCount(0, message: 'pas de notification de nouvelle connexion pour un usager');
+    }
+
+    public function testInteractiveLoginOnUsagerCheckPathIsIgnored(): void
+    {
+        /** @var SignalementRepository $signalementRepository */
+        $signalementRepository = static::getContainer()->get(SignalementRepository::class);
+        $signalement = $signalementRepository->findOneBy(['uuid' => '00000000-0000-0000-2022-000000000001']);
+        $signalementUser = $this->getSignalementUser($signalement);
+        $usager = $signalementUser->getUser();
+
+        $token = $this->createStub(TokenInterface::class);
+        $token->method('getUser')->willReturn($signalementUser);
+
+        $event = new InteractiveLoginEvent(
+            Request::create($this->urlGenerator->generate('2fa_suivi_login_check'), Request::METHOD_POST),
+            $token
+        );
+
+        $this->createListener()->onSecurityInteractiveLogin($event);
+
+        $usagerAfterLogin = static::getContainer()->get(UserRepository::class)->find($usager->getId());
+        $this->assertNull($usagerAfterLogin->getLastLoginAt(), 'la connexion est tracée par l\'événement 2FA, pas par l\'interactive login');
+    }
+
+    private function createListener(): AuthentificationSuccessListener
+    {
+        return new AuthentificationSuccessListener(
+            static::getContainer()->get(HistoryEntryManager::class),
+            $this->logger,
+            static::getContainer()->get(SignalementRepository::class),
+            static::getContainer()->get(EntityManagerInterface::class),
+            '1',
+            static::getContainer()->get(HistoryEntryBuffer::class),
+            static::getContainer()->get(SuiviManager::class),
+            static::getContainer()->get(NewLoginNotifier::class),
+        );
     }
 }
