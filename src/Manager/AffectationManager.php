@@ -132,8 +132,7 @@ class AffectationManager
         $affectation = (new Affectation())
             ->setSignalement($signalement)
             ->setPartner($partner)
-            ->setAffectedBy($user ?? null)
-            ->setTerritory($signalement->getAddress()->getTerritory());
+            ->setAffectedBy($user ?? null);
 
         if ($dispatchEvent) {
             $this->notificationAndMailSender->sendNewAffectation($affectation);

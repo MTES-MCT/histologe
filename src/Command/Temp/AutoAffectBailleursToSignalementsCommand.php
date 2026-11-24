@@ -126,8 +126,7 @@ class AutoAffectBailleursToSignalementsCommand extends Command
                     $newAffectation = (new Affectation())
                         ->setSignalement($signalement)
                         ->setPartner($partner)
-                        ->setAffectedBy($adminUser)
-                        ->setTerritory($signalement->getAddress()->getTerritory());
+                        ->setAffectedBy($adminUser);
                 }
             } else {
                 $newAffectation = $this->affectationManager->createAffectationFrom(

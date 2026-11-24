@@ -609,8 +609,7 @@ class SignalementActionControllerTest extends WebTestCase
 
         $affectation = (new Affectation())->setPartner($partner)
             ->setSignalement($signalement)
-            ->setStatut(AffectationStatus::WAIT)
-            ->setTerritory($territory);
+            ->setStatut(AffectationStatus::WAIT);
 
         $signalement->addAffectation($affectation);
         $em = static::getContainer()->get('doctrine')->getManager();
