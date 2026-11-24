@@ -23,6 +23,8 @@ class TwoFactorConditionTest extends TestCase
         yield '2FA activée, usager activé' => [true, false, true, User::ROLE_USAGER, true];
         yield '2FA activée tous rôles, admin territoire' => [true, true, false, User::ROLE_ADMIN_TERRITORY, true];
         yield '2FA activée tous rôles, agent' => [true, true, false, User::ROLE_USER_PARTNER, true];
+        yield '2FA activée tous rôles, usager désactivé' => [true, true, false, User::ROLE_USAGER, false];
+        yield '2FA activée tous rôles, usager activé' => [true, true, true, User::ROLE_USAGER, true];
     }
 
     #[DataProvider('provideCases')]

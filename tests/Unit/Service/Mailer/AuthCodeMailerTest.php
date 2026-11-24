@@ -22,6 +22,7 @@ class AuthCodeMailerTest extends TestCase
             ->with($this->callback(static fn (NotificationMail $mail): bool => NotificationMailerType::TYPE_ACCOUNT_AUTH_CODE === $mail->getType()
                 && 'agent@signal-logement.fr' === $mail->getTo()
                 && $user === $mail->getUser()
+                && false === $mail->getParams()['isUsager']
             ))
             ->willReturn(true);
 
@@ -39,6 +40,7 @@ class AuthCodeMailerTest extends TestCase
             ->with($this->callback(static fn (NotificationMail $mail): bool => NotificationMailerType::TYPE_ACCOUNT_AUTH_CODE === $mail->getType()
                 && 'occupant@example.com' === $mail->getTo()
                 && $user === $mail->getUser()
+                && true === $mail->getParams()['isUsager']
             ))
             ->willReturn(true);
 

@@ -17,7 +17,10 @@ use App\Validator\EmailFormatValidator;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\MockObject\Stub;
 use PHPUnit\Framework\TestCase;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Session\Session;
+use Symfony\Component\HttpFoundation\Session\Storage\MockArraySessionStorage;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Security\Core\Exception\CustomUserMessageAuthenticationException;
 
@@ -350,6 +353,37 @@ class CodeSuiviLoginAuthenticatorTest extends TestCase
 
         $passport = $this->createAuthenticator(usager2faEnabled: false)->authenticate($request);
         $this->assertInstanceOf(SignalementUser::class, $passport->getUser());
+    }
+
+    public function testStartWithoutCodeRedirectsToHomeWithFlash(): void
+    {
+        $this->urlGenerator->method('generate')->willReturnCallback(
+            static fn (string $route, array $params = []): string => 'home' === $route ? '/' : '/authentification/'.($params['code'] ?? '')
+        );
+        $session = new Session(new MockArraySessionStorage());
+        $request = Request::create('/2fa-suivi');
+        $request->setSession($session);
+
+        $response = $this->createAuthenticator()->start($request);
+
+        $this->assertInstanceOf(RedirectResponse::class, $response);
+        $this->assertSame('/', $response->getTargetUrl());
+        $this->assertNotEmpty($session->getFlashBag()->get('error'));
+    }
+
+    public function testStartWithCodeRedirectsToLoginPage(): void
+    {
+        $this->urlGenerator->method('generate')->willReturnCallback(
+            static fn (string $route, array $params = []): string => 'home' === $route ? '/' : '/authentification/'.($params['code'] ?? '')
+        );
+        $request = Request::create('/suivre-mon-signalement/12345678');
+        $request->attributes->set('code', '12345678');
+        $request->setSession(new Session(new MockArraySessionStorage()));
+
+        $response = $this->createAuthenticator()->start($request);
+
+        $this->assertInstanceOf(RedirectResponse::class, $response);
+        $this->assertSame('/authentification/12345678', $response->getTargetUrl());
     }
 
     private function createAuthenticator(bool $usager2faEnabled = false): CodeSuiviLoginAuthenticator

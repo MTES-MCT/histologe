@@ -23,13 +23,13 @@ class TwoFactorCondition implements TwoFactorConditionInterface
     /**
      * Les rôles éligibles et l'exclusion ProConnect sont gérés par User::isEmailAuthEnabled().
      * FEATURE_2FA_EMAIL_ALL_ROLES permet de filtrer pour ne garder que les super admin.
-     * FEATURE_2FA_EMAIL_USAGERS permet de filtrer pour ajouter les usagers.
+     * FEATURE_2FA_EMAIL_USAGERS active la 2FA des usagers (SignalementUser), indépendamment des autres flags.
      */
     public function shouldPerformTwoFactorAuthentication(AuthenticationContextInterface $context): bool
     {
         /**
-         * Quand on supprimera FEATURE_2FA_EMAIL_ALL_ROLES
-         * Vider et remplacer par
+         * Quand on supprimera FEATURE_2FA_EMAIL_ALL_ROLES,
+         * conserver la branche SignalementUser et remplacer le reste par
          * return $this->feature2faEmailEnabled;.
          */
         if (!$this->feature2faEmailEnabled) {
@@ -38,8 +38,8 @@ class TwoFactorCondition implements TwoFactorConditionInterface
 
         $user = $context->getUser();
 
-        if ($user instanceof SignalementUser && $this->isEnabledForUsagers()) {
-            return true;
+        if ($user instanceof SignalementUser) {
+            return $this->isEnabledForUsagers();
         }
 
         if ($this->feature2faEmailAllRoles) {

@@ -13,8 +13,10 @@ use App\Validator\EmailFormatValidator;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\Session\FlashBagAwareSessionInterface;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
+use Symfony\Component\Security\Core\Exception\AuthenticationException;
 use Symfony\Component\Security\Core\Exception\CustomUserMessageAuthenticationException;
 use Symfony\Component\Security\Http\Authenticator\AbstractLoginFormAuthenticator;
 use Symfony\Component\Security\Http\Authenticator\Passport\Badge\CsrfTokenBadge;
@@ -171,6 +173,29 @@ class CodeSuiviLoginAuthenticator extends AbstractLoginFormAuthenticator
         $codeSuivi = $request->attributes->get('code');
 
         return new RedirectResponse($this->urlGenerator->generate('front_suivi_signalement', ['code' => $codeSuivi]));
+    }
+
+    /**
+     * Les routes de la 2FA usager (/2fa-suivi) ne portent pas de code de suivi :
+     * sans 2FA en cours (session expirée, retour arrière…), on renvoie vers l'accueil.
+     * TODO : on va finir par avoir un formulaire login usager unique, on pourra rediriger dessus
+     */
+    public function start(Request $request, ?AuthenticationException $authException = null): Response
+    {
+        if (empty($request->attributes->get('code'))) {
+            if ($request->hasSession()) {
+                /** @var FlashBagAwareSessionInterface $session */
+                $session = $request->getSession();
+                $session->getFlashBag()->add('error', [
+                    'title' => 'Session expirée',
+                    'message' => 'Votre session a expiré. Merci d\'utiliser à nouveau le lien de suivi de votre dossier pour vous connecter.',
+                ]);
+            }
+
+            return new RedirectResponse($this->urlGenerator->generate('home'));
+        }
+
+        return parent::start($request, $authException);
     }
 
     protected function getLoginUrl(Request $request): string

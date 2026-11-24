@@ -64,9 +64,12 @@ class SignalementUser implements UserInterface, TwoFactorInterface
         return $this->user;
     }
 
+    /**
+     * L'absence d'e-mail est bloquée en amont par CodeSuiviLoginAuthenticator.
+     */
     public function isEmailAuthEnabled(): bool
     {
-        return $this->user->isUsager() && !empty($this->email);
+        return !empty($this->email);
     }
 
     public function getEmailAuthRecipient(): string

@@ -15,12 +15,13 @@ class AccountAuthCodeMailerTest extends KernelTestCase
 
     public static function provideRoles(): \Generator
     {
-        yield 'agent' => [User::ROLE_USER_PARTNER, true];
-        yield 'usager' => [User::ROLE_USAGER, false];
+        yield 'agent' => [User::ROLE_USER_PARTNER, false, true];
+        yield 'usager' => [User::ROLE_USAGER, true, false];
+        yield 'compte pro connecté au suivi usager' => [User::ROLE_USER_PARTNER, true, false];
     }
 
     #[DataProvider('provideRoles')]
-    public function testAgentWarningOnlyForAgents(string $role, bool $expectWarning): void
+    public function testAgentWarningOnlyForAgents(string $role, bool $isUsager, bool $expectWarning): void
     {
         $user = (new User())->setEmail('destinataire@example.com')->setRoles([$role]);
         $user->setEmailAuthCode('123456');
@@ -31,6 +32,7 @@ class AccountAuthCodeMailerTest extends KernelTestCase
             type: NotificationMailerType::TYPE_ACCOUNT_AUTH_CODE,
             to: 'destinataire@example.com',
             user: $user,
+            params: ['isUsager' => $isUsager],
         ));
 
         $this->assertEmailCount(1);
