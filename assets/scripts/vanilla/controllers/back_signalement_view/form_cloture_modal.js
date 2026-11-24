@@ -45,6 +45,12 @@ updateTravauxVisibilityAffectation();
 
 //cloture signalement v2
 function initCloseSignalementForm() {
+  const isVisibleForUsagerCheckboxSignalement = document.querySelector(
+    '#close-signalement-form input[name="close_signalement[isVisibleForUsager]"]'
+  );
+  const usagerNotNotifiedWarningSignalement = document.querySelector(
+    '#close_signalement_usager_notifie_warning'
+  );
   const motifClotureSelectSignalement = document.querySelector('#close_signalement_motifCloture');
   const departOccupantContainerSignalement = document.querySelector(
     '#close_signalement_departOccupantAt_container'
@@ -88,6 +94,13 @@ function initCloseSignalementForm() {
     }
   }
 
+  function updateUsagerNotNotifiedWarningSignalement() {
+    usagerNotNotifiedWarningSignalement?.classList.toggle(
+      'fr-hidden',
+      isVisibleForUsagerCheckboxSignalement?.checked ?? true
+    );
+  }
+
   function updateTravauxWarningSignalement() {
     const selectedOption =
       motifClotureSelectSignalement?.options[motifClotureSelectSignalement.selectedIndex];
@@ -113,12 +126,17 @@ function initCloseSignalementForm() {
     window.dispatchEvent(new Event('refreshSearchCheckboxContainerEvent'));
   }
 
+  isVisibleForUsagerCheckboxSignalement?.addEventListener(
+    'change',
+    updateUsagerNotNotifiedWarningSignalement
+  );
   motifClotureSelectSignalement?.addEventListener('change', updateMotifClotureSubFields);
   motifClotureSelectSignalement?.addEventListener('change', updateTravauxWarningSignalement);
   travauxRadioButtonsSignalement.forEach((radioButton) => {
     radioButton.addEventListener('change', updateTravauxWarningSignalement);
   });
   withoutProcedureCheckboxSignalement?.addEventListener('change', updateProceduresStateSignalement);
+  updateUsagerNotNotifiedWarningSignalement();
   updateMotifClotureSubFields();
   updateTravauxWarningSignalement();
   updateProceduresStateSignalement();

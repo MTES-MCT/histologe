@@ -9,7 +9,7 @@
         A l'étape suivante, vous pourrez indiquer les procédures engagées sur le dossier.
     </p>
     <p><i>Sauf mention contraire, tous les champs sont obligatoires.</i></p>
-    {% include "back/signalement/view/_destinataires-du-message.html.twig" with {'form': closeSignalementForm, 'signalement': signalement} %}
+    {% include "back/signalement/view/_destinataires-du-message.html.twig" with {'form': closeSignalementForm, 'signalement': signalement, 'isCloseSignalementForm': true} %}
     {{ form_row(closeSignalementForm.motifCloture) }}
     <div id="close_signalement_departOccupantAt_container" class="fr-hidden fr-input-group">
         {{ form_row(closeSignalementForm.departOccupantAt) }}
