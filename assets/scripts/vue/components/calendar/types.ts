@@ -17,7 +17,7 @@ export interface CalendarPeriod {
 
 // Données propres à chaque événement, envoyées par le serveur (extendedProps)
 export interface CalendarEventProps {
-  type: 'club' | 'visite'
+  type: 'club' | 'visite' | 'visite_controle'
   link: string
   occupant?: string
   operator?: string | null

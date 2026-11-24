@@ -27,6 +27,7 @@ interface TitleRange {
 const EVENT_COLORS: Record<CalendarEventProps['type'], string> = {
   club: 'var(--calendar-event-club)',
   visite: 'var(--calendar-event-visite)',
+  visite_controle: 'var(--calendar-event-visite-controle)',
 }
 
 const dayFormatter = new Intl.DateTimeFormat('fr-FR', { day: 'numeric', timeZone: 'UTC' })
@@ -126,7 +127,7 @@ const getWeekDayHeaderContent = (info: DayHeaderInfo): { html: string } | true =
 }
 
 /**
- * Couleur de l'événement selon son type (extendedProps.type : "club" ou "visite")
+ * Couleur de l'événement selon son type (extendedProps.type : "club" ou "visite" ou "visite-controle")
  */
 const applyEventColors = (event: EventInput): EventInput => {
   const type = (event.extendedProps as CalendarEventProps | undefined)?.type
@@ -254,7 +255,7 @@ export const dsfrOptions: CalendarOptions = {
     dayGridMonth: {
       weekNumbers: true,
       // Au-delà, lien "+ x autres" qui ouvre une popup avec tous les événements du jour
-      dayMaxEvents: 2,
+      dayMaxEvents: 3,
     },
     // En-têtes avec la date : "Lundi 2"
     dayGridWeek: {
@@ -263,6 +264,7 @@ export const dsfrOptions: CalendarOptions = {
       eventContent: getWeekEventContent,
       // Trait de couleur sur toute la hauteur de l'événement (titre sur plusieurs lignes)
       listItemEventBeforeClass: 'calendar-app__event-marker calendar-app__event-marker--full-height',
+      listItemEventClass: 'calendar-app__week-event',
     },
     // Vue liste : marqueur de couleur placé avant l'heure, contenu sur toute la largeur
     list: {
@@ -307,6 +309,8 @@ export const dsfrOptions: CalendarOptions = {
   // Marqueur de couleur à gauche des événements avec heure (rond dans le thème classic)
   listItemEventBeforeClass: 'calendar-app__event-marker',
   moreLinkClass: 'calendar-app__more-link',
+  // Texte du lien "+ x autres" (12px dans le thème classic)
+  moreLinkInnerClass: 'calendar-app__more-link-inner',
   // Popup "+ x autres" (insérée dans <body>, hors de .calendar-app)
   popoverClass: 'calendar-app__popover',
   popoverCloseClass: 'calendar-app__popover-close',
