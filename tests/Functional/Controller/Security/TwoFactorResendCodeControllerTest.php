@@ -9,6 +9,37 @@ use Symfony\Component\RateLimiter\RateLimiterFactoryInterface;
 class TwoFactorResendCodeControllerTest extends WebTestCase
 {
     private const string SUPER_ADMIN_EMAIL = 'admin-01@signal-logement.fr';
+    private const string FEATURE_2FA_ENV = 'FEATURE_2FA_EMAIL_ENABLED';
+
+    /** @var array{env: mixed, server: mixed} */
+    private array $previousFeature2fa;
+
+    /**
+     * Ces tests ont besoin d'une 2FA en cours : on force le flag plutôt que de dépendre
+     * de l'environnement (désactivé dans .env.ci, utilisé par la CI et les tests e2e).
+     * Le flag est lu à l'exécution (#[Autowire(env:)]), chaque kernel de test le relit.
+     */
+    protected function setUp(): void
+    {
+        $this->previousFeature2fa = [
+            'env' => $_ENV[self::FEATURE_2FA_ENV] ?? null,
+            'server' => $_SERVER[self::FEATURE_2FA_ENV] ?? null,
+        ];
+        $_ENV[self::FEATURE_2FA_ENV] = $_SERVER[self::FEATURE_2FA_ENV] = '1';
+    }
+
+    protected function tearDown(): void
+    {
+        parent::tearDown();
+
+        foreach (['env' => &$_ENV, 'server' => &$_SERVER] as $key => &$superGlobal) {
+            if (null === $this->previousFeature2fa[$key]) {
+                unset($superGlobal[self::FEATURE_2FA_ENV]);
+            } else {
+                $superGlobal[self::FEATURE_2FA_ENV] = $this->previousFeature2fa[$key];
+            }
+        }
+    }
 
     private function loginUntilTwoFactorForm(KernelBrowser $client): void
     {
