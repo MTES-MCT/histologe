@@ -221,7 +221,7 @@ class AddressesHistoryQueryTest extends KernelTestCase
         // This is enforced by the query subquery
     }
 
-    public function testFindAddressesWithHistoryReturnsOnlyActiveNeedValidationOrClosedSignalements(): void
+    public function testFindAddressesWithHistoryReturnsOnlyAuthorizedStatus(): void
     {
         $user = $this->entityManager->getRepository(User::class)->findOneBy(['email' => 'admin-01@signal-logement.fr']);
         $this->assertNotNull($user);
@@ -233,7 +233,14 @@ class AddressesHistoryQueryTest extends KernelTestCase
             if (null !== $result['statut']) {
                 $this->assertContains(
                     $result['statut'],
-                    [SignalementStatus::ACTIVE, SignalementStatus::NEED_VALIDATION, SignalementStatus::CLOSED]
+                    [
+                        SignalementStatus::ACTIVE,
+                        SignalementStatus::NEED_VALIDATION,
+                        SignalementStatus::CLOSED,
+                        SignalementStatus::INJONCTION_BAILLEUR,
+                        SignalementStatus::CLOSED,
+                        SignalementStatus::REFUSED,
+                    ]
                 );
             }
         }
@@ -332,7 +339,7 @@ class AddressesHistoryQueryTest extends KernelTestCase
         $results = $this->addressesHistoryQuery->findAddressesWithHistory($user, $searchQuery);
 
         $this->assertIsArray($results);
-        $this->assertCount(11, $results);
+        $this->assertCount(14, $results);
 
         // Test avec un type d'arrêté connu
         $searchQuery = new AddressesHistorySearchQuery(
@@ -342,7 +349,7 @@ class AddressesHistoryQueryTest extends KernelTestCase
         $results = $this->addressesHistoryQuery->findAddressesWithHistory($user, $searchQuery);
 
         $this->assertIsArray($results);
-        $this->assertCount(15, $results);
+        $this->assertCount(18, $results);
     }
 
     public function testFindAddressesWithHistoryWithCommuneAndEpciFilter(): void
@@ -361,7 +368,7 @@ class AddressesHistoryQueryTest extends KernelTestCase
         $results = $this->addressesHistoryQuery->findAddressesWithHistory($user, $searchQuery);
 
         $this->assertIsArray($results);
-        $this->assertCount(15, $results);
+        $this->assertCount(17, $results);
 
         // Test avec un mélange de commune et EPCI (préfixé par "EPCI : ")
         $searchQuery = new AddressesHistorySearchQuery(

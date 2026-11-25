@@ -3,11 +3,13 @@
 namespace App\Controller\Back;
 
 use App\Dto\Request\Signalement\AddressesHistorySearchQuery;
+use App\Entity\Enum\SignalementStatus;
 use App\Entity\User;
 use App\Factory\AddressesHistoryListViewFactory;
 use App\Repository\Query\Address\AddressesHistoryQuery;
 use App\Repository\ZoneRepository;
 use App\Service\Geometry\GeometryFactory;
+use App\Service\InjonctionBailleur\InjonctionBailleurService;
 use App\Service\Signalement\Export\AddressesHistoryExporter;
 use App\Utils\ExportFormat;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -98,9 +100,10 @@ class AddressesHistoryController extends AbstractController
 
             // Traitement des signalements (éviter les doublons)
             if (!empty($row['id']) && !in_array($row['id'], $processedSignalements[$addressKey])) {
+                $reference = in_array($row['statut'], SignalementStatus::injonctionStatuses()) ? InjonctionBailleurService::REFERENCE_PREFIX.'-'.$row['referenceInjonction'] : $row['reference'];
                 $addressesHistorySignalement = $addressesHistoryListViewFactory->createSignalementInstanceFromSignalementData([
                     'signalementUuid' => $row['uuid'],
-                    'reference' => $row['reference'],
+                    'reference' => $reference,
                     'prenomOccupant' => $row['prenomOccupant'],
                     'nomOccupant' => $row['nomOccupant'],
                     'statut' => $row['statut'],
