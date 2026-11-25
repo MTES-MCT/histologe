@@ -1116,3 +1116,46 @@ signalements:
         label: "Mardi"
       - user: "admin-territoire-30-02@signal-logement.fr"
         label: "Janvier"
+  - 
+    uuid: "00000000-0000-0000-2026-000000000002"
+    reference: "2026-02"
+    details: "Bidon, bidon, bidonville."
+    is_proprio_averti: 1
+    is_allocataire: "1"
+    nature_logement: "appartement"
+    superficie: 70
+    loyer: 580
+    date_entree: "2026-02-01"
+    nom_proprio: "Fleur"
+    prenom_proprio: "Bleue"
+    email_proprio: "b.fleur@yopmail.com"
+    type_proprio: "PARTICULIER"
+    is_logement_social: 0
+    civilite_occupant: "mr"
+    nom_occupant: "Cament"
+    prenom_occupant: "Mehdi"
+    tel_occupant: "+330644446677"
+    phone_number: "+330644446677"
+    mail_occupant: "mehdi.cament@yopmail.com"
+    adresse_occupant: "18 Bd du 8 Mai 1945"
+    cp_occupant: "30110"
+    ville_occupant: "La Grand-Combe"
+    statut: "REFUSED"
+    motif_refus: "DOUBLON"
+    geoloc: "[]"
+    insee_occupant: "30132"
+    nb_pieces_logement: 3
+    nb_occupants_logement: 4
+    score: 35
+    score_logement: 22
+    score_batiment: 13
+    created_from_uuid: '00000000-0000-0000-2026-000000000002'
+    profile_declarant: "LOCATAIRE"
+    profile_occupant: "LOCATAIRE"
+    type_composition_logement: "[]"
+    situation_foyer: "[]"
+    information_procedure: "[]"
+    information_complementaire: "[]"
+    desordre_precision:
+      - "desordres_batiment_isolation_infiltration_eau_maison_individuelle"
+      - "desordres_logement_electricite_installation_dangereuse"

@@ -3,6 +3,7 @@
 namespace App\Tests\Functional\Controller;
 
 use App\Repository\UserRepository;
+use PHPUnit\Framework\Attributes\DataProvider;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\Routing\RouterInterface;
@@ -80,5 +81,42 @@ class AddressesHistoryControllerTest extends WebTestCase
         $this->client->request('GET', $route);
 
         $this->assertResponseStatusCodeSame(403);
+    }
+
+    #[DataProvider('provideSignalementUuidOnSameAddress')]
+    public function testSignalementViewLinksToAddressHistory(string $uuid): void
+    {
+        $user = $this->userRepository->findOneBy(['email' => 'admin-territoire-30@signal-logement.fr']);
+        $this->client->loginUser($user);
+
+        $route = $this->router->generate('back_signalement_view', ['uuid' => $uuid]);
+        $crawler = $this->client->request('GET', $route);
+        $this->assertResponseIsSuccessful();
+
+        $this->assertSelectorTextContains('#header-address', '1 autre dossier et 3 arrêtés trouvés à cette adresse');
+
+        $link = $crawler->filter('#header-address a')->reduce(
+            static fn ($node) => str_contains($node->text(), "Voir l'historique")
+        );
+        $this->assertCount(1, $link);
+
+        $href = (string) $link->attr('href');
+        $this->assertSame($this->router->generate('back_addresses_history_index'), parse_url($href, \PHP_URL_PATH));
+
+        $query = (string) parse_url($href, \PHP_URL_QUERY);
+        $listRoute = $this->router->generate('back_addresses_history_list_json').'?'.$query;
+        $this->client->request('GET', $listRoute);
+        $this->assertResponseIsSuccessful();
+
+        $response = json_decode((string) $this->client->getResponse()->getContent(), true);
+        $this->assertCount(1, $response['list']);
+        $this->assertCount(2, $response['list'][0]['signalements']);
+        $this->assertCount(3, $response['list'][0]['arretes']);
+    }
+
+    public static function provideSignalementUuidOnSameAddress(): \Generator
+    {
+        yield 'Signalement 2025-TEMPORAIRE' => ['00000000-0000-0000-2025-000000000011'];
+        yield 'Signalement 2026-02' => ['00000000-0000-0000-2026-000000000002'];
     }
 }

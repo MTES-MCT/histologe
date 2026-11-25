@@ -245,7 +245,7 @@ class SignalementController extends AbstractController
         $signalementsOnSameAddress = $signalementRepository->findOnSameAddress(
             signalement: $signalement,
             exclusiveStatus: [],
-            excludedStatus: SignalementStatus::excludedStatuses(),
+            excludedStatus: SignalementStatus::excludedStatuses(includeInjonctionBailleur: false),
         );
 
         $arretesOnSameAddress = $arreteFinder->find($signalement);

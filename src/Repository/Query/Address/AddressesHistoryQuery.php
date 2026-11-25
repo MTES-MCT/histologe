@@ -165,10 +165,9 @@ class AddressesHistoryQuery
             return [];
         }
 
-        $statusList = $this->getStatusList();
         $qb = $this->entityManager->createQueryBuilder()
             ->from(Address::class, 'a')
-            ->leftJoin('a.signalements', 's', 'WITH', 's.statut IN (:statusList)')
+            ->leftJoin('a.signalements', 's', 'WITH', 's.statut NOT IN (:statusList)')
             ->leftJoin('s.bailleur', 'b')
             ->leftJoin('a.arretes', 'ar')
             ->select(
@@ -185,6 +184,7 @@ class AddressesHistoryQuery
                 's.createdAt',
                 's.closedAt',
                 's.reference',
+                's.referenceInjonction',
                 's.statut',
                 's.profileDeclarant',
                 's.geoloc',
@@ -203,7 +203,7 @@ class AddressesHistoryQuery
             )
             ->where('a.id IN (:addressIds)')
             ->setParameter('addressIds', $addressIds)
-            ->setParameter('statusList', $statusList)
+            ->setParameter('statusList', SignalementStatus::excludedStatuses(includeInjonctionBailleur: false))
             ->orderBy('a.street', \SortDirection::Ascending)
             ->addOrderBy('a.postCode', \SortDirection::Ascending)
             ->addOrderBy('a.city', \SortDirection::Ascending)
@@ -223,34 +223,21 @@ class AddressesHistoryQuery
         return (int) $qb->getQuery()->getSingleScalarResult();
     }
 
-    /**
-     * @return array<SignalementStatus>
-     */
-    private function getStatusList(): array
-    {
-        return [
-            SignalementStatus::ACTIVE,
-            SignalementStatus::NEED_VALIDATION,
-            SignalementStatus::CLOSED,
-        ];
-    }
-
     private function buildBaseQueryBuilder(
         User $user,
         ?AddressesHistorySearchQuery $addressesHistorySearchQuery,
     ): QueryBuilder {
-        $statusList = $this->getStatusList();
         $qb = $this->entityManager->createQueryBuilder()
             ->from(Address::class, 'a')
-            ->leftJoin('a.signalements', 's', 'WITH', 's.statut IN (:statusList)')
+            ->leftJoin('a.signalements', 's', 'WITH', 's.statut NOT IN (:statusList)')
             ->leftJoin('a.arretes', 'ar')
-            ->setParameter('statusList', $statusList);
+            ->setParameter('statusList', SignalementStatus::excludedStatuses(includeInjonctionBailleur: false));
 
         // Une adresse est renvoyée si il y a au moins 2 signalements ou au moins 1 arrêté
         $qb->andWhere('ar.id IS NOT NULL OR EXISTS (
             SELECT 1 FROM '.Signalement::class.' sMultiple
             WHERE sMultiple.address = a
-            AND sMultiple.statut IN (:statusList)
+            AND sMultiple.statut NOT IN (:statusList)
             HAVING COUNT(sMultiple.id) >= 2
         )');
 
@@ -300,7 +287,7 @@ class AddressesHistoryQuery
 
         $queryDossiersMultiples = 'SELECT 1 FROM '.Signalement::class.' s2
                 WHERE s2.address = a
-                AND s2.statut IN (:statusList)
+                AND s2.statut NOT IN (:statusList)
                 AND s2.id != s.id';
         if (!empty($addressesHistorySearchQuery) && null !== $addressesHistorySearchQuery->getDossiersMultiples()) {
             if ('oui' === $addressesHistorySearchQuery->getDossiersMultiples()) {
