@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\Tests\Unit\Service\DashboardTabPanel\TabBodyLoader;
 
 use App\Entity\User;
-use App\Service\ClubEventService;
+use App\Repository\ClubEventRepository;
 use App\Service\DashboardTabPanel\TabBody;
 use App\Service\DashboardTabPanel\TabBodyLoader\DossiersDernierActionTabBodyLoader;
 use App\Service\DashboardTabPanel\TabBodyType;
@@ -18,12 +18,12 @@ use Symfony\Bundle\SecurityBundle\Security;
 
 class DossiersDernierActionTabBodyLoaderTest extends KernelTestCase
 {
-    private ClubEventService $clubEventService;
+    private ClubEventRepository $clubEventRepository;
 
     protected function setUp(): void
     {
         $kernel = self::bootKernel();
-        $this->clubEventService = static::getContainer()->get(ClubEventService::class);
+        $this->clubEventRepository = static::getContainer()->get(ClubEventRepository::class);
     }
 
     public function testLoadFillsTabBodyWithExpectedData(): void
@@ -84,7 +84,7 @@ class DossiersDernierActionTabBodyLoaderTest extends KernelTestCase
             ->with($tabQueryParameters)
             ->willReturn($expectedInterconnexion);
 
-        $loader = new DossiersDernierActionTabBodyLoader($security, $tabDataManager, $this->clubEventService);
+        $loader = new DossiersDernierActionTabBodyLoader($security, $tabDataManager, $this->clubEventRepository);
         $tabBody = new TabBody(
             type: TabBodyType::TAB_DATA_TYPE_DERNIER_ACTION_DOSSIERS,
             tabQueryParameters: $tabQueryParameters
@@ -128,7 +128,7 @@ class DossiersDernierActionTabBodyLoaderTest extends KernelTestCase
         $tabDataManager->expects($this->never())
             ->method('countInjonctionsNouveauxMessages');
 
-        $loader = new DossiersDernierActionTabBodyLoader($security, $tabDataManager, $this->clubEventService);
+        $loader = new DossiersDernierActionTabBodyLoader($security, $tabDataManager, $this->clubEventRepository);
         $tabBody = new TabBody(
             type: TabBodyType::TAB_DATA_TYPE_DERNIER_ACTION_DOSSIERS,
             tabQueryParameters: $tabQueryParameters

@@ -8,6 +8,8 @@ use App\Entity\Enum\UserStatus;
 use App\Repository\ClubEventRepository;
 use App\Repository\UserRepository;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
+use Symfony\Component\Clock\ClockInterface;
+use Symfony\Component\Clock\MockClock;
 
 class ClubEventRepositoryTest extends KernelTestCase
 {
@@ -49,5 +51,65 @@ class ClubEventRepositoryTest extends KernelTestCase
                 }
             }
         }
+    }
+
+    public function testfindNextForUserRT(): void
+    {
+        $container = static::getContainer();
+        $mockClock = new MockClock(new \DateTimeImmutable('2026-01-01'));
+        $container->set(ClockInterface::class, $mockClock);
+
+        $clubEventRepository = $container->get(ClubEventRepository::class);
+        $userRepository = $container->get(UserRepository::class);
+
+        $user = $userRepository->findOneByEmail('admin-territoire-13-01@signal-logement.fr');
+
+        $nextClubEvent = $clubEventRepository->findNextForUser($user);
+        $this->assertNotNull($nextClubEvent);
+    }
+
+    public function testfindNextForUserRTWithoutResult(): void
+    {
+        $container = static::getContainer();
+        $mockClock = new MockClock((new \DateTimeImmutable())->modify('+3 days'));
+        $container->set(ClockInterface::class, $mockClock);
+
+        $clubEventRepository = $container->get(ClubEventRepository::class);
+        $userRepository = $container->get(UserRepository::class);
+
+        $user = $userRepository->findOneByEmail('admin-territoire-13-01@signal-logement.fr');
+
+        $nextClubEvent = $clubEventRepository->findNextForUser($user);
+        $this->assertNull($nextClubEvent);
+    }
+
+    public function testGetNextClubEventForAgentEligible(): void
+    {
+        $container = static::getContainer();
+        $mockClock = new MockClock(new \DateTimeImmutable('2026-01-01'));
+        $container->set(ClockInterface::class, $mockClock);
+
+        $clubEventRepository = $container->get(ClubEventRepository::class);
+        $userRepository = $container->get(UserRepository::class);
+
+        $user = $userRepository->findOneByEmail('user-13-05@signal-logement.fr');
+
+        $nextClubEvent = $clubEventRepository->findNextForUser($user);
+        $this->assertNotNull($nextClubEvent);
+    }
+
+    public function testGetNextClubEventForAgentNonEligible(): void
+    {
+        $container = static::getContainer();
+        $mockClock = new MockClock(new \DateTimeImmutable('2026-01-01'));
+        $container->set(ClockInterface::class, $mockClock);
+
+        $clubEventRepository = $container->get(ClubEventRepository::class);
+        $userRepository = $container->get(UserRepository::class);
+
+        $user = $userRepository->findOneByEmail('user-34-01@signal-logement.fr');
+
+        $nextClubEvent = $clubEventRepository->findNextForUser($user);
+        $this->assertNull($nextClubEvent);
     }
 }

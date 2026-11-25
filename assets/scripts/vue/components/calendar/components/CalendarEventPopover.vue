@@ -1,13 +1,13 @@
 <template>
   <dialog
-    ref="popover"
+    ref="calendar-event-popover"
     class="calendar-event-popover"
     :aria-labelledby="titleId"
   >
     <div class="calendar-event-popover__header">
       <h2
         :id="titleId"
-        ref="title"
+        ref="calendar-event-popover-title"
         tabindex="-1"
         class="calendar-event-popover__title"
         :class="`calendar-event-popover__title--${eventProps.type}`"
@@ -91,8 +91,8 @@ const VIEWPORT_MARGIN = 8
 
 const dateFormatter = new Intl.DateTimeFormat('fr-FR', { weekday: 'long', day: 'numeric', month: 'long' })
 
-const popover = useTemplateRef<HTMLDialogElement>('popover')
-const title = useTemplateRef<HTMLElement>('title')
+const popover = useTemplateRef<HTMLDialogElement>('calendar-event-popover')
+const title = useTemplateRef<HTMLElement>('calendar-event-popover-title')
 const titleId = useId()
 
 const eventProps = computed<CalendarEventProps>(() => props.event.extendedProps as CalendarEventProps)

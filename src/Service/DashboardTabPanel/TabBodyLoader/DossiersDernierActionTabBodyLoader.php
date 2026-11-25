@@ -3,8 +3,8 @@
 namespace App\Service\DashboardTabPanel\TabBodyLoader;
 
 use App\Entity\User;
+use App\Repository\ClubEventRepository;
 use App\Security\Voter\InjonctionBailleurVoter;
-use App\Service\ClubEventService;
 use App\Service\DashboardTabPanel\TabBody;
 use App\Service\DashboardTabPanel\TabBodyType;
 use App\Service\DashboardTabPanel\TabDataManager;
@@ -18,7 +18,7 @@ class DossiersDernierActionTabBodyLoader extends AbstractTabBodyLoader
     public function __construct(
         private readonly Security $security,
         private readonly TabDataManager $tabDataManager,
-        private readonly ClubEventService $clubEventService,
+        private readonly ClubEventRepository $clubEventRepository,
     ) {
         parent::__construct($this->security);
     }
@@ -53,7 +53,7 @@ class DossiersDernierActionTabBodyLoader extends AbstractTabBodyLoader
             $data['data_interconnexion'] = $this->tabDataManager->getInterconnexions($this->tabQueryParameters);
         }
         $data['territory_id'] = $this->tabQueryParameters ? $this->tabQueryParameters->territoireId : null;
-        $data['nextClubEvent'] = $this->clubEventService->getNextClubEventForUser($user);
+        $data['nextClubEvent'] = $this->clubEventRepository->findNextForUser($user);
 
         $tabBody->setData($data);
         $tabBody->setCount($paginatedDossiers['total']);
