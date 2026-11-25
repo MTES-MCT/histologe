@@ -78,7 +78,7 @@ class ProConnectContext
         $currentRequest = $this->requestStack->getCurrentRequest();
         if ($currentRequest && str_starts_with($currentRequest->getHost(), 'service-secours.')) {
             return $this->urlGenerator->generate(
-                'service_secours_home',
+                'service_secours_logout',
                 ['domain' => UrlHelper::extractRootDomain($currentRequest->getHost())],
                 UrlGeneratorInterface::ABSOLUTE_URL
             );
