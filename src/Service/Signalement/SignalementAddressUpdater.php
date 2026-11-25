@@ -121,7 +121,8 @@ class SignalementAddressUpdater
             if (1 === \count($buildings)) {
                 $signalement
                     ->setRnbIdOccupant($buildings[0]->getRnbId())
-                    ->setGeoloc(['lat' => $buildings[0]->getLat(), 'lng' => $buildings[0]->getLng()]);
+                    // Le positionnement du RNB est parfois moins précis que celui de la BAN
+                    // ->setGeoloc(['lat' => $buildings[0]->getLat(), 'lng' => $buildings[0]->getLng()]);
             }
         }
     }
