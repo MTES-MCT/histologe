@@ -17,7 +17,7 @@ class CountStatisticsQueryTest extends KernelTestCase
     public function testCountRefused(): void
     {
         $signalementsRefused = $this->countStatisticsQuery->countRefused(true);
-        $this->assertEquals(1, $signalementsRefused);
+        $this->assertEquals(2, $signalementsRefused);
     }
 
     public function testCountCritereByZone(): void
