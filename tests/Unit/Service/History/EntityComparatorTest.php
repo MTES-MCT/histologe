@@ -138,7 +138,7 @@ class EntityComparatorTest extends TestCase
         $properties = $this->entityComparator->getEntityPropertiesAndValueNormalized($entity);
 
         $this->assertSame('***', $properties['authCode']);
-        $this->assertSame('hash***', $properties['password']);
+        $this->assertSame('hash..........', $properties['password']);
         $this->assertSame('agent@example.com', $properties['email']);
     }
 }
