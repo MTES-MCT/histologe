@@ -213,7 +213,7 @@ class DossiersDernierActionTabBodyLoaderTest extends KernelTestCase
     }
 
     /**
-     * Chargement par un agent (sans KPI), avec la fonctionnalité calendrier activée
+     * Chargement par un agent (sans KPI), avec la fonctionnalité calendrier activée.
      *
      * @return array<string, mixed>
      */

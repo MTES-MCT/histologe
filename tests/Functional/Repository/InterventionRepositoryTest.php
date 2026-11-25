@@ -166,6 +166,19 @@ class InterventionRepositoryTest extends KernelTestCase
         $this->assertSame('13', $nextIntervention->getSignalement()->getAddress()->getTerritory()->getZip());
     }
 
+    public function testFindNextForUserPartnerOnlySubscribedSignalements(): void
+    {
+        // Fixtures : la première visite visible par l'agent concerne un signalement auquel il n'est pas abonné
+        $visibleInterventions = $this->findForUser(self::USER_PARTNER_13);
+        $subscribedInterventions = $this->findForUser(self::USER_PARTNER_13, uniquementMesDossiers: '1');
+
+        $nextIntervention = $this->createRepositoryAt('2000-01-01')->findNextForUser($this->getUser(self::USER_PARTNER_13));
+
+        $this->assertNotNull($nextIntervention);
+        $this->assertSame($subscribedInterventions[0]->getId(), $nextIntervention->getId());
+        $this->assertNotSame($visibleInterventions[0]->getId(), $nextIntervention->getId());
+    }
+
     public function testFindNextForUserReturnsNullWithoutUpcomingVisite(): void
     {
         $nextIntervention = $this->createRepositoryAt('2100-01-01')->findNextForUser($this->getUser(self::USER_ADMIN));

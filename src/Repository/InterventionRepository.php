@@ -119,7 +119,12 @@ class InterventionRepository extends ServiceEntityRepository
 
     public function findNextForUser(User $user, ?int $territoryId = null): ?Intervention
     {
-        return $this->createVisitesForUserQueryBuilder($user, $territoryId)
+        return $this->createVisitesForUserQueryBuilder(
+            user: $user,
+            territoryId: $territoryId,
+            // Agents et admins partenaire : uniquement leurs dossiers (pour être cohérent avec l'état par défaut du calendrier)
+            onlySubscribed: !$user->isSuperAdmin() && !$user->isTerritoryAdmin(),
+        )
             ->andWhere('i.scheduledAt >= :now')
             ->setParameter('now', $this->clock->now()->setTime(0, 0, 0))
             ->orderBy('i.scheduledAt', \SortDirection::Ascending)
@@ -138,24 +143,15 @@ class InterventionRepository extends ServiceEntityRepository
         $territoire = $calendarEventRequest?->getTerritoire();
         $territoryId = empty($territoire) ? null : (int) $territoire;
 
-        $qb = $this->createVisitesForUserQueryBuilder($user, $territoryId)
+        $qb = $this->createVisitesForUserQueryBuilder(
+            user: $user,
+            territoryId: $territoryId,
+            onlySubscribed: '1' === $calendarEventRequest?->getUniquementMesDossiers(),
+        )
             // Fin exclue : dateFin est le lendemain du dernier jour affiché
             ->andWhere('i.scheduledAt >= :start AND i.scheduledAt < :end')
             ->setParameter('start', new \DateTimeImmutable($calendarEventRequest?->getDateDebut() ?? 'today'))
             ->setParameter('end', new \DateTimeImmutable($calendarEventRequest?->getDateFin() ?? 'tomorrow'));
-
-        // TODO : voir avec Mathilde le comportement pour les agents sur le dashboard
-        // Filtre par "mes dossiers"
-        if ('1' === $calendarEventRequest?->getUniquementMesDossiers()) {
-            $existsSubscription = $this->getEntityManager()->createQueryBuilder()
-                ->select('1')
-                ->from(UserSignalementSubscription::class, 'uss')
-                ->where('uss.signalement = i.signalement')
-                ->andWhere('uss.user = :currentUser')
-                ->getDQL();
-            $qb->andWhere($qb->expr()->exists($existsSubscription))
-                ->setParameter('currentUser', $user);
-        }
 
         if ($user->isTerritoryAdmin()) {
             // Filtre opérateurs : identifiants de partenaires et/ou "extern" (visites sans partenaire)
@@ -184,9 +180,13 @@ class InterventionRepository extends ServiceEntityRepository
      * - SA : toutes, ou celles du territoire demandé
      * - RT : celles de son territoire
      * - autres utilisateurs : celles de leurs partenaires toujours affectés, ou du territoire demandé
+     * Avec $onlySubscribed, limitées aux signalements auxquels l'utilisateur est abonné ("mes dossiers").
      */
-    private function createVisitesForUserQueryBuilder(User $user, ?int $territoryId = null): QueryBuilder
-    {
+    private function createVisitesForUserQueryBuilder(
+        User $user,
+        ?int $territoryId = null,
+        bool $onlySubscribed = false,
+    ): QueryBuilder {
         $qb = $this->createQueryBuilder('i')
             ->innerJoin('i.signalement', 's')
             ->innerJoin('s.address', 'address')
@@ -221,6 +221,18 @@ class InterventionRepository extends ServiceEntityRepository
         if (!$user->isTerritoryAdmin() && null !== $territoryId) {
             $qb->andWhere('address.territory = :territory')
                 ->setParameter('territory', $territoryId);
+        }
+
+        // Filtre par "mes dossiers"
+        if ($onlySubscribed) {
+            $existsSubscription = $this->getEntityManager()->createQueryBuilder()
+                ->select('1')
+                ->from(UserSignalementSubscription::class, 'uss')
+                ->where('uss.signalement = i.signalement')
+                ->andWhere('uss.user = :currentUser')
+                ->getDQL();
+            $qb->andWhere($qb->expr()->exists($existsSubscription))
+                ->setParameter('currentUser', $user);
         }
 
         return $qb;
