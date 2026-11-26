@@ -2,9 +2,14 @@
 
 namespace App\Repository;
 
+use App\Dto\Request\CalendarEventRequest;
+use App\Entity\Affectation;
 use App\Entity\Enum\InterventionType;
+use App\Entity\Enum\SignalementStatus;
 use App\Entity\Intervention;
 use App\Entity\Signalement;
+use App\Entity\User;
+use App\Entity\UserSignalementSubscription;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
@@ -107,5 +112,84 @@ class InterventionRepository extends ServiceEntityRepository
             ->setParameter('done', Intervention::STATUS_DONE)
             ->getQuery()
             ->getResult();
+    }
+
+    /**
+     * @return array<int, Intervention>
+     */
+    public function findAllFilteredForUser(
+        User $user,
+        ?CalendarEventRequest $calendarEventRequest = null,
+    ): array {
+        $qb = $this->createQueryBuilder('i')
+            ->innerJoin('i.signalement', 's')
+            ->innerJoin('s.address', 'address')
+            ->leftJoin('i.partner', 'p')
+            ->addSelect('s', 'p')
+            ->andWhere('i.type IN (:visiteTypes)')
+            ->setParameter('visiteTypes', [InterventionType::VISITE->name, InterventionType::VISITE_CONTROLE->name]) // TODO enlever avec suppression ARRETE
+            ->andWhere('i.status != :canceled')
+            ->setParameter('canceled', Intervention::STATUS_CANCELED)
+            ->andWhere('i.partner IS NOT NULL OR i.externalOperator IS NOT NULL')
+            ->andWhere('s.statut NOT IN (:excludedStatus)')
+            ->setParameter('excludedStatus', SignalementStatus::excludedStatuses())
+            // Fin exclue : dateFin est le lendemain du dernier jour affiché
+            ->andWhere('i.scheduledAt >= :start AND i.scheduledAt < :end')
+            ->setParameter('start', new \DateTimeImmutable($calendarEventRequest?->getDateDebut() ?? 'today'))
+            ->setParameter('end', new \DateTimeImmutable($calendarEventRequest?->getDateFin() ?? 'tomorrow'));
+
+        // Filtre par "mes dossiers"
+        if ('1' === $calendarEventRequest?->getUniquementMesDossiers()) {
+            $existsSubscription = $this->getEntityManager()->createQueryBuilder()
+                ->select('1')
+                ->from(UserSignalementSubscription::class, 'uss')
+                ->where('uss.signalement = i.signalement')
+                ->andWhere('uss.user = :currentUser')
+                ->getDQL();
+            $qb->andWhere($qb->expr()->exists($existsSubscription))
+                ->setParameter('currentUser', $user);
+        }
+
+        if ($user->isTerritoryAdmin()) {
+            // RT : toutes les visites de son territoire
+            $qb->andWhere('address.territory = :userTerritory')
+                ->setParameter('userTerritory', $user->getFirstTerritory());
+
+            // Filtre opérateurs : identifiants de partenaires et/ou "extern" (visites sans partenaire)
+            $operateurs = $calendarEventRequest?->getOperateurs() ?? [];
+            if (!empty($operateurs)) {
+                $partnerIds = array_values(array_filter($operateurs, static fn (string $id): bool => 'extern' !== $id));
+                $operatorConditions = [];
+                if (!empty($partnerIds)) {
+                    $operatorConditions[] = 'i.partner IN (:operatorPartnerIds)';
+                    $qb->setParameter('operatorPartnerIds', $partnerIds);
+                }
+                if (\in_array('extern', $operateurs, true)) {
+                    $operatorConditions[] = 'i.partner IS NULL';
+                }
+                $qb->andWhere(implode(' OR ', $operatorConditions));
+            }
+        } elseif (!$user->isSuperAdmin()) {
+            // Agents et admins partenaire : les visites de leurs partenaires toujours affectés
+            $existsAffectation = $this->getEntityManager()->createQueryBuilder()
+                ->select('1')
+                ->from(Affectation::class, 'a')
+                ->where('a.signalement = i.signalement')
+                ->andWhere('a.partner = i.partner')
+                ->getDQL();
+            $qb->andWhere('i.partner IN (:userPartners)')
+                ->andWhere($qb->expr()->exists($existsAffectation))
+                ->setParameter('userPartners', $user->getPartners());
+        }
+
+        // Filtre territoire (SA et utilisateurs multi-territoires)
+        if (!$user->isTerritoryAdmin() && !empty($calendarEventRequest?->getTerritoire())) {
+            $qb->andWhere('address.territory = :territory')
+                ->setParameter('territory', $calendarEventRequest->getTerritoire());
+        }
+
+        $qb->orderBy('i.scheduledAt', \SortDirection::Ascending);
+
+        return $qb->getQuery()->getResult();
     }
 }
