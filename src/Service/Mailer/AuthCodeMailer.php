@@ -3,6 +3,7 @@
 namespace App\Service\Mailer;
 
 use App\Entity\User;
+use App\Repository\SignalementRepository;
 use App\Security\User\SignalementUser;
 use Scheb\TwoFactorBundle\Mailer\AuthCodeMailerInterface;
 use Scheb\TwoFactorBundle\Model\Email\TwoFactorInterface;
@@ -11,6 +12,7 @@ class AuthCodeMailer implements AuthCodeMailerInterface
 {
     public function __construct(
         private readonly NotificationMailerRegistry $notificationMailerRegistry,
+        private readonly SignalementRepository $signalementRepository,
     ) {
     }
 
@@ -26,6 +28,9 @@ class AuthCodeMailer implements AuthCodeMailerInterface
                 to: $user->getEmailAuthRecipient(),
                 user: $user instanceof SignalementUser ? $user->getUser() : $user,
                 params: ['isUsager' => $user instanceof SignalementUser],
+                signalement: $user instanceof SignalementUser
+                    ? $this->signalementRepository->findOneByCodeForPublic($user->getCodeSuivi())
+                    : null,
             )
         );
     }

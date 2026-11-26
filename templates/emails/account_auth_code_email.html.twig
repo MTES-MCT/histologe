@@ -3,7 +3,11 @@
 {% block body %}
     <p>Bonjour,</p>
     <p>
+        {% if isUsager %}
+        Une connexion à votre dossier{% if reference %} #{{ reference }}{% endif %} sur {{ platform.name }} est en cours.
+        {% else %}
         Une connexion à votre compte {{ platform.name }} est en cours.
+        {% endif %}
         Voici le code de vérification à renseigner pour finaliser votre connexion :
     </p>
     <p><strong style="font-size: 18px;background-color:#ececfe;padding:10px;">{{ authCode }}</strong></p>

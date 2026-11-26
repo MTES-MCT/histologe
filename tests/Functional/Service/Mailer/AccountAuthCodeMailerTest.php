@@ -2,6 +2,7 @@
 
 namespace App\Tests\Functional\Service\Mailer;
 
+use App\Entity\Signalement;
 use App\Entity\User;
 use App\Service\Mailer\NotificationMail;
 use App\Service\Mailer\NotificationMailerRegistry;
@@ -46,5 +47,23 @@ class AccountAuthCodeMailerTest extends KernelTestCase
             $this->assertEmailHtmlBodyNotContains($email, self::AGENT_WARNING);
             $this->assertEmailHtmlBodyContains($email, self::USAGER_WARNING);
         }
+    }
+
+    public function testUsagerEmailShowsSignalementReference(): void
+    {
+        $user = (new User())->setEmail('occupant@example.com')->setRoles([User::ROLE_USAGER]);
+        $user->setEmailAuthCode('123456');
+
+        /** @var NotificationMailerRegistry $registry */
+        $registry = static::getContainer()->get(NotificationMailerRegistry::class);
+        $registry->send(new NotificationMail(
+            type: NotificationMailerType::TYPE_ACCOUNT_AUTH_CODE,
+            to: 'occupant@example.com',
+            user: $user,
+            signalement: (new Signalement())->setReference('2026-42'),
+            params: ['isUsager' => true],
+        ));
+
+        $this->assertEmailHtmlBodyContains($this->getMailerMessage(), 'votre dossier n°2026-42');
     }
 }

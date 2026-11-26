@@ -2,7 +2,9 @@
 
 namespace App\Tests\Unit\Service\Mailer;
 
+use App\Entity\Signalement;
 use App\Entity\User;
+use App\Repository\SignalementRepository;
 use App\Security\User\SignalementUser;
 use App\Service\Mailer\AuthCodeMailer;
 use App\Service\Mailer\NotificationMail;
@@ -23,16 +25,27 @@ class AuthCodeMailerTest extends TestCase
                 && 'agent@signal-logement.fr' === $mail->getTo()
                 && $user === $mail->getUser()
                 && false === $mail->getParams()['isUsager']
+                && null === $mail->getSignalement()
             ))
             ->willReturn(true);
 
-        (new AuthCodeMailer($registry))->sendAuthCode($user);
+        $signalementRepository = $this->createMock(SignalementRepository::class);
+        $signalementRepository->expects($this->never())->method('findOneByCodeForPublic');
+
+        (new AuthCodeMailer($registry, $signalementRepository))->sendAuthCode($user);
     }
 
     public function testSendAuthCodeToUsagerUsesSignalementEmailAndWrappedUser(): void
     {
         $user = (new User())->setEmail('compte-usager@example.com')->setRoles([User::ROLE_USAGER]);
         $signalementUser = new SignalementUser('12345678:occupant', $user, 'occupant@example.com');
+        $signalement = (new Signalement())->setReference('2026-42');
+
+        $signalementRepository = $this->createMock(SignalementRepository::class);
+        $signalementRepository->expects($this->once())
+            ->method('findOneByCodeForPublic')
+            ->with('12345678')
+            ->willReturn($signalement);
 
         $registry = $this->createMock(NotificationMailerRegistry::class);
         $registry->expects($this->once())
@@ -41,9 +54,10 @@ class AuthCodeMailerTest extends TestCase
                 && 'occupant@example.com' === $mail->getTo()
                 && $user === $mail->getUser()
                 && true === $mail->getParams()['isUsager']
+                && $signalement === $mail->getSignalement()
             ))
             ->willReturn(true);
 
-        (new AuthCodeMailer($registry))->sendAuthCode($signalementUser);
+        (new AuthCodeMailer($registry, $signalementRepository))->sendAuthCode($signalementUser);
     }
 }
