@@ -3,6 +3,7 @@
 namespace App\Repository;
 
 use App\Entity\SignalementUsager;
+use App\Entity\User;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
@@ -19,5 +20,20 @@ class SignalementUsagerRepository extends ServiceEntityRepository
     public function __construct(ManagerRegistry $registry)
     {
         parent::__construct($registry, SignalementUsager::class);
+    }
+
+    /**
+     * @return SignalementUsager[]
+     */
+    public function findByUser(User $user): array
+    {
+        return $this->createQueryBuilder('su')
+            ->addSelect('s')
+            ->innerJoin('su.signalement', 's')
+            ->where('su.occupant = :user')
+            ->orWhere('su.declarant = :user')
+            ->setParameter('user', $user)
+            ->getQuery()
+            ->getResult();
     }
 }
