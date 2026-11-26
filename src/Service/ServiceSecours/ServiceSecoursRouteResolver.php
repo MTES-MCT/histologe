@@ -1,0 +1,99 @@
+<?php
+
+namespace App\Service\ServiceSecours;
+
+use App\Entity\ServiceSecoursRoute;
+use App\Exception\ServiceSecours\ServiceSecoursRouteNotFoundException;
+use App\Exception\ServiceSecours\ServiceSecoursRouteResolutionException;
+use App\Repository\ServiceSecoursRouteRepository;
+use App\Service\Gouv\Insee\Exception\SireneRateLimitExceededException;
+use App\Service\Gouv\Insee\SireneService;
+use App\Service\Gouv\ProConnect\Model\ProConnectUser;
+use App\Service\Signalement\ZipcodeProvider;
+use Symfony\Contracts\HttpClient\Exception\ClientExceptionInterface;
+use Symfony\Contracts\HttpClient\Exception\DecodingExceptionInterface;
+use Symfony\Contracts\HttpClient\Exception\RedirectionExceptionInterface;
+use Symfony\Contracts\HttpClient\Exception\ServerExceptionInterface;
+use Symfony\Contracts\HttpClient\Exception\TransportExceptionInterface;
+
+class ServiceSecoursRouteResolver
+{
+    public function __construct(
+        private readonly SireneService $sireneService,
+        private readonly ServiceSecoursCategoryResolver $serviceSecoursCategoryResolver,
+        private readonly ZipcodeProvider $zipcodeProvider,
+        private readonly ServiceSecoursRouteRepository $serviceSecoursRouteRepository,
+    ) {
+    }
+
+    /**
+     * @throws ServiceSecoursRouteResolutionException
+     * @throws SireneRateLimitExceededException
+     * @throws RedirectionExceptionInterface
+     * @throws DecodingExceptionInterface
+     * @throws TransportExceptionInterface
+     * @throws ServerExceptionInterface
+     */
+    public function resolve(ProConnectUser $proConnectUser): ServiceSecoursRoute
+    {
+        $siret = $proConnectUser->siret;
+        if (null === $siret || '' === trim($siret)) {
+            throw new ServiceSecoursRouteResolutionException('Le SIRET est manquant dans l\'identité ProConnect.');
+        }
+
+        $organizationalUnit = $proConnectUser->organizationalUnit;
+        $organizationLabel = $proConnectUser->organizationLabel;
+        $fieldsMissing = [];
+
+        if (null === $organizationalUnit || '' === trim($organizationalUnit)) {
+            $fieldsMissing[] = 'unité organisationnelle (organizational_unit)';
+        }
+
+        if (null === $organizationLabel || '' === trim($organizationLabel)) {
+            $fieldsMissing[] = 'libellé de l\'unité organisationnelle (organization_label)';
+        }
+
+        if (count($fieldsMissing) > 1) {
+            throw new ServiceSecoursRouteResolutionException(sprintf('Champs manquants dans l\'identité ProConnect : %s.', implode(', ', $fieldsMissing)));
+        }
+
+        try {
+            $siretInformation = $this->sireneService->getSiret($siret);
+        } catch (SireneRateLimitExceededException $exception) {
+            throw $exception;
+        } catch (ClientExceptionInterface|\UnexpectedValueException $exception) {
+            throw new ServiceSecoursRouteResolutionException(sprintf('Impossible de récupérer les informations de l\'établissement pour le SIRET "%s".', $siret), previous: $exception);
+        }
+        $territory = $this->zipcodeProvider->getTerritoryByInseeCode($siretInformation->codeCommune);
+        if (null === $territory) {
+            throw new ServiceSecoursRouteResolutionException(sprintf('Aucun territoire trouvé pour le code commune INSEE "%s" (SIRET "%s").', $siretInformation->codeCommune, $siret));
+        }
+
+        if (!$territory->isIsActive()) {
+            throw new ServiceSecoursRouteResolutionException('Le territoire correspondant à votre établissement n’est pas encore actif sur Signal Logement.');
+        }
+
+        $category = null;
+        if (null !== $organizationLabel && '' !== trim($organizationLabel)) {
+            $category = $this->serviceSecoursCategoryResolver->resolve(
+                $organizationLabel
+            );
+        } elseif (null !== $organizationalUnit && '' !== trim($organizationalUnit)) {
+            $category = $this->serviceSecoursCategoryResolver->resolve(
+                $organizationalUnit,
+                'organizational_unit',
+            );
+        }
+
+        $serviceSecoursRoute = $this->serviceSecoursRouteRepository->findOneBy([
+            'territory' => $territory,
+            'category' => $category,
+        ]);
+
+        if (null === $serviceSecoursRoute) {
+            throw new ServiceSecoursRouteNotFoundException(sprintf('Aucune route Service Secours configurée pour le territoire "%s" et la catégorie "%s".', $territory->getName(), $category->value));
+        }
+
+        return $serviceSecoursRoute;
+    }
+}
