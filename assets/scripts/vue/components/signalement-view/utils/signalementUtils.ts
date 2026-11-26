@@ -306,9 +306,9 @@ export function buildQueryString (queryParameters: QueryParameter[]): string {
 }
 
 export function clearScreen (context: any): any {
-  context.titleDeleteConfirmation = ''
-  context.messageDeleteConfirmation = ''
-  context.classNameDeleteConfirmation = ''
+  context.titleNotice = ''
+  context.messageNotice = ''
+  context.classNameNotice = ''
   context.sharedState.loadingList = true
 }
 

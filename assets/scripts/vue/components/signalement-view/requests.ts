@@ -43,8 +43,9 @@ export const requests = {
     const ajaxurl = store.props.ajaxurlMassAffectationAnalyze + '?' + queryParams + `&partnerId=${partnerId}`
     commonRequests.doRequest(ajaxurl, functionReturn)
   },
-  massAffectationValidate (payload: { partnerId: string; ids: string[] }, csrfToken: string, functionReturn: Function) {
+  massAffectationValidate (payload: { partnerId: number; ids: number[] }, csrfToken: string, functionReturn: Function) {
     const ajaxurl = store.props.ajaxurlMassAffectationValidate
+    console.log(ajaxurl)
     commonRequests.doPostRequest(
       ajaxurl,
       { _token: csrfToken, partnerId: payload.partnerId, ids: payload.ids },

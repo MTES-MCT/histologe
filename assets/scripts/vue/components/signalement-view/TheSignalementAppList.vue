@@ -2,15 +2,17 @@
 <template>
   <SignalementViewModalEditSearch/>
   <SignalementViewModalSaveSearch
-    @savedSearchSuccess="onSearchSaved"
+    @savedSearchSuccess="showNotice"
   />
-  <SignalementViewPanelMassAffectation/>
-  <div v-if="classNameDeleteConfirmation.length > 0" class="fr-notice" :class="classNameDeleteConfirmation">
+  <SignalementViewPanelMassAffectation
+    @massAffectationSuccess="showNotice"
+  />
+  <div v-if="classNameNotice.length > 0" class="fr-notice" :class="classNameNotice">
     <div class="fr-container">
       <div class="fr-notice__body">
         <p>
-          <span class="fr-notice__title">{{ titleDeleteConfirmation }}</span>
-          <span class="fr-notice__desc">{{ messageDeleteConfirmation }}</span>
+          <span class="fr-notice__title">{{ titleNotice }}</span>
+          <span class="fr-notice__desc">{{ messageNotice }}</span>
         </p>
       </div>
     </div>
@@ -142,9 +144,9 @@ export default defineComponent({
     return {
       sharedProps: store.props,
       sharedState: store.state,
-      titleDeleteConfirmation: '',
-      messageDeleteConfirmation: '',
-      classNameDeleteConfirmation: '',
+      titleNotice: '',
+      messageNotice: '',
+      classNameNotice: '',
       abortRequest: null as AbortController | null
     }
   },
@@ -230,15 +232,15 @@ export default defineComponent({
       handleFilters(this, initElements.dataset.ajaxurl)
     },
     handleDelete (requestResponse: any) {
-      this.titleDeleteConfirmation =
+      this.titleNotice =
           requestResponse.data.status === 200
             ? requestResponse.data.title
             : 'Erreur'
-      this.messageDeleteConfirmation =
+      this.messageNotice =
           requestResponse.data.status === 200
             ? requestResponse.data.message
             : 'Une erreur s\'est produite lors de la suppression. Veuillez réessayer plus tard.'
-      this.classNameDeleteConfirmation =
+      this.classNameNotice =
           requestResponse.data.status === 200
             ? 'fr-notice--success'
             : 'fr-notice--alert'
@@ -246,10 +248,10 @@ export default defineComponent({
       buildUrl(this, initElements.dataset.ajaxurl)
       requests.getSignalements(this.handleSignalements)
     },
-    onSearchSaved(title: string, message: string, className: string ) {
-      this.titleDeleteConfirmation = title
-      this.messageDeleteConfirmation = message
-      this.classNameDeleteConfirmation = className
+    showNotice (title: string, message: string, className: string) {
+      this.titleNotice = title
+      this.messageNotice = message
+      this.classNameNotice = className
     },
     applySavedSearch(value: string) {
       applySavedSearch(this, value)

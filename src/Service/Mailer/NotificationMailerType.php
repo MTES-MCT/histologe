@@ -77,4 +77,6 @@ enum NotificationMailerType
     case TYPE_CLUB_EVENT;
     case TYPE_CLUB_EVENT_REMINDER;
     case TYPE_TEMP_REINIT_MDP;
+    case TYPE_MASS_AFFECTATION_TO_PARTNER;
+    case TYPE_MASS_AFFECTATION_REPORT;
 }

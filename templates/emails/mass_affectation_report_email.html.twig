@@ -1,0 +1,26 @@
+{% extends 'emails/base_email.html.twig' %}
+
+{% macro signalement_list(title, signalements) %}
+    {% if signalements|length %}
+        <p><u>{{ title }} ({{ signalements|length }}) :</u></p>
+        <ul>
+            {% for signalement in signalements %}
+                <li>Signalement <strong><a href="{{ signalement.link }}" target="_blank" rel="noopener">#{{ signalement.reference }}</a></strong></li>
+            {% endfor %}
+        </ul>
+    {% endif %}
+{% endmacro %}
+
+{% block body %}
+    {% import _self as macros %}
+    <p>Bonjour,</p>
+    <p>L'affectation en masse vers le partenaire <strong>{{ partner }}</strong> est terminée. Voici son résultat :</p>
+
+    {% if affected|length == 0 %}
+        <p>Aucun signalement n'a été affecté.</p>
+    {% endif %}
+    {{ macros.signalement_list('Signalements affectés', affected) }}
+    {{ macros.signalement_list('Signalements ignorés car déjà affectés à ce partenaire', alreadyAffected) }}
+    {{ macros.signalement_list('Signalements ignorés car hors du périmètre du partenaire', outOfPerimeter) }}
+    {{ macros.signalement_list('Signalements ignorés car ils ne sont plus en cours', notActive) }}
+{% endblock %}

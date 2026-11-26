@@ -111,6 +111,52 @@ class NotificationAndMailSender
         $this->createInAppNotifications(recipients: $recipients, type: NotificationType::NOUVELLE_AFFECTATION, affectation: $affectation);
     }
 
+    /**
+     * Affectation en masse : une notification in-app par affectation (comme sendNewAffectation)
+     * mais un seul mail récapitulatif au partenaire.
+     *
+     * @param array<Affectation> $affectations
+     */
+    public function sendMassAffectation(Partner $partner, array $affectations): void
+    {
+        if (empty($affectations)) {
+            return;
+        }
+        // Le service est réutilisé d'un message à l'autre dans le worker : on repart d'un état propre.
+        // isUserNotified() exige qu'une affectation soit renseignée.
+        $this->suivi = null;
+        $this->affectation = $affectations[array_key_first($affectations)];
+        $this->signalement = $this->affectation->getSignalement();
+        $recipients = $this->getRecipientsPartner($partner);
+
+        $signalements = [];
+        foreach ($affectations as $affectation) {
+            $this->createInAppNotifications(
+                recipients: $recipients,
+                type: NotificationType::NOUVELLE_AFFECTATION,
+                affectation: $affectation
+            );
+            $signalements[] = [
+                'reference' => $affectation->getSignalement()->getReference(),
+                'uuid' => $affectation->getSignalement()->getUuid(),
+            ];
+        }
+
+        $recipientsEmails = $this->getRecipientsFilteredEmail($recipients);
+        if (empty($recipientsEmails)) {
+            return;
+        }
+        $this->notificationMailerRegistry->send(
+            new NotificationMail(
+                type: NotificationMailerType::TYPE_MASS_AFFECTATION_TO_PARTNER,
+                to: $recipientsEmails,
+                territory: $partner->getTerritory(),
+                isRecipientVisible: false,
+                params: ['signalements' => $signalements],
+            )
+        );
+    }
+
     public function sendNewSubscription(UserSignalementSubscription $subscription, Affectation $affectation): void
     {
         if ($subscription->getUser() !== $subscription->getCreatedBy()) {

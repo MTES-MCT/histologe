@@ -48,22 +48,26 @@
             <p>Aucun signalement à affecter à <strong>{{ selectedPartnerName }}</strong> parmi les signalements filtrés.</p>
           </div>
 
-          <ul class="fr-mb-0">
-            <li>
-              <strong>{{ formatSignalementCount(analysis.signalementsToAffect.length) }}</strong>
-              {{ analysis.signalementsToAffect.length > 1 ? 'seront affectés' : 'sera affecté' }}
-              à <strong>{{ selectedPartnerName }}</strong>
-            </li>
-            <li v-if="analysis.signalementsAlreadyAffected.length > 0">
-              {{ formatSignalementCount(analysis.signalementsAlreadyAffected.length) }}
-              {{ analysis.signalementsAlreadyAffected.length > 1 ? 'déjà affectés' : 'déjà affecté' }}
-              à ce partenaire (ignorés)
-            </li>
-            <li v-if="analysis.signalementsOutOfPerimeter.length > 0">
-              {{ formatSignalementCount(analysis.signalementsOutOfPerimeter.length) }}
-              hors du périmètre du partenaire (ignorés)
-            </li>
-          </ul>
+          <div class="fr-accordions-group">
+            <section v-for="group in analysisGroups" :key="group.id" class="fr-accordion">
+              <h2 class="fr-accordion__title">
+                <button
+                  type="button"
+                  class="fr-accordion__btn"
+                  aria-expanded="false"
+                  :aria-controls="group.id"
+                >{{ group.title }}</button>
+              </h2>
+              <div class="fr-collapse" :id="group.id">
+                <ul class="fr-raw-list">
+                  <li v-for="signalement in group.signalements" :key="signalement.id" class="fr-mb-2w">
+                    <strong>#{{ signalement.reference }}</strong> - {{ signalement.identite_occupant }} - 
+                    <span class="fr-text--sm fr-mb-0">{{ signalement.adresse }}</span>
+                  </li>
+                </ul>
+              </div>
+            </section>
+          </div>
         </div>
       </div>
 
@@ -98,7 +102,7 @@ import { store } from '../store'
 import { requests } from '../requests'
 import HistoSelect from '../../common/HistoSelect.vue'
 import HistoInterfaceSelectOption from '../../common/HistoInterfaceSelectOption'
-import { MassAffectationAnalysis } from '../interfaces/massAffectationAnalysis'
+import { MassAffectationAnalysis, MassAffectationSignalement, AnalysisGroup } from '../interfaces/massAffectationAnalysis'
 
 const DEFAULT_ERROR_TITLE = 'Erreur'
 const ANALYZE_ERROR_MESSAGE = 'Une erreur est survenue lors de l\'analyse des signalements. Veuillez réessayer.'
@@ -108,6 +112,7 @@ export default defineComponent({
   components: {
     HistoSelect
   },
+  emits: ['massAffectationSuccess'],
   data () {
     return {
       sharedProps: store.props,
@@ -135,6 +140,36 @@ export default defineComponent({
     selectedPartnerName (): string {
       const partner = this.affectablePartners.find((option: HistoInterfaceSelectOption) => option.Id === this.partnerId)
       return partner !== undefined ? partner.Text : ''
+    },
+    /**
+     * Sections du récapitulatif (une par catégorie non vide), affichées en accordéon
+     */
+    analysisGroups (): AnalysisGroup[] {
+      if (this.analysis === null) {
+        return []
+      }
+      const toAffectCount = this.analysis.signalementsToAffect.length
+      const alreadyAffectedCount = this.analysis.signalementsAlreadyAffected.length
+      const outOfPerimeterCount = this.analysis.signalementsOutOfPerimeter.length
+
+      const groups: AnalysisGroup[] = [
+        {
+          id: 'mass-affectation-to-affect',
+          title: `${this.formatSignalementCount(toAffectCount)} ${toAffectCount > 1 ? 'seront affectés' : 'sera affecté'} à ${this.selectedPartnerName}`,
+          signalements: this.analysis.signalementsToAffect
+        },
+        {
+          id: 'mass-affectation-already-affected',
+          title: `${this.formatSignalementCount(alreadyAffectedCount)} ${alreadyAffectedCount > 1 ? 'déjà affectés' : 'déjà affecté'} à ce partenaire (ignorés)`,
+          signalements: this.analysis.signalementsAlreadyAffected
+        },
+        {
+          id: 'mass-affectation-out-of-perimeter',
+          title: `${this.formatSignalementCount(outOfPerimeterCount)} hors du périmètre du partenaire (ignorés)`,
+          signalements: this.analysis.signalementsOutOfPerimeter
+        }
+      ]
+      return groups.filter(group => group.signalements.length > 0)
     },
     canValidate (): boolean {
       if (this.isAnalyzing || this.isSubmitting || this.analysis === null) {
@@ -220,17 +255,42 @@ export default defineComponent({
       return count > 1 ? `${count} signalements` : `${count} signalement`
     },
     validate () {
-      if (!this.canValidate) {
+      console.log('validate')
+      if (!this.canValidate || !this.analysis) {
         return
       }
       this.isSubmitting = true
-      // TODO : requests.massAffectationValidate({ partnerId, ids: analysis.signalementsToAffect }, csrfToken, this.handleValidateResponse)
+      console.log('appelle massAffectationValidate')
+      requests.massAffectationValidate(
+        { partnerId: Number(this.partnerId), ids: this.analysis.signalementsToAffect.map(signalement => signalement.id) }, 
+        this.sharedProps.csrfMassAffectationValidate, 
+        this.handleValidateResponse
+      )
     },
     handleValidateResponse (requestResponse: any) {
-      this.isSubmitting = false
-      // TODO : succès → message de confirmation + fermeture du panel
-      // TODO : erreur → showErrorNotice()
-      // console.log('handleValidateResponse', requestResponse)
+      console.log('handleValidateResponse', requestResponse)
+      if (requestResponse.status === 200) {
+        // Message affiché en haut de la liste par le parent (showNotice), puis fermeture du panel
+        this.$emit(
+          'massAffectationSuccess',
+          'Affectation en cours',
+          'Les affectations sont en cours, vous recevrez un mail récapitulatif à la fin.',
+          'fr-notice--success'
+        )
+        this.closePanel()
+      } else {
+        this.isSubmitting = false
+        this.showErrorNotice(requestResponse.data.message)
+      }
+    },
+    /**
+     * Ferme le panel (via son bouton Fermer, pour passer par le mécanisme habituel des side panels)
+     */
+    closePanel () {
+      const closeButton = document.querySelector(
+        'button[aria-controls="panel-mass-affectation"].fr-btn--close'
+      ) as HTMLButtonElement | null
+      closeButton?.click()
     }
   }
 })
