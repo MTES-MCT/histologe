@@ -3,6 +3,7 @@ import { attachAjaxFormHandlers } from '../form/ajax_form_handler.js';
 import { initSearchCheckboxWidgets } from '../component/component_search_checkbox.js';
 import { initSearchAndSelectBadges } from '../component/component_search_and_select_badges.js';
 import { reloadPersonalNoteEditor } from '../../controllers/back_signalement_view/personal_note.js';
+import { invalidateCloseSignalementForm } from '../../controllers/back_signalement_view/form_cloture_modal.js';
 import {
   openPhotoAlbumAddEventListeners,
   updateBtnAddSuiviForm,
@@ -104,6 +105,9 @@ export function jsonResponseProcess(response) {
             break;
           case 'clearProcedureEngageeForm':
             clearProcedureEngageeForm();
+            break;
+          case 'invalidateCloseSignalementForm':
+            invalidateCloseSignalementForm();
             break;
           default:
             console.warn(`Unknown function name: ${fn.name}`);

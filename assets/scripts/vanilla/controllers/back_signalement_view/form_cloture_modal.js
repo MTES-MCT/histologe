@@ -45,6 +45,12 @@ updateTravauxVisibilityAffectation();
 
 //cloture signalement v2
 function initCloseSignalementForm() {
+  const isVisibleForUsagerCheckboxSignalement = document.querySelector(
+    '#close-signalement-form input[name="close_signalement[isVisibleForUsager]"]'
+  );
+  const usagerNotNotifiedWarningSignalement = document.querySelector(
+    '#close_signalement_usager_notifie_warning'
+  );
   const motifClotureSelectSignalement = document.querySelector('#close_signalement_motifCloture');
   const departOccupantContainerSignalement = document.querySelector(
     '#close_signalement_departOccupantAt_container'
@@ -88,6 +94,13 @@ function initCloseSignalementForm() {
     }
   }
 
+  function updateUsagerNotNotifiedWarningSignalement() {
+    usagerNotNotifiedWarningSignalement?.classList.toggle(
+      'fr-hidden',
+      isVisibleForUsagerCheckboxSignalement?.checked ?? true
+    );
+  }
+
   function updateTravauxWarningSignalement() {
     const selectedOption =
       motifClotureSelectSignalement?.options[motifClotureSelectSignalement.selectedIndex];
@@ -113,20 +126,33 @@ function initCloseSignalementForm() {
     window.dispatchEvent(new Event('refreshSearchCheckboxContainerEvent'));
   }
 
+  isVisibleForUsagerCheckboxSignalement?.addEventListener(
+    'change',
+    updateUsagerNotNotifiedWarningSignalement
+  );
   motifClotureSelectSignalement?.addEventListener('change', updateMotifClotureSubFields);
   motifClotureSelectSignalement?.addEventListener('change', updateTravauxWarningSignalement);
   travauxRadioButtonsSignalement.forEach((radioButton) => {
     radioButton.addEventListener('change', updateTravauxWarningSignalement);
   });
   withoutProcedureCheckboxSignalement?.addEventListener('change', updateProceduresStateSignalement);
+  updateUsagerNotNotifiedWarningSignalement();
   updateMotifClotureSubFields();
   updateTravauxWarningSignalement();
   updateProceduresStateSignalement();
 }
 
 const btnCloseSignalement = document.querySelector('.btn-close-signalement');
+let closeSignalementFormNeedsReload = true;
 
-btnCloseSignalement?.addEventListener('click', () => {
+export function invalidateCloseSignalementForm() {
+  closeSignalementFormNeedsReload = true;
+}
+
+btnCloseSignalement?.addEventListener('click', async () => {
+  if (!closeSignalementFormNeedsReload) return;
+
+  closeSignalementFormNeedsReload = false;
   const url = btnCloseSignalement.dataset.url;
   const panelContent = document.querySelector('#panel-close-signalement-content');
   panelContent.querySelectorAll('textarea.editor').forEach((textarea) => {
@@ -149,6 +175,7 @@ btnCloseSignalement?.addEventListener('click', () => {
         initTinyMCE('#close-signalement-form textarea.editor');
       });
     } else {
+      invalidateCloseSignalementForm();
       const content =
         '<div class="fr-notice fr-notice--alert"><div class="fr-container"><div class="fr-notice__body"><p><span class="fr-notice__title">Erreur</span><span class="fr-notice__desc">Une erreur s\'est produite. Veuillez actualiser la page.</span></p></div></div></div>';
       document.querySelector('#panel-close-signalement-content').innerHTML = content;

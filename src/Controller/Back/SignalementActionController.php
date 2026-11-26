@@ -733,7 +733,7 @@ class SignalementActionController extends AbstractController
             'target' => '#tabpanel-orientation-panel',
             'content' => $this->renderView('back/signalement/view/tabs/tab-orientation.html.twig', ['tabOrientationItems' => $tabOrientationService->getTabOrientationItems($signalement)]),
         ];
-        $functions = [['name' => 'applyFilter']];
+        $functions = [['name' => 'applyFilter'], ['name' => 'invalidateCloseSignalementForm']];
 
         return $this->json(['stayOnPage' => true, 'flashMessages' => $flashMessages, 'closeModal' => true, 'htmlTargetContents' => $htmlTargetContents, 'functions' => $functions]);
     }
@@ -785,6 +785,7 @@ class SignalementActionController extends AbstractController
         $functions = [
             ['name' => 'applyFilter'],
             ['name' => 'clearProcedureEngageeForm'],
+            ['name' => 'invalidateCloseSignalementForm'],
         ];
 
         return $this->json(['stayOnPage' => true, 'flashMessages' => $flashMessages, 'closeModal' => true, 'htmlTargetContents' => $htmlTargetContents, 'functions' => $functions]);
