@@ -64,6 +64,6 @@ class AccountAuthCodeMailerTest extends KernelTestCase
             params: ['isUsager' => true],
         ));
 
-        $this->assertEmailHtmlBodyContains($this->getMailerMessage(), 'votre dossier n°2026-42');
+        $this->assertEmailHtmlBodyContains($this->getMailerMessage(), 'votre dossier #2026-42');
     }
 }
