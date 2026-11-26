@@ -68,10 +68,6 @@ class Affectation implements EntityHistoryInterface
     #[ORM\OneToMany(mappedBy: 'affectation', targetEntity: Notification::class, cascade: ['remove'])]
     private Collection $notifications;
 
-    #[ORM\ManyToOne(targetEntity: Territory::class, inversedBy: 'affectations')]
-    #[ORM\JoinColumn(nullable: true)]
-    private ?Territory $territory;
-
     private ?AffectationStatus $nextStatut = null;
     private ?bool $hasNotificationUsagerToCreate = null;
 
@@ -255,18 +251,6 @@ class Affectation implements EntityHistoryInterface
                 $notification->setAffectation(null);
             }
         }
-
-        return $this;
-    }
-
-    public function getTerritory(): ?Territory
-    {
-        return $this->territory;
-    }
-
-    public function setTerritory(?Territory $territory): static
-    {
-        $this->territory = $territory;
 
         return $this;
     }

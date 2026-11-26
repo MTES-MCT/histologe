@@ -39,7 +39,7 @@ class AffectationVoter extends Voter
     {
         /** @var User $user */
         $user = $token->getUser();
-        if (!$user instanceof User || !$user->isSuperAdmin() && !$user->hasPartnerInTerritory($subject->getTerritory())) {
+        if (!$user instanceof User || !$user->isSuperAdmin() && !$user->hasPartnerInTerritory($subject->getSignalement()->getAddress()->getTerritory())) {
             $vote?->addReason('L\'utilisateur n\'a pas les droits suffisants dans le territoire demandé.');
 
             return false;

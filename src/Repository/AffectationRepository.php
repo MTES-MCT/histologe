@@ -56,6 +56,7 @@ class AffectationRepository extends ServiceEntityRepository
         $qb = $qb
             ->innerJoin('a.partner', 'p')
             ->innerJoin('a.signalement', 's')
+            ->innerJoin('s.address', 'address')
             ->where('p.esaboraUrl IS NOT NULL')
             ->andWhere('p.isEsaboraActive = 1')
             ->andWhere(
@@ -95,7 +96,7 @@ class AffectationRepository extends ServiceEntityRepository
         }
 
         if (null !== $territory) {
-            $qb->andWhere('a.territory = :territory')->setParameter('territory', $territory);
+            $qb->andWhere('address.territory = :territory')->setParameter('territory', $territory);
         }
 
         $esaboraConditions = [];

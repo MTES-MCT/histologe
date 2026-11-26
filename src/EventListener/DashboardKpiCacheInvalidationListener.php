@@ -48,7 +48,7 @@ final readonly class DashboardKpiCacheInvalidationListener
         }
 
         if ($entity instanceof Affectation) {
-            $territoryId = $entity->getTerritory()->getId();
+            $territoryId = $entity->getSignalement()->getAddress()->getTerritory()->getId();
             // NOUVEAUX_DOSSIERS - Dossiers non affectés aux partenaires
             // NOUVEAUX_DOSSIERS - Nouveaux dossiers
             $this->invalidateTerritoryKpiTags(
@@ -156,7 +156,7 @@ final readonly class DashboardKpiCacheInvalidationListener
         }
 
         if ($entity instanceof Affectation) {
-            $territoryId = $entity->getTerritory()->getId();
+            $territoryId = $entity->getSignalement()->getAddress()->getTerritory()->getId();
             if (AffectationStatus::CLOSED === $entity->getStatut()) {
                 // DOSSIERS_A_FERMER - Dossiers fermés par tous les partenaires
                 // DOSSIERS_A_FERMER -  Dossiers fermés par les communes
@@ -204,7 +204,7 @@ final readonly class DashboardKpiCacheInvalidationListener
         $entity = $args->getObject();
 
         if ($entity instanceof Affectation) {
-            $territoryId = $entity->getTerritory()->getId();
+            $territoryId = $entity->getSignalement()->getAddress()->getTerritory()->getId();
 
             // NOUVEAUX_DOSSIERS - Dossiers non affectés aux partenaires
             $this->invalidateTerritoryKpiTags(

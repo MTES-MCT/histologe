@@ -42,10 +42,6 @@ class Territory implements EntityHistoryInterface
     #[ORM\Column(type: 'boolean')]
     private bool $isActive = false;
 
-    /** @var Collection<int, Affectation> $affectations */
-    #[ORM\OneToMany(mappedBy: 'territory', targetEntity: Affectation::class)]
-    private Collection $affectations;
-
     /** @var array<mixed> $bbox */
     #[ORM\Column(type: 'json')]
     private array $bbox = [];
@@ -93,7 +89,6 @@ class Territory implements EntityHistoryInterface
     {
         $this->partners = new ArrayCollection();
         $this->signalements = new ArrayCollection();
-        $this->affectations = new ArrayCollection();
         $this->tags = new ArrayCollection();
         $this->bailleurTerritories = new ArrayCollection();
         $this->autoAffectationRules = new ArrayCollection();
@@ -185,36 +180,6 @@ class Territory implements EntityHistoryInterface
     public function setIsActive(bool $isActive): static
     {
         $this->isActive = $isActive;
-
-        return $this;
-    }
-
-    /**
-     * @return Collection<int, Affectation>
-     */
-    public function getAffectations(): Collection
-    {
-        return $this->affectations;
-    }
-
-    public function addAffectation(Affectation $affectation): static
-    {
-        if (!$this->affectations->contains($affectation)) {
-            $this->affectations[] = $affectation;
-            $affectation->setTerritory($this);
-        }
-
-        return $this;
-    }
-
-    public function removeAffectation(Affectation $affectation): static
-    {
-        if ($this->affectations->removeElement($affectation)) {
-            // set the owning side to null (unless already changed)
-            if ($affectation->getTerritory() === $this) {
-                $affectation->setTerritory(null);
-            }
-        }
 
         return $this;
     }

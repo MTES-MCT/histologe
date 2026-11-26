@@ -11,7 +11,6 @@ use App\Entity\User;
 use App\Entity\UserSignalementSubscription;
 use App\Repository\PartnerRepository;
 use App\Repository\SignalementRepository;
-use App\Repository\TerritoryRepository;
 use App\Repository\UserRepository;
 use App\Repository\UserSignalementSubscriptionRepository;
 use App\Service\Notification\NotificationAndMailSender;
@@ -29,7 +28,6 @@ class LoadAffectationData extends Fixture implements OrderedFixtureInterface
     public function __construct(
         private readonly SignalementRepository $signalementRepository,
         private readonly PartnerRepository $partnerRepository,
-        private readonly TerritoryRepository $territoryRepository,
         private readonly UserRepository $userRepository,
         private readonly UserSignalementSubscriptionRepository $userSignalementSubscriptionRepository,
         private readonly NotificationAndMailSender $notificationAndMailSender,
@@ -70,7 +68,6 @@ class LoadAffectationData extends Fixture implements OrderedFixtureInterface
             ->setSignalement($signalement)
             ->setPartner($partner)
             ->setStatut(AffectationStatus::from($row['statut']))
-            ->setTerritory($this->territoryRepository->findOneBy(['name' => $row['territory']]))
             ->setCreatedAt(new \DateTimeImmutable())
             ->setAffectedBy($this->userRepository->findOneBy(['email' => $row['affected_by']]))
             ->setAnsweredBy($answeredBy)
