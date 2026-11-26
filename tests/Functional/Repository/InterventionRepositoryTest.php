@@ -13,7 +13,9 @@ use App\Repository\InterventionRepository;
 use App\Repository\TerritoryRepository;
 use App\Repository\UserRepository;
 use App\Repository\UserSignalementSubscriptionRepository;
+use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
+use Symfony\Component\Clock\MockClock;
 
 class InterventionRepositoryTest extends KernelTestCase
 {
@@ -139,6 +141,60 @@ class InterventionRepositoryTest extends KernelTestCase
         foreach ($interventions as $intervention) {
             $this->assertSame('2023-07-01', $intervention->getScheduledAt()->format('Y-m-d'));
         }
+    }
+
+    public function testFindNextForUserReturnsFirstUpcomingVisite(): void
+    {
+        // Visites des fixtures prévues le 2023-07-01 à 10h
+        $nextIntervention = $this->createRepositoryAt('2023-06-25')->findNextForUser($this->getUser(self::USER_ADMIN));
+
+        $upcomingInterventions = $this->findForUser(self::USER_ADMIN, dateDebut: '2023-06-25');
+        $this->assertNotNull($nextIntervention);
+        $this->assertSame($upcomingInterventions[0]->getId(), $nextIntervention->getId());
+    }
+
+    public function testFindNextForUserSuperAdminWithTerritoryFilter(): void
+    {
+        /** @var TerritoryRepository $territoryRepository */
+        $territoryRepository = static::getContainer()->get(TerritoryRepository::class);
+        $territory = $territoryRepository->findOneBy(['zip' => '13']);
+
+        $nextIntervention = $this->createRepositoryAt('2000-01-01')
+            ->findNextForUser($this->getUser(self::USER_ADMIN), $territory->getId());
+
+        $this->assertNotNull($nextIntervention);
+        $this->assertSame('13', $nextIntervention->getSignalement()->getAddress()->getTerritory()->getZip());
+    }
+
+    public function testFindNextForUserPartnerOnlySubscribedSignalements(): void
+    {
+        // Fixtures : la première visite visible par l'agent concerne un signalement auquel il n'est pas abonné
+        $visibleInterventions = $this->findForUser(self::USER_PARTNER_13);
+        $subscribedInterventions = $this->findForUser(self::USER_PARTNER_13, uniquementMesDossiers: '1');
+
+        $nextIntervention = $this->createRepositoryAt('2000-01-01')->findNextForUser($this->getUser(self::USER_PARTNER_13));
+
+        $this->assertNotNull($nextIntervention);
+        $this->assertSame($subscribedInterventions[0]->getId(), $nextIntervention->getId());
+        $this->assertNotSame($visibleInterventions[0]->getId(), $nextIntervention->getId());
+    }
+
+    public function testFindNextForUserReturnsNullWithoutUpcomingVisite(): void
+    {
+        $nextIntervention = $this->createRepositoryAt('2100-01-01')->findNextForUser($this->getUser(self::USER_ADMIN));
+
+        $this->assertNull($nextIntervention);
+    }
+
+    /**
+     * Repository dont l'horloge est figée à la date donnée.
+     */
+    private function createRepositoryAt(string $date): InterventionRepository
+    {
+        /** @var ManagerRegistry $registry */
+        $registry = static::getContainer()->get('doctrine');
+
+        return new InterventionRepository($registry, new MockClock(new \DateTimeImmutable($date)));
     }
 
     private function getUser(string $email): User

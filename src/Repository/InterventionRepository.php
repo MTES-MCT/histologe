@@ -11,7 +11,9 @@ use App\Entity\Signalement;
 use App\Entity\User;
 use App\Entity\UserSignalementSubscription;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\ORM\QueryBuilder;
 use Doctrine\Persistence\ManagerRegistry;
+use Symfony\Component\Clock\ClockInterface;
 
 /**
  * @extends ServiceEntityRepository<Intervention>
@@ -26,7 +28,8 @@ class InterventionRepository extends ServiceEntityRepository
     private const int NB_DAYS_DELAY_NOTIFICATION_VISIT_PAST = 2;
     private const int NB_DAYS_DELAY_NOTIFICATION_VISIT_FUTURE = -2;
 
-    public function __construct(ManagerRegistry $registry)
+    public function __construct(ManagerRegistry $registry,
+        private readonly ClockInterface $clock, )
     {
         parent::__construct($registry, Intervention::class);
     }
@@ -114,6 +117,22 @@ class InterventionRepository extends ServiceEntityRepository
             ->getResult();
     }
 
+    public function findNextForUser(User $user, ?int $territoryId = null): ?Intervention
+    {
+        return $this->createVisitesForUserQueryBuilder(
+            user: $user,
+            territoryId: $territoryId,
+            // Agents et admins partenaire : uniquement leurs dossiers (pour être cohérent avec l'état par défaut du calendrier)
+            onlySubscribed: !$user->isSuperAdmin() && !$user->isTerritoryAdmin(),
+        )
+            ->andWhere('i.scheduledAt >= :now')
+            ->setParameter('now', $this->clock->now()->setTime(0, 0, 0))
+            ->orderBy('i.scheduledAt', \SortDirection::Ascending)
+            ->setMaxResults(1)
+            ->getQuery()
+            ->getOneOrNullResult();
+    }
+
     /**
      * @return array<int, Intervention>
      */
@@ -121,40 +140,20 @@ class InterventionRepository extends ServiceEntityRepository
         User $user,
         ?CalendarEventRequest $calendarEventRequest = null,
     ): array {
-        $qb = $this->createQueryBuilder('i')
-            ->innerJoin('i.signalement', 's')
-            ->innerJoin('s.address', 'address')
-            ->leftJoin('i.partner', 'p')
-            ->addSelect('s', 'p')
-            ->andWhere('i.type IN (:visiteTypes)')
-            ->setParameter('visiteTypes', [InterventionType::VISITE->name, InterventionType::VISITE_CONTROLE->name]) // TODO enlever avec suppression ARRETE
-            ->andWhere('i.status != :canceled')
-            ->setParameter('canceled', Intervention::STATUS_CANCELED)
-            ->andWhere('i.partner IS NOT NULL OR i.externalOperator IS NOT NULL')
-            ->andWhere('s.statut NOT IN (:excludedStatus)')
-            ->setParameter('excludedStatus', SignalementStatus::excludedStatuses())
+        $territoire = $calendarEventRequest?->getTerritoire();
+        $territoryId = empty($territoire) ? null : (int) $territoire;
+
+        $qb = $this->createVisitesForUserQueryBuilder(
+            user: $user,
+            territoryId: $territoryId,
+            onlySubscribed: '1' === $calendarEventRequest?->getUniquementMesDossiers(),
+        )
             // Fin exclue : dateFin est le lendemain du dernier jour affiché
             ->andWhere('i.scheduledAt >= :start AND i.scheduledAt < :end')
             ->setParameter('start', new \DateTimeImmutable($calendarEventRequest?->getDateDebut() ?? 'today'))
             ->setParameter('end', new \DateTimeImmutable($calendarEventRequest?->getDateFin() ?? 'tomorrow'));
 
-        // Filtre par "mes dossiers"
-        if ('1' === $calendarEventRequest?->getUniquementMesDossiers()) {
-            $existsSubscription = $this->getEntityManager()->createQueryBuilder()
-                ->select('1')
-                ->from(UserSignalementSubscription::class, 'uss')
-                ->where('uss.signalement = i.signalement')
-                ->andWhere('uss.user = :currentUser')
-                ->getDQL();
-            $qb->andWhere($qb->expr()->exists($existsSubscription))
-                ->setParameter('currentUser', $user);
-        }
-
         if ($user->isTerritoryAdmin()) {
-            // RT : toutes les visites de son territoire
-            $qb->andWhere('address.territory = :userTerritory')
-                ->setParameter('userTerritory', $user->getFirstTerritory());
-
             // Filtre opérateurs : identifiants de partenaires et/ou "extern" (visites sans partenaire)
             $operateurs = $calendarEventRequest?->getOperateurs() ?? [];
             if (!empty($operateurs)) {
@@ -169,6 +168,42 @@ class InterventionRepository extends ServiceEntityRepository
                 }
                 $qb->andWhere(implode(' OR ', $operatorConditions));
             }
+        }
+
+        $qb->orderBy('i.scheduledAt', \SortDirection::Ascending);
+
+        return $qb->getQuery()->getResult();
+    }
+
+    /**
+     * Visites affichables (calendrier, tableau de bord) que l'utilisateur peut voir :
+     * - SA : toutes, ou celles du territoire demandé
+     * - RT : celles de son territoire
+     * - autres utilisateurs : celles de leurs partenaires toujours affectés, ou du territoire demandé
+     * Avec $onlySubscribed, limitées aux signalements auxquels l'utilisateur est abonné ("mes dossiers").
+     */
+    private function createVisitesForUserQueryBuilder(
+        User $user,
+        ?int $territoryId = null,
+        bool $onlySubscribed = false,
+    ): QueryBuilder {
+        $qb = $this->createQueryBuilder('i')
+            ->innerJoin('i.signalement', 's')
+            ->innerJoin('s.address', 'address')
+            ->leftJoin('i.partner', 'p')
+            ->addSelect('s', 'p')
+            ->andWhere('i.type IN (:visiteTypes)')
+            ->setParameter('visiteTypes', [InterventionType::VISITE->name, InterventionType::VISITE_CONTROLE->name]) // TODO enlever avec suppression ARRETE
+            ->andWhere('i.status != :canceled')
+            ->setParameter('canceled', Intervention::STATUS_CANCELED)
+            ->andWhere('i.partner IS NOT NULL OR i.externalOperator IS NOT NULL')
+            ->andWhere('s.statut IN (:includedStatus)')
+            ->setParameter('includedStatus', [SignalementStatus::ACTIVE]); // TODO : voir avec Mathilde si on élargit ?
+
+        if ($user->isTerritoryAdmin()) {
+            // RT : toutes les visites de son territoire
+            $qb->andWhere('address.territory = :userTerritory')
+                ->setParameter('userTerritory', $user->getFirstTerritory());
         } elseif (!$user->isSuperAdmin()) {
             // Agents et admins partenaire : les visites de leurs partenaires toujours affectés
             $existsAffectation = $this->getEntityManager()->createQueryBuilder()
@@ -183,13 +218,23 @@ class InterventionRepository extends ServiceEntityRepository
         }
 
         // Filtre territoire (SA et utilisateurs multi-territoires)
-        if (!$user->isTerritoryAdmin() && !empty($calendarEventRequest?->getTerritoire())) {
+        if (!$user->isTerritoryAdmin() && null !== $territoryId) {
             $qb->andWhere('address.territory = :territory')
-                ->setParameter('territory', $calendarEventRequest->getTerritoire());
+                ->setParameter('territory', $territoryId);
         }
 
-        $qb->orderBy('i.scheduledAt', \SortDirection::Ascending);
+        // Filtre par "mes dossiers"
+        if ($onlySubscribed) {
+            $existsSubscription = $this->getEntityManager()->createQueryBuilder()
+                ->select('1')
+                ->from(UserSignalementSubscription::class, 'uss')
+                ->where('uss.signalement = i.signalement')
+                ->andWhere('uss.user = :currentUser')
+                ->getDQL();
+            $qb->andWhere($qb->expr()->exists($existsSubscription))
+                ->setParameter('currentUser', $user);
+        }
 
-        return $qb->getQuery()->getResult();
+        return $qb;
     }
 }
