@@ -255,12 +255,10 @@ export default defineComponent({
       return count > 1 ? `${count} signalements` : `${count} signalement`
     },
     validate () {
-      console.log('validate')
       if (!this.canValidate || !this.analysis) {
         return
       }
       this.isSubmitting = true
-      console.log('appelle massAffectationValidate')
       requests.massAffectationValidate(
         { partnerId: Number(this.partnerId), ids: this.analysis.signalementsToAffect.map(signalement => signalement.id) }, 
         this.sharedProps.csrfMassAffectationValidate, 
@@ -268,7 +266,6 @@ export default defineComponent({
       )
     },
     handleValidateResponse (requestResponse: any) {
-      console.log('handleValidateResponse', requestResponse)
       if (requestResponse.status === 200) {
         // Message affiché en haut de la liste par le parent (showNotice), puis fermeture du panel
         this.$emit(
