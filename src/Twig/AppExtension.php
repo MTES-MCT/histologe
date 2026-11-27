@@ -13,6 +13,7 @@ use App\Entity\Signalement;
 use App\Entity\Suivi;
 use App\Repository\CommuneRepository;
 use App\Service\EmailAlert\EmailAlertChecker;
+use App\Service\Files\FileDocumentTypeLabelResolver;
 use App\Service\Files\ImageBase64Encoder;
 use App\Service\Files\UserAvatar;
 use App\Service\Notification\NotificationCounter;
@@ -258,6 +259,7 @@ class AppExtension extends AbstractExtension implements GlobalsInterface
             new TwigFunction('singular_or_plural', [$this, 'displaySingularOrPlural']),
             new TwigFunction('transform_suivi_description', [$this, 'transformSuiviDescription']),
             new TwigFunction('sign_url', [$this, 'signUrl']),
+            new TwigFunction('file_document_type_label', [FileDocumentTypeLabelResolver::class, 'getLabel']),
             new TwigFunction('get_communes_by_insee', [$this, 'getCommunesByInsee']),
             new TwigFunction('root_domain', [$this, 'extractRootDomain']),
         ];
