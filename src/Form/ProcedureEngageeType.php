@@ -5,9 +5,12 @@ namespace App\Form;
 use App\Entity\Enum\ProcedureCategory;
 use App\Entity\Enum\ProcedureType;
 use App\Entity\Enum\SuiviCategory;
+use App\Entity\File;
 use App\Entity\Signalement;
 use App\Entity\SignalementProcedure;
 use App\Form\Type\SearchCheckboxEnumType;
+use App\Form\Type\SearchCheckboxType;
+use App\Service\Files\FileListService;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -19,13 +22,20 @@ use Symfony\Component\Validator\Constraints as Assert;
  */
 class ProcedureEngageeType extends AbstractType
 {
+    public function __construct(
+        private readonly FileListService $fileListService,
+    ) {
+    }
+
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $signalement = $builder->getData();
         $commentaire = null;
+        $files = [];
         if ($signalement->getSignalementProcedures(ProcedureCategory::PROCEDURE_ENGAGEE)->count() > 0) {
             $lastSuivi = $signalement->getSuivisWithCategory(SuiviCategory::ADD_OR_EDIT_PROCEDURE_ENGAGEE)->last();
             $commentaire = $lastSuivi ? ($lastSuivi->getOriginalData()['commentaire']) : null;
+            $files = $lastSuivi ? ($lastSuivi->getSuiviFiles()->map(static fn ($suiviFile) => $suiviFile->getFile())->toArray()) : [];
         }
 
         $builder->add('procedureEngagees', SearchCheckboxEnumType::class, [
@@ -59,6 +69,16 @@ class ProcedureEngageeType extends AbstractType
                 // on compte 17 pour une limite de 10 car le message est emglobé par <p></p> par l'éditeur de texte
                 new Assert\Length(min: 17, minMessage: 'Le commentaire doit contenir au moins 10 caractères.'),
             ],
+        ]);
+        $builder->add('files', SearchCheckboxType::class, [
+            'class' => File::class,
+            'choice_label' => 'title',
+            'label' => 'Fichiers',
+            'noselectionlabel' => 'Sélectionnez un ou plusieurs fichiers à joindre au suivi',
+            'nochoiceslabel' => 'Aucun fichier disponible',
+            'mapped' => false,
+            'choices' => $this->fileListService->getFileChoicesForSignalement($signalement),
+            'data' => $files,
         ]);
     }
 

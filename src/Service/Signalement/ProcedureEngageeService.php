@@ -5,9 +5,11 @@ namespace App\Service\Signalement;
 use App\Entity\Enum\ProcedureCategory;
 use App\Entity\Enum\ProcedureType;
 use App\Entity\Enum\SuiviCategory;
+use App\Entity\File;
 use App\Entity\Signalement;
 use App\Entity\SignalementProcedure;
 use App\Entity\Suivi;
+use App\Entity\SuiviFile;
 use App\Entity\User;
 use App\Manager\SuiviManager;
 use Doctrine\ORM\EntityManagerInterface;
@@ -44,7 +46,12 @@ class ProcedureEngageeService
         sort($anciennesProcedures);
         sort($nouvellesProcedures);
 
-        if ($anciennesProcedures === $nouvellesProcedures && trim((string) $ancienCommentaire) === trim((string) $nouveauCommentaire)) {
+        $anciensFiles = $lastSuivi ? array_filter($lastSuivi->getSuiviFiles()->map(static fn (SuiviFile $suiviFile): ?int => $suiviFile->getFile()?->getId())->toArray()) : [];
+        $nouveauxFiles = array_map(static fn (File $file): ?int => $file->getId(), $form->get('files')->getData() ?? []);
+        sort($anciensFiles);
+        sort($nouveauxFiles);
+
+        if ($anciennesProcedures === $nouvellesProcedures && trim((string) $ancienCommentaire) === trim((string) $nouveauCommentaire) && $anciensFiles === $nouveauxFiles) {
             // aucun changement détecté, on sort
             return null;
         }
@@ -62,9 +69,7 @@ class ProcedureEngageeService
             $this->entityManager->persist($signalementProcedure);
         }
 
-        /**
-         * @var User
-         */
+        /** @var User $user */
         $user = $this->security->getUser();
         $partner = $user->getPartnerInTerritoryOrFirstOne($signalement->getAddress()->getTerritory());
         $suivi = $this->suiviManager->createSuivi(
@@ -81,6 +86,10 @@ class ProcedureEngageeService
             user: $user,
         );
         $suivi->setOriginalData(['commentaire' => $nouveauCommentaire]);
+        foreach ($form->get('files')->getData() as $file) {
+            $suiviFile = (new SuiviFile())->setFile($file)->setSuivi($suivi)->setTitle($file->getTitle());
+            $this->entityManager->persist($suiviFile);
+        }
 
         return $suivi;
     }

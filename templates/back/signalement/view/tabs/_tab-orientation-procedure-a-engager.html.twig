@@ -46,6 +46,7 @@
                     <div class="fr-background--white">
                         <div class="fr-highlight fr-ml-0">
                             {{ commentaire|raw }}
+                            {% include 'suivi/_suivi_files.html.twig' with {suiviFiles: lastSuivi.suiviFiles} %}
                         </div>
                     </div>
                 {% endif %}

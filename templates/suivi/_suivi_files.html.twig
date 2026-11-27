@@ -1,0 +1,17 @@
+{% if suiviFiles|length > 0 %}
+    <div class="fr-mt-2v">
+        <i>{{ suiviFiles|length > 1 ? suiviFiles|length ~ ' Fichiers joints :' : '1 Fichier joint :' }}</i>
+        <ul>
+            {% for suiviFile in suiviFiles %}
+                <li>
+                    {% if suiviFile.file %}
+                        {% set details = file_document_type_label(suiviFile.file) %}
+                        <a class="fr-link" target="_blank" rel="noopener" href="{{ sign_url(url('show_file', {uuid: suiviFile.file.uuid})) }}">{{ suiviFile.title }}</a>{% if details %} <small>({{ details }})</small>{% endif %}
+                    {% else %}
+                        Fichier supprimé ({{ suiviFile.title }})
+                    {% endif %}
+                </li>
+            {% endfor %}
+        </ul>
+    </div>
+{% endif %}
