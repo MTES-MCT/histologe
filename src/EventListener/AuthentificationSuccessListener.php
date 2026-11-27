@@ -23,7 +23,11 @@ use Symfony\Component\Security\Http\Event\InteractiveLoginEvent;
 
 class AuthentificationSuccessListener
 {
-    private const string CHECK_2FA_PATH = '/2fa_check';
+    /**
+     * Sur ces chemins, scheb redéclenche l'interactive login après validation du code :
+     * la connexion est tracée par onSchebTwoFactorAuthenticationSuccess() (LOGIN_2FA).
+     */
+    private const array CHECK_2FA_PATHS = ['/2fa_check', '/2fa-suivi-check'];
 
     public function __construct(
         private readonly HistoryEntryManager $historyEntryManager,
@@ -40,15 +44,11 @@ class AuthentificationSuccessListener
 
     public function onSecurityInteractiveLogin(InteractiveLoginEvent $event): void
     {
-        if (self::CHECK_2FA_PATH === $event->getRequest()->getPathInfo()) {
+        if (\in_array($event->getRequest()->getPathInfo(), self::CHECK_2FA_PATHS, true)) {
             return;
         }
-        if ($event->getAuthenticationToken()->getUser() instanceof User || $event->getAuthenticationToken()->getUser() instanceof SignalementBailleur) {
-            $user = $event->getAuthenticationToken()->getUser();
-        } elseif ($event->getAuthenticationToken()->getUser() instanceof SignalementUser) {
-            $user = $event->getAuthenticationToken()->getUser()->getUser();
-        }
-        if (!isset($user)) {
+        $user = $this->resolveLoggedUser($event->getAuthenticationToken()->getUser());
+        if (null === $user) {
             return;
         }
         $this->handleSuccessfulLogin(
@@ -60,13 +60,26 @@ class AuthentificationSuccessListener
 
     public function onSchebTwoFactorAuthenticationSuccess(TwoFactorAuthenticationEvent $event): void
     {
-        /** @var User $user */
-        $user = $event->getToken()->getUser();
         $this->handleSuccessfulLogin(
-            $user,
+            $this->resolveLoggedUser($event->getToken()->getUser()),
             HistoryEntryEvent::LOGIN_2FA,
             $event->getRequest(),
         );
+    }
+
+    /**
+     * Un usager (SignalementUser) est tracé via l'entité User qu'il encapsule.
+     */
+    private function resolveLoggedUser(?UserInterface $user): User|SignalementBailleur|null
+    {
+        if ($user instanceof User || $user instanceof SignalementBailleur) {
+            return $user;
+        }
+        if ($user instanceof SignalementUser) {
+            return $user->getUser();
+        }
+
+        return null;
     }
 
     private function handleSuccessfulLogin(?UserInterface $user, HistoryEntryEvent $eventType, Request $request): void

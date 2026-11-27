@@ -1,9 +1,11 @@
 # See the configuration reference at https://symfony.com/bundles/SchebTwoFactorBundle/6.x/configuration.html
 scheb_two_factor:
     two_factor_condition: App\Service\Security\TwoFactorCondition
+    persister: App\Service\Security\TwoFactorPersister
     security_tokens:
         - Symfony\Component\Security\Core\Authentication\Token\UsernamePasswordToken
         - Symfony\Component\Security\Http\Authenticator\Token\PostAuthenticationToken
     email:
         enabled: true
+        digits: 6
         mailer: App\Service\Mailer\AuthCodeMailer

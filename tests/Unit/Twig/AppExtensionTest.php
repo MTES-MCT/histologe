@@ -128,6 +128,24 @@ class AppExtensionTest extends WebTestCase
         ];
     }
 
+    #[DataProvider('provideDataEmail')]
+    public function testMaskEmail(?string $email, string $expected): void
+    {
+        self::bootKernel();
+        /** @var AppExtension $appExtension */
+        $appExtension = static::getContainer()->get(AppExtension::class);
+
+        $this->assertSame($expected, $appExtension->maskEmail($email));
+    }
+
+    public static function provideDataEmail(): \Generator
+    {
+        yield 'No email' => [null, ''];
+        yield 'Not an email' => ['inconnu', ''];
+        yield 'Email' => ['jean.dupont@example.com', 'j***@example.com'];
+        yield 'Accented local part' => ['élise@example.com', 'é***@example.com'];
+    }
+
     public function testGetFilters(): void
     {
         self::bootKernel();
@@ -153,6 +171,7 @@ class AppExtensionTest extends WebTestCase
             'badge_class',
             'badge_relance_class',
             'entity_label',
+            'mask_email',
         ];
 
         $this->assertEqualsCanonicalizing($expectedFilters, $filterNames);

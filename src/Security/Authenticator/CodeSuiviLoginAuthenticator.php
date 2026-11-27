@@ -8,11 +8,15 @@ use App\Manager\UserManager;
 use App\Repository\SignalementRepository;
 use App\Security\Provider\SignalementUserProvider;
 use App\Security\User\SignalementUser;
+use App\Service\Security\TwoFactorCondition;
+use App\Validator\EmailFormatValidator;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\Session\FlashBagAwareSessionInterface;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
+use Symfony\Component\Security\Core\Exception\AuthenticationException;
 use Symfony\Component\Security\Core\Exception\CustomUserMessageAuthenticationException;
 use Symfony\Component\Security\Http\Authenticator\AbstractLoginFormAuthenticator;
 use Symfony\Component\Security\Http\Authenticator\Passport\Badge\CsrfTokenBadge;
@@ -20,6 +24,7 @@ use Symfony\Component\Security\Http\Authenticator\Passport\Badge\UserBadge;
 use Symfony\Component\Security\Http\Authenticator\Passport\Passport;
 use Symfony\Component\Security\Http\Authenticator\Passport\SelfValidatingPassport;
 use Symfony\Component\Security\Http\Util\TargetPathTrait;
+use Twig\Environment;
 use function Symfony\Component\String\u;
 
 class CodeSuiviLoginAuthenticator extends AbstractLoginFormAuthenticator
@@ -27,11 +32,15 @@ class CodeSuiviLoginAuthenticator extends AbstractLoginFormAuthenticator
     use TargetPathTrait;
 
     public const string LOGIN_FO_ROUTE = 'app_login_fo';
+    public const string NO_EMAIL_MESSAGE = 'Aucune adresse e-mail n\'est associée à votre dossier : nous ne pouvons pas vous envoyer votre code de connexion. Contactez les services en charge de votre dossier pour la faire ajouter.';
+    public const string INVALID_EMAIL_MESSAGE = 'L\'adresse e-mail associée à votre dossier n\'est pas valide : nous ne pouvons pas vous envoyer votre code de connexion. Contactez les services en charge de votre dossier pour la faire corriger.';
 
     public function __construct(
         private readonly UrlGeneratorInterface $urlGenerator,
         private readonly SignalementRepository $signalementRepository,
         private readonly SignalementUserProvider $signalementUserProvider,
+        private readonly TwoFactorCondition $twoFactorCondition,
+        private readonly Environment $twig,
     ) {
     }
 
@@ -77,6 +86,7 @@ class CodeSuiviLoginAuthenticator extends AbstractLoginFormAuthenticator
         }
 
         $this->denyAccessIfNotAllowed($signalement, $firstLetterPrenom, $firstLetterNom, $codePostal, $visitorType);
+        $this->denyAccessIfNoEmailForTwoFactor($signalement, $visitorType);
 
         $userIdentifier = $codeSuivi.':'.$visitorType;
 
@@ -133,6 +143,30 @@ class CodeSuiviLoginAuthenticator extends AbstractLoginFormAuthenticator
         }
     }
 
+    /**
+     * La 2FA usager envoie le code par e-mail : sans adresse, l'usager ne peut pas se connecter.
+     */
+    private function denyAccessIfNoEmailForTwoFactor(Signalement $signalement, string $visitorType): void
+    {
+        if (!$this->twoFactorCondition->isEnabledForUsagers()) {
+            return;
+        }
+
+        $email = UserManager::DECLARANT === $visitorType
+            ? $signalement->getMailDeclarant()
+            : $signalement->getMailOccupant();
+
+        // Seuls les services en charge du dossier peuvent modifier l'adresse e-mail : on oriente vers eux,
+        // quel que soit le profil (un locataire est à la fois occupant et déclarant).
+        if (empty($email) || EmailFormatValidator::EMAIL_HISTOLOGE_INCONNU === $email) {
+            throw new CustomUserMessageAuthenticationException(self::NO_EMAIL_MESSAGE);
+        }
+
+        if (EmailFormatValidator::isInvalidEmail($email)) {
+            throw new CustomUserMessageAuthenticationException(self::INVALID_EMAIL_MESSAGE);
+        }
+    }
+
     public function onAuthenticationSuccess(Request $request, TokenInterface $token, string $firewallName): ?Response
     {
         if ($targetPath = $this->getTargetPath($request->getSession(), $firewallName)) {
@@ -141,6 +175,31 @@ class CodeSuiviLoginAuthenticator extends AbstractLoginFormAuthenticator
         $codeSuivi = $request->attributes->get('code');
 
         return new RedirectResponse($this->urlGenerator->generate('front_suivi_signalement', ['code' => $codeSuivi]));
+    }
+
+    /**
+     * Les routes de la 2FA usager (/2fa-suivi) ne portent pas de code de suivi :
+     * sans 2FA en cours (session expirée, retour arrière…), on renvoie vers l'accueil.
+     * TODO : on va finir par avoir un formulaire login usager unique, on pourra rediriger dessus
+     */
+    public function start(Request $request, ?AuthenticationException $authException = null): Response
+    {
+        if (empty($request->attributes->get('code'))) {
+            // Pas de redirection vers « home » : en prod elle renvoie vers le site public et le message serait perdu.
+            // Même rendu que SecurityController::loginFO() pour un lien invalide.
+            if ($request->hasSession()) {
+                /** @var FlashBagAwareSessionInterface $session */
+                $session = $request->getSession();
+                $session->getFlashBag()->add('error', [
+                    'title' => 'Session expirée',
+                    'message' => 'Votre session a expiré. Merci d\'utiliser à nouveau le lien de suivi de votre dossier pour vous connecter.',
+                ]);
+            }
+
+            return new Response($this->twig->render('front/flash-messages.html.twig'));
+        }
+
+        return parent::start($request, $authException);
     }
 
     protected function getLoginUrl(Request $request): string

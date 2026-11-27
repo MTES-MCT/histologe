@@ -18,14 +18,14 @@ trait UserHelper
         if (UserManager::OCCUPANT === $type) {
             return new SignalementUser(
                 userIdentifier: $signalement->getCodeSuivi().':'.UserManager::OCCUPANT,
-                email: $signalement->getMailDeclarant(),
+                email: $signalement->getMailOccupant(),
                 user: $signalement->getSignalementUsager()->getOccupant(),
             );
         }
 
         return new SignalementUser(
             userIdentifier: $signalement->getCodeSuivi().':'.UserManager::DECLARANT,
-            email: $signalement->getMailOccupant(),
+            email: $signalement->getMailDeclarant(),
             user: $signalement->getSignalementUsager()->getDeclarant()
         );
     }

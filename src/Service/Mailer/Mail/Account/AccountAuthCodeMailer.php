@@ -30,6 +30,10 @@ class AccountAuthCodeMailer extends AbstractNotificationMailer
      */
     public function getMailerParamsFromNotification(NotificationMail $notificationMail): array
     {
-        return ['authCode' => $notificationMail->getUser()->getEmailAuthCode()];
+        return [
+            'authCode' => $notificationMail->getUser()->getEmailAuthCode(),
+            'isUsager' => (bool) ($notificationMail->getParams()['isUsager'] ?? false),
+            'reference' => $notificationMail->getSignalement()?->getReference(),
+        ];
     }
 }

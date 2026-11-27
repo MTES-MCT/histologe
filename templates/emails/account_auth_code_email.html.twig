@@ -3,17 +3,28 @@
 {% block body %}
     <p>Bonjour,</p>
     <p>
+        {% if isUsager %}
+        Une connexion à votre dossier{% if reference %} #{{ reference }}{% endif %} sur {{ platform.name }} est en cours.
+        {% else %}
         Une connexion à votre compte {{ platform.name }} est en cours.
+        {% endif %}
         Voici le code de vérification à renseigner pour finaliser votre connexion :
     </p>
     <p><strong style="font-size: 18px;background-color:#ececfe;padding:10px;">{{ authCode }}</strong></p>
     <p>
         Ce code est personnel : ne le communiquez à personne.
     </p>
-    <p>
-        Si vous n'êtes pas à l'origine de cette tentative de connexion, nous vous recommandons de modifier votre mot de passe
-        et de prévenir votre responsable de territoire.
-    </p>
+    {% if isUsager %}
+        <p>
+            Si vous n'êtes pas à l'origine de cette tentative de connexion, vous pouvez ignorer ce message :
+            il sert de sécurité pour accéder à votre dossier.
+        </p>
+    {% else %}
+        <p>
+            Si vous n'êtes pas à l'origine de cette tentative de connexion, nous vous recommandons de modifier votre mot de passe
+            et de prévenir votre responsable de territoire.
+        </p>
+    {% endif %}
 
     <p>A bientôt sur {{ platform.name }} !</p>
 {% endblock %}

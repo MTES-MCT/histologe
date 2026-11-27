@@ -5,9 +5,10 @@ namespace App\Security\User;
 use App\Entity\Territory;
 use App\Entity\User;
 use App\Manager\UserManager;
+use Scheb\TwoFactorBundle\Model\Email\TwoFactorInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
 
-class SignalementUser implements UserInterface
+class SignalementUser implements UserInterface, TwoFactorInterface
 {
     private string $codeSuivi;
     private string $type;
@@ -61,5 +62,28 @@ class SignalementUser implements UserInterface
     public function getUser(): User
     {
         return $this->user;
+    }
+
+    /**
+     * L'absence d'e-mail est bloquée en amont par CodeSuiviLoginAuthenticator.
+     */
+    public function isEmailAuthEnabled(): bool
+    {
+        return !empty($this->email);
+    }
+
+    public function getEmailAuthRecipient(): string
+    {
+        return $this->email ?? '';
+    }
+
+    public function getEmailAuthCode(): string
+    {
+        return $this->user->getEmailAuthCode();
+    }
+
+    public function setEmailAuthCode(?string $authCode): void
+    {
+        $this->user->setEmailAuthCode($authCode);
     }
 }

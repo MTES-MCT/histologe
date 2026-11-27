@@ -41,10 +41,14 @@ security:
                 max_attempts: 5 # '%env(int:FORMS_SUBMIT_LIMITER_LIMIT)%' doesnt work here: fails to cast str to int
                 interval: '%env(FORMS_SUBMIT_LIMITER_INTERVAL)%'
         code_suivi:
-            pattern: ^/(authentification|logout-suivi|suivre-mon-signalement|suivre-ma-procedure|show-export-pdf-usager|signalement/[^/]+/file/)
+            pattern: ^/(authentification|logout-suivi|2fa-suivi|suivre-mon-signalement|suivre-ma-procedure|show-export-pdf-usager|signalement/[^/]+/file/)
             stateless: false
             provider: app_signalement_user_provider
             custom_authenticator: App\Security\Authenticator\CodeSuiviLoginAuthenticator
+            two_factor:
+                auth_form_path: 2fa_suivi_login
+                check_path: 2fa_suivi_login_check
+                enable_csrf: true
             login_throttling:
                 max_attempts: 5 # '%env(int:FORMS_SUBMIT_LIMITER_LIMIT)%' doesnt work here: fails to cast str to int
                 interval: '%env(FORMS_SUBMIT_LIMITER_INTERVAL)%'
@@ -70,6 +74,7 @@ security:
             two_factor:
                 auth_form_path: 2fa_login
                 check_path: 2fa_login_check
+                enable_csrf: true
             login_throttling:
                 max_attempts: 5 # '%env(int:FORMS_SUBMIT_LIMITER_LIMIT)%' doesnt work here: fails to cast str to int
                 interval: '%env(FORMS_SUBMIT_LIMITER_INTERVAL)%'
@@ -99,6 +104,7 @@ security:
         # cancel two-factor authentication, if they need to.
         - { path: ^/logout, role: PUBLIC_ACCESS }
         # This ensures that the form can only be accessed when two-factor authentication is in progress.
+        # Couvre aussi /2fa-suivi (2FA usagers, firewall code_suivi).
         - { path: ^/2fa, role: IS_AUTHENTICATED_2FA_IN_PROGRESS }
         # Other rules may follow here...
         - { path: ^/api/doc, roles: PUBLIC_ACCESS }

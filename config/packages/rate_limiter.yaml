@@ -16,6 +16,10 @@ framework:
             policy: 'fixed_window'
             limit: '%env(int:FORMS_SUBMIT_LIMITER_LIMIT)%'
             interval: '%env(FORMS_SUBMIT_LIMITER_INTERVAL)%'
+        two_factor_resend_code:
+            policy: 'fixed_window'
+            limit: 3
+            interval: '15 minutes'
         api_limiter: 
             policy: 'fixed_window'
             limit: '%env(int:API_LIMITER_LIMIT)%'
