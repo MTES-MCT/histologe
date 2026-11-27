@@ -232,7 +232,7 @@ class Suivi implements EntityHistoryInterface
             || SuiviCategory::INJONCTION_BAILLEUR_LOGIN_BAILLEUR === $this->getCategory()
         ) {
             $author = $forBailleur ? 'Vous (bailleur)' : 'BAILLEUR';
-        } elseif ($this->getCreatedBy()?->isUsager() || in_array($this->getCategory(), SuiviCategory::categoriesSubmittedByUsager())) {
+        } elseif ($this->getCreatedBy() && in_array($this->getCategory(), SuiviCategory::categoriesSubmittedByUsager())) {
             $partnerOrType = $this->getCreatedBy() === $this->getSignalement()->getSignalementUsager()?->getOccupant() ? 'OCCUPANT' : 'DECLARANT';
             $author = $this->getCreatedByNomComplet(true);
         } elseif ($this->getCreatedBy() && !$this->getCreatedBy()->isApiUser()) {
