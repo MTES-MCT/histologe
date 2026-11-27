@@ -63,9 +63,9 @@ class DemandeLienSignalement
         return $this->adresse;
     }
 
-    public function setAdresse(string $adresse): self
+    public function setAdresse(?string $adresse): self
     {
-        $this->adresse = $adresse;
+        $this->adresse = $adresse ?? '';
 
         return $this;
     }
@@ -75,9 +75,9 @@ class DemandeLienSignalement
         return $this->codePostal;
     }
 
-    public function setCodePostal(string $codePostal): self
+    public function setCodePostal(?string $codePostal): self
     {
-        $this->codePostal = $codePostal;
+        $this->codePostal = $codePostal ?? '';
 
         return $this;
     }
@@ -87,9 +87,9 @@ class DemandeLienSignalement
         return $this->ville;
     }
 
-    public function setVille(string $ville): self
+    public function setVille(?string $ville): self
     {
-        $this->ville = $ville;
+        $this->ville = $ville ?? '';
 
         return $this;
     }
