@@ -12,9 +12,9 @@ use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 class SignalementFeedbackUsagerWithResponseMailer extends AbstractNotificationMailer
 {
+    public const MAILER_SUBJECT = '[%s] Faites le point sur votre problème de logement !';
     protected ?NotificationMailerType $mailerType =
         NotificationMailerType::TYPE_SIGNALEMENT_FEEDBACK_USAGER_WITH_RESPONSE;
-    protected ?string $mailerSubject = '%param.platform_name% : faites le point sur votre problème de logement !';
     protected ?string $mailerButtonText = 'Mettre à jour ma situation';
     protected ?string $mailerTemplate = 'demande_feedback_usager_email';
     protected ?string $tagHeader = 'Usager relance apres reponse';
@@ -53,5 +53,11 @@ class SignalementFeedbackUsagerWithResponseMailer extends AbstractNotificationMa
             'from' => $toRecipient,
             'lien_suivi' => $link,
         ];
+    }
+
+    public function updateMailerSubjectFromNotification(NotificationMail $notificationMail): void
+    {
+        $signalement = $notificationMail->getSignalement();
+        $this->mailerSubject = \sprintf(self::MAILER_SUBJECT, $signalement->getReference());
     }
 }

@@ -229,6 +229,7 @@ class NotificationAndMailSender
             $this->notificationMailerRegistry->send(
                 new NotificationMail(
                     type: NotificationMailerType::TYPE_DEMANDE_ABANDON_PROCEDURE_TO_USAGER,
+                    // TODO : #6778 il faudrait utilise l'email enregistré dasn le signalement (mais il faut pouvoir déterminer le type d'usager connecté)
                     to: $this->suivi->getCreatedBy()->getEmail(),
                     territory: $this->signalement->getAddress()->getTerritory(),
                     signalement: $this->signalement,

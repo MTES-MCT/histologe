@@ -12,8 +12,8 @@ use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 class SuiviVisiteEditedToUsagerMailer extends AbstractNotificationMailer
 {
+    public const MAILER_SUBJECT = '[%s] Mise à jour de la conclusion de la visite de votre logement';
     protected ?NotificationMailerType $mailerType = NotificationMailerType::TYPE_VISITE_EDITED_TO_USAGER;
-    protected ?string $mailerSubject = 'Mise à jour de la conclusion de la visite de votre logement';
     protected ?string $mailerButtonText = 'Accéder à mon dossier';
     protected ?string $mailerTemplate = 'nouveau_suivi_visite_edited_email';
     protected ?string $tagHeader = 'Usager Conclusion Visite Disponible';
@@ -47,5 +47,11 @@ class SuiviVisiteEditedToUsagerMailer extends AbstractNotificationMailer
                 ['code' => $signalement->getCodeSuivi()],
             ),
         ];
+    }
+
+    public function updateMailerSubjectFromNotification(NotificationMail $notificationMail): void
+    {
+        $signalement = $notificationMail->getSignalement();
+        $this->mailerSubject = \sprintf(self::MAILER_SUBJECT, $signalement->getReference());
     }
 }

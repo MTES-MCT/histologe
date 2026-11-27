@@ -12,8 +12,8 @@ use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 class SignalementFeedbackUsagerThirdMailer extends AbstractNotificationMailer
 {
+    public const MAILER_SUBJECT = '[%s] Faites le point sur votre problème de logement !';
     protected ?NotificationMailerType $mailerType = NotificationMailerType::TYPE_SIGNALEMENT_FEEDBACK_USAGER_THIRD;
-    protected ?string $mailerSubject = '%param.platform_name% : faites le point sur votre problème de logement !';
     protected ?string $mailerTemplate = 'demande_feedback_usager_third_email';
     protected ?string $tagHeader = 'Usager 3e relance';
 
@@ -56,5 +56,11 @@ class SignalementFeedbackUsagerThirdMailer extends AbstractNotificationMailer
             'lien_suivi_poursuivre' => $linkPoursuivre,
             'lien_suivi_arreter' => $linkArreter,
         ];
+    }
+
+    public function updateMailerSubjectFromNotification(NotificationMail $notificationMail): void
+    {
+        $signalement = $notificationMail->getSignalement();
+        $this->mailerSubject = \sprintf(self::MAILER_SUBJECT, $signalement->getReference());
     }
 }
