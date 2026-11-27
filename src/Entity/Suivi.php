@@ -191,6 +191,17 @@ class Suivi implements EntityHistoryInterface
         return $this->getCreatedBy()?->getNomComplet($firstNameFirst);
     }
 
+    public function getCreatedByEmail(): ?string
+    {
+        if ($this->isCreatedByOccupant()) {
+            return $this->getSignalement()->getMailOccupant();
+        } elseif ($this->isCreatedByDeclarant()) {
+            return $this->getSignalement()->getMailOccupant();
+        }
+
+        return $this->getCreatedBy()?->getEmail();
+    }
+
     public function getCreatedByLabel(
         string $separator = ' : ',
         bool $forBailleur = false,
@@ -221,7 +232,7 @@ class Suivi implements EntityHistoryInterface
             || SuiviCategory::INJONCTION_BAILLEUR_LOGIN_BAILLEUR === $this->getCategory()
         ) {
             $author = $forBailleur ? 'Vous (bailleur)' : 'BAILLEUR';
-        } elseif ($this->getCreatedBy()?->isUsager()) {
+        } elseif ($this->getCreatedBy() && in_array($this->getCategory(), SuiviCategory::categoriesSubmittedByUsager())) {
             $partnerOrType = $this->getCreatedBy() === $this->getSignalement()->getSignalementUsager()?->getOccupant() ? 'OCCUPANT' : 'DECLARANT';
             $author = $this->getCreatedByNomComplet(true);
         } elseif ($this->getCreatedBy() && !$this->getCreatedBy()->isApiUser()) {

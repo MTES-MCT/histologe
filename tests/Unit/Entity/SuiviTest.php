@@ -110,16 +110,16 @@ class SuiviTest extends KernelTestCase
 
     public function testCreatedByLabelAutomaticSuiviFromOccupant(): void
     {
-        $suivi = $this->createSuivi(SuiviCategory::NEW_DOCUMENT, $this->occupant);
+        $suivi = $this->createSuivi(SuiviCategory::MESSAGE_USAGER, $this->occupant);
 
-        $this->assertSame('OCCUPANT : Marie MARTIN (Suivi automatique)', $suivi->getCreatedByLabel());
+        $this->assertSame('OCCUPANT : Marie MARTIN', $suivi->getCreatedByLabel());
     }
 
     public function testCreatedByLabelAutomaticSuiviFromDeclarant(): void
     {
-        $suivi = $this->createSuivi(SuiviCategory::NEW_DOCUMENT, $this->declarant);
+        $suivi = $this->createSuivi(SuiviCategory::MESSAGE_USAGER, $this->declarant);
 
-        $this->assertSame('DECLARANT : Paul DURAND (Suivi automatique)', $suivi->getCreatedByLabel());
+        $this->assertSame('DECLARANT : Paul DURAND', $suivi->getCreatedByLabel());
     }
 
     // getCreatedByLabel : suivis agent
