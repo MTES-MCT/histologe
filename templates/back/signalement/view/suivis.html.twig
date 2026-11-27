@@ -14,14 +14,18 @@
                         {{ suivi.createdByNomComplet }}
                     </strong>
                     <hr>
-                    <span class="fr-ws-nowrap">{{ suivi.createdBy.email }}</span>
-                    {% if suivi.createdBy.fonction %}
-                        <hr>
-                        <span class="fr-ws-nowrap">{{ suivi.createdBy.fonction }}</span>
-                    {% endif %}
-                    {% if suivi.createdBy.phone %}
-                        <hr>
-                        <span class="fr-ws-nowrap">{{ suivi.createdBy.phoneDecoded|phone }}</span>
+                    {% if suivi.category in enum('App\\Entity\\Enum\\SuiviCategory').categoriesSubmittedByUsager and suivi.createdByEmail %}
+                        <span class="fr-ws-nowrap">{{ suivi.createdByEmail }}</span>
+                    {% else %}
+                        <span class="fr-ws-nowrap">{{ suivi.createdBy.email }}</span>
+                        {% if suivi.createdBy.fonction %}
+                            <hr>
+                            <span class="fr-ws-nowrap">{{ suivi.createdBy.fonction }}</span>
+                        {% endif %}
+                        {% if suivi.createdBy.phone %}
+                            <hr>
+                            <span class="fr-ws-nowrap">{{ suivi.createdBy.phoneDecoded|phone }}</span>
+                        {% endif %}
                     {% endif %}
                 </div>
                 <div aria-describedby="tooltip_suivi_{{ suivi.id }}">
