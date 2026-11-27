@@ -12,8 +12,8 @@ use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 class SignalementValidationMailer extends AbstractNotificationMailer
 {
+    public const MAILER_SUBJECT = '[%s] Votre signalement est validé !';
     protected ?NotificationMailerType $mailerType = NotificationMailerType::TYPE_SIGNALEMENT_VALIDATION_TO_USAGER;
-    protected ?string $mailerSubject = 'Votre signalement est validé !';
     protected ?string $mailerButtonText = 'Accéder à mon dossier';
     protected ?string $mailerTemplate = 'validation_signalement_email';
     protected ?string $tagHeader = 'Usager Validation Signalement';
@@ -45,5 +45,11 @@ class SignalementValidationMailer extends AbstractNotificationMailer
             ),
             'territory_name' => $notificationMail->getTerritory()->getName(),
         ];
+    }
+
+    public function updateMailerSubjectFromNotification(NotificationMail $notificationMail): void
+    {
+        $signalement = $notificationMail->getSignalement();
+        $this->mailerSubject = \sprintf(self::MAILER_SUBJECT, $signalement->getReference());
     }
 }

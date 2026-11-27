@@ -12,8 +12,8 @@ use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 class SignalementRefusalMailer extends AbstractNotificationMailer
 {
+    public const MAILER_SUBJECT = '[%s] Votre signalement ne peut pas être traité';
     protected ?NotificationMailerType $mailerType = NotificationMailerType::TYPE_SIGNALEMENT_REFUSAL_TO_USAGER;
-    protected ?string $mailerSubject = 'Votre signalement ne peut pas être traité';
     protected ?string $mailerTemplate = 'refus_signalement_email';
     protected ?string $tagHeader = 'Usager Refus Signalement';
 
@@ -37,5 +37,11 @@ class SignalementRefusalMailer extends AbstractNotificationMailer
             'signalement_nomOccupant' => $notificationMail->getSignalement()->getNomOccupant(),
             'signalement_prenomOccupant' => $notificationMail->getSignalement()->getPrenomOccupant(),
         ];
+    }
+
+    public function updateMailerSubjectFromNotification(NotificationMail $notificationMail): void
+    {
+        $signalement = $notificationMail->getSignalement();
+        $this->mailerSubject = \sprintf(self::MAILER_SUBJECT, $signalement->getReference());
     }
 }

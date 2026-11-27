@@ -12,8 +12,8 @@ use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 class AskTravauxMiseEnConformiteMailer extends AbstractNotificationMailer
 {
+    public const MAILER_SUBJECT = '[%s] Avancement des travaux dans votre logement';
     protected ?NotificationMailerType $mailerType = NotificationMailerType::TYPE_ASK_TRAVAUX_MISE_EN_CONFORMITE;
-    protected ?string $mailerSubject = 'Avancement des travaux dans votre logement';
     protected ?string $mailerTemplate = 'ask_travaux_mise_en_conformite_email';
     protected ?string $tagHeader = 'Usager Demande Avancement Des Travaux';
 
@@ -38,5 +38,11 @@ class AskTravauxMiseEnConformiteMailer extends AbstractNotificationMailer
             'date_cloture' => $signalement->getClosedAt()?->format('d/m/Y'),
             'btn_link' => $btn_link,
         ];
+    }
+
+    public function updateMailerSubjectFromNotification(NotificationMail $notificationMail): void
+    {
+        $signalement = $notificationMail->getSignalement();
+        $this->mailerSubject = \sprintf(self::MAILER_SUBJECT, $signalement->getReference());
     }
 }

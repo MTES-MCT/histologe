@@ -12,8 +12,8 @@ use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 class SuiviVisiteAbortedToUsagerMailer extends AbstractNotificationMailer
 {
+    public const MAILER_SUBJECT = '[%s] Visite du logement non effectuée';
     protected ?NotificationMailerType $mailerType = NotificationMailerType::TYPE_VISITE_ABORTED_TO_USAGER;
-    protected ?string $mailerSubject = 'Visite du logement non effectuée';
     protected ?string $mailerButtonText = 'Accéder à mon dossier';
     protected ?string $mailerTemplate = 'nouveau_suivi_visite_aborted_email';
     protected ?string $tagHeader = 'Usager Visite Non Effectuee';
@@ -43,5 +43,11 @@ class SuiviVisiteAbortedToUsagerMailer extends AbstractNotificationMailer
                 ['code' => $signalement->getCodeSuivi()],
             ),
         ];
+    }
+
+    public function updateMailerSubjectFromNotification(NotificationMail $notificationMail): void
+    {
+        $signalement = $notificationMail->getSignalement();
+        $this->mailerSubject = \sprintf(self::MAILER_SUBJECT, $signalement->getReference());
     }
 }

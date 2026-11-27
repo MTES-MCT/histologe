@@ -12,8 +12,8 @@ use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 class SuiviVisiteCanceledMailer extends AbstractNotificationMailer
 {
+    public const MAILER_SUBJECT = '[%s] Annulation de la visite de votre logement';
     protected ?NotificationMailerType $mailerType = NotificationMailerType::TYPE_VISITE_CANCELED_TO_USAGER;
-    protected ?string $mailerSubject = 'Annulation de la visite de votre logement';
     protected ?string $mailerButtonText = 'Accéder à mon dossier';
     protected ?string $mailerTemplate = 'nouveau_suivi_visite_canceled_email';
     protected ?string $tagHeader = 'Usager Annulation Visite Prevue';
@@ -44,5 +44,11 @@ class SuiviVisiteCanceledMailer extends AbstractNotificationMailer
                 UrlGeneratorInterface::ABSOLUTE_URL
             ),
         ];
+    }
+
+    public function updateMailerSubjectFromNotification(NotificationMail $notificationMail): void
+    {
+        $signalement = $notificationMail->getSignalement();
+        $this->mailerSubject = \sprintf(self::MAILER_SUBJECT, $signalement->getReference());
     }
 }

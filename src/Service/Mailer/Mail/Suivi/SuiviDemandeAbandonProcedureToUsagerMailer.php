@@ -12,7 +12,7 @@ use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 class SuiviDemandeAbandonProcedureToUsagerMailer extends AbstractNotificationMailer
 {
-    public const MAILER_SUBJECT = 'Demande de fermeture du dossier %s sur Signal Logement';
+    public const MAILER_SUBJECT = '[%s] Demande de fermeture du dossier sur Signal Logement';
     protected ?NotificationMailerType $mailerType = NotificationMailerType::TYPE_DEMANDE_ABANDON_PROCEDURE_TO_USAGER;
     protected ?string $mailerButtonText = 'Accéder au signalement';
     protected ?string $mailerTemplate = 'demande_abandon_procedure_to_usager';

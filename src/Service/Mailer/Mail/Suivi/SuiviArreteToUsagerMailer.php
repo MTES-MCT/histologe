@@ -12,8 +12,8 @@ use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 class SuiviArreteToUsagerMailer extends AbstractNotificationMailer
 {
+    public const MAILER_SUBJECT = '[%s] Un arrêté concernant votre logement a été pris';
     protected ?NotificationMailerType $mailerType = NotificationMailerType::TYPE_ARRETE_CREATED_TO_USAGER;
-    protected ?string $mailerSubject = 'Un arrêté concernant votre logement a été pris';
     protected ?string $mailerButtonText = 'Consulter mon arrêté';
     protected ?string $mailerTemplate = 'nouveau_suivi_arrete_created_to_usager_email';
     protected ?string $tagHeader = 'Usager Arrêté';
@@ -45,5 +45,11 @@ class SuiviArreteToUsagerMailer extends AbstractNotificationMailer
                 ['code' => $signalement->getCodeSuivi()],
             ),
         ];
+    }
+
+    public function updateMailerSubjectFromNotification(NotificationMail $notificationMail): void
+    {
+        $signalement = $notificationMail->getSignalement();
+        $this->mailerSubject = \sprintf(self::MAILER_SUBJECT, $signalement->getReference());
     }
 }

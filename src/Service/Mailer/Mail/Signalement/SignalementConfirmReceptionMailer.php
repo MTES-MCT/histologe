@@ -12,8 +12,8 @@ use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 class SignalementConfirmReceptionMailer extends AbstractNotificationMailer
 {
+    public const MAILER_SUBJECT = '[%s] Votre signalement a bien été reçu !';
     protected ?NotificationMailerType $mailerType = NotificationMailerType::TYPE_CONFIRM_RECEPTION_TO_USAGER;
-    protected ?string $mailerSubject = 'Votre signalement a bien été reçu !';
     protected ?string $mailerButtonText = 'Accéder à mon dossier';
     protected ?string $mailerTemplate = 'accuse_reception_email';
     protected ?string $tagHeader = 'Usager Accusé Reception Signalement';
@@ -47,5 +47,11 @@ class SignalementConfirmReceptionMailer extends AbstractNotificationMailer
                 UrlGeneratorInterface::ABSOLUTE_URL
             ),
         ];
+    }
+
+    public function updateMailerSubjectFromNotification(NotificationMail $notificationMail): void
+    {
+        $signalement = $notificationMail->getSignalement();
+        $this->mailerSubject = \sprintf(self::MAILER_SUBJECT, $signalement->getReference());
     }
 }

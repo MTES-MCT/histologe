@@ -59,17 +59,17 @@ class AskFeedbackUsagerCommandTest extends KernelTestCase
 
         // first email is loop relance
         $firstEmail = $this->getMailerMessages()[0];
-        $this->assertEmailSubjectContains($firstEmail, 'faites le point sur votre problème de logement !');
+        $this->assertEmailSubjectContains($firstEmail, 'Faites le point sur votre problème de logement !');
         $this->assertEmailHtmlBodyContains($firstEmail, 'Merci d\'indiquer si vous souhaitez poursuivre ou arrêter la procédure en cliquant sur les boutons ci-dessous.');
 
         // second email is third relance
         $secondEmail = $this->getMailerMessages()[1];
-        $this->assertEmailSubjectContains($secondEmail, 'faites le point sur votre problème de logement !');
+        $this->assertEmailSubjectContains($secondEmail, 'Faites le point sur votre problème de logement !');
         $this->assertEmailHtmlBodyContains($secondEmail, 'Merci d\'indiquer si vous souhaitez poursuivre ou arrêter la procédure en cliquant sur les boutons ci-dessous.');
 
         // third email is second relance
         $thirdEmail = $this->getMailerMessages()[2];
-        $this->assertEmailSubjectContains($thirdEmail, 'faites le point sur votre problème de logement !');
+        $this->assertEmailSubjectContains($thirdEmail, 'Faites le point sur votre problème de logement !');
         $this->assertEmailHtmlBodyContains($thirdEmail, 'Cliquez sur le bouton ci-dessous pour nous envoyer un message de mise à jour !');
 
         // last email is cron summary
