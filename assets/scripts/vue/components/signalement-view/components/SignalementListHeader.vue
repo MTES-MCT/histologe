@@ -16,6 +16,14 @@
       </HistoSelect>
     </div>
     <div v-if="sharedState.user.isAdmin" class="fr-col-12 fr-col-lg-6 fr-col-xl-8 fr-mt-2w fr-text--right">
+      <button
+          v-if="sharedState.input.filters.status === 'en_cours' && sharedState.input.filters.territoire !== undefined" 
+          data-fr-opened="false"
+          data-panel-open="panel-mass-affectation"
+          aria-controls="panel-mass-affectation"
+          class="fr-btn fr-btn--secondary fr-btn--icon-left fr-icon-briefcase-line fr-mr-3v">
+        Affecter ces signalements
+      </button>
       <a :href="canExport ? `${sharedProps.ajaxurlExportCsv}` : undefined"
          :class="[
               'fr-btn',

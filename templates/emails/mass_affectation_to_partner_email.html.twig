@@ -1,0 +1,17 @@
+{% extends 'emails/base_email.html.twig' %}
+
+{% block body %}
+    <p>Bonjour,</p>
+    {% if signalements|length > 1 %}
+        <p>{{ signalements|length }} nouveaux signalements vous ont été affectés. Vous devez les accepter pour commencer à en assurer le suivi.</p>
+        <p>Cliquez sur les liens ci-dessous pour consulter ces signalements et les accepter.</p>
+    {% else %}
+        <p>Un nouveau signalement vous a été affecté. Vous devez l'accepter pour commencer à en assurer le suivi.</p>
+        <p>Cliquez sur le lien ci-dessous pour consulter ce signalement et l'accepter.</p>
+    {% endif %}
+    <ul>
+        {% for signalement in signalements %}
+            <li>Signalement <strong><a href="{{ signalement.link }}" target="_blank" rel="noopener">#{{ signalement.reference }}</a></strong></li>
+        {% endfor %}
+    </ul>
+{% endblock %}

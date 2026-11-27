@@ -15,11 +15,11 @@ export const commonRequests = {
       .catch(error => {
         if (axios.isCancel(error)) {
           console.warn('Request cancelled', error.message)
-        } else {
-          console.error(error)
-          Sentry.captureException(new Error(error))
-          functionReturn('error')
+          return
         }
+        console.error(error)
+        Sentry.captureException(new Error(error))
+        functionReturn('error', error.response?.data?.message)
       })
   },
   doPostRequest(

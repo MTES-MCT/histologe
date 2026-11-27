@@ -2,14 +2,17 @@
 <template>
   <SignalementViewModalEditSearch/>
   <SignalementViewModalSaveSearch
-    @savedSearchSuccess="onSearchSaved"
+    @savedSearchSuccess="showNotice"
   />
-  <div v-if="classNameDeleteConfirmation.length > 0" class="fr-notice" :class="classNameDeleteConfirmation">
+  <SignalementViewPanelMassAffectation
+    @massAffectationSuccess="showNotice"
+  />
+  <div v-if="classNameNotice.length > 0" class="fr-notice" :class="classNameNotice">
     <div class="fr-container">
       <div class="fr-notice__body">
         <p>
-          <span class="fr-notice__title">{{ titleDeleteConfirmation }}</span>
-          <span class="fr-notice__desc">{{ messageDeleteConfirmation }}</span>
+          <span class="fr-notice__title">{{ titleNotice }}</span>
+          <span class="fr-notice__desc">{{ messageNotice }}</span>
         </p>
       </div>
     </div>
@@ -119,6 +122,7 @@ import SignalementListCards from './components/SignalementListCards.vue'
 import SignalementListPagination from './components/SignalementListPagination.vue'
 import SignalementViewModalEditSearch from './components/SignalementViewModalEditSearch.vue'
 import SignalementViewModalSaveSearch from './components/SignalementViewModalSaveSearch.vue'
+import SignalementViewPanelMassAffectation from './components/SignalementViewPanelMassAffectation.vue'
 import HistoSelect from '../common/HistoSelect.vue'
 import { handleQueryParameter, handleSettings, handleTerritoryChange, handleSignalementsShared, handleFilters, addQueryParameter, removeQueryParameter, buildUrl, clearScreen, applySavedSearch } from './utils/signalementUtils'
 
@@ -133,15 +137,16 @@ export default defineComponent({
     SignalementListPagination,
     SignalementViewModalEditSearch,
     SignalementViewModalSaveSearch,
+    SignalementViewPanelMassAffectation,
     HistoSelect
   },
   data () {
     return {
       sharedProps: store.props,
       sharedState: store.state,
-      titleDeleteConfirmation: '',
-      messageDeleteConfirmation: '',
-      classNameDeleteConfirmation: '',
+      titleNotice: '',
+      messageNotice: '',
+      classNameNotice: '',
       abortRequest: null as AbortController | null
     }
   },
@@ -169,6 +174,9 @@ export default defineComponent({
         this.sharedProps.csrfDeleteSearch = initElements.dataset.csrfDeleteSearch
         this.sharedProps.ajaxurlEditSearch = initElements.dataset.ajaxurlEditSearch
         this.sharedProps.csrfEditSearch = initElements.dataset.csrfEditSearch
+        this.sharedProps.ajaxurlMassAffectationAnalyze = initElements.dataset.ajaxurlMassAffectationAnalyze
+        this.sharedProps.ajaxurlMassAffectationValidate = initElements.dataset.ajaxurlMassAffectationValidate
+        this.sharedProps.csrfMassAffectationValidate = initElements.dataset.csrfMassAffectationValidate
         this.sharedProps.platformName = initElements.dataset.platformName
         if (!reset) {
           handleQueryParameter(this)
@@ -224,15 +232,15 @@ export default defineComponent({
       handleFilters(this, initElements.dataset.ajaxurl)
     },
     handleDelete (requestResponse: any) {
-      this.titleDeleteConfirmation =
+      this.titleNotice =
           requestResponse.data.status === 200
             ? requestResponse.data.title
             : 'Erreur'
-      this.messageDeleteConfirmation =
+      this.messageNotice =
           requestResponse.data.status === 200
             ? requestResponse.data.message
             : 'Une erreur s\'est produite lors de la suppression. Veuillez réessayer plus tard.'
-      this.classNameDeleteConfirmation =
+      this.classNameNotice =
           requestResponse.data.status === 200
             ? 'fr-notice--success'
             : 'fr-notice--alert'
@@ -240,10 +248,10 @@ export default defineComponent({
       buildUrl(this, initElements.dataset.ajaxurl)
       requests.getSignalements(this.handleSignalements)
     },
-    onSearchSaved(title: string, message: string, className: string ) {
-      this.titleDeleteConfirmation = title
-      this.messageDeleteConfirmation = message
-      this.classNameDeleteConfirmation = className
+    showNotice (title: string, message: string, className: string) {
+      this.titleNotice = title
+      this.messageNotice = message
+      this.classNameNotice = className
     },
     applySavedSearch(value: string) {
       applySavedSearch(this, value)
